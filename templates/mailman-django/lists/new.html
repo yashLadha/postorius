@@ -7,53 +7,11 @@
 
 <form action="{% url list_new %}" method="post" class="newlist">
 
-	<fieldset>
+    {{ form.as_div }}
 
-		<legend>{% trans "List Details" %}</legend>
-
-		<div class="field {{ form.listname.html_name }}">
-			{{ form.listname.label_tag }}
-			{{ form.listname }}
-			{{ form.listname.errors }}
-		</div>
-
-		<div class="field {{ form.list_owner.html_name }}">
-			{{ form.list_owner.label_tag }}
-			{{ form.list_owner}}
-			{{ form.list_owner.errors }}
-		</div>
-
-		<div class="field {{ form.list_type.html_name }}">
-			{{ form.list_type.label_tag }}
-			{{ form.list_type}}
-			{{ form.list_type.errors }}
-		</div>
-
-	</fieldset>
-
-	<fieldset class="optional" id="fs_2">
-
-		<legend>{% trans "Available Languages" %}</legend>
-
-		<p>
-			This list of languages is just an example of an optional part of the form which is hidden by default (by giving its html fieldset a <em>class</em> attribute of "optional"). 
-		</p>
-		
-		<p>
-			Information that isn't mandatory at creation should be hidden so it doesn't distract the user's attention. 
-		</p>
-
-		<div class="field {{ form.languages.html_name }}">
-			{{ form.label_tag }}
-			{{ form.languages }}
-			{{ form.languages.errors }}
-		</div>
-
-	</fieldset>
-
-	<div class="field">
-		<button type="submit">Create List</button>
-	</div>
+    <div class="field">
+        <button type="submit">Create List</button>
+    </div>
 
 </form>
 {% endblock %}

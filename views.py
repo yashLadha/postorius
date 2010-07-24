@@ -23,15 +23,16 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
 
             parts = listname.split('@')
             try:
-                r = c.read_domain(parts[1])
-            except MailmanRESTClientError, e:
+                domain = c.get_domain(parts[1])
+            except ValueError, e:
                 try:
                     c.create_domain(parts[1])
-                except MailmanRESTClientError, e:
+                except MailmanRESTClientError, e: 
+                    # I don't think this error can ever appear but I couldn't 
+                    # trigger the one that might appear -- Anna
                     return HttpResponse(e)
-
             try:
-                response = c.create_list(fqdn_listname=listname)
+                response = domain.create_list(parts[0])
                 return HttpResponseRedirect(reverse('list_index'))
             except MailmanRESTClientError, e:
                 return HttpResponse(e)
@@ -65,6 +66,7 @@ def list_info(request, fqdn_listname = None,
     """
     try:
         c = MailmanRESTClient('localhost:8001')
+        the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
     if request.method == 'POST':
@@ -80,16 +82,14 @@ def list_info(request, fqdn_listname = None,
             if action == "subscribe":
                 real_name = form.cleaned_data.get('real_name', '')
                 try:
-                    response = c.subscribe_list(fqdn_listname=listname,
-                                                address=email,
+                    response = the_list.subscribe(address=email,
                                                 real_name=real_name)
                     return HttpResponseRedirect(reverse('list_index'))
                 except Exception, e:
                     return HttpResponse(e)
             elif action == "unsubscribe":
                 try:
-                    response = c.leave_list(fqdn_listname=listname, 
-                                            address=email) # doesn't throw error when not subscribed...
+                    response = the_list.unsubscribe(address=email)
                     return render_to_response('mailman-django/lists/unsubscribed.html', 
                                               {'listname': fqdn_listname})
                 except Exception, e:
@@ -109,7 +109,7 @@ def list_info(request, fqdn_listname = None,
         unsubscribe = ListUnsubscribe(initial = {'listname': fqdn_listname, 
                                                  'name' : 'unsubscribe'})
 
-    listinfo = c.read_list(fqdn_listname)
+    listinfo = c.get_list(fqdn_listname)
 
     return render_to_response(template, {'subscribe': subscribe,
                                          'unsubscribe': unsubscribe,

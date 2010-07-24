@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.utils.translation import gettext as _
+from fieldset_forms import FieldsetForm
 
-class ListNew(forms.Form):
-    """Form fields to add a new list.
-    languages are hard coded which should be replaced by a REST lookup of available languages.
+class ListNew(FieldsetForm):
+    """Form fields to add a new list. Languages are hard coded which should 
+    be replaced by a REST lookup of available languages.
     """
     listname = forms.EmailField(
         label = _('List Name'), 
@@ -76,9 +77,17 @@ class ListNew(forms.Form):
         ),
         required = False
     )
+    class Meta:
+        """Class to handle the automatic insertion of fieldsets and divs.
+        
+        To use it: add a list for each wished fieldset. The first item in 
+        the list should be the wished name of the fieldset, the following 
+        the fields that should be included in the fieldset.
+        """
+        layout = [["List Details", "listname", "list_owner", "list_type"],
+                  ["Available Languages", "languages"],]
 
 class ListSubscribe(forms.Form):
-
     """Form fields to join an existing list
     """
     listname = forms.EmailField(
@@ -132,5 +141,4 @@ class ListUnsubscribe(forms.Form):
     #initial = 'unsubscribe'
     )
 
-    
     # should at one point add the password to be required as well!
