@@ -14,7 +14,8 @@ class FieldsetForm(Form):
         """Initialize a FormsetField."""
         super(FieldsetForm, self).__init__(*args)
         if hasattr(self, 'Meta') and hasattr(self.Meta, 'layout'):
-            assert hasattr(self.Meta.layout, '__getitem__'), "Meta.layout must be iterable"
+            msg = "Meta.layout must be iterable"
+            assert hasattr(self.Meta.layout, '__getitem__'), msg
             self.layout = self.Meta.layout
         else:
             self.layout = self.fields.keys()
@@ -29,6 +30,8 @@ class FieldsetForm(Form):
 
     def create_fieldset(self, field):
         """Create a <fieldset> around a number of field instances."""
+        # field[0] is the name of the fieldset and 
+        # field[1:] the fields it should include
         # create the divs in each fieldset by calling create_divs
         return u'<fieldset><legend>%s</legend>%s</fieldset>' % (field[0], 
                                                                 self.create_divs(field[1:]))
@@ -41,9 +44,11 @@ class FieldsetForm(Form):
                 # create a field instance for the bound field
                 field_instance = self.base_fields[field]
             except KeyError:
-                raise FieldsetError("Could not resolve form field '%s'." % field)
+                # msg on a separate line since the line got too long otherwise
+                msg = "Could not resolve form field '%s'." % field
+                raise FieldsetError(msg)
             # create a bound field containing all the necessary fields 
-            # from the model
+            # from the form
             bound_field = BoundField(self, field_instance, field)
             output += '<div class="field %(class)s">%(label)s%(help_text)s%(errors)s%(field)s</div>\n' % \
                      {'class': bound_field.name, 

@@ -115,3 +115,25 @@ def list_info(request, fqdn_listname = None,
                                          'unsubscribe': unsubscribe,
                                          'fqdn_listname': fqdn_listname,
                                          'listinfo': listinfo})
+
+def list_delete(request, fqdn_listname = None, 
+              template = 'mailman-django/lists/index.html'):
+    """Delete a list.
+    """
+    # create a connection to Mailman and get the list
+    try:
+        c = MailmanRESTClient('localhost:8001')
+        the_list = c.get_list(fqdn_listname)
+    except Exception, e:
+        return HttpResponse(e)
+    # get the parts for the list necessary to delete it
+    parts = fqdn_listname.split('@')
+    domain = the_list.get_domain(parts[1])
+    domain.delete_list(parts[0])
+    # let the user return to the list index page
+    try:
+        lists = c.get_lists()
+        return render_to_response(template, {'lists': lists})
+    except MailmanRESTClientError, e:
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message': e})
