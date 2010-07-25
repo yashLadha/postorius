@@ -3,6 +3,9 @@ from django.forms import Form
 from django.utils import safestring
 from django.forms.forms import BoundField
 
+class FieldsetError(Exception):
+    pass
+
 class FieldsetForm(Form):
     """Extends BaseForm and adds fieldsets and the possibililty to use 
     as_div. Inspired by WTForm."""
@@ -38,7 +41,7 @@ class FieldsetForm(Form):
                 # create a field instance for the bound field
                 field_instance = self.base_fields[field]
             except KeyError:
-                print "Could not resolve form field '%s'." % field
+                raise FieldsetError("Could not resolve form field '%s'." % field)
             # create a bound field containing all the necessary fields 
             # from the model
             bound_field = BoundField(self, field_instance, field)
