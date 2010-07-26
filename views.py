@@ -10,7 +10,7 @@ from forms import ListNew, ListSubscribe, ListUnsubscribe
 
 
 def list_new(request, template = 'mailman-django/lists/new.html'):
-    """Show or process form to add a new mailing list
+    """Show or process form to add a new mailing list.
     """
     if request.method == 'POST':
         form = ListNew(request.POST)
@@ -44,7 +44,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
 
 
 def list_index(request, template = 'mailman-django/lists/index.html'):
-    """Show a table of all mailing lists
+    """Show a table of all mailing lists.
     """
     try:
         c = MailmanRESTClient('localhost:8001')
@@ -62,7 +62,7 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
 
 def list_info(request, fqdn_listname = None, 
               template = 'mailman-django/lists/info.html'):
-    """Display list info and/or subscribe or unsubscribe a user to a list
+    """Display list info and/or subscribe or unsubscribe a user to a list.
     """
     try:
         c = MailmanRESTClient('localhost:8001')
@@ -126,7 +126,7 @@ def list_delete(request, fqdn_listname = None,
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
-    # get the parts for the list necessary to delete it
+    # get the parts of the list necessary to delete it
     parts = fqdn_listname.split('@')
     domain = the_list.get_domain(parts[1])
     domain.delete_list(parts[0])
