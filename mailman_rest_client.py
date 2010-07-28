@@ -183,6 +183,8 @@ class _Domain(MailmanRESTClient):
         """
         super(_Domain, self).__init__(host)
         self.info = self._http_request('/3.0/domains/' + email_host)
+        if self.info == 404:
+            raise ValueError
 
     def create_list(self, list_name):
         """Create a mailing list and return a list object.
@@ -262,4 +264,7 @@ class _List(MailmanRESTClient):
         else:
             return sorted(response['entries'],
                 key=itemgetter('self_link'))
-    
+
+    def __str__(self):
+        """A string representation of a list."""
+        return "A list object for the list '%s'." % self.info['fqdn_listname']

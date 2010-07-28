@@ -88,7 +88,7 @@ class ListNew(FieldsetForm):
                   ["Available Languages", "languages"],]
 
 class ListSubscribe(forms.Form):
-    """Form fields to join an existing list
+    """Form fields to join an existing list.
     """
     listname = forms.EmailField(
         label = _('List Name'), 
@@ -118,7 +118,7 @@ class ListSubscribe(forms.Form):
     # should add password!
 
 class ListUnsubscribe(forms.Form):
-    """Form fields to leave an existing list
+    """Form fields to leave an existing list.
     """
     listname = forms.EmailField(
         label = _('List Name'), 
@@ -142,3 +142,24 @@ class ListUnsubscribe(forms.Form):
     )
 
     # should at one point add the password to be required as well!
+class ListSettings(FieldsetForm):
+    """Form fields dealing with the list settings.
+    """
+    # currently only one field for testing that the form works at all...
+    listname = forms.EmailField(
+        label = _('List Name'), 
+        initial = '@mailman.state-of-mind.de',
+        error_messages = {
+            'required': _('Please enter a name for your list.'), 
+            'invalid': _('Please enter a valid list name.')
+        }
+    )
+    
+    class Meta:
+        """Class to handle the automatic insertion of fieldsets and divs.
+        
+        To use it: add a list for each wished fieldset. The first item in 
+        the list should be the wished name of the fieldset, the following 
+        the fields that should be included in the fieldset.
+        """
+        layout = [["List Details", "listname"],]

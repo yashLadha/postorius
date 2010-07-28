@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 import re
 from mailman_rest_client import MailmanRESTClient, MailmanRESTClientError
-from forms import ListNew, ListSubscribe, ListUnsubscribe
+from forms import ListNew, ListSubscribe, ListUnsubscribe, ListSettings
 
 
 def list_new(request, template = 'mailman-django/lists/new.html'):
@@ -26,7 +26,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 domain = c.get_domain(parts[1])
             except ValueError, e:
                 try:
-                    c.create_domain(parts[1])
+                    domain = c.create_domain(parts[1])
                 except MailmanRESTClientError, e: 
                     # I don't think this error can ever appear but I couldn't 
                     # trigger the one that might appear -- Anna
@@ -36,10 +36,10 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 return HttpResponseRedirect(reverse('list_index'))
             except MailmanRESTClientError, e:
                 return HttpResponse(e)
-            
+
     else:
         form = ListNew()
-    
+
     return render_to_response(template, {'form': form})
 
 
@@ -117,7 +117,7 @@ def list_info(request, fqdn_listname = None,
                                          'listinfo': listinfo})
 
 def list_delete(request, fqdn_listname = None, 
-              template = 'mailman-django/lists/index.html'):
+                template = 'mailman-django/lists/index.html'):
     """Delete a list.
     """
     # create a connection to Mailman and get the list
@@ -137,3 +137,21 @@ def list_delete(request, fqdn_listname = None,
     except MailmanRESTClientError, e:
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'message': e})
+
+def list_settings(request, fqdn_listname = None, 
+                  template = 'mailman-django/lists/settings.html'):
+    """The settings of a list."""
+    if request.method == 'POST':
+        form = ListSettings(request.POST)
+        if form.is_valid():
+            try:
+                c = MailmanRESTClient('localhost:8001')
+            except Exception, e:
+                return HttpResponse(e)
+            # code to update the form etc., will use PATCH/PUT etc.
+    else:
+        # should use GET to get all the info about the list
+        form = ListSettings()
+    c = MailmanRESTClient('localhost:8001')
+    the_list = c.get_list(fqdn_listname)
+    return render_to_response(template, {'list_settings': the_list.info})

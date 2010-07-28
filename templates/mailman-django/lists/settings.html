@@ -1,0 +1,17 @@
+{% extends "mailman-django/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<h1>{% trans "List Settings" %}</h1>
+
+<h2>Available List Settings</h2>
+<ul>
+{% for item in list_settings %}
+    <li>{{ item }}</li>
+{% endfor %}
+</ul>
+<!-- {{ form.as_div }} -->
+<!-- {{ list_settings }} -->
+
+{% endblock %}
