@@ -35,7 +35,7 @@ from httplib2 import Http
 from operator import itemgetter
 from urllib import urlencode
 from urllib2 import HTTPError
-import mockdata
+from systers_ui.mailman_django import mockdata
 
 
 
