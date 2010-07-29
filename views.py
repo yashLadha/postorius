@@ -22,9 +22,8 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 return HttpResponse(e)
 
             parts = listname.split('@')
-            try:
-                domain = c.get_domain(parts[1])
-            except ValueError, e:
+            domain = c.get_domain(parts[1])
+            if domain.info == 404: # failed to get domain so try creating one
                 try:
                     domain = c.create_domain(parts[1])
                 except MailmanRESTClientError, e: 
@@ -141,17 +140,17 @@ def list_delete(request, fqdn_listname = None,
 def list_settings(request, fqdn_listname = None, 
                   template = 'mailman-django/lists/settings.html'):
     """The settings of a list."""
+    try:
+        c = MailmanRESTClient('localhost:8001')
+        the_list = c.get_list(fqdn_listname)
+    except Exception, e:
+        return HttpResponse(e)
     if request.method == 'POST':
         form = ListSettings(request.POST)
         if form.is_valid():
-            try:
-                c = MailmanRESTClient('localhost:8001')
-            except Exception, e:
-                return HttpResponse(e)
+            pass
             # code to update the form etc., will use PATCH/PUT etc.
     else:
-        # should use GET to get all the info about the list
-        form = ListSettings()
-    c = MailmanRESTClient('localhost:8001')
-    the_list = c.get_list(fqdn_listname)
-    return render_to_response(template, {'list_settings': the_list.info})
+        # should later use GET to get all the info about the list
+        form = ListSettings(the_list.info)
+    return render_to_response(template, {'form': form})

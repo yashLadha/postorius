@@ -145,16 +145,399 @@ class ListUnsubscribe(forms.Form):
 class ListSettings(FieldsetForm):
     """Form fields dealing with the list settings.
     """
-    # currently only one field for testing that the form works at all...
-    listname = forms.EmailField(
-        label = _('List Name'), 
-        initial = '@mailman.state-of-mind.de',
+    choices = ((True, 'Yes'), (False, 'No'),)
+    list_name = forms.CharField(
+        label = _('List Name'),
+    )
+    host_name = forms.CharField(
+        label = _('Domain host name'),
+    )
+    id = forms.IntegerField(    # this should probably not be changeable...
+        label = _('ID'),
+        initial = 9,
+        widget = forms.HiddenInput(),
         error_messages = {
-            'required': _('Please enter a name for your list.'), 
-            'invalid': _('Please enter a valid list name.')
+            'invalid': _('Please provide an integer ID.')
         }
     )
-    
+    list_id = forms.CharField(    # this should probably not be changeable...
+        label = _('List ID'),
+    )
+    include_list_post_header = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Include list post header'),
+    )
+    include_rfc2369_headers = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Include RFC2369 headers'),
+    )
+    autorespond_owner = forms.IntegerField(
+        label = _('Autorespond owner'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    autoresponse_owner_text = forms.CharField(
+        label = _('Autoresponse owner text'),
+    )
+    autorespond_postings = forms.IntegerField(
+        label = _('Autorespond postings'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    autoresponse_postings_text = forms.CharField(
+        label = _('Autoresponse postings text'),
+    )
+    autorespond_requests = forms.IntegerField(
+        label = _('Autorespond requests'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    autoresponse_request_text = forms.CharField(
+        label = _('Autoresponse request text'),
+    )
+    autoresponse_grace_period = forms.CharField(
+        label = _('Autoresponse grace period'),
+    )
+    ban_list = forms.CharField(
+        label = _('Ban list'),
+        widget = forms.Textarea
+    )
+    bounce_info_stale_after = forms.CharField(
+        label = _('Bounce info stale after'),
+    )
+    bounce_matching_headers = forms.CharField(
+        label = _('Bounce matching headers'),
+    )
+    bounce_notify_owner_on_disable = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Bounce notify owner on disable'),
+    )
+    bounce_notify_owner_on_removal = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Bounce notify owner on removal'),
+    )
+    bounce_processing = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Bounce processing'),
+    )
+    bounce_score_threshold = forms.IntegerField(
+        label = _('Bounce score threshold'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    bounce_score_threshold = forms.IntegerField(
+        label = _('Bounce score threshold'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    bounce_unrecognized_goes_to_list_owner = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Bounce unrecognized goes to list owner'),
+    )
+    bounce_you_are_disabled_warnings = forms.IntegerField(
+        label = _('Bounce you are disabled warnings'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    bounce_you_are_disabled_warnings_interval = forms.CharField(
+        label = _('Bounce you are disabled warnings interval'),
+    )
+    filter_content = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Filter content'),
+    )
+    collapse_alternatives = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Collapse alternatives'),
+    )
+    convert_html_to_plaintext = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Convert html to plaintext'),
+    )
+    default_member_moderation = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Default member moderation'),
+    )
+    description = forms.CharField(
+        label = _('Description'),
+    )
+    digest_footer = forms.CharField(
+        label = _('Digest footer'),
+    )
+    digest_header = forms.CharField(
+        label = _('Digest header'),
+    )
+    digest_is_default = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Digest is default'),
+    )
+    digest_send_periodic = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Digest send periodic'),
+    )
+    digest_size_threshold = forms.IntegerField(
+        label = _('Digest size threshold'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    digest_volume_frequency = forms.CharField(
+        label = _('Digest volume frequency'),
+    )
+    digestable = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Digestable'),
+    )
+    discard_these_nonmembers = forms.CharField(
+        label = _('Discard these nonmembers'),
+        widget = forms.Textarea
+    )
+    emergency = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Emergency'),
+    )
+    encode_ascii_prefixes = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Encode ascii prefixes'),
+    )
+    first_strip_reply_to = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('First strip reply to'),
+    )
+    forward_auto_discards = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Forward auto discards'),
+    )
+    gateway_to_mail = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Gateway to mail'),
+    )
+    gateway_to_news = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Gateway to news'),
+    )
+    generic_nonmember_action = forms.IntegerField(
+        label = _('Generic nonmember action'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    goodbye_msg = forms.CharField(
+        label = _('Goodbye message'),
+    )
+    header_matches = forms.CharField(
+        label = _('Header matches'),
+        widget = forms.Textarea
+    )
+    hold_these_nonmembers = forms.CharField(
+        label = _('Hold these nonmembers'),
+        widget = forms.Textarea
+    )
+    info = forms.CharField(
+        label = _('Information'),
+    )
+    linked_newsgroup = forms.CharField(
+        label = _('Linked newsgroup'),
+    )
+    max_days_to_hold = forms.IntegerField(
+        label = _('Maximum days to hold'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    max_message_size = forms.IntegerField(
+        label = _('Maximum message size'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    max_num_recipients = forms.IntegerField(
+        label = _('Maximum number of recipients'), 
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    member_moderation_action = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Member moderation action'),
+    )
+    member_moderation_notice = forms.CharField(
+        label = _('Member moderation notice'),
+    )
+    mime_is_default_digest = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Mime is default digest'),
+    )
+    moderator_password = forms.CharField(
+        label = _('Moderator password'),
+    )
+    msg_footer = forms.CharField(
+        label = _('Message footer'),
+    )
+    msg_header = forms.CharField(
+        label = _('Message header'),
+    )
+    new_member_options = forms.IntegerField(
+        label = _('New member options'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    news_moderation = forms.CharField(
+        label = _('News moderation'),
+    )
+    news_prefix_subject_too = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('News prefix subject too'),
+    )
+    nntp_host = forms.CharField(
+        label = _('Nntp host'),
+    )
+    nondigestable = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Nondigestable'),
+    )
+    nonmember_rejection_notice = forms.CharField(
+        label = _('Nonmember rejection notice'),
+    )
+    obscure_addresses = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Obscure addresses'), 
+    )
+    personalize = forms.CharField(
+        label = _('Personalize'),
+    )
+    pipeline = forms.CharField(
+        label = _('Pipeline'),
+    )
+    post_id = forms.IntegerField(
+        label = _('Post ID'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    preferred_language = forms.CharField(
+        label = _('Preferred language'),
+    )
+    private_roster = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Private roster'),
+    )
+    real_name = forms.CharField(
+        label = _('Real name')
+    )
+    reject_these_nonmembers = forms.CharField(
+        label = _('Reject these nonmembers'),
+        widget = forms.Textarea
+    )
+    reply_goes_to_list = forms.CharField(
+        label = _('Reply goes to list'),
+    )
+    reply_to_address = forms.EmailField(
+        label = _('Reply to address'),
+    )
+    require_explicit_destination = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Require explicit destination'),
+    )
+    respond_to_post_requests = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Respond to post requests'),
+    )
+    scrub_nondigest = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Scrub nondigest'),
+    )
+    send_goodbye_msg = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Send goodbye message'),
+    )
+    send_reminders = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Send reminders'),
+    )
+    send_welcome_msg = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Send welcome message'),
+    )
+    start_chain = forms.CharField(
+        label = _('Start chain'),
+    )
+    subject_prefix = forms.CharField(
+        label = _('Subject prefix'),
+    )
+    subscribe_auto_approval = forms.CharField(
+        label = _('Subscribe auto approval'),
+        widget = forms.Textarea
+    )
+    subscribe_policy = forms.IntegerField(
+        label = _('Subscribe policy'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    topics = forms.CharField(
+        label = _('Topics'),
+        widget = forms.Textarea
+    )
+    topics_bodylines_limit = forms.IntegerField(
+        label = _('Topics bodylines limit'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    topics_enabled = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Topics enabled'),
+    )
+    unsubscribe_policy = forms.IntegerField(
+        label = _('Unsubscribe policy'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
+    welcome_msg = forms.CharField(
+        label = _('Welcome message'),
+    )
+
     class Meta:
         """Class to handle the automatic insertion of fieldsets and divs.
         
@@ -162,4 +545,10 @@ class ListSettings(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["List Details", "listname"],]
+        # just a really temporary layout to see that it works. -- Anna
+        layout = [
+                  ["List Indentity", "list_name", "host_name", "list_id", "include_list_post_header", "include_rfc2369_headers"],
+                  ["Automatic Responses", "autorespond_owner", "autoresponse_owner_text", "autorespond_postings", "autoresponse_postings_text", "autorespond_requests", "autoresponse_request_text", "autoresponse_grace_period"],
+                  ["Bounce and Ban", "ban_list", "bounce_info_stale_after", "bounce_matching_headers", "bounce_notify_owner_on_disable", "bounce_notify_owner_on_removal", "bounce_processing", "bounce_score_threshold", "bounce_unrecognized_goes_to_list_owner", "bounce_you_are_disabled_warnings", "bounce_you_are_disabled_warnings_interval"],
+                  ["Content Filtering", "filter_content", "collapse_alternatives", "convert_html_to_plaintext", "default_member_moderation", "description", "digest_footer", "digest_header", "digest_is_default", "digest_send_periodic", "digest_size_threshold", "digest_volume_frequency", "digestable", "discard_these_nonmembers", "emergency", "encode_ascii_prefixes", "first_strip_reply_to", "forward_auto_discards", "gateway_to_mail", "gateway_to_news", "generic_nonmember_action", "goodbye_msg", "header_matches", "hold_these_nonmembers", "info", "linked_newsgroup", "max_days_to_hold", "max_message_size", "max_num_recipients", "member_moderation_action", "member_moderation_notice", "mime_is_default_digest", "moderator_password", "msg_footer", "msg_header", "new_member_options", "news_moderation", "news_prefix_subject_too", "nntp_host", "nondigestable", "nonmember_rejection_notice", "obscure_addresses", "personalize", "pipeline", "post_id", "preferred_language", "private_roster", "real_name", "reject_these_nonmembers", "reply_goes_to_list", "reply_to_address", "require_explicit_destination", "respond_to_post_requests", "scrub_nondigest", "send_goodbye_msg", "send_reminders", "send_welcome_msg", "start_chain", "subject_prefix", "subscribe_auto_approval", "subscribe_policy", "topics", "topics_bodylines_limit", "topics_enabled", "unsubscribe_policy", "welcome_msg"],
+                 ]

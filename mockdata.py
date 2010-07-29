@@ -23,8 +23,8 @@ def add_mock_data(cls):
     def __init__(self, *args, **kwargs):
         cls.__orig__init__(self, *args, **kwargs)
         self.info['id'] = 9
-        self.info['list_name'] = 'List name lorem ipsum dolor sit'
-        self.info['host_name'] = 'Host name lorem ipsum dolor sit'
+        #self.info['list_name'] = 'List name lorem ipsum dolor sit'
+        #self.info['host_name'] = 'Host name lorem ipsum dolor sit'
         self.info['list_id'] = 'Some list ID lorem ipsum dolor sit'
         self.info['include_list_post_header'] = True
         self.info['include_rfc2369_headers'] = True
@@ -91,7 +91,7 @@ def add_mock_data(cls):
         self.info['post_id'] = 9
         self.info['preferred_language'] = 'Preferred language lorem ipsum dolor sit'
         self.info['private_roster'] = True
-        self.info['real_name'] = 'Real name lorem ipsum dolor sit'
+        #self.info['real_name'] = 'Real name lorem ipsum dolor sit'
         self.info['reject_these_nonmembers'] = 'Reject these non members (BLOB format) lorem ipsum dolor sit'
         self.info['reply_goes_to_list'] = 'Reply goes to list lorem ipsum dolor sit'
         self.info['reply_to_address'] = 'Reply to address lorem ipsum dolor sit'
