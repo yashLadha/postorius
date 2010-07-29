@@ -156,6 +156,7 @@ class ListSettings(FieldsetForm):
         label = _('ID'),
         initial = 9,
         widget = forms.HiddenInput(),
+        required = False,
         error_messages = {
             'invalid': _('Please provide an integer ID.')
         }

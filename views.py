@@ -148,9 +148,11 @@ def list_settings(request, fqdn_listname = None,
     if request.method == 'POST':
         form = ListSettings(request.POST)
         if form.is_valid():
-            pass
-            # code to update the form etc., will use PATCH/PUT etc.
+            the_list.update_list(request.POST)
+            message = "The list has been updated."
     else:
-        # should later use GET to get all the info about the list
         form = ListSettings(the_list.info)
-    return render_to_response(template, {'form': form})
+        message = ""
+    return render_to_response(template, {'form': form,
+                                         'message': message,
+                                         'fqdn_listname': the_list.info['fqdn_listname']})

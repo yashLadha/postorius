@@ -94,7 +94,7 @@ def add_mock_data(cls):
         #self.info['real_name'] = 'Real name lorem ipsum dolor sit'
         self.info['reject_these_nonmembers'] = 'Reject these non members (BLOB format) lorem ipsum dolor sit'
         self.info['reply_goes_to_list'] = 'Reply goes to list lorem ipsum dolor sit'
-        self.info['reply_to_address'] = 'Reply to address lorem ipsum dolor sit'
+        self.info['reply_to_address'] = 'some_reply_to_address@lorem.ipsum'
         self.info['require_explicit_destination'] = True
         self.info['respond_to_post_requests'] = True
         self.info['scrub_nondigest'] = True
