@@ -7,22 +7,52 @@ class ListNew(FieldsetForm):
     """Form fields to add a new list. Languages are hard coded which should 
     be replaced by a REST lookup of available languages.
     """
+    languages = (("Arabic", "Arabic"),
+                 ("Catalan", "Catalan"),
+                 ("Chinese (China)", "Chinese (China)"),
+                 ("Chinese (Taiwan)", "Chinese (Taiwan)"),
+                 ("Croatian", "Croatian"),
+                 ("Czech", "Czech"),
+                 ("Danish", "Danish"),
+                 ("Dutch", "Dutch"),
+                 ("English (USA)", "English (USA)"),
+                 ("Estonian", "Estonian"),
+                 ("Estonian", "Estonian"),
+                 ("Euskara", "Euskara"),
+                 ("Finnish", "Finnish"),
+                 ("French", "French"),
+                 ("German", "German"),
+                 ("Hungarian", "Hungarian"),
+                 ("Interlingua", "Interlingua"),
+                 ("Italian", "Italian"),
+                 ("Japanese", "Japanese"),
+                 ("Korean", "Korean"),
+                 ("Lithuanian", "Lithuanian"),
+                 ("Norwegian", "Norwegian"),
+                 ("Polish", "Polish"),
+                 ("Portuguese", "Portuguese"),
+                 ("Portuguese (Brazil)",  "Portuguese (Brazil)"),
+                 ("Romanian", "Romanian"),
+                 ("Russian", "Russian"),
+                 ("Serbian", "Serbian"),
+                 ("Slovenian", "Slovenian"),
+                 ("Spanish (Spain)", "Spanish (Spain)"),
+                 ("Swedish", "Swedish"),
+                 ("Turkish", "Turkish"),
+                 ("Ukrainian", "Ukrainian"),
+                 ("Vietnamese", "Vietnamese")),
     listname = forms.EmailField(
         label = _('List Name'), 
         initial = '@mailman.state-of-mind.de',
-        error_messages = {
-            'required': _('Please enter a name for your list.'), 
-            'invalid': _('Please enter a valid list name.')
-        }
-    )
+        error_messages = {'required': _('Please enter a name for your list.'), 
+                          'invalid': _('Please enter a valid list name.')})
     list_owner = forms.EmailField(
         label = _('Inital list owner address'),
         error_messages = {
             'required': _("Please enter the list owner's email address."), 
             'invalid': _('Please enter a valid email adress.')
         },
-        required = True,
-    )
+        required = True)
     list_type = forms.ChoiceField(
         widget = forms.Select(),
         label = _('List Type'), 
@@ -34,49 +64,13 @@ class ListNew(FieldsetForm):
             ("", _("Please choose")),
             ("closed_discussion", _("Closed discussion list")),
             ("announcement", _("Announcement list")),
-        )
-    )
+        ))
     languages = forms.MultipleChoiceField(
         label = _('Language'),
         widget = forms.CheckboxSelectMultiple(),
-        choices = (
-            ("Arabic", "Arabic"),
-            ("Catalan", "Catalan"),
-            ("Chinese (China)", "Chinese (China)"),
-            ("Chinese (Taiwan)", "Chinese (Taiwan)"),
-            ("Croatian", "Croatian"),
-            ("Czech", "Czech"),
-            ("Danish", "Danish"),
-            ("Dutch", "Dutch"),
-            ("English (USA)", "English (USA)"),
-            ("Estonian", "Estonian"),
-            ("Estonian", "Estonian"),
-            ("Euskara", "Euskara"),
-            ("Finnish", "Finnish"),
-            ("French", "French"),
-            ("German", "German"),
-            ("Hungarian", "Hungarian"),
-            ("Interlingua", "Interlingua"),
-            ("Italian", "Italian"),
-            ("Japanese", "Japanese"),
-            ("Korean", "Korean"),
-            ("Lithuanian", "Lithuanian"),
-            ("Norwegian", "Norwegian"),
-            ("Polish", "Polish"),
-            ("Portuguese", "Portuguese"),
-            ("Portuguese (Brazil)",  "Portuguese (Brazil)"),
-            ("Romanian", "Romanian"),
-            ("Russian", "Russian"),
-            ("Serbian", "Serbian"),
-            ("Slovenian", "Slovenian"),
-            ("Spanish (Spain)", "Spanish (Spain)"),
-            ("Swedish", "Swedish"),
-            ("Turkish", "Turkish"),
-            ("Ukrainian", "Ukrainian"),
-            ("Vietnamese", "Vietnamese")
-        ),
-        required = False
-    )
+        choices = languages,
+        required = False)
+
     class Meta:
         """Class to handle the automatic insertion of fieldsets and divs.
         
@@ -85,7 +79,7 @@ class ListNew(FieldsetForm):
         the fields that should be included in the fieldset.
         """
         layout = [["List Details", "listname", "list_owner", "list_type"],
-                  ["Available Languages", "languages"],]
+                  ["Available Languages", "languages"]]
 
 class ListSubscribe(forms.Form):
     """Form fields to join an existing list.
@@ -96,15 +90,11 @@ class ListSubscribe(forms.Form):
         error_messages = {
             'required': _('Please enter the mailing list address.'), 
             'invalid': _('Please enter a valid email address.')
-        }
-    )
+        })
     email = forms.EmailField(
         label = _('Your email address'), 
-        error_messages = {
-            'required': _('Please enter an email address.'), 
-            'invalid': _('Please enter a valid email address.')
-        }
-    )
+        error_messages = {'required': _('Please enter an email address.'), 
+                          'invalid': _('Please enter a valid email address.')})
     real_name = forms.CharField(
         label = _('Your name'), 
         required = False,
@@ -255,6 +245,21 @@ class ListSettings(FieldsetForm):
     bounce_you_are_disabled_warnings_interval = forms.CharField(
         label = _('Bounce you are disabled warnings interval'),
     )
+    archive = forms.BooleanField(
+        widget = forms.RadioSelect(choices=choices),
+        required = False,
+        label = _('Archive'),
+        )
+    archive_private = forms.BooleanField(
+        widget = forms.RadioSelect(choices=choices),
+        required = False,
+        label = _('Private Archive'),
+        )
+    advertised = forms.BooleanField(
+        widget = forms.RadioSelect(choices=choices),
+        required = False,
+        label = _('Advertised'),
+        )
     filter_content = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
         required = False,
@@ -548,8 +553,47 @@ class ListSettings(FieldsetForm):
         """
         # just a really temporary layout to see that it works. -- Anna
         layout = [
-                  ["List Indentity", "list_name", "host_name", "list_id", "include_list_post_header", "include_rfc2369_headers"],
-                  ["Automatic Responses", "autorespond_owner", "autoresponse_owner_text", "autorespond_postings", "autoresponse_postings_text", "autorespond_requests", "autoresponse_request_text", "autoresponse_grace_period"],
-                  ["Bounce and Ban", "ban_list", "bounce_info_stale_after", "bounce_matching_headers", "bounce_notify_owner_on_disable", "bounce_notify_owner_on_removal", "bounce_processing", "bounce_score_threshold", "bounce_unrecognized_goes_to_list_owner", "bounce_you_are_disabled_warnings", "bounce_you_are_disabled_warnings_interval"],
-                  ["Content Filtering", "filter_content", "collapse_alternatives", "convert_html_to_plaintext", "default_member_moderation", "description", "digest_footer", "digest_header", "digest_is_default", "digest_send_periodic", "digest_size_threshold", "digest_volume_frequency", "digestable", "discard_these_nonmembers", "emergency", "encode_ascii_prefixes", "first_strip_reply_to", "forward_auto_discards", "gateway_to_mail", "gateway_to_news", "generic_nonmember_action", "goodbye_msg", "header_matches", "hold_these_nonmembers", "info", "linked_newsgroup", "max_days_to_hold", "max_message_size", "max_num_recipients", "member_moderation_action", "member_moderation_notice", "mime_is_default_digest", "moderator_password", "msg_footer", "msg_header", "new_member_options", "news_moderation", "news_prefix_subject_too", "nntp_host", "nondigestable", "nonmember_rejection_notice", "obscure_addresses", "personalize", "pipeline", "post_id", "preferred_language", "private_roster", "real_name", "reject_these_nonmembers", "reply_goes_to_list", "reply_to_address", "require_explicit_destination", "respond_to_post_requests", "scrub_nondigest", "send_goodbye_msg", "send_reminders", "send_welcome_msg", "start_chain", "subject_prefix", "subscribe_auto_approval", "subscribe_policy", "topics", "topics_bodylines_limit", "topics_enabled", "unsubscribe_policy", "welcome_msg"],
-                 ]
+            ["List Indentity", "list_name", "host_name", "list_id", 
+             "include_list_post_header", "include_rfc2369_headers", "info",
+             "real_name"],
+            ["Automatic Responses", "autorespond_owner",
+             "autoresponse_owner_text", "autorespond_postings",
+             "autoresponse_postings_text", "autorespond_requests",
+             "autoresponse_request_text", "autoresponse_grace_period"],
+            ["Bounce and Ban", "ban_list", "bounce_info_stale_after",
+             "bounce_matching_headers", "bounce_notify_owner_on_disable",
+             "bounce_notify_owner_on_removal", "bounce_processing",
+             "bounce_score_threshold",
+             "bounce_unrecognized_goes_to_list_owner",
+             "bounce_you_are_disabled_warnings",
+             "bounce_you_are_disabled_warnings_interval"],
+            ["Archiving", "archive"],
+            ["Content Filtering", "filter_content", "collapse_alternatives",
+             "convert_html_to_plaintext", "default_member_moderation",
+             "description"],
+            ["Digest", "digest_footer", "digest_header", "digest_is_default",
+             "digest_send_periodic", "digest_size_threshold",
+             "digest_volume_frequency", "digestable"],
+            ["Moderation","discard_these_nonmembers", "emergency",
+             "generic_nonmember_action", "generic_nonmember_action",
+             "member_moderation_action", "member_moderation_notice",
+             "moderator_password", "hold_these_nonmembers"],
+            ["Message Text", "msg_header", "msg_footer", "welcome_msg", "goodbye_msg"],
+            ["Privacy", "archive_private", "obscure_addresses",
+             "private_roster", "advertised"],
+            ["Assorted", "encode_ascii_prefixes", "first_strip_reply_to",
+             "forward_auto_discards", "gateway_to_mail", "gateway_to_news",
+             "header_matches", "linked_newsgroup", "max_days_to_hold",
+             "max_message_size", "max_num_recipients",
+             "mime_is_default_digest", "new_member_options",
+             "news_moderation", "news_prefix_subject_too", "nntp_host",
+             "nondigestable", "nonmember_rejection_notice", "personalize",
+             "pipeline", "post_id", "preferred_language",
+             "reject_these_nonmembers", "reply_goes_to_list",
+             "reply_to_address", "require_explicit_destination",
+             "respond_to_post_requests", "scrub_nondigest",
+             "send_goodbye_msg", "send_reminders", "send_welcome_msg",
+             "start_chain", "subject_prefix", "subscribe_auto_approval",
+             "subscribe_policy", "topics", "topics_bodylines_limit",
+             "topics_enabled", "unsubscribe_policy"]]
+            

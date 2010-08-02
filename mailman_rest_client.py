@@ -32,11 +32,10 @@ import re
 import json
 
 from httplib2 import Http
+from mailman_django import mockdata
 from operator import itemgetter
 from urllib import urlencode
 from urllib2 import HTTPError
-from systers_ui.mailman_django import mockdata
-
 
 
 class MailmanRESTClientError(Exception):
