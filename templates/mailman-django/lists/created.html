@@ -1,0 +1,19 @@
+{% extends "mailman-django/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<h1>{% trans "List Created" %}</h1>
+
+<p>The list <em>{{ fqdn_listname }}</em> has been created. What would you like to do next?</p>
+
+<ul>
+    <li><a href="{% url mass_subscribe fqdn_listname %}">Subscribe users</a> to the list <em>{{ fqdn_listname }}</em> or send list invitations.</li>
+    <li>Edit <em>{{ fqdn_listname }}</em>'s <a href="{% url list_settings fqdn_listname %}">settings</a>.</li>
+    <li><a href="{% url list_new %}">Create</a> another list.</li>
+</ul>
+
+
+
+
+{% endblock %}

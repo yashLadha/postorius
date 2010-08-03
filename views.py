@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 import re
 from mailman_rest_client import MailmanRESTClient, MailmanRESTClientError
-from forms import ListNew, ListSubscribe, ListUnsubscribe, ListSettings
+from forms import *
 
 
 def list_new(request, template = 'mailman-django/lists/new.html'):
@@ -32,7 +32,8 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                     return HttpResponse(e)
             try:
                 response = domain.create_list(parts[0])
-                return HttpResponseRedirect(reverse('list_index'))
+                return render_to_response('mailman-django/lists/created.html', 
+                                          {'fqdn_listname': response.info['fqdn_listname'] })
             except MailmanRESTClientError, e:
                 return HttpResponse(e)
 
@@ -140,6 +141,7 @@ def list_delete(request, fqdn_listname = None,
 def list_settings(request, fqdn_listname = None, 
                   template = 'mailman-django/lists/settings.html'):
     """The settings of a list."""
+    message = ""
     try:
         c = MailmanRESTClient('localhost:8001')
         the_list = c.get_list(fqdn_listname)
@@ -152,7 +154,36 @@ def list_settings(request, fqdn_listname = None,
             message = "The list has been updated."
     else:
         form = ListSettings(the_list.info)
-        message = ""
+    return render_to_response(template, {'form': form,
+                                         'message': message,
+                                         'fqdn_listname': the_list.info['fqdn_listname']})
+
+def mass_subscribe(request, fqdn_listname = None, 
+                   template = 'mailman-django/lists/mass_subscribe.html'):
+    """Mass subscribe users to a list."""
+    message = ""
+    try:
+        c = MailmanRESTClient('localhost:8001')
+        the_list = c.get_list(fqdn_listname)
+    except Exception, e:
+        return HttpResponse(e)
+    if request.method == 'POST':
+        form = ListMassSubscription(request.POST)
+        if form.is_valid():
+            try:
+                emails = request.POST["emails"].splitlines()
+                message = "The mass subscription was successful."
+                for email in emails:
+                    # very simple test if email address is valid
+                    parts = email.split('@')
+                    if len(parts) == 2 and '.' in parts[1]:
+                        the_list.subscribe(address=email, real_name="")
+                    else:
+                        message = "Please make sure the email addresses are valid."
+            except Exception, e:
+                return HttpResponse(e)
+    else:
+        form = ListMassSubscription()
     return render_to_response(template, {'form': form,
                                          'message': message,
                                          'fqdn_listname': the_list.info['fqdn_listname']})

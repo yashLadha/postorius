@@ -11,6 +11,7 @@
 		<th>{% trans "List Name" %}</th>
 		<th>&nbsp;</th>
 		<th>&nbsp;</th>
+		<!--<th>&nbsp;</th>-->
 	</tr>
 {% for list in lists %}
 	<tr>
@@ -22,6 +23,10 @@
         <td>
             <a href="{% url list_delete list.fqdn_listname %}">Delete list</a>
         </td>
+        <!--Not sure where to add the list settings link to let users know this page exists. Should be moved to better location but I didn't know where.
+        <td>
+            <a href="{% url list_settings list.fqdn_listname %}">View the list settings page</a>
+        </td>-->
 	</tr>
 {% endfor %}
 </table>

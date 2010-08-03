@@ -40,7 +40,7 @@ class ListNew(FieldsetForm):
                  ("Swedish", "Swedish"),
                  ("Turkish", "Turkish"),
                  ("Ukrainian", "Ukrainian"),
-                 ("Vietnamese", "Vietnamese")),
+                 ("Vietnamese", "Vietnamese"))
     listname = forms.EmailField(
         label = _('List Name'), 
         initial = '@mailman.state-of-mind.de',
@@ -596,4 +596,14 @@ class ListSettings(FieldsetForm):
              "start_chain", "subject_prefix", "subscribe_auto_approval",
              "subscribe_policy", "topics", "topics_bodylines_limit",
              "topics_enabled", "unsubscribe_policy"]]
-            
+
+class ListMassSubscription(FieldsetForm):
+    """Form fields to masssubscribe users to a list.
+    """
+    emails = forms.CharField(
+        label = _('Emails to mass subscribe'),
+        widget = forms.Textarea,
+    )
+
+    class Meta:
+        layout = [["Mass subscription", "emails"],]
