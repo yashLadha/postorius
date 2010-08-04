@@ -20,8 +20,11 @@
         <a id="logo" href="{% url list_index %}"></a>
 
 		<div id="content">
-			<p>This is a draft of a Mailman3 django client. It's not a finished design. For now you can view a <a href="{% url list_index %}">list</a> of existing mailing lists, you can <a href="{% url list_new %}">create</a> new lists and you can subscribe to lists.</p>
+			<p>This is a draft of a Mailman3 django client. It's not a finished design. For now you can view a <a href="{% url list_index %}">list</a> of existing mailing lists and you can <a href="{% url list_new %}">create</a> new lists. 
+			{% block links %}{% endblock %}
+			</p>
 
+            
         	{% block content %}{% endblock %}
 
 		</div>

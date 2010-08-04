@@ -110,6 +110,9 @@ def add_mock_data(cls):
         self.info['topics_enabled'] = True
         self.info['unsubscribe_policy'] = 9
         self.info['welcome_msg'] = 'Welcome message lorem ipsum dolor sit'
+        self.info['advertised'] = True
+        self.info['archive'] = True
+        self.info['archive_private'] = True
     cls.__init__ = __init__
 
     return cls

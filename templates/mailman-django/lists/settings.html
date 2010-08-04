@@ -1,16 +1,19 @@
 {% extends "mailman-django/base.html" %}
 {% load i18n %}
 
+{% block links%}
+You can also <a href="{% url list_info fqdn_listname %}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{% url list_delete fqdn_listname %}">delete</a> the list. If you wish to mass subscribe users to this list, please click <a href="{% url mass_subscribe fqdn_listname %}">here</a>.
+{% endblock %}
+
 {% block content %}
 
 <h1>{% trans "List Settings for " %}{{ fqdn_listname }}</h1>
 
 <p>This page visualizes all list settings. Currently the page is not connected to the rest server so the settings will not be saved when changing them. However, this gives an idea of what the settings page could look like.</p>
 
-<p>If you wish to mass subscribe users to this list, please click <a href="{% url mass_subscribe fqdn_listname %}">here</a>.</p>
 
 {% if message %}
-    <p>{{ message }}</p>
+    <p id="message">{{ message }}</p>
 {% endif %}
 
 <form action="{% url list_settings fqdn_listname %}" method="post" class="list_settings">

@@ -1,6 +1,10 @@
 {% extends "mailman-django/base.html" %}
 {% load i18n %}
 
+{% block links%}
+You can also <a href="{% url list_info fqdn_listname %}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{% url list_delete fqdn_listname %}">delete</a> the list.
+{% endblock %}
+
 {% block content %}
 
 <h1>{% trans "List Created" %}</h1>
