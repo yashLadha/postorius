@@ -597,6 +597,25 @@ class ListSettings(FieldsetForm):
              "subscribe_policy", "topics", "topics_bodylines_limit",
              "topics_enabled", "unsubscribe_policy"]]
 
+class Login(FieldsetForm):
+    """Form to let the user log in.
+    """
+    address = forms.EmailField(
+        label = _('Email address'),
+        error_messages = {'required': _('Please enter an email address.'), 
+                          'invalid': _('Please enter a valid email address.')},
+        required = True,
+    )
+    password = forms.CharField(
+        label = _('Password'),
+        error_messages = {'required': _('Please enter your password.'), 
+                          'invalid': _('Please enter a valid password.')},
+        required = True,
+    )
+
+    class Meta:
+        layout = [["Login", "address", "password"],]
+
 class ListMassSubscription(FieldsetForm):
     """Form fields to masssubscribe users to a list.
     """

@@ -8,7 +8,42 @@ import re
 from mailman_rest_client import MailmanRESTClient, MailmanRESTClientError
 from forms import *
 
+def login_required(fn):
+    """Function (decorator) letting the user log in.
+    """
+    def _login_decorator(*request, **kwargs):
+        """Inner decorator to login.
+        """
+        # If the user is already logged in, let them continue directly.
+        try:
+            if request[0].session['member_id']:
+                return fn(request[0], **kwargs)
+        except:
+            pass
+        template = 'mailman-django/lists/login.html'
+        # Authenticate the user
+        # This is just a mockup since the authenticate functionality in 
+        # the rest server is still missing.
+        # TODO Anna 2010-08-04: implement real authenticate when possible
+        valid_users = {"james@example.com": "james",
+                       "katie@example.com": "katie",
+                       "kevin@example.com": "kevin"}
+        if request[0].method == 'POST':
+            form = Login(request[0].POST)
+            if form.is_valid():
+                if request[0].POST["address"] in valid_users.keys():
+                    if request[0].POST["password"] == valid_users[request[0].POST["address"]]:
+                        request[0].session['member_id'] = request[0].POST["address"]
+                        # make sure to "reset" the method before continuing
+                        request[0].method = 'GET'
+                        return fn(request[0], **kwargs)
+            message = "Your username and password didn't match."
+        else:
+            message = ""
+        return render_to_response(template, {'form': Login(), 'message': message})
+    return _login_decorator
 
+@login_required
 def list_new(request, template = 'mailman-django/lists/new.html'):
     """Show or process form to add a new mailing list.
     """
@@ -27,8 +62,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 try:
                     domain = c.create_domain(parts[1])
                 except MailmanRESTClientError, e: 
-                    # I don't think this error can ever appear but I couldn't 
-                    # trigger the one that might appear -- Anna
+                    # I don't think this error can ever appear... -- Anna
                     return HttpResponse(e)
             try:
                 response = domain.create_list(parts[0])
@@ -138,6 +172,7 @@ def list_delete(request, fqdn_listname = None,
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'message': e})
 
+@login_required
 def list_settings(request, fqdn_listname = None, 
                   template = 'mailman-django/lists/settings.html'):
     """The settings of a list."""
@@ -158,6 +193,7 @@ def list_settings(request, fqdn_listname = None,
                                          'message': message,
                                          'fqdn_listname': the_list.info['fqdn_listname']})
 
+@login_required
 def mass_subscribe(request, fqdn_listname = None, 
                    template = 'mailman-django/lists/mass_subscribe.html'):
     """Mass subscribe users to a list."""
@@ -179,7 +215,7 @@ def mass_subscribe(request, fqdn_listname = None,
                     if len(parts) == 2 and '.' in parts[1]:
                         the_list.subscribe(address=email, real_name="")
                     else:
-                        message = "Please make sure the email addresses are valid."
+                        message = "Please enter valid email addresses."
             except Exception, e:
                 return HttpResponse(e)
     else:
@@ -187,3 +223,12 @@ def mass_subscribe(request, fqdn_listname = None,
     return render_to_response(template, {'form': form,
                                          'message': message,
                                          'fqdn_listname': the_list.info['fqdn_listname']})
+
+def logout(request):
+    """Let the user logout.
+    """
+    try:
+        del request.session['member_id']
+    except KeyError:
+        pass
+    return list_index(request, template = 'mailman-django/lists/index.html')
