@@ -608,6 +608,7 @@ class Login(FieldsetForm):
     )
     password = forms.CharField(
         label = _('Password'),
+        widget = forms.PasswordInput,
         error_messages = {'required': _('Please enter your password.'), 
                           'invalid': _('Please enter a valid password.')},
         required = True,
