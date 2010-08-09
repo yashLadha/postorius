@@ -1,26 +1,38 @@
 # -*- coding: utf-8 -*-
 
 def check_http_method(fn):
-    """Decorator function to return a mock response if the requested method was
-    PUT or PATCH.
+    """
+    Decorator function to return a mock response if the requested 
+    method was PUT or PATCH. Will be removed once this functionality 
+    is implemented in the REST server.
     """
     def http_req(*kwargs):
         if 'method' in kwargs:
+            # If one of the not implemented methods gets called, return
+            # a response saying everything went well (200).
             if method.upper() == 'PUT':
                 return 200
             elif method.upper() == 'PATCH':
                 return 200
         else:
+            # otherwise we return the function to let it perform its 
+            # usual job
             return fn(*kwargs)
-
     return http_req
 
 
 def add_mock_data(cls):
-    """Decorator function to add mock data from the database to a list.
+    """
+    Decorator function to add mock data from the database to a list.
+    Once the functionality exists in the REST server this function can 
+    be removed.
     """
     cls.__orig__init__ = cls.__init__
     def __init__(self, *args, **kwargs):
+        """
+        Initiate the list with the missing information and call the 
+        usual init function to get the real data already available.
+        """
         cls.__orig__init__(self, *args, **kwargs)
         self.info['id'] = 9
         #self.info['list_name'] = 'List name lorem ipsum dolor sit'
@@ -116,4 +128,3 @@ def add_mock_data(cls):
     cls.__init__ = __init__
 
     return cls
-

@@ -4,7 +4,8 @@ from django.utils.translation import gettext as _
 from fieldset_forms import FieldsetForm
 
 class ListNew(FieldsetForm):
-    """Form fields to add a new list. Languages are hard coded which should 
+    """
+    Form fields to add a new list. Languages are hard coded which should 
     be replaced by a REST lookup of available languages.
     """
     languages = (("Arabic", "Arabic"),
@@ -72,7 +73,8 @@ class ListNew(FieldsetForm):
         required = False)
 
     class Meta:
-        """Class to handle the automatic insertion of fieldsets and divs.
+        """
+        Class to handle the automatic insertion of fieldsets and divs.
         
         To use it: add a list for each wished fieldset. The first item in 
         the list should be the wished name of the fieldset, the following 
@@ -598,7 +600,7 @@ class ListSettings(FieldsetForm):
              "topics_enabled", "unsubscribe_policy"]]
 
 class Login(FieldsetForm):
-    """Form to let the user log in.
+    """Form fields to let the user log in.
     """
     address = forms.EmailField(
         label = _('Email address'),
@@ -615,6 +617,10 @@ class Login(FieldsetForm):
     )
 
     class Meta:
+        """
+        Class to define the name of the fieldsets and what should be
+        included in each.
+        """
         layout = [["Login", "address", "password"],]
 
 class ListMassSubscription(FieldsetForm):
@@ -626,4 +632,8 @@ class ListMassSubscription(FieldsetForm):
     )
 
     class Meta:
+        """
+        Class to define the name of the fieldsets and what should be
+        included in each.
+        """
         layout = [["Mass subscription", "emails"],]
