@@ -9,6 +9,7 @@ urlpatterns = patterns('mailman_django.views',
     url(r'^lists/logout/$', 'logout', name = 'logout'),
     url(r'^lists/(?P<fqdn_listname>.+)/$', 'list_info', name = 'list_info'),
     url(r'^delete_list/(?P<fqdn_listname>[^/]+)/$', 'list_delete', name = 'list_delete'),
+    url(r'^user_settings/(?P<member>[^/]+)/$', 'user_settings', name = 'user_settings'),
     url(r'^settings/(?P<fqdn_listname>[^/]+)/$', 'list_settings', name = 'list_settings'),
     url(r'^settings/(?P<fqdn_listname>[^/]+)/mass_subscribe/$', 'mass_subscribe', name = 'mass_subscribe'),
     # to override the default templates specifiy your own:

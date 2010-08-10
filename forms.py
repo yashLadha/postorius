@@ -405,6 +405,9 @@ class ListSettings(FieldsetForm):
     )
     moderator_password = forms.CharField(
         label = _('Moderator password'),
+        widget = forms.PasswordInput,
+        error_messages = {'required': _('Please enter your password.'), 
+                          'invalid': _('Please enter a valid password.')},
     )
     msg_footer = forms.CharField(
         label = _('Message footer'),
@@ -637,3 +640,143 @@ class ListMassSubscription(FieldsetForm):
         included in each.
         """
         layout = [["Mass subscription", "emails"],]
+
+class MembershipSettings(FieldsetForm):
+    """Form handling the membership settings.
+    """
+    choices = ((True, 'Yes'), (False, 'No'),)
+    acknowledge_posts = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Acknowledge posts'),
+    )
+    hide_address = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Hide address'),
+    )
+    receive_list_copy = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Receive list copy'),
+    )
+    receive_own_postings = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Receive own postings'),
+    )
+    delivery_mode = forms.ChoiceField(
+        widget = forms.Select(),
+        error_messages = {
+            'required': _("Please choose a mode."),
+        },
+        required = False,
+        choices = (
+            ("", _("Please choose")),
+            ("delivery_mode", "some mode..."), # this must later be
+            # changed to what modes are available
+        ),
+        label = _('Delivery mode'),
+    )
+    delivery_status = forms.ChoiceField(
+        widget = forms.Select(),
+        error_messages = {
+            'required': _("Please choose a status."),
+        },
+        required = False,
+        choices = (
+            ("", _("Please choose")),
+            ("delivery_status", "some status..."), # this must later be
+            # changed to what statuses are available
+        ),
+        label = _('Delivery status'),
+    )
+    name = forms.CharField(
+        label = "", 
+        widget = forms.HiddenInput(),
+        initial = "membership",
+    )
+
+    class Meta:
+        """
+        Class to define the name of the fieldsets and what should be
+        included in each.
+        """
+        layout = [["Membership Settings", "acknowledge_posts", "hide_address", 
+                   "receive_list_copy", "receive_own_postings", 
+                   "delivery_mode", "delivery_status", "name"],]
+
+class UserSettings(FieldsetForm):
+    """Form handling the user settings.
+    """
+    id = forms.IntegerField(    # this should probably not be 
+                                # changeable...
+        label = _('ID'),
+        initial = 9,
+        widget = forms.HiddenInput(),
+        required = False,
+        error_messages = {
+            'invalid': _('Please provide an integer ID.')
+        }
+    )
+    mailing_list = forms.CharField( # not sure this needs to be here
+        label = _('Mailing list'),
+        widget = forms.HiddenInput(),
+        required = False,
+    )
+    address = forms.ChoiceField(
+        widget = forms.Select(),
+        error_messages = {
+            'required': _("Please choose an address."),
+        },
+        required = True,
+        choices = (
+            ("", _("Please choose")),
+            ("address", "address@example.com"), # this must later be 
+            # changed to what addresses are available
+        ),
+        label = _('Default email address'),
+    )
+    real_name =forms.CharField(
+        label = _('Real name'),
+        required = False,
+    )
+    preferred_language = forms.ChoiceField(
+        label = _('Default/Preferred language'),
+        widget = forms.Select(),
+        error_messages = {
+            'required': _("Please choose a language."),
+        },
+        required = False,
+        choices = (
+            ("", _("Please choose")),
+            ("English (USA)", "English (USA)"), # this must later be 
+            # changed to what languages the list offers
+        )
+    )
+    password = forms.CharField(
+        label = _('Change password'),
+        widget = forms.PasswordInput,
+        required = False,
+        error_messages = {'required': _('Please enter your password.'), 
+                          'invalid': _('Please enter a valid password.')},
+    )
+    conf_password = forms.CharField(
+        label = _('Confirm password'),
+        widget = forms.PasswordInput,
+        required = False,
+        error_messages = {'required': _('Please enter your password.'), 
+                          'invalid': _('Please enter a valid password.')},
+    )
+    name = forms.CharField(
+        label = "", 
+        widget = forms.HiddenInput(),
+        initial = "user",
+    )
+    class Meta:
+        """
+        Class to define the name of the fieldsets and what should be
+        included in each.
+        """
+        layout = [["User settings", "real_name", "password", 
+                   "conf_password", "preferred_language", "address", "name"],]

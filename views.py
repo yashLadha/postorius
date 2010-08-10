@@ -273,6 +273,56 @@ def mass_subscribe(request, fqdn_listname = None,
     return render_to_response(template, {'form': form,
                                          'message': message,
                                          'fqdn_listname': the_list.info['fqdn_listname']})
+@login_required
+def user_settings(request, member = None, 
+                  template = 'mailman-django/lists/user_settings.html'):
+    """
+    Change the user or the membership settings.
+    The user must be logged in to be allowed to change any settings.
+    TODO: * deal with the actual member and updating the list
+          * add CSS to display tabs
+          * create a function returning all membership lists for a user
+    """
+    message = ""
+    settings_type = "User "
+    membership_forms = []
+    # TODO: call function to append all membership lists for a user
+    if request.method == 'POST':
+        # The form enables both user and member settings. As a result
+        # we must find out which was the case.
+        tab_type = request.POST.get('name', '')
+        if tab_type == "membership":
+            membership_forms.append(MembershipSettings(request.POST))
+            user_form = UserSettings()
+            settings_type = "Membership "
+            # TODO: make sure the correct form is evaluated, this is
+            # just a temporary solution with one membership list
+            if membership_forms[0].is_valid():
+                # TODO: add a call to an update function of the member
+                # settings HERE, once the member class is created
+                message = "The membership settings have been updated."
+        else:
+            user_form = UserSettings(request.POST)
+            membership_forms.append(MembershipSettings())
+            if user_form.is_valid(): 
+                # TODO: add a call to an update function of the user
+                # settings HERE, once the member class is created
+                message = "The user settings have been updated."
+
+    else:
+        tab_type = "user"
+        user_form = UserSettings()
+        # TODO: add a call to a function adding all membership forms,
+        # this is just a temporary solution until we know what lists
+        # the user is subscribed to
+        membership_forms.append(MembershipSettings())
+        
+    return render_to_response(template, {'user_form': user_form,
+                                         'membership_forms': membership_forms,
+                                         'settings_type': settings_type,
+                                         'tab_type': tab_type,
+                                         'message': message,
+                                         'member': member})
 
 def logout(request):
     """

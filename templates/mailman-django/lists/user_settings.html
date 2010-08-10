@@ -1,0 +1,47 @@
+{% extends "mailman-django/base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+
+<h1>{{ settings_type }}{% trans "Settings" %}</h1>
+
+<div id="{{ tab_type }}" class="{{ tab_type }}">
+
+<ul id="tabs">
+    <li id="user" class="user">{% trans "User Settings" %}</li>
+    <li id="membership" class="membership">{% trans "Membership Settings" %}</li>
+</ul>
+
+<p id=logout><a href="{% url logout %}">Logout</a></p>
+
+<p>This page visualizes the user/membership settings. Currently the page is not connected to the rest server so the settings will not be saved when changing them. However, this gives an idea of what the settings page could look like.</p>
+
+
+{% if message %}
+    <p id="message">{{ message }}</p>
+{% endif %}
+
+<div id="user_form" class="user_form">
+<form action="" method="post" class="user" name="user">
+{{ user_form.as_div }}
+    <div class="field">
+        <button type="submit">Save changes</button>
+    </div>
+</form>
+</div>
+
+<div id="membership_form" class="membership_form">
+{% for form in membership_forms %}
+<form action="" method="post" class="membership" name="membership">
+{{ form.as_div }}
+    <div class="field">
+        <button type="submit">Save changes</button>
+    </div>
+</form>
+{% endfor %}
+</div>
+
+</div>
+
+{% endblock %}
