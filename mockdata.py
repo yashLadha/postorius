@@ -128,3 +128,40 @@ def add_mock_data(cls):
     cls.__init__ = __init__
 
     return cls
+
+def add_member_data(cls):
+    """
+    Decorator function to add mock data from the database to a member.
+    Once the functionality exists in the REST server this function can 
+    be removed.
+    """
+    cls.__orig__init__ = cls.__init__
+    def __init__(self, *args, **kwargs):
+        """
+        Initiate the member with the missing information and call the 
+        usual init function to get the real data already available.
+        """
+        cls.__orig__init__(self, *args, **kwargs)
+        self.info['id'] = 9
+        self.info['acknowledge_posts'] = True
+        self.info['hide_address'] = True
+        self.info['preferred_language'] = 'Preferred language lorem ipsum dolor sit'
+        self.info['receive_list_copy'] = True
+        self.info['receive_own_postings'] = True
+        self.info['delivery_mode'] = 'Delivery mode lorem ipsum dolor sit'
+        self.info['delivery_status'] = 'Delivery status lorem ipsum dolor sit'
+        self.info['real_name'] = 'Real name lorem ipsum dolor sit'
+        self.info['password'] = 'Password lorem ipsum dolor sit'
+        self.info['preferences_id'] = 9
+        self.info['role'] = 'Role lorem ipsum dolor sit'
+        self.info['mailing_list'] = 'Mailing list lorem ipsum dolor sit'
+        self.info['is_moderated'] = True
+        self.info['address_id'] = 9
+        self.info['address'] = 'Address lorem ipsum dolor sit'
+        self.info['_original'] = 'Original lorem ipsum dolor sit'
+        self.info['verified_on'] = '2000-01-01 00:00:00'
+        self.info['registered_on'] = '2000-01-01 00:00:00'
+        self.info['user_id'] = 9
+    cls.__init__ = __init__
+
+    return cls
