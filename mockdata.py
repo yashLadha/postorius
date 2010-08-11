@@ -6,22 +6,22 @@ def check_http_method(fn):
     method was PUT or PATCH. Will be removed once this functionality 
     is implemented in the REST server.
     """
-    def http_req(*kwargs):
+    def http_req(*args, **kwargs):
         if 'method' in kwargs:
             # If one of the not implemented methods gets called, return
-            # a response saying everything went well (200).
-            if method.upper() == 'PUT':
-                return 200
-            elif method.upper() == 'PATCH':
-                return 200
+            # a response saying everything went well (204).
+            if kwargs['method'].upper() == 'PUT':
+                return 204
+            elif kwargs['method'].upper() == 'PATCH':
+                return 204
         else:
             # otherwise we return the function to let it perform its 
             # usual job
-            return fn(*kwargs)
+            return fn(*args, **kwargs)
     return http_req
 
 
-def add_mock_data(cls):
+def add_list_mock_data(cls):
     """
     Decorator function to add mock data from the database to a list.
     Once the functionality exists in the REST server this function can 
@@ -129,7 +129,37 @@ def add_mock_data(cls):
 
     return cls
 
-def add_member_data(cls):
+
+def add_user_mock_data(cls):
+    """Decorator function to add mock data to a user object."""
+
+    cls.__orig__init__ = cls.__init__
+    def __init__(self, *args, **kwargs):
+        """Initiate a user and add mockdata."""
+        cls.__orig__init__(self, *args, **kwargs)
+        self.info[u'real_name'] = u'Jack'
+
+    def get_lists(self):
+        response = [{u'email_address': u'jack@example.com',
+                     u'fqdn_listname': u'test-one@example.com',
+                     u'real_name': u'Test-one'},
+                    {u'email_address': u'jack@example.com',
+                     u'fqdn_listname': u'test-two@example.com',
+                     u'real_name': u'Test-two'}]
+        return response
+
+    def get_email_addresses(self):
+        response = [u'jack@example.com']
+        return response
+
+    cls.__init__ = __init__
+    cls.get_lists = get_lists
+    cls.get_email_addresses = get_email_addresses
+
+    return cls
+
+
+def add_member_mock_data(cls):
     """
     Decorator function to add mock data from the database to a member.
     Once the functionality exists in the REST server this function can 

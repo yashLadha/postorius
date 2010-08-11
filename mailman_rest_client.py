@@ -32,7 +32,7 @@ import re
 import json
 
 from httplib2 import Http
-from mailman_django import mockdata
+from mailmanclient import mockdata
 from operator import itemgetter
 from urllib import urlencode
 from urllib2 import HTTPError
@@ -65,12 +65,12 @@ class MailmanRESTClient():
         return '<MailmanRESTClient: %s>' % self.host
 
     @mockdata.check_http_method
-    def _http_request(self, path, data=None, method=None):
+    def _http_request(self, path, data=None, method=None, **kwargs):
         """Send an HTTP request.
         
         :param path: the path to send the request to
         :type path: string
-        :param data: POST oder PUT data to send
+        :param data: POST, PUT or PATCH data to send
         :type data: dict
         :param method: the HTTP method; defaults to GET or POST (if
             data is not None)
@@ -167,6 +167,29 @@ class MailmanRESTClient():
             return sorted(response['entries'],
                 key=itemgetter('self_link'))
 
+    def get_member(self, email_address, fqdn_listname):
+        """Return a member object.
+        
+        :param email_adresses: the email address used
+        :type email_address: string
+        :param fqdn_listname: the mailing list
+        :type fqdn_listname: string
+        :return: a member object
+        :rtype: _Member
+        """
+        return _Member(self.host, email_address, fqdn_listname)
+
+
+    def get_user(self, email_address):
+        """Find and return a user object.
+        
+        :param email_address: one of the user's email addresses
+        :type email: string:
+        :returns: a user object 
+        :rtype: _User
+        """
+        return _User(self.host, email_address)
+
 
 class _Domain(MailmanRESTClient):
     """A domain wrapper for the MailmanRESTClient."""
@@ -201,7 +224,7 @@ class _Domain(MailmanRESTClient):
         fqdn_listname = list_name + '@' + self.info['email_host']
         return self._http_request('/3.0/lists/' + fqdn_listname, None, 'DELETE')
 
-@mockdata.add_mock_data
+@mockdata.add_list_mock_data
 class _List(MailmanRESTClient):
     """A mailing list wrapper for the MailmanRESTClient."""
 
@@ -262,12 +285,136 @@ class _List(MailmanRESTClient):
             return sorted(response['entries'],
                 key=itemgetter('self_link'))
 
+    def get_member(self, email_address):
+        """Return a member object.
+        
+        :param email_adresses: the email address used
+        :type email_address: string
+        :param fqdn_listname: the mailing list
+        :type fqdn_listname: string
+        :return: a member object
+        :rtype: _Member
+        """
+        return _Member(self.host, email_address, self.info['fqdn_listname'])
+
     def update_list(self, data):
         """Update the settings for a list.
         """
-        return self._http_request('/3.0/lists/' + self.info['fqdn_listname'], data, 'PATCH')
+        return self._http_request('/3.0/lists/' + self.info['fqdn_listname'],
+                                  data, method='PATCH')
 
     def __str__(self):
         """A string representation of a list.
         """
         return "A list object for the list '%s'." % self.info['fqdn_listname']
+
+
+@mockdata.add_user_mock_data
+class _User(MailmanRESTClient):
+    """A user wrapper for the MailmanRESTClient."""
+
+    def __init__(self, host, email_address):
+        """Connect to host and get user information.
+        
+        :param host: the host name of the REST API 
+        :type host: string
+        :param email_address: email address
+        :type email_address: string
+        :return: a user object
+        :rtype: _User
+        """
+        super(_User, self).__init__(host)
+        # store the email address the instance was created with
+        self.email_address = email_address
+        # create an info attribute
+        self.info = {}
+
+    def get_email_addresses(self):
+        """Return a list of all email adresses used by this user.
+        
+        :return: a list of email addresses
+        :rtype: list
+        """
+        response = self._http_request('/3.0/users/' + self.email_address + '/email_adresses')
+        if type(response) is int:
+            return response
+        elif 'entries' not in response:
+            return []
+        else:
+            return sorted(response['entries'])
+
+    def get_lists(self):
+        """Return a list of all mailing list connected to a user.
+
+        :return: a list of dicts with all mailing lists
+        :rtype: list
+        """
+        path = '/3.0/users/%s/lists' % self.email_address
+        response = self._http_request(path)
+        if type(response) is int:
+            return response
+        elif 'entries' not in response:
+            return []
+        else:
+            # Return a dict with entries sorted by fqdn_listname
+            return sorted(response['entries'],
+                key=itemgetter('fqdn_listname'))
+
+    def update(self, data=None):
+        """Update user settings."""
+
+        # If data is None, use the info dict
+        if data is None:
+            data = self.info
+
+        path = '/3.0/users/%s' % (self.email_address)
+        return self._http_request(path, data, method='PATCH')
+
+    def __str__(self):
+        """A string representation of a member."""
+
+        return "A user object for the user '%s'." % self.info['real_name']
+
+
+@mockdata.add_member_mock_data
+class _Member(MailmanRESTClient):
+    """A user wrapper for the MailmanRESTClient."""
+
+    def __init__(self, host, email_address, fqdn_listname):
+        """Connect to host and get membership information.
+        
+        :param host: the host name of the REST API 
+        :type host: string
+        :param email_address: email address
+        :type email_address: string
+        :param fqdn_listname: the mailing list
+        :type fqdn_listname: string
+        :return: a member object
+        :rtype: _Member
+        """
+        super(_Member, self).__init__(host)
+        # Create an info attribute to receive member info via the API.
+        # To be filled with actual data as soon as the API supports it.
+        self.info = {}
+        # Keep these values out of the info dict so info can be send 
+        # back to the server without additional keys
+        self.email_address = email_address
+        self.fqdn_listname = fqdn_listname
+
+    def update(self, data=None):
+        """Update member settings."""
+
+        # If data is None, use the info dict
+        if data is None:
+            data = self.info
+
+        path = '/3.0/lists/%s/member/%s' % (self.fqdn_listname,
+                                           self.email_address)
+        return self._http_request(path, data, method='PATCH')
+
+    def __str__(self):
+        """A string representation of a member."""
+
+        return "A member object for '%s', subscribed to '%s'." \
+            % (self.email_address, self.fqdn_listname)
+
