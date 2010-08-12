@@ -1,63 +1,74 @@
 # -*- coding: utf-8 -*-
 """
+===================================================================
 Test suite for the Mailman UI.
-This document both acts as a test for all the functions implemented 
+This document both acts as a test for all the functions implemented
 in the UI as well as documenting what has been done.
+===================================================================
 
-# To start the test, import the django test client.
+Getting Started
+===============
+
+To start the test, import the django test client.
 >>> from django.test.client import Client
 
-# Then instantiate a test client.
+Then instantiate a test client.
 >>> c = Client()
 
-# Go to the start page listing all lists.
+Go to the start page listing all lists.
 >>> response = c.get('/mailman_django/',)
 
-# Make sure the load was a success by checking the status code.
+Make sure the load was a success by checking the status code.
 >>> response.status_code
 200
 
-# Try to create a new list. Accessing the page to create a new list 
-# redirects to a login page since we need admin authority to create 
-# a new list.
+Create a New List
+=================
+
+Try to create a new list. Accessing the page to create a new list 
+redirects to a login page since we need admin authority to create 
+a new list.
 >>> response = c.get('/mailman_django/lists/new/')
 
-# Check that login required was in the HTML content of what was loaded
+Check that login required was in the HTML content of what was loaded
 >>> print "Login Required" in response.content
 True
 
-# Hence, we log in as an admin on the login page we get as a response 
-# to our call.
+Hence, we log in as an admin on the login page we get as a response 
+to our call.
 >>> response = c.post('/mailman_django/lists/new/',
-...                   {"address": "kevin@example.com",
-...                   "password": "kevin"})
+...                   {"addr": "kevin@example.com",
+...                   "psw": "kevin"})
 
-# Check the content to see that we came to the create page after 
-# logging in.
+Check the content to see that we came to the create page after 
+logging in.
 >>> print "Create a new list" in response.content
 True
 
-# Now create a new list called 'new_list'.
+Now create a new list called 'new_list'.
 >>> response = c.post('/mailman_django/lists/new/',
 ...                   {"listname": "new_list@example.com",
 ...                    "list_owner": "kevin@example.com",
 ...                    "list_type": "closed_discussion",
 ...                    "languages": "English (USA)"})
 
-# We should now end up on a success page offering what to do next. 
-# Let's check that this was the case.
+We should now end up on a success page offering what to do next. 
+Let's check that this was the case.
 >>> print "What would you like to do next?" in response.content
 True
 
-# Three options appear on this page. The first one is to mass subscribe
-# users, the second is to go to the settings page of the list just 
-# created and the third is to create another list. 
-# We're still logged in so go to the page where the settings can be 
-# changed (this page also requires admin authority).
+Three options appear on this page. The first one is to mass subscribe
+users, the second is to go to the settings page of the list just 
+created and the third is to create another list. 
+We're still logged in so go to the page where the settings can be 
+changed (this page also requires admin authority).
 >>> response = c.get('/mailman_django/settings/new_list%40example.com/',)
 
-# Try to update the settings. Here we must provide all the settings 
-# on the page to be allowed to update it.
+Change the List Settings
+========================
+
+Try to update the settings. Here we must provide all the settings 
+on the page to be allowed to update it.
 >>> response = c.post('/mailman_django/settings/new_list%40example.com/',
 ...                   {'send_welcome_msg': True,
 ...                    'advertised': True,
@@ -154,96 +165,177 @@ True
 ...                    'bounce_unrecognized_goes_to_list_owner': True,
 ...                    'autoresponse_postings_text': 'Auto response postings text lorem ipsum dolor sit'})
 
-# If the post was successful, a positive response should appear in 
-# the HTML content.
+If the post was successful, a positive response should appear in 
+the HTML content.
 >>> print "The list has been updated." in response.content
 True
 
-# Now we want to mass subscribe a few users to the list. Therefore, 
-# go to the mass subscription page.
+Mass Subscribe Users
+====================
+
+Now we want to mass subscribe a few users to the list. Therefore, 
+go to the mass subscription page.
 >>> url = '/mailman_django/settings/new_list%40example.com/mass_subscribe/'
 >>> response = c.get(url)
 
-# Check that everything went well by making sure the status code 
-# was correct.
+Check that everything went well by making sure the status code 
+was correct.
 >>> response.status_code
 200
 
-# Try mass subscribing the users 'liza@example.com' and 
-# 'george@example.com'. Each address should be provided on a separate 
-# line so add '\\n' between the names to indicate that this was done 
-# (we're on a Linux machine which is why the letter 'n' was used and 
-# the double '\\' instead of a single one is to escape the string 
-# parsing of Python).
+Try mass subscribing the users 'liza@example.com' and 
+'george@example.com'. Each address should be provided on a separate 
+line so add '\\n' between the names to indicate that this was done 
+(we're on a Linux machine which is why the letter 'n' was used and 
+the double '\\' instead of a single one is to escape the string 
+parsing of Python).
 >>> url = '/mailman_django/settings/new_list%40example.com/mass_subscribe/'
 >>> response = c.post(url,
 ...                   {"emails": "liza@example.com\\ngeorge@example.com"})
 
-# If everything was successful, we shall get a positive response from 
-# the page. We'll check that this was the case.
+If everything was successful, we shall get a positive response from 
+the page. We'll check that this was the case.
 >>> print "The mass subscription was successful." in response.content
 True
 
-# Done with the admin stuff. Now let's log out.
+Done with the admin stuff. Now let's log out.
 >>> response = c.get('/mailman_django/lists/logout/',)
 
-# If the request was successful we should end up on the list info page.
-# Now make sure that we got redirected there.
+If the request was successful we should end up on the list info page.
+Now make sure that we got redirected there.
 >>> print "All mailing lists" in response.content
 True
 
-# Apart from just viewing a list of all the available lists we can 
-# view the information about one particular list on a list info page. 
-# On this page we can also subscribe or unsubscribe an email address 
-# to the list. Let's try to subscribe to the list in the "normal" way 
-# (i.e. not using mass subscription). First we go to the page.
+Change the User Settings
+========================
+
+Now let's check out the user settings. Start by accessing the user 
+settings page. The user settings also requires the user to be logged 
+in. We'll call the page and log in as the Katie.
+>>> response = c.post('/mailman_django/user_settings/katie%40example.com/',
+...                   {"addr": "katie@example.com",
+...                   "psw": "katie"})
+
+Let's check that we ended up on the right page.
+>>> print "User Settings" in response.content
+True
+
+The settings page contains two tabs - one for the general user settings
+valid for all lists and a specific membership page with links to all 
+lists the user is subscribed to. On the latter the user can change the 
+settings for each list.
+We'll start by changing some of the user settings. We'll set the real 
+name to Katie and the default email address to 'jack@example.com'.
+>>> response = c.post('/mailman_django/user_settings/katie%40example.com/', 
+...                   {'real_name': 'Katie', 
+...                   'address': u'jack@example.com'})
+
+If we now check the content of the page that was loaded, we should get
+a confirmation that everything went well.
+>>> print "The user settings have been updated." in response.content
+True
+
+Change the Memebership Settings
+===============================
+
+Now let's go to the membership settings page. Once we go there we 
+should get a list of all the available lists.
+>>> response = c.get('/mailman_django/membership_settings/katie%40example.com/')
+
+Check that we came to the right place...
+>>> print "Membership Settings" in response.content
+True
+
+...and select the list 'test-one@example.com'.
+>>> response = c.get('/mailman_django/membership_settings/katie%40example.com/?list=test-one@example.com')
+
+Lets make sure we got to the right page.
+>>> print "Membership Settings for test-one@example.com" in response.content
+True
+
+We want to make sure we don't hide our address when posting to the 
+list, so we change this option and save the form.
+>>> response = c.post('/mailman_django/membership_settings/katie%40example.com/?list=test-one@example.com', 
+...                   {"hide_address": False})
+
+Now we just need to make sure the saving went well. We do this by 
+checking the content of the page that was loaded.
+>>> print "The membership settings have been updated." in response.content
+True
+
+We feel done with the user and memebership settings so let's log out 
+before we continue.
+>>> response = c.get('/mailman_django/lists/logout/',)
+
+Again, if the request was successful we should end up on the list info
+page. Make sure that we got redirected there.
+>>> print "All mailing lists" in response.content
+True
+
+View the List Info Page
+=======================
+
+Apart from just viewing a list of all the available lists we can 
+view the information about one particular list on a list info page. 
+On this page we can also subscribe or unsubscribe an email address 
+to the list. Let's try to subscribe to the list in the "normal" way 
+(i.e. not using mass subscription). First we go to the page.
 >>> response = c.get('/mailman_django/lists/new_list%40example.com/',)
 
-# Then we check that everything went well.
+Then we check that everything went well.
 >>> response.status_code
 200
 
-# And finally we try to subscribe a user named 'Meg'.
+Subscribe a User
+================
+
+And finally we try to subscribe a user named 'Meg'.
 >>> response = c.post('/mailman_django/lists/new_list%40example.com/',
 ...                   {"email": "meg@example.com",
 ...                   "real_name": "Meg",
 ...                   "name": "subscribe",
 ...                   "listname": "new_list@example.com"})
 
-# This page contains a redirect so we check the status code for this.
+This page contains a redirect so we check the status code for this.
 >>> response.status_code
 302
 
-# Then we check that the redirect gives the correct status code.
+Then we check that the redirect gives the correct status code.
 >>> response = c.get("http://testserver/mailman_django/lists/")
 >>> response.status_code
 200
 
-# We'll now try unsubscribing the address we just subscribed.
+Unsubscribe a User
+==================
+
+We'll now try unsubscribing the address for Meg.
 >>> response = c.post('/mailman_django/lists/new_list%40example.com/',
 ...                   {"email": "meg@example.com",
 ...                   "real_name": "Meg",
 ...                   "name": "unsubscribe",
 ...                   "listname": "new_list@example.com"})
 
-# If everything went well, we'll get a positive response saying so.
+If everything went well, we'll get a positive response saying so.
 >>> print "You have now been unsubscribed from new_list@example.com." in \
  response.content
 True
 
-# Finally, let's delete the list.
-# We start by checking that the list is really there (for reference).
+Delete the List
+===============
+
+Finally, let's delete the list.
+We start by checking that the list is really there (for reference).
 >>> response = c.get('/mailman_django/lists/')
 >>> print "new_list@example.com" in response.content
 True
 
-# Then we delete the list...
+Then we delete the list...
 >>> response = c.post('/mailman_django/delete_list/new_list%40example.com/',)
 
-# ...and check that it's been deleted.
+...and check that it's been deleted.
 >>> print "new_list@example.com" in response.content
 False
 
-# So far this is what you can do in the UI. More tests can be added 
-# here later.
+So far this is what you can do in the UI. More tests can be added 
+here later.
 """
