@@ -605,13 +605,13 @@ class ListSettings(FieldsetForm):
 class Login(FieldsetForm):
     """Form fields to let the user log in.
     """
-    address = forms.EmailField(
+    addr = forms.EmailField(
         label = _('Email address'),
         error_messages = {'required': _('Please enter an email address.'), 
                           'invalid': _('Please enter a valid email address.')},
         required = True,
     )
-    password = forms.CharField(
+    psw = forms.CharField(
         label = _('Password'),
         widget = forms.PasswordInput,
         error_messages = {'required': _('Please enter your password.'), 
@@ -624,7 +624,7 @@ class Login(FieldsetForm):
         Class to define the name of the fieldsets and what should be
         included in each.
         """
-        layout = [["Login", "address", "password"],]
+        layout = [["Login", "addr", "psw"],]
 
 class ListMassSubscription(FieldsetForm):
     """Form fields to masssubscribe users to a list.
@@ -673,8 +673,10 @@ class MembershipSettings(FieldsetForm):
         required = False,
         choices = (
             ("", _("Please choose")),
-            ("delivery_mode", "some mode..."), # this must later be
-            # changed to what modes are available
+            ("delivery_mode", "some mode..."), # TODO: this must later
+            # be dynalically changed to what modes the list offers
+            # (see the address field in __init__ in UserSettings for
+            # how to do this)
         ),
         label = _('Delivery mode'),
     )
@@ -686,15 +688,12 @@ class MembershipSettings(FieldsetForm):
         required = False,
         choices = (
             ("", _("Please choose")),
-            ("delivery_status", "some status..."), # this must later be
-            # changed to what statuses are available
+            ("delivery_status", "some status..."), # TODO: this must 
+            # later be dynalically changed to what statuses the list 
+            # offers (see the address field in __init__ in UserSettings
+            # for how to do this)
         ),
         label = _('Delivery status'),
-    )
-    name = forms.CharField(
-        label = "", 
-        widget = forms.HiddenInput(),
-        initial = "membership",
     )
 
     class Meta:
@@ -704,11 +703,23 @@ class MembershipSettings(FieldsetForm):
         """
         layout = [["Membership Settings", "acknowledge_posts", "hide_address", 
                    "receive_list_copy", "receive_own_postings", 
-                   "delivery_mode", "delivery_status", "name"],]
+                   "delivery_mode", "delivery_status"],]
 
 class UserSettings(FieldsetForm):
     """Form handling the user settings.
     """
+    def __init__(self, address_choices, *args, **kwargs):
+        """
+        Initialize the user settings with a field 'address' where 
+        the values are set dynamically in the view.
+        """
+        super(UserSettings, self).__init__(*args, **kwargs)
+        self.fields['address'] = forms.ChoiceField(choices=(address_choices), 
+                                                   widget = forms.Select(), 
+                                                   error_messages = {'required': _("Please choose an address."),},
+                                                   required = True,
+                                                   label = _('Default email address'),)
+    
     id = forms.IntegerField(    # this should probably not be 
                                 # changeable...
         label = _('ID'),
@@ -724,19 +735,6 @@ class UserSettings(FieldsetForm):
         widget = forms.HiddenInput(),
         required = False,
     )
-    address = forms.ChoiceField(
-        widget = forms.Select(),
-        error_messages = {
-            'required': _("Please choose an address."),
-        },
-        required = True,
-        choices = (
-            ("", _("Please choose")),
-            ("address", "address@example.com"), # this must later be 
-            # changed to what addresses are available
-        ),
-        label = _('Default email address'),
-    )
     real_name =forms.CharField(
         label = _('Real name'),
         required = False,
@@ -750,8 +748,9 @@ class UserSettings(FieldsetForm):
         required = False,
         choices = (
             ("", _("Please choose")),
-            ("English (USA)", "English (USA)"), # this must later be 
-            # changed to what languages the list offers
+            ("English (USA)", "English (USA)"), # TODO: this must later
+            # be dynalically changed to what languages the list offers
+            # (see the address field in __init__ for how to do this)
         )
     )
     password = forms.CharField(
@@ -768,15 +767,11 @@ class UserSettings(FieldsetForm):
         error_messages = {'required': _('Please enter your password.'), 
                           'invalid': _('Please enter a valid password.')},
     )
-    name = forms.CharField(
-        label = "", 
-        widget = forms.HiddenInput(),
-        initial = "user",
-    )
+
     class Meta:
         """
         Class to define the name of the fieldsets and what should be
         included in each.
         """
         layout = [["User settings", "real_name", "password", 
-                   "conf_password", "preferred_language", "address", "name"],]
+                   "conf_password", "preferred_language", "address"],]

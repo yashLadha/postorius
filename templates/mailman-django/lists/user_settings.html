@@ -3,14 +3,16 @@
 
 
 {% block content %}
-
-<h1>{{ settings_type }}{% trans "Settings" %}</h1>
-
-<div id="{{ tab_type }}" class="{{ tab_type }}">
+{% ifequal tab "membership"%}
+    <h1>{% trans "Membership Settings" %} {% if listname %}{% trans "for"%}{% endif %} {{ listname }}</h1>
+{% else %}
+    <h1>{% trans "User Settings" %}</h1>
+{% endifequal %}
+<div id="{{ tab }}" class="{{ tab }}">
 
 <ul id="tabs">
-    <li id="user" class="user">{% trans "User Settings" %}</li>
-    <li id="membership" class="membership">{% trans "Membership Settings" %}</li>
+    <li id="user_tab" class="user"><a href="{% url user_settings member %}">{% trans "User Settings" %}</a></li>
+    <li id="membership_tab" class="membership"><a href="{% url membership_settings member %}">{% trans "Membership Settings" %}</a></li>
 </ul>
 
 <p id=logout><a href="{% url logout %}">Logout</a></p>
@@ -22,26 +24,22 @@
     <p id="message">{{ message }}</p>
 {% endif %}
 
-<div id="user_form" class="user_form">
+
+{% if form %}
 <form action="" method="post" class="user" name="user">
-{{ user_form.as_div }}
-    <div class="field">
+<ul class="form_ul">
+    {{ form.as_ul }}
+    <li class="field">
         <button type="submit">Save changes</button>
-    </div>
+    </li>
+</ul>
 </form>
-</div>
-
-<div id="membership_form" class="membership_form">
-{% for form in membership_forms %}
-<form action="" method="post" class="membership" name="membership">
-{{ form.as_div }}
-    <div class="field">
-        <button type="submit">Save changes</button>
-    </div>
-</form>
+{% else %}
+<ul>
+{% for list in membership_lists %}
+<li><a href="{% url membership_settings member %}?list={{ list.fqdn_listname }}">{{ list.fqdn_listname}} </li>
 {% endfor %}
-</div>
-
-</div>
+</ul>
+{% endif %}
 
 {% endblock %}

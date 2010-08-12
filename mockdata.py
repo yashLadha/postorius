@@ -178,8 +178,8 @@ def add_member_mock_data(cls):
         self.info['preferred_language'] = 'Preferred language lorem ipsum dolor sit'
         self.info['receive_list_copy'] = True
         self.info['receive_own_postings'] = True
-        self.info['delivery_mode'] = 'Delivery mode lorem ipsum dolor sit'
-        self.info['delivery_status'] = 'Delivery status lorem ipsum dolor sit'
+        #self.info['delivery_mode'] = 'Delivery mode lorem ipsum dolor sit'
+        #self.info['delivery_status'] = 'Delivery status lorem ipsum dolor sit'
         self.info['real_name'] = 'Real name lorem ipsum dolor sit'
         self.info['password'] = 'Password lorem ipsum dolor sit'
         self.info['preferences_id'] = 9

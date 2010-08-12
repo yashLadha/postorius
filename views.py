@@ -16,7 +16,7 @@ def login_required(fn):
     user to be logged in. The function requiring login will 
     automatically be added as an argument in the call.
     """
-    def _login_decorator(*request, **kwargs):
+    def _login_decorator(*args, **kwargs):
         """
         Inner decorator to require a user to login. This inner 
         function gets access to the arguments of the function demanding
@@ -26,9 +26,10 @@ def login_required(fn):
         redirected to the original function.
         """
         # If the user is already logged in, let them continue directly.
+        request = args[0]
         try:
-            if request[0].session['member_id']:
-                return fn(request[0], **kwargs)
+            if request.session['member_id']:
+                return fn(*args, **kwargs)
         except:
             pass
         template = 'mailman-django/lists/login.html'
@@ -39,16 +40,16 @@ def login_required(fn):
         valid_users = {"james@example.com": "james",
                        "katie@example.com": "katie",
                        "kevin@example.com": "kevin"}
-        if request[0].method == 'POST':
-            form = Login(request[0].POST)
+        if request.method == 'POST':
+            form = Login(request.POST)
             if form.is_valid():
-                if request[0].POST["address"] in valid_users.keys():
-                    if request[0].POST["password"] == valid_users[request[0].POST["address"]]:
+                if request.POST["addr"] in valid_users.keys():
+                    if request.POST["psw"] == valid_users[request.POST["addr"]]:
                         # TODO: change this to a better id when possible
-                        request[0].session['member_id'] = request[0].POST["address"]
+                        request.session['member_id'] = request.POST["addr"]
                         # make sure to "reset" the method before continuing
-                        request[0].method = 'GET'
-                        return fn(request[0], **kwargs)
+                        request.method = 'GET'
+                        return fn(*args, **kwargs)
             message = "Your username and password didn't match."
         else:
             message = ""
@@ -273,54 +274,77 @@ def mass_subscribe(request, fqdn_listname = None,
     return render_to_response(template, {'form': form,
                                          'message': message,
                                          'fqdn_listname': the_list.info['fqdn_listname']})
+
 @login_required
-def user_settings(request, member = None, 
+def user_settings(request, member = None, tab = "user",
                   template = 'mailman-django/lists/user_settings.html'):
     """
     Change the user or the membership settings.
     The user must be logged in to be allowed to change any settings.
-    TODO: * deal with the actual member and updating the list
-          * add CSS to display tabs
-          * create a function returning all membership lists for a user
+    TODO: * add CSS to display tabs
+          * add missing functionality in REST server and client and 
+            change to the correct calls here
     """
     message = ""
-    settings_type = "User "
-    membership_forms = []
-    # TODO: call function to append all membership lists for a user
+    membership_lists = []
+    listname = ""
+    try:
+        c = MailmanRESTClient('localhost:8001')
+        user_object = c.get_user(member)
+        # address_choices for the 'address' field must be a list of 
+        # tuples of length 2
+        address_choices = [[addr, addr] for addr in user_object.get_email_addresses()]
+    except Exception, e:
+        return HttpResponse(e)
     if request.method == 'POST':
         # The form enables both user and member settings. As a result
         # we must find out which was the case.
-        tab_type = request.POST.get('name', '')
-        if tab_type == "membership":
-            membership_forms.append(MembershipSettings(request.POST))
-            user_form = UserSettings()
-            settings_type = "Membership "
-            # TODO: make sure the correct form is evaluated, this is
-            # just a temporary solution with one membership list
-            if membership_forms[0].is_valid():
-                # TODO: add a call to an update function of the member
-                # settings HERE, once the member class is created
+        if tab == "membership":
+            form = MembershipSettings(request.POST)
+            if form.is_valid():
+                member_object = c.get_member(member, request.GET["list"])
+                member_object.update(request.POST)
                 message = "The membership settings have been updated."
         else:
-            user_form = UserSettings(request.POST)
-            membership_forms.append(MembershipSettings())
-            if user_form.is_valid(): 
-                # TODO: add a call to an update function of the user
-                # settings HERE, once the member class is created
+            # the post request came from the user tab
+            # the 'address' field need choices as a tuple of length 2
+            addr_choices = [[request.POST["address"], request.POST["address"]]]
+            form = UserSettings(addr_choices, request.POST)
+            if form.is_valid(): 
+                user_object.update(request.POST)
+                # to get the full list of addresses we need to 
+                # reinstantiate the form with all the addresses
+                # TODO: should return the correct settings from the DB,
+                # not just the address_choices (add mock data to _User 
+                # class and make the call with 'user_object.info')
+                form = UserSettings(address_choices)
                 message = "The user settings have been updated."
 
     else:
-        tab_type = "user"
-        user_form = UserSettings()
-        # TODO: add a call to a function adding all membership forms,
-        # this is just a temporary solution until we know what lists
-        # the user is subscribed to
-        membership_forms.append(MembershipSettings())
-        
-    return render_to_response(template, {'user_form': user_form,
-                                         'membership_forms': membership_forms,
-                                         'settings_type': settings_type,
-                                         'tab_type': tab_type,
+        if tab == "membership":
+            listname = request.GET.get("list", "")
+            if listname:
+                member_object = c.get_member(member, listname)
+                # TODO: add delivery_mode and deliver_status from a 
+                # list of tuples at one point, currently we hard code
+                # them in forms.py
+                # instantiate the form with the correct member info
+                form = MembershipSettings(member_object.info)
+            else:
+                form = None
+                membership_lists = user_object.get_lists()
+        else:
+            # TODO: should return the correct settings from the DB,
+            # not just the address_choices (add mock data to _User 
+            # class and make the call with 'user_object.info') The 'language'
+            # field must also be added as a list of tuples with correct
+            # values (is currently hard coded in forms.py).
+            form = UserSettings(address_choices)
+
+    return render_to_response(template, {'form': form,
+                                         'tab': tab,
+                                         'listname': listname,
+                                         'membership_lists': membership_lists,
                                          'message': message,
                                          'member': member})
 
