@@ -1,4 +1,21 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 1998-2010 by the Free Software Foundation, Inc.
+#
+# This file is part of GNU Mailman.
+#
+# GNU Mailman is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option)
+# any later version.
+#
+# GNU Mailman is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context, loader
 from django.shortcuts import render_to_response
@@ -32,7 +49,7 @@ def login_required(fn):
                 return fn(*args, **kwargs)
         except:
             pass
-        template = 'mailman-django/lists/login.html'
+        template = 'mailman-django/login.html'
         # Authenticate the user
         # This is just a mockup since the authenticate functionality in 
         # the rest server is still missing.
@@ -277,7 +294,7 @@ def mass_subscribe(request, fqdn_listname = None,
 
 @login_required
 def user_settings(request, member = None, tab = "user",
-                  template = 'mailman-django/lists/user_settings.html'):
+                  template = 'mailman-django/user_settings.html'):
     """
     Change the user or the membership settings.
     The user must be logged in to be allowed to change any settings.
