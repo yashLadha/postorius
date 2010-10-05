@@ -157,12 +157,15 @@ class ListSettings(FieldsetForm):
     choices = ((True, 'Yes'), (False, 'No'),)
     list_name = forms.CharField(
         label = _('List Name'),
+        required = False,
     )
     host_name = forms.CharField(
         label = _('Domain host name'),
+        required = False,
     )
     fqdn_listname = forms.CharField(
         label = _('Fqdn listname'),
+        required = False,
     )
     #id = forms.IntegerField(    # this should probably not be changeable...
         #label = _('ID'),
@@ -175,9 +178,11 @@ class ListSettings(FieldsetForm):
     #)
     list_id = forms.CharField(    # this should probably not be changeable...
         label = _('List ID'),
+        required = False,
     )
     http_etag = forms.CharField(
         label = _('Http etag'),
+        required = False,
     )
     include_list_post_header = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
@@ -192,8 +197,8 @@ class ListSettings(FieldsetForm):
     autorespond_owner = forms.IntegerField(
         label = _('Autorespond owner'),
         error_messages = {
-            'invalid': _('Please provide an integer.')
-        }
+            'invalid': _('Please provide an integer.'),
+        },
     )
     autoresponse_owner_text = forms.CharField(
         label = _('Autoresponse owner text'),
@@ -201,8 +206,8 @@ class ListSettings(FieldsetForm):
     autorespond_postings = forms.IntegerField(
         label = _('Autorespond postings'),
         error_messages = {
-            'invalid': _('Please provide an integer.')
-        }
+            'invalid': _('Please provide an integer.'),
+        },
     )
     autoresponse_postings_text = forms.CharField(
         label = _('Autoresponse postings text'),
@@ -210,8 +215,8 @@ class ListSettings(FieldsetForm):
     autorespond_requests = forms.IntegerField(
         label = _('Autorespond requests'),
         error_messages = {
-            'invalid': _('Please provide an integer.')
-        }
+            'invalid': _('Please provide an integer.'),
+        },
     )
     autoresponse_request_text = forms.CharField(
         label = _('Autoresponse request text'),
@@ -221,6 +226,7 @@ class ListSettings(FieldsetForm):
     )
     bounces_address = forms.EmailField(
         label = _('Bounces Address'),
+        required = False,
     )
     #ban_list = forms.CharField(
         #label = _('Ban list'),
@@ -287,7 +293,7 @@ class ListSettings(FieldsetForm):
         widget = forms.RadioSelect(choices=choices),
         required = False,
         label = _('Advertised'),
-        )
+    )
     filter_content = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
         required = False,
@@ -327,11 +333,8 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Digest send periodic'),
     #)
-    digest_size_threshold = forms.IntegerField(
+    digest_size_threshold = forms.DecimalField(
         label = _('Digest size threshold'),
-        error_messages = {
-            'invalid': _('Please provide an integer.')
-        }
     )
     #digest_volume_frequency = forms.CharField(
         #label = _('Digest volume frequency'),
@@ -344,8 +347,9 @@ class ListSettings(FieldsetForm):
     digest_last_sent_at = forms.IntegerField(
         label = _('Digest last sent at'),
         error_messages = {
-            'invalid': _('Please provide an integer.')
-        }
+            'invalid': _('Please provide an integer.'),
+        },
+        required = False,
     )
     #discard_these_nonmembers = forms.CharField(
         #label = _('Discard these nonmembers'),
@@ -475,11 +479,13 @@ class ListSettings(FieldsetForm):
     next_digest_number = forms.IntegerField(
         label = _('Next digest number'),
         error_messages = {
-            'invalid': _('Please provide an integer.')
-        }
+            'invalid': _('Please provide an integer.'),
+        },
+        required = False,
     )
     no_reply_address = forms.EmailField(
         label = _('No reply address'),
+        required = False,
     )
     #obscure_addresses = forms.BooleanField(
         #widget = forms.RadioSelect(choices = choices), 
@@ -495,8 +501,9 @@ class ListSettings(FieldsetForm):
     post_id = forms.IntegerField(
         label = _('Post ID'),
         error_messages = {
-            'invalid': _('Please provide an integer.')
-        }
+            'invalid': _('Please provide an integer.'),
+        },
+        required = False,
     )
     #preferred_language = forms.CharField(
         #label = _('Preferred language'),
@@ -507,7 +514,7 @@ class ListSettings(FieldsetForm):
         #label = _('Private roster'),
     #)
     real_name = forms.CharField(
-        label = _('Real name')
+        label = _('Real name'),
     )
     #reject_these_nonmembers = forms.CharField(
         #label = _('Reject these nonmembers'),
@@ -531,6 +538,7 @@ class ListSettings(FieldsetForm):
     #)
     request_address = forms.EmailField(
         label = _('Request address'),
+        required = False,
     )
     #scrub_nondigest = forms.BooleanField(
         #widget = forms.RadioSelect(choices = choices), 
@@ -570,6 +578,7 @@ class ListSettings(FieldsetForm):
     #)
     scheme = forms.CharField(
         label = _('Scheme'),
+        required = False,
     )
     #topics = forms.CharField(
         #label = _('Topics'),
@@ -597,9 +606,11 @@ class ListSettings(FieldsetForm):
     #)
     volume = forms.IntegerField(
         label = _('Volume'),
+        required = False,
     )
     web_host = forms.CharField(
         label = _('Web host'),
+        required = False,
     )
     acceptable_aliases = forms.CharField(
         label = _("Acceptable aliases"),
@@ -631,6 +642,7 @@ class ListSettings(FieldsetForm):
     )
     join_address = forms.EmailField(
         label = _('Join address'),
+        required = False,
     )
     last_post_at = forms.IntegerField(
         label = _('Last post at'),
@@ -638,12 +650,15 @@ class ListSettings(FieldsetForm):
     )
     leave_address = forms.EmailField(
         label = _('Leave address'),
+        required = False,
     )
     owner_address = forms.EmailField(
         label = _('Owner Address'),
+        required = False,
     )
     posting_address = forms.EmailField(
         label = _('Posting Address'),
+        required = False,
     )
 
     class Meta:
@@ -655,10 +670,10 @@ class ListSettings(FieldsetForm):
         """
         # just a really temporary layout to see that it works. -- Anna
         layout = [
-            ["List Indentity", "list_name", "host_name", "list_id", 
-             "include_list_post_header", "include_rfc2369_headers", 
-             "real_name", "fqdn_listname", "http_etag", "volume", "web_host"], 
-             #"info",
+            ["List Indentity", "real_name", "include_list_post_header", 
+             "include_rfc2369_headers"], 
+             #"info", "list_name", "host_name", "list_id", "fqdn_listname", 
+             #"http_etag", "volume", "web_host"
             ["Automatic Responses", "autorespond_owner",
              "autoresponse_owner_text", "autorespond_postings",
              "autoresponse_postings_text", "autorespond_requests",
@@ -673,10 +688,10 @@ class ListSettings(FieldsetForm):
              #"bounce_you_are_disabled_warnings_interval"],
             #["Archiving", "archive"],
             ["Content Filtering", "filter_content", "collapse_alternatives",
-             "convert_html_to_plaintext", "description", "scheme"], 
-             #"default_member_moderation",
-            ["Digest", "digest_last_sent_at", "digest_size_threshold", 
-             "next_digest_number", "last_post_at"],#"digest_footer", 
+             "convert_html_to_plaintext", "description"], 
+             #"default_member_moderation", "scheme"
+            ["Digest", "digest_size_threshold"], #"next_digest_number", 
+             #"last_post_at", "digest_last_sent_at", "digest_footer", 
              #"digest_header", "digest_is_default",
              #"digest_send_periodic", "digest_size_threshold",
              #"digest_volume_frequency", "digestable"],
@@ -689,11 +704,11 @@ class ListSettings(FieldsetForm):
             ["Privacy", "advertised", "admin_immed_notify", 
              "admin_notify_mchanges", "anonymous_list"], #"archive_private", 
             #"obscure_addresses", "private_roster",
-            ["Addresses", "bounces_address", "join_address", "leave_address", "no_reply_address", 
-             "owner_address", "posting_address", "request_address"],
-            ["Assorted", "acceptable_aliases", "administrivia", "pipeline", 
-             "post_id"]]
-             #"encode_ascii_prefixes", "first_strip_reply_to",
+            #["Addresses", "bounces_address", "join_address", "leave_address", 
+             #"no_reply_address", "owner_address", "posting_address", 
+             #"request_address"],
+            ["Assorted", "acceptable_aliases", "administrivia", "pipeline"]]
+             #"post_id", "encode_ascii_prefixes", "first_strip_reply_to",
              #"forward_auto_discards", "gateway_to_mail", "gateway_to_news",
              #"header_matches", "linked_newsgroup", "max_days_to_hold",
              #"max_message_size", "max_num_recipients",

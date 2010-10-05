@@ -242,7 +242,7 @@ def list_settings(request, fqdn_listname = None,
     if request.method == 'POST':
         form = ListSettings(request.POST)
         if form.is_valid():
-            the_list.update_list(request.POST)
+            the_list.update_config(request.POST)
             message = "The list has been updated."
     else:
         form = ListSettings(the_list.info)
