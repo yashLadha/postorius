@@ -48,7 +48,7 @@ Later the domain object can be instantiated using get_domain()
 Mailing lists
 =============
 
-Now let's add a mailing list called 'test-one'.
+Now let's add s mailing list called 'test-one'.
 
     >>> new_list = my_domain.create_list('test-one')
 
@@ -56,13 +56,48 @@ Let's add another list and get some information on the list.
 
     >>> another_list = my_domain.create_list('test-two')
     >>> pprint(another_list.info)
-    {'advertised': True,
-    ...
-     'welcome_msg': 'Welcome message lorem ipsum dolor sit'}
+    {u'fqdn_listname': u'test-two@example.com',
+     u'host_name': u'example.com',
+     u'http_etag': u'"a05542c9faa07cbe2b8fdf8a1655a2361ab365f2"',
+     u'list_name': u'test-two',
+     u'real_name': u'Test-two',
+     u'self_link': u'http://localhost:8001/3.0/lists/test-two@example.com'}
 
 Later the new list can be instantiated using get_list():
 
     >>> some_list = client.get_list('test-one@example.com')
+
+Also a ``config`` dictionary is populated with some default list configuration options
+
+    >>> pprint(some_list.config)
+    {u'acceptable_aliases': [],
+    ...
+     u'description': u'',
+    ...
+     u'real_name': u'Test-one',
+    ...
+
+You can change these options:
+
+    >>> data = dict(real_name='Fnorg',
+    ... description='Discuss all things Fnorg')
+    >>> some_list.update_config(data)
+    200
+    >>> some_list.config['real_name']
+    u'Fnorg'
+    >>> some_list.config['description']
+    u'Discuss all things Fnorg'
+
+New instances of the list also show these changes:
+
+    >>> some_list = client.get_list('test-one@example.com')
+    >>> pprint(some_list.config)
+    {u'acceptable_aliases': [],
+    ...
+     u'description': u'Discuss all things Fnorg',
+    ...
+     u'real_name': u'Fnorg',
+    ...
 
 The lists have been added and get_lists() returns a list of dicts, sorted
 by fqdn_listname.
@@ -70,13 +105,13 @@ by fqdn_listname.
     >>> pprint(client.get_lists())
     [{u'fqdn_listname': u'test-one@example.com',
       u'host_name': u'example.com',
-      u'http_etag': u'"5e99519ef1b823a52254b77e89bec54fbd17bef0"',
+     ...
       u'list_name': u'test-one',
-      u'real_name': u'Test-one',
+      u'real_name': u'Fnorg',
       u'self_link': u'http://localhost:8001/3.0/lists/test-one@example.com'},
      {u'fqdn_listname': u'test-two@example.com',
       u'host_name': u'example.com',
-      u'http_etag': u'"a05542c9faa07cbe2b8fdf8a1655a2361ab365f2"',
+     ... 
       u'list_name': u'test-two',
       u'real_name': u'Test-two',
       u'self_link': u'http://localhost:8001/3.0/lists/test-two@example.com'}]
@@ -119,84 +154,8 @@ After a while Meg decides to unsubscribe from the mailing list (like
     >>> new_list.unsubscribe('meg@example.com')
     200
 
+You can delete lists via their domain:
 
-Users
-=====
-
-Users and their settings can be accessed by using one of their email
-addresses.
-
-    >>> jack = client.get_user('jack@example.com')
-    >>> print jack
-    A user object for the user 'Jack'.
-    >>> pprint(jack.info)
-    {u'real_name': u'Jack'}
-
-To update the User settings, change the info attribute and call update().
-
-    >>> jack.info['real_name'] = 'Jack, Brother of Meg'
-    >>> jack.update()
+    >>> my_domain.delete_list('test-two')
     204
-
-You can get a list of all lists a user has subscribed and/or is an owner
-or moderator of by using .get_lists().
-
-    >>> pprint(jack.get_lists())
-    [{u'email_address': u'jack@example.com',
-      u'fqdn_listname': u'test-one@example.com',
-      u'real_name': u'Test-one'},
-     {u'email_address': u'jack@example.com',
-      u'fqdn_listname': u'test-two@example.com',
-      u'real_name': u'Test-two'}]
-
-To see which email addresses jack has used to subscribe to the lists on
-that domain, use get_email_addresses().
-
-    >>> pprint(jack.get_email_addresses())
-    [u'jack@example.com']
-
-
-Membership
-==========
-
-To know more about the membership details of Jack's subscription, you
-need an instance of a member. There are two ways to get a member object:
-Either get it from the client object...
-
-    >>> member = client.get_member('jack@example.com', 'test-one@example.com')
-
-...or from a list object, providing only an email address as a parameter:
-
-    >>> member = new_list.get_member('jack@example.com')
-    >>> print member
-    A member object for 'jack@example.com', subscribed to 'test-one@example.com'.
-    >>> member_info = member.info
-    >>> pprint(member_info)
-    {'_original': 'Original lorem ipsum dolor sit',
-     'acknowledge_posts': True,
-     'address': 'Address lorem ipsum dolor sit',
-     'address_id': 9,
-     'delivery_mode': 'Delivery mode lorem ipsum dolor sit',
-     'delivery_status': 'Delivery status lorem ipsum dolor sit',
-     'hide_address': True,
-     'id': 9,
-     'is_moderated': True,
-     'mailing_list': 'Mailing list lorem ipsum dolor sit',
-     'password': 'Password lorem ipsum dolor sit',
-     'preferences_id': 9,
-     'preferred_language': 'Preferred language lorem ipsum dolor sit',
-     'real_name': 'Real name lorem ipsum dolor sit',
-     'receive_list_copy': True,
-     'receive_own_postings': True,
-     'registered_on': '2000-01-01 00:00:00',
-     'role': 'Role lorem ipsum dolor sit',
-     'user_id': 9,
-     'verified_on': '2000-01-01 00:00:00'}
-
-To change any of the membership settings just set the relevant values and use update_member().
-
-    >>> member.info['password'] = 'someencryptednewpasswordstring'
-    >>> member.update()
-    204
-
 
