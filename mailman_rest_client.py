@@ -31,6 +31,7 @@ import re
 import json
 
 from httplib2 import Http
+from mailman_django import mockdata
 from operator import itemgetter
 from urllib import urlencode
 from urllib2 import HTTPError
@@ -67,7 +68,7 @@ class MailmanRESTClient():
         
         :param path: the path to send the request to
         :type path: string
-        :param data: POST oder PUT data to send
+        :param data: POST or PUT data to send
         :type data: dict
         :param method: the HTTP method; defaults to GET or POST (if
             data is not None)
@@ -197,7 +198,7 @@ class _Domain(MailmanRESTClient):
         fqdn_listname = list_name + '@' + self.info['email_host']
         return self._http_request('/3.0/lists/' + fqdn_listname, None, 'DELETE')
 
-
+@mockdata.add_list_mock_data
 class _List(MailmanRESTClient):
     """A mailing list wrapper for the MailmanRESTClient."""
 

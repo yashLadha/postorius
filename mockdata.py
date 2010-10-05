@@ -141,6 +141,25 @@ def add_list_mock_data(cls):
         self.info['advertised'] = True
         self.info['archive'] = True
         self.info['archive_private'] = True
+        self.info['acceptable_aliases'] = 'Acceptable aliases lorem ipsum dolor sit'
+        self.info['admin_immed_notify'] = True
+        self.info['admin_notify_mchanges'] = False
+        self.info['administrivia'] = True
+        self.info['anonymous_list'] = False
+        self.info['bounces_address'] = 'test-one-bounces@example.com'
+        self.info['created_at'] = 9
+        self.info['digest_last_sent_at'] = 9
+        self.info['join_address'] = 'test-one-join@example.com'
+        self.info['last_post_at'] = 9
+        self.info['leave_address'] = 'test-one-leave@example.com'
+        self.info['next_digest_number'] = 9
+        self.info['no_reply_address'] = 'noreply@example.com'
+        self.info['owner_address'] = 'test-one-owner@example.com'
+        self.info['posting_address'] = 'test-one@example.com'
+        self.info['request_address'] = 'test-one-request@example.com'
+        self.info['scheme'] = 'http'
+        self.info['volume'] = 9
+        self.info['web_host'] = 'lists.example.com'
     cls.__init__ = __init__
 
     return cls
