@@ -9,8 +9,7 @@
 	<tr>
 		<th>{% trans "Real Name" %}</th>
 		<th>{% trans "List Name" %}</th>
-		<th>&nbsp;</th>
-		<th>&nbsp;</th>
+		<th colspan="3">&nbsp;</th>
 		<!--<th>&nbsp;</th>-->
 	</tr>
 {% for list in lists %}
@@ -19,6 +18,9 @@
 		<td>{{ list.fqdn_listname }}</td>
 		<td>
             <a href="{% url list_info list.fqdn_listname %}">Info / Subscribe</a>
+        </td>
+		<td>
+            <a href="{% url list_settings list.fqdn_listname %}">Settings</a>
         </td>
         <td>
             <a href="{% url list_delete list.fqdn_listname %}">Delete list</a>
