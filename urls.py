@@ -33,3 +33,4 @@ urlpatterns = patterns('mailman_django.views',
     # to override the default templates specifiy your own:
     # url(r'lists/(?P<fqdn_listname>.+)/$', 'list_info', dict(template = 'path/to/template.html'), name = 'list_info'),
 )
+

@@ -61,7 +61,6 @@ class ListNew(FieldsetForm):
                  ("Vietnamese", "Vietnamese"))
     listname = forms.EmailField(
         label = _('List Name'), 
-        initial = '@mailman.state-of-mind.de',
         error_messages = {'required': _('Please enter a name for your list.'), 
                           'invalid': _('Please enter a valid list name.')})
     list_owner = forms.EmailField(

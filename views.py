@@ -22,7 +22,7 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 import re
-from mailman_rest_client import MailmanRESTClient, MailmanRESTClientError
+from mailmanclient.rest import MailmanRESTClient, MailmanRESTClientError
 from forms import *
 
 def login_required(fn):
