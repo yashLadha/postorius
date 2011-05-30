@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block links%}
-You can also <a href="{% url list_info fqdn_listname %}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{% url list_delete fqdn_listname %}">delete</a> the list.
+{% blocktrans with url_list_info=url.list_info.fqdn_listname url_list_delete=url.list_delete.fqdn_listname%} You can also <a href="{{url_list_info}}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{{url_list_delete]}">delete</a> the list.{% endblocktrans %}
 {% endblock %}
 
 {% block content %}
@@ -11,15 +11,12 @@ You can also <a href="{% url list_info fqdn_listname %}">subscribe or unsubscrib
 
 <p id=logout><a href="{% url logout %}">Logout</a></p>
 
-<p>The list <em>{{ fqdn_listname }}</em> has been created. What would you like to do next?</p>
+<p>{% blocktrans %}The list <em>{{ fqdn_listname }}</em> has been created. What would you like to do next?{% endblocktrans %}</p>
 
 <ul>
-    <li><a href="{% url mass_subscribe fqdn_listname %}">Subscribe users</a> to the list <em>{{ fqdn_listname }}</em> or send list invitations.</li>
-    <li>Edit <em>{{ fqdn_listname }}</em>'s <a href="{% url list_settings fqdn_listname %}">settings</a>.</li>
-    <li><a href="{% url list_new %}">Create</a> another list.</li>
+    <li><a href="{% url mass_subscribe fqdn_listname %}">{% blocktrans %}Subscribe users</a> to the list <em>{{ fqdn_listname }}</em> or send list invitations.{% endblocktrans %}</li>
+    <li>{%trans "Edit <em>{{ fqdn_listname }}</em>'s" %} <a href="{% url list_settings fqdn_listname %}">{%trans "settings"}</a>.</li>
+    <li><a href="{% url list_new %}">{% blocktrans %}Create</a> another list.{% endblocktrans %}</li>
 </ul>
-
-
-
 
 {% endblock %}
