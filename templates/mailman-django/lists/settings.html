@@ -2,7 +2,12 @@
 {% load i18n %}
 
 {% block links%}
-{% blocktrans with url_list_info=url list_info fqdn_listname url_list_delete=url list_delete fqdn_listname url_mass_subscription=url mass_subscribe fqdn_listname %}
+{% url list_info fqdn_listname as url_list_info %}
+{% url list_delete fqdn_listname as url_list_delete %}
+{% url mass_subscribe fqdn_listname as url_mass_subscription %}
+
+
+{% blocktrans %}
 You can also <a href="{{url_list_info}}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{{url_list_delete}}">delete</a> the list. If you wish to mass subscribe users to this list, please click <a href="{{url_mass_subcription}}">here</a>.
 {% endblocktrans %}
 {% endblock %}

@@ -2,7 +2,13 @@
 {% load i18n %}
 
 {% block links%}
-{% blocktrans with url_list_info= url list_info fqdn_listname url_list_delete=url list_delete fqdn_listname url_list_settings=url list_settings fqdn_listname %}You can also <a href="{{url_list_info}}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{{ url_list_delete }}">delete</a> the list. To go back to the general settings page, please click <a href="{{ url_list_settings}}">here</a>.{% endblocktrans %}
+{% url list_info fqdn_listname as url_list_info %}
+{% url list_delete fqdn_listname as url_list_delete %}
+{% url list_settings fqdn_listname as url_list_settings %}
+
+{% blocktrans %}
+
+You can also <a href="{{url_list_info}}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{{ url_list_delete }}">delete</a> the list. To go back to the general settings page, please click <a href="{{ url_list_settings}}">here</a>.{% endblocktrans %}
 {% endblock %}
 
 {% block content %}
