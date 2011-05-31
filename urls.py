@@ -34,3 +34,10 @@ urlpatterns = patterns('mailman_django.views',
     # url(r'lists/(?P<fqdn_listname>.+)/$', 'list_info', dict(template = 'path/to/template.html'), name = 'list_info'),
 )
 
+if settings.DEBUG:
+    urlpatterns += patterns('',
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve',  
+     {'document_root': settings.STATIC_MAILMAN_DJANGO}),
+)
+
+
