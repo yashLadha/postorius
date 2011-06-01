@@ -22,9 +22,10 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 import re
-from mailmanclient.rest import MailmanRESTClient, MailmanRESTClientError
+from mailman.client import Client
 from forms import *
 from settings import API_USER, API_PASS
+import sys #Error handing info
 
 def login_required(fn):
     """
@@ -75,7 +76,7 @@ def login_required(fn):
                                              'message': message})
     return _login_decorator
 
-@login_required
+#@login_required
 def list_new(request, template = 'mailman-django/lists/new.html'):
     """
     Add a new mailing list. 
@@ -91,7 +92,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
         if form.is_valid():
             listname = form.cleaned_data['listname']
             try:
-                c = MailmanRESTClient('localhost:8001', API_USER, API_PASS)
+                c = Client('localhost:8001', API_USER, API_PASS)
             except Exception, e:
                 return HttpResponse(e)
 
@@ -101,14 +102,14 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                                     # creating a new one
                 try:
                     domain = c.create_domain(parts[1])
-                except MailmanRESTClientError, e: 
+                except: 
                     # I don't think this error can ever appear. -- Anna
                     return HttpResponse(e)
             try:
                 response = domain.create_list(parts[0])
                 return render_to_response('mailman-django/lists/created.html', 
                                           {'fqdn_listname': response.info['fqdn_listname']})
-            except MailmanRESTClientError, e:
+            except:
                 return HttpResponse(e)
 
     else:
@@ -121,17 +122,17 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
     """Show a table of all mailing lists.
     """
     try:
-        c = MailmanRESTClient('localhost:8001', API_USER, API_PASS)
-    except MailmanRESTClientError, e:
+        c = Client('localhost:8001', API_USER, API_PASS)
+    except:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message': e})
+                                  {'message':  "Unexpected error:"+ str(sys.exc_info()[0])})
 
     try:
         lists = c.get_lists()
         return render_to_response(template, {'lists': lists})
-    except MailmanRESTClientError, e:
+    except:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message': e})
+                                  {'message':  "Unexpected error:"+ str(sys.exc_info()[0])})
 
 
 def list_info(request, fqdn_listname = None, 
@@ -143,7 +144,7 @@ def list_info(request, fqdn_listname = None,
     user to fill in which are evaluated in this function.
     """
     try:
-        c = MailmanRESTClient('localhost:8001', API_USER, API_PASS)
+        c = Client('localhost:8001', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
@@ -210,7 +211,7 @@ def list_delete(request, fqdn_listname = None,
 
     # create a connection to Mailman and get the list
     try:
-        c = MailmanRESTClient('localhost:8001', API_USER, API_PASS)
+        c = Client('localhost:8001', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
@@ -222,9 +223,9 @@ def list_delete(request, fqdn_listname = None,
     try:
         lists = c.get_lists()
         return render_to_response(template, {'lists': lists})
-    except MailmanRESTClientError, e:
+    except:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message': e})
+                                  {'message':  "Unexpected error:"+ str(sys.exc_info()[0])})
 
 @login_required
 def list_settings(request, fqdn_listname = None, 
@@ -236,7 +237,7 @@ def list_settings(request, fqdn_listname = None,
     """
     message = ""
     try:
-        c = MailmanRESTClient('localhost:8001', API_USER, API_PASS)
+        c = Client('localhost:8001', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
@@ -261,7 +262,7 @@ def mass_subscribe(request, fqdn_listname = None,
     """
     message = ""
     try:
-        c = MailmanRESTClient('localhost:8001', API_USER, API_PASS)
+        c = Client('localhost:8001', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
@@ -307,7 +308,7 @@ def user_settings(request, member = None, tab = "user",
     membership_lists = []
     listname = ""
     try:
-        c = MailmanRESTClient('localhost:8001', API_USER, API_PASS)
+        c = Client('localhost:8001', API_USER, API_PASS)
         user_object = c.get_user(member)
         # address_choices for the 'address' field must be a list of 
         # tuples of length 2
