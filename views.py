@@ -87,6 +87,7 @@ def new_domain(request, template = 'mailman-django/new_domain.html'):
             except Exception, e:
                 return HttpResponse(e)
             domain = c.create_domain(domain_name)
+            #email_host ; url_host might differ #TODO
             domain.contact_address = form.cleaned_data['contact_address']
             domain.description = form.cleaned_data['description']
 
@@ -114,27 +115,31 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
         form = ListNew(request.POST)
         if form.is_valid():
             try:
-                c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-                
+                c = Client('http://localhost:8001/3.0', API_USER, API_PASS)    
             except Exception, e:
                 return HttpResponse(e)
             domain = c.get_domain(form.cleaned_data['domains'])
             mailing_list = domain.create_list(form.cleaned_data['listname'])
-
             try:
                 return render_to_response('mailman-django/lists/created.html', 
                                           {'fqdn_listname': mailing_list.info['fqdn_listname']})
             except Exception, e:
                 return HttpResponse(e)
-
     else:
-        form = ListNew()
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-            #form.domains.choices = c.domains
         except Exception, e:
             return HttpResponse(e)
-        
+        choosable_domains = [("","Choose a Domain")]
+        for domain in c.domains:
+            choosable_domains.append((domain,domain))
+        #choosable_domains
+        test = ( 
+                    ("","Please Choose a Domain"),
+                    ("","-"),  
+                  )
+        form = ListNew(test)
+        #form["domains"]["choices"]=test
 
     return render_to_response(template, {'form': form})
 

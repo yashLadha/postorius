@@ -24,7 +24,7 @@ class DomainNew(FieldsetForm):
     """ 
     Form field to add a new domain
     """
-    domain_name = forms.CharField(
+    domain_name = forms.CharField( #todo MAIL → add domain, check post !
         label = _('Domain Name'), 
         required = True,
     )
@@ -52,7 +52,7 @@ class ListNew(FieldsetForm):
     """
     Form fields to add a new list. Languages are hard coded which should 
     be replaced by a REST lookup of available languages.
-    """
+    """    
     languages = (("Arabic", "Arabic"),
                  ("Catalan", "Catalan"),
                  ("Chinese (China)", "Chinese (China)"),
@@ -97,12 +97,13 @@ class ListNew(FieldsetForm):
         widget = forms.Select(),
         label = _('@Domain'),
         required = True, 
-        choices = ( ("",("Please Choose a Domain")),
-                    ("example.com",("http://example.com")),#NEEDS to be REST API Call
+        choices = ( 
+                    ("","Please Choose a Domain"),
+                    ("","-"),  
         ),
         error_messages = {
             'required': _("Please choose an existing Domain."), 
-        }
+                        }
         )                         
     list_owner = forms.EmailField(
         label = _('Inital list owner address'),
@@ -129,6 +130,9 @@ class ListNew(FieldsetForm):
         widget = forms.CheckboxSelectMultiple(),
         choices = languages,
         required = False)
+    def __init__(self,domain_choices):
+        super(ListNew, self).__init__()
+        self["domains"].choices = (("test","test2"))#domain_choices #BUG
 
     class Meta:
         """
