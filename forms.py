@@ -20,6 +20,34 @@ from django import forms
 from django.utils.translation import gettext as _
 from fieldset_forms import FieldsetForm
 
+class DomainNew(FieldsetForm):
+    """ 
+    Form field to add a new domain
+    """
+    domain_name = forms.CharField(
+        label = _('Domain Name'), 
+        required = True,
+    )
+    contact_address = forms.EmailField(
+        label = _('Your email address'), 
+        error_messages = {'required': _('Please enter an email address.'), 
+                          'invalid': _('Please enter a valid email address.')})
+    description = forms.CharField(
+        label = _('Description'), 
+        required = False,
+    )
+    class Meta:
+        """
+        Class to handle the automatic insertion of fieldsets and divs.
+        
+        To use it: add a list for each wished fieldset. The first item in 
+        the list should be the wished name of the fieldset, the following 
+        the fields that should be included in the fieldset.
+        """
+        layout = [["New Domain","domain_name", "contact_address",],
+                  ["Description", "description"]]
+
+    
 class ListNew(FieldsetForm):
     """
     Form fields to add a new list. Languages are hard coded which should 
