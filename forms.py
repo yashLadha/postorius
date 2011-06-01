@@ -87,10 +87,23 @@ class ListNew(FieldsetForm):
                  ("Turkish", "Turkish"),
                  ("Ukrainian", "Ukrainian"),
                  ("Vietnamese", "Vietnamese"))
-    listname = forms.EmailField(
+    listname = forms.CharField(
         label = _('List Name'), 
+        required = True,    
         error_messages = {'required': _('Please enter a name for your list.'), 
-                          'invalid': _('Please enter a valid list name.')})
+                          'invalid': _('Please enter a valid list name.')}
+        )
+    domains = forms.ChoiceField(
+        widget = forms.Select(),
+        label = _('@Domain'),
+        required = True, 
+        choices = ( ("",("Please Choose a Domain")),
+                    ("example.com",("http://example.com")),#NEEDS to be REST API Call
+        ),
+        error_messages = {
+            'required': _("Please choose an existing Domain."), 
+        }
+        )                         
     list_owner = forms.EmailField(
         label = _('Inital list owner address'),
         error_messages = {
@@ -110,6 +123,7 @@ class ListNew(FieldsetForm):
             ("closed_discussion", _("Closed discussion list")),
             ("announcement", _("Announcement list")),
         ))
+
     languages = forms.MultipleChoiceField(
         label = _('Language'),
         widget = forms.CheckboxSelectMultiple(),
@@ -124,7 +138,7 @@ class ListNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["List Details", "listname", "list_owner", "list_type"],
+        layout = [["List Details", "listname", "domains", "list_owner", "list_type"],
                   ["Available Languages", "languages"]]
 
 class ListSubscribe(forms.Form):

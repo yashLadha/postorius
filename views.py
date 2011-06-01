@@ -84,11 +84,11 @@ def new_domain(request, template = 'mailman-django/new_domain.html'):
             domain_name = form.cleaned_data['domain_name']
             try:
                 c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-                domain = c.create_domain(domain_name)
-                domain.contact_address = form.cleaned_data['contact_address']
-                domain.description = form.cleaned_data['description']
             except Exception, e:
                 return HttpResponse(e)
+            domain = c.create_domain(domain_name)
+            domain.contact_address = form.cleaned_data['contact_address']
+            domain.description = form.cleaned_data['description']
 
     else:
         try:
@@ -113,30 +113,28 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
     if request.method == 'POST':
         form = ListNew(request.POST)
         if form.is_valid():
-            listname = form.cleaned_data['listname']
             try:
                 c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+                
             except Exception, e:
                 return HttpResponse(e)
+            domain = c.get_domain(form.cleaned_data['domains'])
+            mailing_list = domain.create_list(form.cleaned_data['listname'])
 
-            parts = listname.split('@')
-            domain = c.get_domain(parts[1])
-            if domain.info == 404: # failed to get domain so try 
-                                    # creating a new one
-                try:
-                    domain = c.create_domain(parts[1])
-                except: 
-                    # I don't think this error can ever appear. -- Anna
-                    return HttpResponse(e)
             try:
-                response = domain.create_list(parts[0])
                 return render_to_response('mailman-django/lists/created.html', 
-                                          {'fqdn_listname': response.info['fqdn_listname']})
-            except:
+                                          {'fqdn_listname': mailing_list.info['fqdn_listname']})
+            except Exception, e:
                 return HttpResponse(e)
 
     else:
         form = ListNew()
+        try:
+            c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+            #form.domains.choices = c.domains
+        except Exception, e:
+            return HttpResponse(e)
+        
 
     return render_to_response(template, {'form': form})
 
@@ -146,16 +144,16 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
     """
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-    except:
+    except Exception, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ str(sys.exc_info()[0])})
+                                  {'message':  "Unexpected error:"+ e})
 
     try:
         lists = c.lists
         return render_to_response(template, {'lists': lists})
-    except:
+    except Exception, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ str(sys.exc_info()[0])})
+                                  {'message':  "Unexpected error:"+ e})
 
 
 def list_info(request, fqdn_listname = None, 
@@ -246,9 +244,9 @@ def list_delete(request, fqdn_listname = None,
     try:
         lists = c.get_lists()
         return render_to_response(template, {'lists': lists})
-    except:
+    except Exception, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ str(sys.exc_info()[0])})
+                                  {'message':  "Unexpected error:"+ e})
 
 @login_required
 def list_settings(request, fqdn_listname = None, 
