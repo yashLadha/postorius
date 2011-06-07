@@ -20,22 +20,40 @@ from django import forms
 from django.utils.translation import gettext as _
 from fieldset_forms import FieldsetForm
 
+#Redefined Classes for Validation Purpose
+class DomainField(forms.EmailField):
+    def validate(self, value):
+        "Check if value consists of a valid email domain."
+        mail = "mail@"+value        
+        super(forms.EmailField, self).validate(mail)
+            
+class ListNameField(forms.EmailField):
+    def validate(self, value):
+        "Check if value consists of a valid email prefix."
+        mail = value+"@example.net"
+        super(forms.EmailField, self).validate(mail)
+
+#Fieldsets for use within the views
 class DomainNew(FieldsetForm):
     """ 
     Form field to add a new domain
     """
-    domain_name = forms.CharField( #todo MAIL → add domain, check post !
+    domain_name = DomainField(
         label = _('Domain Name'), 
-        required = True,
+        error_messages = {'required': _('Please a domain name'), 
+                          'invalid': _('Please enter a valid domain name.')},
+        required = True
     )
     contact_address = forms.EmailField(
-        label = _('Your email address'), 
+        label = _('Your email address'),
+        required = True,
         error_messages = {'required': _('Please enter an email address.'), 
                           'invalid': _('Please enter a valid email address.')})
     description = forms.CharField(
         label = _('Description'), 
-        required = False,
+        required = False
     )
+    
     class Meta:
         """
         Class to handle the automatic insertion of fieldsets and divs.
@@ -87,7 +105,7 @@ class ListNew(FieldsetForm):
                  ("Turkish", "Turkish"),
                  ("Ukrainian", "Ukrainian"),
                  ("Vietnamese", "Vietnamese"))
-    listname = forms.CharField(
+    listname = ListNameField(
         label = _('List Name'), 
         required = True,    
         error_messages = {'required': _('Please enter a name for your list.'), 
@@ -98,7 +116,7 @@ class ListNew(FieldsetForm):
         label = _('@Domain'),
         required = True, 
         choices = ( 
-                    ("","Please Choose a Domain"),
+                    ("",_("Please Choose a Domain")),
                     ("","-"),  
         ),
         error_messages = {

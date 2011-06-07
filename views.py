@@ -76,28 +76,30 @@ def login_required(fn):
                                              'message': message})
     return _login_decorator
 
-#@login_required
+#@login_required #TODO
 def new_domain(request, template = 'mailman-django/new_domain.html'):
     if request.method == 'POST':
         form = DomainNew(request.POST)
+        try:
+            c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+        except Exception, e:
+            return HttpResponse(e)
         if form.is_valid():
             domain_name = form.cleaned_data['domain_name']
-            try:
-                c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-            except Exception, e:
-                return HttpResponse(e)
             domain = c.create_domain(domain_name)
-            #email_host ; url_host might differ #TODO
-            domain.contact_address = form.cleaned_data['contact_address']
-            domain.description = form.cleaned_data['description']
-
+            domain.contact_address  = form.cleaned_data['contact_address']
+            domain.description      = form.cleaned_data['description']
     else:
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-            existing_domains = c.domains
-        except Exception, e:
+        except Exception, e: 
             return HttpResponse(e)
-        form = DomainNew()
+        form = DomainNew()  
+    try:
+        existing_domains = c.domains
+    except Exception, e: 
+        return HttpResponse(e)
+        
     return render_to_response(template, {'form': form,'domains':existing_domains})        
 
 #@login_required
