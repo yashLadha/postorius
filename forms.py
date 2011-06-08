@@ -17,6 +17,7 @@
 # GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
+from django.core.validators import validate_email
 from django.utils.translation import gettext as _
 from fieldset_forms import FieldsetForm
 
@@ -25,20 +26,23 @@ class DomainField(forms.EmailField):
     def validate(self, value):
         "Check if value consists of a valid email domain."
         mail = "mail@"+value        
-        super(forms.EmailField, self).validate(mail)
+        super(DomainField, self).validate(mail)
+        validate_email(mail)
+
             
 class ListNameField(forms.EmailField):
     def validate(self, value):
         "Check if value consists of a valid email prefix."
         mail = value+"@example.net"
-        super(forms.EmailField, self).validate(mail)
+        super(ListNameField, self).validate(mail)
+        validate_email(mail)
 
 #Fieldsets for use within the views
 class DomainNew(FieldsetForm):
     """ 
     Form field to add a new domain
     """
-    domain_name = DomainField(
+    domain_name = forms.CharField(
         label = _('Domain Name'), 
         error_messages = {'required': _('Please a domain name'), 
                           'invalid': _('Please enter a valid domain name.')},
@@ -53,6 +57,10 @@ class DomainNew(FieldsetForm):
         label = _('Description'), 
         required = False
     )
+
+    def clean_domain_name(self):
+        domain_name = self.cleaned_data['domain_name']
+        validate_email('mail@' + domain_name)
     
     class Meta:
         """

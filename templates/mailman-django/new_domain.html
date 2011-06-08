@@ -1,0 +1,40 @@
+{% extends "mailman-django/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<h1>{% trans "Add a new Domain" %}</h1>
+
+<p id=logout><a href="{% url logout %}">{% trans "Logout" %}</a></p>
+
+{% if domains %}
+    <table cellpadding="0" cellspacing="0">
+	    <tr>
+		    <th>{% trans "Domain" %}</th>
+		    <th>{% trans "Contact Address" %}</th>
+		    <th>{% trans "Description" %}</th>
+	    </tr>
+    {% for domain in domains %}
+	    <tr>
+		    <td>{{ domain.base_url }}</td>
+		    <td>{{ domain.contact_address }}</td>
+		    <td>
+		        {% if domain.description %}
+		            {{ domain.description }}
+		        {% endif %}
+		    </td>
+	    </tr>
+    {% endfor %}
+    </table>
+{% endif %}
+<br>
+<form action="{% url new_domain %}" method="post" class="newdomain">
+
+    {{ form.as_div }}
+
+    <div class="field">
+        <button type="submit">{% trans "Create Domain" %}</button>
+    </div>
+
+</form>
+{% endblock %}
