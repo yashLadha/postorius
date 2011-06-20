@@ -118,18 +118,6 @@ class ListNew(FieldsetForm):
         required = True,    
         error_messages = {'required': _('Please enter a name for your list.'), 
                           'invalid': _('Please enter a valid list name.')}
-        )
-    domains = forms.ChoiceField(
-        widget = forms.Select(),
-        label = _('@Domain'),
-        required = True, 
-        choices = ( 
-                    ("",_("Please Choose a Domain")),
-                    ("","-"),  
-        ),
-        error_messages = {
-            'required': _("Please choose an existing Domain."), 
-                        }
         )                         
     list_owner = forms.EmailField(
         label = _('Inital list owner address'),
@@ -155,11 +143,25 @@ class ListNew(FieldsetForm):
         label = _('Language'),
         widget = forms.CheckboxSelectMultiple(),
         choices = languages,
-        required = False)
-    def __init__(self,domain_choices):
-        super(ListNew, self).__init__()
-        self["domains"].choices = (("test","test2"))#domain_choices #BUG
+        required = False)   
 
+    description = forms.CharField(
+        label = _('Description'),
+        widget = forms.TextInput(),
+        required = True)           
+        
+    web_host = forms.ChoiceField( ) 
+                     
+    def __init__(self,domain_choices, *args, **kwargs):  
+        super(ListNew, self).__init__(*args, **kwargs)  
+        self.fields["web_host"] = forms.ChoiceField(
+            widget = forms.Select(),
+            label = _('Web Host'),
+            required = True, 
+            choices = domain_choices,
+            error_messages = {'required': _("Choose an existing Domain."),}
+            )        
+        
     class Meta:
         """
         Class to handle the automatic insertion of fieldsets and divs.
@@ -168,7 +170,7 @@ class ListNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["List Details", "listname", "domains", "list_owner", "list_type"],
+        layout = [["List Details", "listname", "web_host", "list_owner", "description", "list_type"],
                   ["Available Languages", "languages"]]
 
 class ListSubscribe(forms.Form):

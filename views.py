@@ -76,7 +76,7 @@ def login_required(fn):
                                              'message': message})
     return _login_decorator
 
-#@login_required #TODO
+#@login_required #DEBUG
 def new_domain(request, template = 'mailman-django/new_domain.html'):
     if request.method == 'POST':
         form = DomainNew(request.POST)
@@ -102,7 +102,7 @@ def new_domain(request, template = 'mailman-django/new_domain.html'):
         
     return render_to_response(template, {'form': form,'domains':existing_domains})        
 
-#@login_required
+#@login_required #DEBUG
 def list_new(request, template = 'mailman-django/lists/new.html'):
     """
     Add a new mailing list. 
@@ -120,8 +120,14 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 c = Client('http://localhost:8001/3.0', API_USER, API_PASS)    
             except Exception, e:
                 return HttpResponse(e)
-            domain = c.get_domain(form.cleaned_data['domains'])
+            domain = c.get_domain(form.cleaned_data['web_host'])
             mailing_list = domain.create_list(form.cleaned_data['listname'])
+            """settings = mailing_list.settings
+            settings["description"] = form.cleaned_data['description']
+            #settings["owner_address"] = form.cleaned_data['list_owner'] #TODO: Readonly
+            #settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
+            #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
+            settings.save()"""
             try:
                 return render_to_response('mailman-django/lists/created.html', 
                                           {'fqdn_listname': mailing_list.info['fqdn_listname']})
@@ -132,16 +138,10 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         except Exception, e:
             return HttpResponse(e)
-        choosable_domains = [("","Choose a Domain")]
+        choosable_domains = [("",_("Choose a Domain"))]
         for domain in c.domains:
-            choosable_domains.append((domain,domain))
-        #choosable_domains
-        test = ( 
-                    ("","Please Choose a Domain"),
-                    ("","-"),  
-                  )
-        form = ListNew(test)
-        #form["domains"]["choices"]=test
+            choosable_domains.append((domain.url_host,domain.url_host))
+        form = ListNew(choosable_domains)
 
     return render_to_response(template, {'form': form})
 

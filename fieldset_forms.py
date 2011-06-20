@@ -30,17 +30,19 @@ class FieldsetForm(Form):
     by WTForm.
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """Initialize a FormsetField."""
-        super(FieldsetForm, self).__init__(*args)
+        super(FieldsetForm, self).__init__(*args, **kwargs)
         # check if the user specified the wished layout of the form
         if hasattr(self, 'Meta') and hasattr(self.Meta, 'layout'):
             msg = "Meta.layout must be iterable"
             assert hasattr(self.Meta.layout, '__getitem__'), msg
             self.layout = self.Meta.layout
         else:
-            self.layout = self.fields.keys()
-
+            self.layout = [["All"]]
+            self.layout[0][1:]=(self.fields.keys())
+        #raise Exception(self.layout)#debug
+            
     def as_div(self):
         """Render the form as a set of <div>s."""
         output = ""
@@ -65,7 +67,7 @@ class FieldsetForm(Form):
         for field in fields:
             try:
                 # create a field instance for the bound field
-                field_instance = self.base_fields[field]
+                field_instance = self.fields[field]
             except KeyError:
                 # could not create the instance so throw an exception
                 # msg on a separate line since the line got too long 
