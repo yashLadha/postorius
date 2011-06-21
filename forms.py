@@ -60,12 +60,16 @@ class DomainNew(FieldsetForm):
     )
     def clean_mail_host(self):
         mail_host = self.cleaned_data['mail_host']
-        validate_email('mail@' + mail_host)
+        try:    validate_email('mail@' + mail_host)
+        except: raise forms.ValidationError(_("Please enter a valid Mail Host (mail.example.net)"))
         return mail_host
 
     def clean_web_host(self):
         web_host = self.cleaned_data['web_host']
-        validate_email('mail@' + web_host)
+        try:    
+            validate_email('mail@' + web_host)
+        except: 
+            raise forms.ValidationError(_("Please enter a valid Web Host (example.net)"))
         return web_host
     
     class Meta:
