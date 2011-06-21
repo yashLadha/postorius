@@ -263,17 +263,14 @@ def list_delete(request, fqdn_listname = None,
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
-    # get the parts of the list necessary to delete it
-    parts = fqdn_listname.split('@')
-    domain = the_list.get_domain(parts[1])
-    domain.delete_list(parts[0])
+    the_list.delete()
     # let the user return to the list index page
     try:
-        lists = c.get_lists()
+        lists = c.lists
         return render_to_response(template, {'lists': lists})
     except Exception, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ e})
+                                  {'message':  "Unexpected error:"+ str(e)})
 
 @login_required
 def list_settings(request, fqdn_listname = None, 
