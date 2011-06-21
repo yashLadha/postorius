@@ -88,7 +88,11 @@ def new_domain(request, template = 'mailman-django/new_domain.html'):
             mail_host = form.cleaned_data['mail_host']
             web_host = form.cleaned_data['web_host']
             description = form.cleaned_data['description']
-            domain = c.create_domain(mail_host,web_host,description)
+            try:
+                domain = c.create_domain(mail_host,web_host,description)
+            except Exception, e:
+                form._errors["NON_FIELD_ERRORS"]=forms.util.ErrorList() 
+                form._errors["NON_FIELD_ERRORS"].append(e)    
     else:
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
@@ -124,13 +128,19 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
         form = ListNew(choosable_domains,request.POST)
 
         if form.is_valid():
-
+            #connect and grab domain
             try:
                 c = Client('http://localhost:8001/3.0', API_USER, API_PASS)    
             except Exception, e:
                 return HttpResponse(e)
-            domain = c.get_domain(form.cleaned_data['web_host'])
-            mailing_list = domain.create_list(form.cleaned_data['listname'])
+            domain = c.get_domain(form.cleaned_data['mail_host'])
+            #creating the list
+            try:
+                mailing_list = domain.create_list(form.cleaned_data['listname'])
+            except Exception, e:
+                form._errors["NON_FIELD_ERRORS"]=forms.util.ErrorList() 
+                form._errors["NON_FIELD_ERRORS"].append(e)
+            #saving settings
             """settings = mailing_list.settings
             settings["description"] = form.cleaned_data['description']
             #settings["owner_address"] = form.cleaned_data['list_owner'] #TODO: Readonly
@@ -138,8 +148,9 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
             settings.save()"""
             try:
-                return render_to_response('mailman-django/lists/created.html', 
-                                          {'fqdn_listname': mailing_list.info['fqdn_listname']})
+                pass #debug
+                #return render_to_response('mailman-django/lists/created.html', 
+                #                          {'fqdn_listname': mailing_list.info['fqdn_listname']})
             except Exception, e:
                 return HttpResponse(e)
     else:

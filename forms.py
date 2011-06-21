@@ -116,7 +116,6 @@ class ListNew(FieldsetForm):
         label = _('Inital list owner address'),
         error_messages = {
             'required': _("Please enter the list owner's email address."), 
-            'invalid': _('Please enter a valid email adress.')
         },
         required = True)
     list_type = forms.ChoiceField(
@@ -137,22 +136,24 @@ class ListNew(FieldsetForm):
         widget = forms.CheckboxSelectMultiple(),
         choices = languages,
         required = False)   
-
+    
     description = forms.CharField(
         label = _('Description'),
         required = True)           
 
-    web_host = forms.ChoiceField() 
+    mail_host = forms.ChoiceField()
 
     def __init__(self,domain_choices, *args, **kwargs):  
         super(ListNew, self).__init__(*args, **kwargs)  
-        self.fields["web_host"] = forms.ChoiceField(
+        self.fields["mail_host"] = forms.ChoiceField(
             widget = forms.Select(),
             label = _('Mail Host'),
             required = True, 
             choices = domain_choices,
-            error_messages = {'required': _("Choose an existing Domain."),}
+            error_messages = {'required': _("Choose an existing Domain."),
+                              'invalid':"ERROR-todo_forms.py"  }#todo
             )
+            
     def clean_listname(self):
         try:    
             validate_email(self.cleaned_data['listname']+'@example.net')
@@ -168,7 +169,7 @@ class ListNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["List Details", "listname", "web_host", "list_owner", "description", "list_type"],
+        layout = [["List Details", "listname", "mail_host", "list_owner", "description", "list_type"],
                   ["Available Languages", "languages"]]
 
 class ListSubscribe(forms.Form):

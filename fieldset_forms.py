@@ -19,6 +19,7 @@
 from django.forms import Form
 from django.utils import safestring
 from django.forms.forms import BoundField
+from django.forms.util import ErrorList
 
 class FieldsetError(Exception):
     pass
@@ -41,12 +42,14 @@ class FieldsetForm(Form):
         else:
             self.layout = [["All"]]
             self.layout[0][1:]=(self.fields.keys())
-        #raise Exception(self.layout)#debug
             
     def as_div(self):
         """Render the form as a set of <div>s."""
         output = ""
-        # first, create the fieldsets
+        #Adding Errors
+        try: output += str(self.errors["NON_FIELD_ERRORS"])
+        except: pass
+        #create the fieldsets
         for index in range(len(self.layout)):
             output += self.create_fieldset(self.layout[index])
         return safestring.mark_safe(output)
