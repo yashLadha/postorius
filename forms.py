@@ -42,25 +42,31 @@ class DomainNew(FieldsetForm):
     """ 
     Form field to add a new domain
     """
-    domain_name = forms.CharField(
-        label = _('Domain Name'), 
+    mail_host = forms.CharField(
+        label = _('Mail Host'), 
         error_messages = {'required': _('Please a domain name'), 
                           'invalid': _('Please enter a valid domain name.')},
         required = True
     )
-    contact_address = forms.EmailField(
-        label = _('Your email address'),
-        required = True,
-        error_messages = {'required': _('Please enter an email address.'), 
-                          'invalid': _('Please enter a valid email address.')})
+    web_host = forms.CharField(
+        label = _('Web Host'), 
+        error_messages = {'required': _('Please a domain name'), 
+                          'invalid': _('Please enter a valid domain name.')},
+        required = True
+    )
     description = forms.CharField(
         label = _('Description'), 
         required = False
     )
+    def clean_mail_host(self):
+        mail_host = self.cleaned_data['mail_host']
+        validate_email('mail@' + mail_host)
+        return mail_host
 
-    def clean_domain_name(self):
-        domain_name = self.cleaned_data['domain_name']
-        validate_email('mail@' + domain_name)
+    def clean_web_host(self):
+        web_host = self.cleaned_data['web_host']
+        validate_email('mail@' + web_host)
+        return web_host
     
     class Meta:
         """
@@ -70,8 +76,7 @@ class DomainNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["New Domain","domain_name", "contact_address",],
-                  ["Description", "description"]]
+        layout = [["New Domain","mail_host", "web_host", "description",]]
 
     
 class ListNew(FieldsetForm):

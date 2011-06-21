@@ -85,10 +85,10 @@ def new_domain(request, template = 'mailman-django/new_domain.html'):
         except Exception, e:
             return HttpResponse(e)
         if form.is_valid():
-            domain_name = form.cleaned_data['domain_name']
-            domain = c.create_domain(domain_name)
-            domain.contact_address  = form.cleaned_data['contact_address']
-            domain.description      = form.cleaned_data['description']
+            mail_host = form.cleaned_data['mail_host']
+            web_host = form.cleaned_data['web_host']
+            description = form.cleaned_data['description']
+            domain = c.create_domain(mail_host,web_host,description)
     else:
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
