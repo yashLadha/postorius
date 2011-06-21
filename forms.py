@@ -21,22 +21,6 @@ from django.core.validators import validate_email
 from django.utils.translation import gettext as _
 from fieldset_forms import FieldsetForm
 
-#Redefined Classes for Validation Purpose
-class DomainField(forms.EmailField):
-    def validate(self, value):
-        "Check if value consists of a valid email domain."
-        mail = "mail@"+value        
-        super(DomainField, self).validate(mail)
-        validate_email(mail)
-
-            
-class ListNameField(forms.EmailField):
-    def validate(self, value):
-        "Check if value consists of a valid email prefix."
-        mail = value+"@example.net"
-        super(ListNameField, self).validate(mail)
-        validate_email(mail)
-
 #Fieldsets for use within the views
 class DomainNew(FieldsetForm):
     """ 
@@ -122,7 +106,7 @@ class ListNew(FieldsetForm):
                  ("Turkish", "Turkish"),
                  ("Ukrainian", "Ukrainian"),
                  ("Vietnamese", "Vietnamese"))
-    listname = ListNameField(
+    listname = forms.CharField(
         label = _('List Name'), 
         required = True,    
         error_messages = {'required': _('Please enter a name for your list.'), 
@@ -156,21 +140,26 @@ class ListNew(FieldsetForm):
 
     description = forms.CharField(
         label = _('Description'),
-        widget = forms.TextInput(),
         required = True)           
-        
-    web_host = forms.ChoiceField( ) 
-                     
+
+    web_host = forms.ChoiceField() 
+
     def __init__(self,domain_choices, *args, **kwargs):  
         super(ListNew, self).__init__(*args, **kwargs)  
         self.fields["web_host"] = forms.ChoiceField(
             widget = forms.Select(),
-            label = _('Web Host'),
+            label = _('Mail Host'),
             required = True, 
             choices = domain_choices,
             error_messages = {'required': _("Choose an existing Domain."),}
-            )        
-        
+            )
+    def clean_listname(self):
+        try:    
+            validate_email(self.cleaned_data['listname']+'@example.net')
+        except: 
+            raise forms.ValidationError(_("Please enter a valid listname (my-list-1)"))
+        return self.cleaned_data['listname']
+
     class Meta:
         """
         Class to handle the automatic insertion of fieldsets and divs.

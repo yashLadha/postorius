@@ -114,8 +114,17 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
     be logged in to create a new list.
     """
     if request.method == 'POST':
-        form = ListNew(request.POST)
+        try:
+            c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+        except Exception, e:
+            return HttpResponse(e)
+        choosable_domains = [("",_("Choose a Domain"))]
+        for domain in c.domains:
+            choosable_domains.append((domain.email_host,domain.email_host))
+        form = ListNew(choosable_domains,request.POST)
+
         if form.is_valid():
+
             try:
                 c = Client('http://localhost:8001/3.0', API_USER, API_PASS)    
             except Exception, e:
@@ -140,9 +149,9 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             return HttpResponse(e)
         choosable_domains = [("",_("Choose a Domain"))]
         for domain in c.domains:
-            choosable_domains.append((domain.url_host,domain.url_host))
+            choosable_domains.append((domain.email_host,domain.email_host))
         form = ListNew(choosable_domains)
-
+        
     return render_to_response(template, {'form': form})
 
 
