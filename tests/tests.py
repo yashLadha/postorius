@@ -126,5 +126,51 @@ created and the third is to create another list.
 We're still logged in so go to the page where the settings can be 
 changed (this page also requires admin authority).
 
-    >>> response = c.get('/settings/new_list%40example.com/',)    
+    >>> response = c.get('/settings/new_list%40mail.example.com/',)    
+    
+    
+
+Mass Subscribe Users
+====================
+
+Now we want to mass subscribe a few users to the list. Therefore, 
+go to the mass subscription page.
+
+    >>> url = '/settings/new_list%40mail.example.com/mass_subscribe/'
+
+    >>> response = c.get(url)
+
+Check that everything went well by making sure the status code 
+was correct.
+
+    >>> response.status_code
+    200
+
+Try mass subscribing the users 'liza@example.com' and 
+'george@example.com'. Each address should be provided on a separate 
+line so add '\\n' between the names to indicate that this was done 
+(we're on a Linux machine which is why the letter 'n' was used and 
+the double '\\' instead of a single one is to escape the string 
+parsing of Python).
+
+    >>> url = '/settings/new_list%40mail.example.com/mass_subscribe/'
+
+    >>> response = c.post(url,
+    ...                   {"emails": "liza@example.com\\ngeorge@example.com"})
+
+If everything was successful, we shall get a positive response from 
+the page. We'll check that this was the case.
+    
+    >>> print ("The mass subscription was successful." in response.content) or ("HTTP Error 409: Member already subscribed" in response.content) #TODO - doubled data after multiple tests
+    True
+
+Done with the admin stuff. Now let's log out.
+
+    >>> response = c.get('/lists/logout/',)
+
+If the request was successful we should end up on the list info page.
+Now make sure that we got redirected there.
+
+    >>> print "All mailing lists" in response.content
+    True
 """

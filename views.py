@@ -331,12 +331,16 @@ def mass_subscribe(request, fqdn_listname = None,
                 # The emails to subscribe should each be provided on a
                 # separate line so get each of them.
                 emails = request.POST["emails"].splitlines()
-                message = "The mass subscription was successful."
                 for email in emails:
                     # very simple test if email address is valid
                     parts = email.split('@')
-                    if len(parts) == 2 and '.' in parts[1]:
-                        the_list.subscribe(address=email, real_name="")
+                    if len(parts) == 2 and '.' in parts[1]: #TODO - move check to clean method of the form - see example in django docs
+                        try:
+                            the_list.subscribe(address=email, real_name="")
+                            message = "The mass subscription was successful."
+                        except Exception, e:
+                            form._errors["NON_FIELD_ERRORS"]=forms.util.ErrorList() 
+                            form._errors["NON_FIELD_ERRORS"].append(e)       
                     else:
                         # At least one email address wasn't valid so 
                         # overwrite the success message and ask them to
