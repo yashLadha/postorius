@@ -76,7 +76,7 @@ def login_required(fn):
                                              'message': message})
     return _login_decorator
 
-#@login_required #DEBUG
+@login_required
 def new_domain(request, template = 'mailman-django/new_domain.html'):
     if request.method == 'POST':
         form = DomainNew(request.POST)
@@ -106,7 +106,7 @@ def new_domain(request, template = 'mailman-django/new_domain.html'):
         
     return render_to_response(template, {'form': form,'domains':existing_domains})        
 
-#@login_required #DEBUG
+@login_required
 def list_new(request, template = 'mailman-django/lists/new.html'):
     """
     Add a new mailing list. 
@@ -251,6 +251,7 @@ def list_info(request, fqdn_listname = None,
                                          'fqdn_listname': fqdn_listname,
                                          'listinfo': listinfo})
 
+@login_required
 def list_delete(request, fqdn_listname = None, 
                 template = 'mailman-django/lists/index.html'):
     """
@@ -272,7 +273,7 @@ def list_delete(request, fqdn_listname = None,
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'message':  "Unexpected error:"+ str(e)})
 
-@login_required
+#@login_required #TODO
 def list_settings(request, fqdn_listname = None, 
                   template = 'mailman-django/lists/settings.html'):
     """
@@ -286,16 +287,28 @@ def list_settings(request, fqdn_listname = None,
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
+      
     if request.method == 'POST':
         form = ListSettings(request.POST)
         if form.is_valid():
             the_list.update_config(request.POST)
             message = "The list has been updated."
     else:
-        form = ListSettings(the_list.info)
+        #raise Exception(the_list.settings)#debug  
+        #testdict = {}
+        #for key,item in the_list.settings.items()#debug
+        #    testdict[key]=item
+        form = ListSettings()#testdict)#the_list.settings)
+        
+        #TODO
+        # USE different Forms for each fieldset NO META SETTINGS !!
+        # querry settings when creating the fields not passing the whole settings
+        #
+        
+        raise Exception(form)#debug
     return render_to_response(template, {'form': form,
                                          'message': message,
-                                         'fqdn_listname': the_list.info['fqdn_listname']})
+                                         'fqdn_listname': the_list.settings['fqdn_listname']})
 
 @login_required
 def mass_subscribe(request, fqdn_listname = None, 
@@ -337,7 +350,7 @@ def mass_subscribe(request, fqdn_listname = None,
         form = ListMassSubscription()
     return render_to_response(template, {'form': form,
                                          'message': message,
-                                         'fqdn_listname': the_list.info['fqdn_listname']})
+                                         'fqdn_listname': the_list.settings['fqdn_listname']})
 
 @login_required
 def user_settings(request, member = None, tab = "user",
