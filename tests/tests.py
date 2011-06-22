@@ -42,17 +42,16 @@ Go to the start page listing all lists.
 
 Make sure the load was a success by checking the status code.
 
-    >>> #response.status_code
+    >>> response.status_code
     200
     
-Create a New List
+    
+Check that login is required for a couple of pages
 =================
+Try to access some of the admin Pages. Accessing these pages
+redirects to a login page since we need admin authority to view and use them
 
-Try to create a new list. Accessing the page to create a new list 
-redirects to a login page since we need admin authority to create 
-a new list.
-
-    >>> response = c.get('/mailman_django/lists/new/')
+    >>> response = c.get('/new_domain/')
 
 Check that login required was in the HTML content of what was loaded
 
@@ -61,4 +60,71 @@ Check that login required was in the HTML content of what was loaded
 
 Hence, we log in as an admin on the login page we get as a response 
 to our call.    
+
+    >>> response = c.post('/new_domain/',
+    ...                   {"addr": "kevin@example.com",
+    ...                   "psw": "kevin"})
+
+    >>> print "Add a new Domain" in response.content
+    True
+    
+Create a New Domain
+=================
+Check the content to see that we came to the create page after 
+logging in.
+
+    >>> response = c.post('/new_domain/')
+
+    >>> print "Add a new Domain" in response.content
+    True
+
+Now create a new Domain called 'mail.example.com'.
+
+    >>> response = c.post('/new_domain/',
+    ...                   {"mail_host": "mail.example.com",
+    ...                    "web_host": "example.com",
+    ...                    "description": "doctest testing domain"})  
+
+Check that the new Domain exists in the list of existing domains which is above new_domain form
+
+    >>> print "doctest testing domain" in response.content
+    True
+      
+
+Create a New List
+=================
+
+Try to create a new list. 
+
+    >>> response = c.post('/lists/new/')
+
+Check the content to see that we came to the create page after 
+logging in.
+
+    >>> print "Create a new list" in response.content
+    True
+    
+Now create a new list called 'new_list'.
+
+    >>> response = c.post('/lists/new/',
+    ...                   {"listname": "new_list",
+    ...                    "mail_host": "mail.example.com",
+    ...                    "list_owner": "kevin@example.com",
+    ...                    "list_type": "closed_discussion",
+    ...                    "description": "doctest testing domain",
+    ...                    "languages": "English (USA)"})    
+
+We should now end up on a success page offering what to do next. 
+Let's check that this was the case.
+
+    >>> print "What would you like to do next?" in response.content
+    True
+
+Three options appear on this page. The first one is to mass subscribe
+users, the second is to go to the settings page of the list just 
+created and the third is to create another list. 
+We're still logged in so go to the page where the settings can be 
+changed (this page also requires admin authority).
+
+    >>> response = c.get('/settings/new_list%40example.com/',)    
 """

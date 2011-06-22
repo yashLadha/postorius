@@ -141,16 +141,16 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 form._errors["NON_FIELD_ERRORS"]=forms.util.ErrorList() 
                 form._errors["NON_FIELD_ERRORS"].append(e)
             #saving settings
-            """settings = mailing_list.settings
+            settings = mailing_list.settings
+            """
             settings["description"] = form.cleaned_data['description']
             #settings["owner_address"] = form.cleaned_data['list_owner'] #TODO: Readonly
             #settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
             #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
             settings.save()"""
             try:
-                pass #debug
-                #return render_to_response('mailman-django/lists/created.html', 
-                #                          {'fqdn_listname': mailing_list.info['fqdn_listname']})
+                return render_to_response('mailman-django/lists/created.html', 
+                                          {'fqdn_listname': settings['fqdn_listname']})
             except Exception, e:
                 return HttpResponse(e)
     else:
@@ -273,7 +273,7 @@ def list_delete(request, fqdn_listname = None,
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'message':  "Unexpected error:"+ str(e)})
 
-#@login_required #TODO
+@login_required
 def list_settings(request, fqdn_listname = None, 
                   template = 'mailman-django/lists/settings.html'):
     """
