@@ -44,4 +44,21 @@ Make sure the load was a success by checking the status code.
 
     >>> #response.status_code
     200
+    
+Create a New List
+=================
+
+Try to create a new list. Accessing the page to create a new list 
+redirects to a login page since we need admin authority to create 
+a new list.
+
+    >>> response = c.get('/mailman_django/lists/new/')
+
+Check that login required was in the HTML content of what was loaded
+
+    >>> print "Login Required" in response.content
+    True
+
+Hence, we log in as an admin on the login page we get as a response 
+to our call.    
 """
