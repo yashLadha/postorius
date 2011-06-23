@@ -77,7 +77,7 @@ def login_required(fn):
     return _login_decorator
 
 @login_required
-def new_domain(request, template = 'mailman-django/new_domain.html'):
+def domains(request, template = 'mailman-django/domains.html'):
     if request.method == 'POST':
         form = DomainNew(request.POST)
         try:
