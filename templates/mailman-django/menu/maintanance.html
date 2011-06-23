@@ -1,0 +1,81 @@
+{% load i18n %}
+
+{% block menu_maintanance %}
+    <ul class="menu">
+    Maintanance
+        <li {% if selected == "archive" %}id="selected"{% endif %}>
+            <a href="{% url domains %}">
+                {% trans "Archive" %} Link:TODO
+            </a>
+        </li>
+        <li {% if selected == "auto_resonder" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url ... %}{% endcomment %}">
+                {% trans "Auto Responder" %} Link:TODO
+            </a>
+            <ul>
+                <li {% if selected == "auto_respond_postings" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Postings" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "auto_respond_requests" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Requests" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "auto_respond_owner" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Owner" %} Link:TODO
+                    </a>
+                </li>                                
+            </ul>
+        </li>
+        </li>
+        <li {% if selected == "filter" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                {% trans "Filter" %} Link:TODO
+            </a>
+            <ul>
+                <li {% if selected == "filter_content" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Filter content" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_sender" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Sender" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_message" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Message" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_receipent" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Receipent" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_spam" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Spam" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_topics" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Topics" %} Link:TODO
+                    </a>
+                </li>                   
+            </ul>
+        </li>
+        {% comment %} {% if user in list.moderators %}{% endcomment %}
+        ACL:TODO
+        <li{% if selected == "requests" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                {% trans "Requests" %} Link:TODO
+            </a>
+        </li>
+        {% comment %}{% endif %}{% endcomment %}
+        
+    </ul>
+{% endblock%}

@@ -1,5 +1,27 @@
-{% with "new_list" as selected %}<!-- TODO use include "template" instead of with .. as .. end with-->
+{% load i18n %}
 
-{% include "mailman-django/menu/administration.html" %}
-
-{% endwith %}
+{% block menu_administration %}
+    <ul class="menu">
+    General
+        <li {% if selected == "domains" %}id="selected"{% endif %}>
+            <a href="{% url domains %}">
+                {% trans "Domains" %}
+            </a>
+        </li>
+        <li {% if selected == "new_list" %}id="selected"{% endif %}>
+            <a href="{% url list_new %}">
+                {% trans "New List" %}
+            </a>
+        </li>
+        <li {% if selected == "delete_list" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url list_delete list.fqdn_listname %}TODO add List{% endcomment %}">
+                {% trans "Delete List" %}
+            </a>
+        </li>
+        <li{% if selected == "administrivia" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url list_settings list.fqdn_listname %}TODO add List{% endcomment %}">
+                {% trans "New List" %}
+            </a>
+        </li>
+    </ul>
+{% endblock%}
