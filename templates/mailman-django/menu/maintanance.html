@@ -1,8 +1,8 @@
 {% load i18n %}
 
 {% block menu_maintanance %}
-    <ul class="menu">
-    Maintanance
+    {% trans "Maintanance" %}
+    <div><ul class="menu">
         <li {% if selected == "archive" %}id="selected"{% endif %}>
             <a href="{% url domains %}">
                 {% trans "Archive" %} Link:TODO
@@ -12,7 +12,7 @@
             <a href="{% comment %}{% url ... %}{% endcomment %}">
                 {% trans "Auto Responder" %} Link:TODO
             </a>
-            <ul>
+            <div><ul>
                 <li {% if selected == "auto_respond_postings" %}id="selected"{% endif %}>
                     <a href="{% comment %}{% url ... %}{% endcomment %}">
                         {% trans "Postings" %} Link:TODO
@@ -28,14 +28,14 @@
                         {% trans "Owner" %} Link:TODO
                     </a>
                 </li>                                
-            </ul>
+            </ul></div>
         </li>
         </li>
         <li {% if selected == "filter" %}id="selected"{% endif %}>
             <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                 {% trans "Filter" %} Link:TODO
             </a>
-            <ul>
+            <div><ul>
                 <li {% if selected == "filter_content" %}id="selected"{% endif %}>
                     <a href="{% comment %}{% url ... %}{% endcomment %}">
                         {% trans "Filter content" %} Link:TODO
@@ -66,7 +66,7 @@
                         {% trans "Topics" %} Link:TODO
                     </a>
                 </li>                   
-            </ul>
+            </ul></div>
         </li>
         {% comment %} {% if user in list.admin %}{% endcomment %}
         ACL:TODO
@@ -77,5 +77,5 @@
         </li>
         {% comment %}{% endif %}{% endcomment %}
         
-    </ul>
+    </ul></div>
 {% endblock%}

@@ -1,8 +1,8 @@
 {% load i18n %}
 
 {% block menu_subscriptions %}
-    Info
-    <ul class="menu">
+    {% trans "Subscriptions" %}
+    <div><ul class="menu">
          <li{% if selected == "description" %}id="selected"{% endif %}>
             <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                 {% trans "Description" %} Link:TODO
@@ -12,7 +12,7 @@
             <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                 {% trans "Subscribe" %} Link:TODO
             </a>
-            <ul class="menu">
+            <div><ul class="menu">
                  <li{% if selected == "join_adress" %}id="selected"{% endif %}>
                     <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                         {% trans "Join Adress" %} Link:TODO
@@ -28,19 +28,19 @@
                         {% trans "Mass subscribe" %} 
                     </a>
                 </li>                   
-            </ul>
+            </ul></div>
         </li>  
         <li{% if selected == "remove" %}id="selected"{% endif %}>
             <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                 {% trans "Remove" %} Link:TODO
             </a>
-            <ul class="menu">
+            <div><ul class="menu">
                  <li{% if selected == "leave_adress" %}id="selected"{% endif %}>
                     <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                         {% trans "Leave Adress" %} Link:TODO
                     </a>
                 </li>  
-            </ul>            
+            </ul></div>         
         </li>  
-    </ul>
+    </ul></div>
 {% endblock%}

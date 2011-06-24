@@ -1,13 +1,13 @@
 {% load i18n %}
 
 {% block menu_info %}
-    Info
-    <ul class="menu">
+    {% trans "Info" %}
+    <div><ul>
          <li{% if selected == "info_list" %}id="selected"{% endif %}>
             <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                 {% trans "List" %} Link:TODO
             </a>
-            <ul class="menu">
+            <div><ul>
                  <li{% if selected == "description" %}id="selected"{% endif %}>
                     <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                         {% trans "Description" %} Link:TODO
@@ -28,13 +28,13 @@
                         {% trans "Created at" %} Link:TODO
                     </a>
                 </li>  
-            </ul>
+            </ul></div>
         </li>  
         <li{% if selected == "info_system" %}id="selected"{% endif %}>
             <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                 {% trans "System" %} Link:TODO
             </a>
-            <ul class="menu">
+            <div><ul>
                  <li{% if selected == "info_mail_host" %}id="selected"{% endif %}>
                     <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
                         {% trans "Mail Host" %} Link:TODO
@@ -45,7 +45,7 @@
                         {% trans "Web Host" %} Link:TODO
                     </a>
                 </li>  
-            </ul>            
+            </ul></div>
         </li>  
-    </ul>
+    </ul></div>
 {% endblock%}
