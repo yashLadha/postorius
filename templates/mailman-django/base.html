@@ -17,11 +17,11 @@
 
 	<link rel="shortcut icon" href="/favicon.ico">
 	<!--link rel="apple-touch-icon" href="/apple-touch-icon.png"-->
-
-	<!--<link rel="stylesheet" type="text/css" href="/static/mailman_django/css/style.css?v=1"> OLD--> 
-    <!--<link type="text/css" href="left_tab.css" rel="stylesheet">-->
-    <link rel="stylesheet" type="text/css" href="/static/mailman_django/css/mega_dropdown.css">
+ 
+    
     <link rel="stylesheet" type="text/css" href="/static/mailman_django/css/basics.css">
+    <link rel="stylesheet" type="text/css" href="/static/mailman_django/css/left_tab.css">
+    <!--<link rel="stylesheet" type="text/css" href="/static/mailman_django/css/mega_dropdown.css">-->
     <link rel="stylesheet" type="text/css" href="/static/mailman_django/css/forms.css">
 	<link rel="stylesheet" type="text/css" media="handheld" href="/static/mailman_django/css/handheld.css?v=1">
 
@@ -37,23 +37,7 @@
             {% include "mailman-django/menu/index.html" %}
         </div>
 		<div id="content">
-			<p>
-			{% url list_index as url_list_index %}
-    		{% url list_new as url_list_new %}
-    		{% url list_index as url_list_index %}
-			{% blocktrans %}
-			This is a draft of a Mailman3 django client. It's not a finished design. For now you can view a <a href="{{ url_list_index }}">list</a> of existing mailing lists and you can <a href="{{ url_list_new }}">create</a> new lists. 
-			{% endblocktrans %}
-			{% block links %}{% endblock %}
-			</p>
-			Testing 
-			<ul>
-    	        <li> <a href="/new_domain">New Domain</a></li>
-			</ul>
-
-            
         	{% block content %}{% endblock %}
-
 		</div>
     </div>
 
