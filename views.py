@@ -173,14 +173,14 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
     except Exception, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ e})
+                                  {'message':  "Unexpected error:"+ e.message})
 
     try:
         lists = c.lists
         return render_to_response(template, {'lists': lists})
     except Exception, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ e})
+                                  {'message':  "Unexpected error:"+ e.message})
 
 
 def list_info(request, fqdn_listname = None, 
