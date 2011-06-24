@@ -107,6 +107,15 @@ def domains(request, template = 'mailman-django/domains.html'):
     return render_to_response(template, {'form': form,'domains':existing_domains})        
 
 @login_required
+def administration(request, template = 'mailman-django/lists/new.html'):
+    """
+    Administration dashboard used for Menu navigation
+    """
+    
+    return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message':  "This Site is in preperation."})#TODO
+
+@login_required
 def list_new(request, template = 'mailman-django/lists/new.html'):
     """
     Add a new mailing list. 

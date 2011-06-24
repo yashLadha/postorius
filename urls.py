@@ -21,6 +21,7 @@ from django.conf import settings
 
 urlpatterns = patterns('mailman_django.views',
     (r'^$', 'list_index'),
+    url(r'^administration/', 'administration', name = 'administration'),
     url(r'^domains/', 'domains', name = 'domains'),
     url(r'^lists/$', 'list_index', name = 'list_index'),
     url(r'^lists/new/$', 'list_new', name = 'list_new'),
