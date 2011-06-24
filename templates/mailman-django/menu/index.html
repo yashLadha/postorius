@@ -1,7 +1,20 @@
+{% load i18n %}
 {% with "new_list" as selected %}<!-- TODO use include "template" instead of with .. as .. end with-->
+<ul class="menu">
+<li>{% include "mailman-django/menu/administration.html" %}</li>
+<li>{% include "mailman-django/menu/maintanance.html" %}</li>
+<li>{% include "mailman-django/menu/general.html" %}</li>
+<li>{% include "mailman-django/menu/info.html" %}</li>
+<li>{% include "mailman-django/menu/subscriptions.html" %}</li>
+        {% comment %} {% if user in list.moderator %}{% endcomment %}
+        ACL:TODO
 
-{% include "mailman-django/menu/administration.html" %}
-{% include "mailman-django/menu/maintanance.html" %}
-{% include "mailman-django/menu/general.html" %}
-
+        <li{% if selected == "requests" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                {% trans "Requests" %} Link:TODO
+            </a>
+        </li>
+        {% comment %}{% endif %}{% endcomment %}
+       
+</ul>
 {% endwith %}
