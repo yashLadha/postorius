@@ -101,24 +101,11 @@ def domains(request, template = 'mailman-django/domains.html'):
         form = DomainNew()  
     try:
         existing_domains = c.domains
-        
-        #WEB List selector → TODO → MOVE to Context Processors
-        try:    
-            web_host = request.META["HTTP_HOST"].split(":")#TODO Django DEV only !
-            web_host = web_host[0]
-        except: 
-            web_host = request.META["HTTP_HOST"]               
-        d = c.get_domain(None,web_host)
-        domainname= d.email_host
-        domain_lists = []
-        for list in c.lists:
-            if list.host_name == domainname:
-                domain_lists.append(list)
-        
+       
     except Exception, e: 
         return HttpResponse(e)
         
-    return render_to_response(template, {'form': form,'domains':existing_domains,'lists':domain_lists})        
+    return render_to_response(template, {'form': form,'domains':existing_domains})        
 
 @login_required
 def administration(request, template = 'mailman-django/lists/new.html'):
