@@ -18,7 +18,7 @@
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context, loader
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 import re
@@ -101,10 +101,18 @@ def domains(request, template = 'mailman-django/domains.html'):
         form = DomainNew()  
     try:
         existing_domains = c.domains
+        
+        #WEB List selector → TODO → MOVE to Context Processors
+        web_host = request.META["HTTP_HOST"].split(":")
+        if len(web_host) == 2:
+            web_host = web_host[0]
+        d = c.get_domain(None,web_host)
+        all_lists = c.lists #TODO get filtered by Domain !
+        
     except Exception, e: 
         return HttpResponse(e)
         
-    return render_to_response(template, {'form': form,'domains':existing_domains})        
+    return render_to_response(template, {'form': form,'domains':existing_domains,'lists':all_lists})        
 
 @login_required
 def administration(request, template = 'mailman-django/lists/new.html'):
@@ -178,18 +186,22 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
 def list_index(request, template = 'mailman-django/lists/index.html'):
     """Show a table of all mailing lists.
     """
-    try:
-        c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-    except Exception, e:
-        return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ e.message})
+    if request.method == 'POST':
+        return redirect("/lists/"+request.POST["list"])
+        
+    else:
+        try:
+            c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+        except Exception, e:
+            return render_to_response('mailman-django/errors/generic.html', 
+                                      {'message':  "Unexpected error:"+ e.message})
 
-    try:
-        lists = c.lists
-        return render_to_response(template, {'lists': lists})
-    except Exception, e:
-        return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ e.message})
+        try:
+            lists = c.lists
+            return render_to_response(template, {'lists': lists})
+        except Exception, e:
+            return render_to_response('mailman-django/errors/generic.html', 
+                                      {'message':  "Unexpected error:"+ e.message})
 
 
 def list_info(request, fqdn_listname = None, 

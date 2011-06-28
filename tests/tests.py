@@ -50,6 +50,8 @@ Check that login is required for a couple of pages
 =================
 Try to access some of the admin Pages. Accessing these pages
 redirects to a login page since we need admin authority to view and use them
+#TODO - ACL tests will be implemented for each site at a central place at later stages of development.
+Please be aware that this test only checks for authentification ONCE.
 
     >>> response = c.get('/new_domain/')
 
@@ -173,4 +175,6 @@ Now make sure that we got redirected there.
 
     >>> print "All mailing lists" in response.content
     True
+    
+TODO: Delete Domains    
 """
