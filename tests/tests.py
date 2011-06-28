@@ -53,7 +53,7 @@ redirects to a login page since we need admin authority to view and use them
 #TODO - ACL tests will be implemented for each site at a central place at later stages of development.
 Please be aware that this test only checks for authentification ONCE.
 
-    >>> response = c.get('/new_domain/')
+    >>> response = c.get('/domains/')
 
 Check that login required was in the HTML content of what was loaded
 
@@ -63,7 +63,7 @@ Check that login required was in the HTML content of what was loaded
 Hence, we log in as an admin on the login page we get as a response 
 to our call.    
 
-    >>> response = c.post('/new_domain/',
+    >>> response = c.post('/domains/',
     ...                   {"addr": "kevin@example.com",
     ...                   "psw": "kevin"})
 
@@ -75,14 +75,14 @@ Create a New Domain
 Check the content to see that we came to the create page after 
 logging in.
 
-    >>> response = c.post('/new_domain/')
+    >>> response = c.post('/domains/')
 
     >>> print "Add a new Domain" in response.content
     True
 
 Now create a new Domain called 'mail.example.com'.
 
-    >>> response = c.post('/new_domain/',
+    >>> response = c.post('/domains/',
     ...                   {"mail_host": "mail.example.com",
     ...                    "web_host": "example.com",
     ...                    "description": "doctest testing domain"})  
@@ -120,7 +120,7 @@ We should now end up on a success page offering what to do next.
 Let's check that this was the case.
 
     >>> print "What would you like to do next?" in response.content
-    True
+    True #TODO:Duplication Bug needs test DB
 
 Three options appear on this page. The first one is to mass subscribe
 users, the second is to go to the settings page of the list just 
