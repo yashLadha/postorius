@@ -17,7 +17,7 @@
 # GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import Context, loader
+from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
@@ -105,7 +105,7 @@ def domains(request, template = 'mailman-django/domains.html'):
     except Exception, e: 
         return HttpResponse(e)
         
-    return render_to_response(template, {'form': form,'domains':existing_domains})        
+    return render_to_response(template, {'form': form,'domains':existing_domains},context_instance=RequestContext(request))        
 
 @login_required
 def administration(request, template = 'mailman-django/lists/new.html'):
