@@ -24,6 +24,8 @@ Test suite for the Mailman UI.
 This document both acts as a test for all the functions implemented
 in the UI as well as documenting what has been done.
 
+    >>> from setup import setup_mm, Testobject, teardown_mm
+    >>> testobject = setup_mm(Testobject())
 
 Getting Started
 ===============
@@ -119,8 +121,9 @@ Now create a new list called 'new_list'.
 We should now end up on a success page offering what to do next. 
 Let's check that this was the case.
 
-    >>> print "What would you like to do next?" in response.content
-    True #TODO:Duplication Bug needs test DB
+    >>> print "What would you like to do next?" in response.content #TODO:Duplication Bug needs test DB
+    True
+    
 
 Three options appear on this page. The first one is to mass subscribe
 users, the second is to go to the settings page of the list just 
@@ -177,4 +180,6 @@ Now make sure that we got redirected there.
     True
     
 TODO: Delete Domains    
+
+    >>> teardown_mm(testobject)
 """
