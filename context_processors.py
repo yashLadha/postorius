@@ -10,7 +10,7 @@ def lists_of_domain(request):
         web_host = request.META["HTTP_HOST"].split(":")#TODO Django DEV only !
         web_host = web_host[0]
     except: 
-        web_host = request.META["HTTP_HOST"]   
+        web_host = request.META["HTTP_HOST"]
     #querry the Domain object
     c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
     d = c.get_domain(None,web_host)

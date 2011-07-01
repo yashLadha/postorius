@@ -3,6 +3,7 @@ import time
 import shutil
 import tempfile
 import subprocess
+from django.settings import MAILMAN_TEST_BINDIR
 
 class Testobject:
     bindir = None
@@ -10,7 +11,7 @@ class Testobject:
     cfgfile = None
 
 def setup_mm(testobject):
-    os.environ['MAILMAN_TEST_BINDIR'] = '/home/florian/Development/mailman/bin'
+    os.environ['MAILMAN_TEST_BINDIR'] = MAILMAN_TEST_BINDIR
     bindir = testobject.bindir = os.environ.get('MAILMAN_TEST_BINDIR')
     if bindir is None:
         raise RuntimeError("something's not quite right")

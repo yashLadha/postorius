@@ -121,7 +121,7 @@ Now create a new list called 'new_list'.
 We should now end up on a success page offering what to do next. 
 Let's check that this was the case.
 
-    >>> print "What would you like to do next?" in response.content #TODO:Duplication Bug needs test DB
+    >>> print "What would you like to do next?" in response.content
     True
     
 
@@ -166,7 +166,7 @@ parsing of Python).
 If everything was successful, we shall get a positive response from 
 the page. We'll check that this was the case.
     
-    >>> print ("The mass subscription was successful." in response.content) or ("HTTP Error 409: Member already subscribed" in response.content) #TODO - doubled data after multiple tests
+    >>> print "The mass subscription was successful." in response.content
     True
 
 Done with the admin stuff. Now let's log out.
