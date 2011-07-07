@@ -3,7 +3,7 @@ import time
 import shutil
 import tempfile
 import subprocess
-from django.settings import MAILMAN_TEST_BINDIR
+from settings import MAILMAN_TEST_BINDIR
 
 class Testobject:
     bindir = None
