@@ -734,9 +734,12 @@ class ListSettings(FieldsetForm):
     )
     def __init__(self,settings,visible_section,visible_option, *args, **kwargs):  
         super(ListSettings, self).__init__(*args, **kwargs)  
-        if visible_option in self.layout:
-            self.layout = [["Option",visible_option]]
-        #debug    
+        if visible_option:
+            options=[]
+            for option in self.layout:
+                options += option[1:]
+            if visible_option in options:
+                self.layout = [["",visible_option]]
         if visible_section:
             sections=[]
             for section in self.layout:
