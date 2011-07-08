@@ -301,14 +301,11 @@ def list_settings(request, fqdn_listname = None,
     """
     message = ""
     #check for GET values
-    try:
-        visible_section=request.GET["section"]
-    except:
-        visible_section=None
-    try: 
-        visible_option=request.GET["option"]
-    except:
-        visible_option=None
+    try:   visible_section=request.GET["section"]
+    except:visible_section=None
+    try:   visible_option=request.GET["option"]
+    except:visible_option=None
+    
     #Create the Connection
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
@@ -338,7 +335,10 @@ def list_settings(request, fqdn_listname = None,
         #raise Exception(form)#debug
     return render_to_response(template, {'form': form,
                                          'message': message,
-                                         'fqdn_listname': the_list.settings['fqdn_listname']})
+                                         'fqdn_listname': the_list.settings['fqdn_listname'],
+                                         'visible_option':visible_option,
+                                         'visible_section':visible_section,
+                                         })
 
 @login_required
 def mass_subscribe(request, fqdn_listname = None, 

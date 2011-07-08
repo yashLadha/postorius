@@ -25,7 +25,7 @@
     <p id="message">{{ message }}</p>
 {% endif %}
 
-<form action="{% url list_settings fqdn_listname %}" method="post" class="list_settings">
+<form action="{% url list_settings fqdn_listname %}?section={{visible_section}}&option={{visible_option}}" method="post" class="list_settings">
 {{ form.as_div }}
 
     <div class="field">
