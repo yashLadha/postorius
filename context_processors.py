@@ -23,6 +23,7 @@ def lists_of_domain(request):
             if list.host_name == domainname:
                 domain_lists.append(list)
     except:
+        raise Exception("No Domain Found or HTTP_HOST missing in reqeust")
         pass #in case there is not http_host (e.g. during testing)
 
     #return a Dict with the key used in templates

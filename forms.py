@@ -732,6 +732,19 @@ class ListSettings(FieldsetForm):
         label = _('Posting Address'),
         required = False,
     )
+    def __init__(self,settings,visible_section,visible_option, *args, **kwargs):  
+        super(ListSettings, self).__init__(*args, **kwargs)  
+        if visible_option in self.layout:
+            self.layout = [["Option",visible_option]]
+        #debug    
+        if visible_section:
+            sections=[]
+            for section in self.layout:
+                sections.append(section[0])  
+            if visible_section in sections:
+                for section in self.layout:
+                    if section[0] == visible_section:
+                        self.layout = [section]
 
     class Meta:
         """Class to handle the automatic insertion of fieldsets and divs.

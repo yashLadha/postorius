@@ -287,39 +287,55 @@ def list_delete(request, fqdn_listname = None,
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'message':  "Unexpected error:"+ str(e)})
 
-@login_required
+#@login_required #debug
 def list_settings(request, fqdn_listname = None, 
                   template = 'mailman-django/lists/settings.html'):
     """
     View and edit the settings of a list.
     The function requires the user to be logged in and have the 
     permissions necessary to perform the action.
+    
+    Use ?section=<NAMEOFTHESECTION>
+    or ?option=<NAMEOFTHEOPTION>
+    to show only parts of the settings
     """
     message = ""
+    #check for GET values
+    try:
+        visible_section=request.GET["section"]
+    except:
+        visible_section=None
+    try: 
+        visible_option=request.GET["option"]
+    except:
+        visible_option=None
+    #Create the Connection
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
-      
+    #Save a Form Processed by POST  
     if request.method == 'POST':
-        form = ListSettings(request.POST)
+        form = ListSettings(request.POST,visible_section,visible_option)
         if form.is_valid():
             the_list.update_config(request.POST)
             message = "The list has been updated."
+    #Provide a form with existing values
     else:
         #raise Exception(the_list.settings)#debug  
-        #testdict = {}
-        #for key,item in the_list.settings.items()#debug
+        testdict = {}
+        #raise Exception(the_list.settings)#debug
+        #for key,item in dict(the_list.settings).items():#debug
         #    testdict[key]=item
-        form = ListSettings()#testdict)#the_list.settings)
+        form = ListSettings(testdict,visible_section,visible_option)#the_list.settings)
         
         #TODO
         # USE different Forms for each fieldset NO META SETTINGS !!
-        # querry settings when creating the fields not passing the whole settings
+        # querry settings when creating the fields not parsing the whole settings
         #
         
-        raise Exception(form)#debug
+        #raise Exception(form)#debug
     return render_to_response(template, {'form': form,
                                          'message': message,
                                          'fqdn_listname': the_list.settings['fqdn_listname']})
