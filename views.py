@@ -163,7 +163,8 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             settings.save()"""
             try:
                 return render_to_response('mailman-django/lists/created.html', 
-                                          {'fqdn_listname': settings['fqdn_listname']})
+                                          {'fqdn_listname': settings['fqdn_listname']}
+                                          ,context_instance=RequestContext(request))
             except Exception, e:
                 return HttpResponse(e)
     else:
@@ -176,7 +177,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             choosable_domains.append((domain.email_host,domain.email_host))
         form = ListNew(choosable_domains)
         
-    return render_to_response(template, {'form': form})
+    return render_to_response(template, {'form': form},context_instance=RequestContext(request))
 
 
 def list_index(request, template = 'mailman-django/lists/index.html'):
@@ -190,14 +191,14 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         except Exception, e:
             return render_to_response('mailman-django/errors/generic.html', 
-                                      {'message':  "Unexpected error:"+ e.message})
+                                      {'message':  "Unexpected error:"+ e.message},context_instance=RequestContext(request))
 
         try:
             lists = c.lists
-            return render_to_response(template, {'lists': lists})
+            return render_to_response(template, {'lists': lists},context_instance=RequestContext(request))
         except Exception, e:
             return render_to_response('mailman-django/errors/generic.html', 
-                                      {'message':  "Unexpected error:"+ e.message})
+                                      {'message':  "Unexpected error:"+ e.message},context_instance=RequestContext(request))
 
 
 def list_info(request, fqdn_listname = None, 
@@ -240,7 +241,7 @@ def list_info(request, fqdn_listname = None,
                     response = the_list.unsubscribe(address=email)
                     template = 'mailman-django/lists/unsubscribed.html'
                     return render_to_response(template, 
-                                              {'listname': fqdn_listname})
+                                              {'listname': fqdn_listname},context_instance=RequestContext(request))
                 except Exception, e:
                     return HttpResponse(e)
         else:
@@ -266,7 +267,8 @@ def list_info(request, fqdn_listname = None,
     return render_to_response(template, {'subscribe': subscribe,
                                          'unsubscribe': unsubscribe,
                                          'fqdn_listname': fqdn_listname,
-                                         'listinfo': listinfo})
+                                         'listinfo': listinfo}
+                                         ,context_instance=RequestContext(request))
 
 @login_required
 def list_delete(request, fqdn_listname = None, 
@@ -288,7 +290,8 @@ def list_delete(request, fqdn_listname = None,
         return redirect("/lists/")
     except Exception, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ str(e)})
+                                  {'message':  "Unexpected error:"+ str(e)}
+                                  ,context_instance=RequestContext(request))
 
 #@login_required #debug
 def list_settings(request, fqdn_listname = None, 
@@ -340,7 +343,8 @@ def list_settings(request, fqdn_listname = None,
                                          'fqdn_listname': the_list.settings['fqdn_listname'],
                                          'visible_option':visible_option,
                                          'visible_section':visible_section,
-                                         })
+                                         }
+                                         ,context_instance=RequestContext(request))
 
 @login_required
 def mass_subscribe(request, fqdn_listname = None, 
@@ -386,7 +390,8 @@ def mass_subscribe(request, fqdn_listname = None,
         form = ListMassSubscription()
     return render_to_response(template, {'form': form,
                                          'message': message,
-                                         'fqdn_listname': the_list.settings['fqdn_listname']})
+                                         'fqdn_listname': the_list.settings['fqdn_listname']}
+                                         ,context_instance=RequestContext(request))
 
 @login_required
 def user_settings(request, member = None, tab = "user",
@@ -459,7 +464,8 @@ def user_settings(request, member = None, tab = "user",
                                          'listname': listname,
                                          'membership_lists': membership_lists,
                                          'message': message,
-                                         'member': member})
+                                         'member': member}
+                                         ,context_instance=RequestContext(request))
 
 def logout(request):
     """
