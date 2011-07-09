@@ -320,13 +320,16 @@ def list_settings(request, fqdn_listname = None,
             message = "The list has been updated."
     #Provide a form with existing values
     else:
-        #raise Exception(the_list.settings)#debug  
-        testdict = {}
-        #raise Exception(the_list.settings)#debug
-        #for key,item in dict(the_list.settings).items():#debug
-        #    testdict[key]=item
-        form = ListSettings(testdict,visible_section,visible_option)#the_list.settings)
-        
+        #create form to get layout
+        form = ListSettings(None,visible_section,visible_option)
+        #create a Dict of all settings which are used in the form
+        used_settings={}
+        for section in form.layout:
+            for option in section[1:]:
+                used_settings[option] = the_list.settings[option]
+        #recreate the form using the settings
+        form = ListSettings(used_settings,visible_section,visible_option)
+            
         #TODO
         # USE different Forms for each fieldset NO META SETTINGS !!
         # querry settings when creating the fields not parsing the whole settings

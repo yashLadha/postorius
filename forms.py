@@ -734,6 +734,7 @@ class ListSettings(FieldsetForm):
     )
     def __init__(self,settings,visible_section,visible_option, *args, **kwargs):  
         super(ListSettings, self).__init__(*args, **kwargs)  
+        #if settings:raise Exception(settings) #debug
         if visible_option:
             options=[]
             for option in self.layout:
@@ -748,7 +749,14 @@ class ListSettings(FieldsetForm):
                 for section in self.layout:
                     if section[0] == visible_section:
                         self.layout = [section]
-
+        if settings:
+            for section in self.layout:
+                for option in section[1:]:    
+                    #raise Exception(settings)
+                    self.fields[option].initial = settings[option]
+                    #raise Exception(self.fields[option].initial)
+                
+            
     class Meta:
         """Class to handle the automatic insertion of fieldsets and divs.
         
