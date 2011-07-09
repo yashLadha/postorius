@@ -752,9 +752,7 @@ class ListSettings(FieldsetForm):
         if settings:
             for section in self.layout:
                 for option in section[1:]:    
-                    #raise Exception(settings)
                     self.fields[option].initial = settings[option]
-                    #raise Exception(self.fields[option].initial)
                 
             
     class Meta:

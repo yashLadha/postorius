@@ -36,6 +36,9 @@
         <div class="menu">
             {% include "mailman-django/menu/index.html" %}
         </div>
+        {% if message %}
+            <p id="message">{{ message }}</p>
+        {% endif %}
 		<div id="content">
         	{% block content %}{% endblock %}
 		</div>

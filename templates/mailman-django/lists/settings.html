@@ -20,11 +20,6 @@
 
 <p>{% trans "This page visualizes all list settings. Currently the page is not connected to the rest server so the settings will not be saved when changing them. However, this gives an idea of what the settings page could look like." %}</p>
 
-
-{% if message %}
-    <p id="message">{{ message }}</p>
-{% endif %}
-
 <form action="{% url list_settings fqdn_listname %}?section={{visible_section}}&option={{visible_option}}" method="post" class="list_settings">
 {{ form.as_div }}
 

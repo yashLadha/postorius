@@ -78,6 +78,7 @@ def login_required(fn):
 
 @login_required
 def domains(request, template = 'mailman-django/domains.html'):
+    message=""
     if request.method == 'POST':
         form = DomainNew(request.POST)
         try:
@@ -91,8 +92,7 @@ def domains(request, template = 'mailman-django/domains.html'):
             try:
                 domain = c.create_domain(mail_host,web_host,description)
             except Exception, e:
-                form._errors["NON_FIELD_ERRORS"]=forms.util.ErrorList() 
-                form._errors["NON_FIELD_ERRORS"].append(e)    
+                message=e
     else:
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
@@ -105,7 +105,10 @@ def domains(request, template = 'mailman-django/domains.html'):
     except Exception, e: 
         return HttpResponse(e)
         
-    return render_to_response(template, {'form': form,'domains':existing_domains},context_instance=RequestContext(request))        
+    return render_to_response(template, {'form': form,
+                                        'domains':existing_domains,
+                                        'message':message,
+                                        },context_instance=RequestContext(request))        
 
 @login_required
 def administration(request, template = 'mailman-django/lists/new.html'):
@@ -316,10 +319,12 @@ def list_settings(request, fqdn_listname = None,
     if request.method == 'POST':
         form = ListSettings(request.POST,visible_section,visible_option)
         if form.is_valid():
-            the_list.update_config(request.POST)
-            message = "The list has been updated."
-    #Provide a form with existing values
-    else:
+            the_list.update_config(request.POST)#TODO
+            message = _("The list has been updated.")
+        else:
+            message = _("Validation Error - The list has not been updated.")
+    
+    else:#Provide a form with existing values
         #create form to get layout
         form = ListSettings(None,visible_section,visible_option)
         #create a Dict of all settings which are used in the form
@@ -329,13 +334,7 @@ def list_settings(request, fqdn_listname = None,
                 used_settings[option] = the_list.settings[option]
         #recreate the form using the settings
         form = ListSettings(used_settings,visible_section,visible_option)
-            
-        #TODO
-        # USE different Forms for each fieldset NO META SETTINGS !!
-        # querry settings when creating the fields not parsing the whole settings
-        #
         
-        #raise Exception(form)#debug
     return render_to_response(template, {'form': form,
                                          'message': message,
                                          'fqdn_listname': the_list.settings['fqdn_listname'],
