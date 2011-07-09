@@ -321,14 +321,21 @@ def list_settings(request, fqdn_listname = None,
     #Save a Form Processed by POST  
     if request.method == 'POST':
         form = ListSettings(request.POST,visible_section,visible_option)
+        form.truncate()
         if form.is_valid():
             the_list.update_config(request.POST)#TODO
             message = _("The list has been updated.")
         else:
+            for key,item in form.fields.items():
+                #raise Exception(item.value)
+                #item.validate(False)#debug
+                #item.run_validators()
+                #item.clean()
+                raise Exception(item._errors)
             message = _("Validation Error - The list has not been updated.")
     
     else:#Provide a form with existing values
-        #create form to get layout
+        #create form and process layout into form.layout
         form = ListSettings(None,visible_section,visible_option)
         #create a Dict of all settings which are used in the form
         used_settings={}
@@ -337,6 +344,8 @@ def list_settings(request, fqdn_listname = None,
                 used_settings[option] = the_list.settings[option]
         #recreate the form using the settings
         form = ListSettings(used_settings,visible_section,visible_option)
+        form.truncate()
+                
         
     return render_to_response(template, {'form': form,
                                          'message': message,

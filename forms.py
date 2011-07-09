@@ -753,7 +753,18 @@ class ListSettings(FieldsetForm):
             for section in self.layout:
                 for option in section[1:]:    
                     self.fields[option].initial = settings[option]
-                
+    def truncate(self):
+        """
+           truncates the form to have only those fields which are in self.layout 
+        """
+        #delete form.fields which are not in the layout
+        used_options=[]
+        for section in self.layout:
+            used_options += section[1:]
+       
+        for key in self.fields.keys():
+            if not(key in used_options):
+                del self.fields[key]                
             
     class Meta:
         """Class to handle the automatic insertion of fieldsets and divs.
