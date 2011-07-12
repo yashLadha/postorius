@@ -320,30 +320,27 @@ def list_settings(request, fqdn_listname = None,
         return HttpResponse(e)
     #Save a Form Processed by POST  
     if request.method == 'POST':
-        form = ListSettings(request.POST,visible_section,visible_option)
+        form = ListSettings(visible_section,visible_option,data=request.POST)
         form.truncate()
         if form.is_valid():
-            the_list.update_config(request.POST)#TODO
+            settings = the_list.settings
+            for key in form.fields.keys():
+                settings[key] = form.cleaned_data[key]
+                settings.save()    
             message = _("The list has been updated.")
         else:
-            for key,item in form.fields.items():
-                #raise Exception(item.value)
-                #item.validate(False)#debug
-                #item.run_validators()
-                #item.clean()
-                raise Exception(item._errors)
             message = _("Validation Error - The list has not been updated.")
     
     else:#Provide a form with existing values
         #create form and process layout into form.layout
-        form = ListSettings(None,visible_section,visible_option)
+        form = ListSettings(visible_section,visible_option,data=None)
         #create a Dict of all settings which are used in the form
         used_settings={}
         for section in form.layout:
             for option in section[1:]:
                 used_settings[option] = the_list.settings[option]
         #recreate the form using the settings
-        form = ListSettings(used_settings,visible_section,visible_option)
+        form = ListSettings(visible_section,visible_option,data=used_settings)
         form.truncate()
                 
         

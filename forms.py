@@ -732,7 +732,7 @@ class ListSettings(FieldsetForm):
         label = _('Posting Address'),
         required = False,
     )
-    def __init__(self,settings,visible_section,visible_option, *args, **kwargs):  
+    def __init__(self,visible_section,visible_option, *args, **kwargs):  
         super(ListSettings, self).__init__(*args, **kwargs)  
         #if settings:raise Exception(settings) #debug
         if visible_option:
@@ -749,10 +749,13 @@ class ListSettings(FieldsetForm):
                 for section in self.layout:
                     if section[0] == visible_section:
                         self.layout = [section]
-        if settings:
-            for section in self.layout:
-                for option in section[1:]:    
-                    self.fields[option].initial = settings[option]
+        try:
+            if data:
+                for section in self.layout:
+                    for option in section[1:]:    
+                        self.fields[option].initial = settings[option]
+        except:
+            pass #empty form                        
     def truncate(self):
         """
            truncates the form to have only those fields which are in self.layout 
