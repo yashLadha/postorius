@@ -196,7 +196,16 @@ class ListSubscribe(forms.Form):
         #initial = 'subscribe',
     )
     
-    # should add password!
+    # should add password! TODO
+    class Meta:
+        """
+        Class to handle the automatic insertion of fieldsets and divs.
+        
+        To use it: add a list for each wished fieldset. The first item in 
+        the list should be the wished name of the fieldset, the following 
+        the fields that should be included in the fieldset.
+        """
+        layout = [["Subscribe", "email","real_name"]]    
 
 class ListUnsubscribe(forms.Form):
     """Form fields to leave an existing list.
@@ -221,8 +230,17 @@ class ListUnsubscribe(forms.Form):
     widget = forms.HiddenInput(),
     #initial = 'unsubscribe'
     )
+    class Meta:
+        """
+        Class to handle the automatic insertion of fieldsets and divs.
+        
+        To use it: add a list for each wished fieldset. The first item in 
+        the list should be the wished name of the fieldset, the following 
+        the fields that should be included in the fieldset.
+        """
+        layout = [["Unsubscribe", "email"]]        
 
-    # should at one point add the password to be required as well!
+    # should at one point add the password to be required as well! #TODO
 class ListSettings(FieldsetForm):
     """Form fields dealing with the list settings.
     """

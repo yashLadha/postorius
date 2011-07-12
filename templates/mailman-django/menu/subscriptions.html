@@ -1,7 +1,8 @@
 {% load i18n %}
 
 {% block menu_subscriptions %}
-    {% trans "Subscriptions" %}
+    {% if fqdn_listname %}
+    <a href="{% url list_subscriptions fqdn_listname%}">{% trans "Subscriptions" %}</a>
     <div><ul class="menu">
          <li{% if selected == "description" %}id="selected"{% endif %}>
             <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
@@ -43,4 +44,5 @@
             </ul></div>         
         </li>  
     </ul></div>
+    {%endif%}
 {% endblock%}

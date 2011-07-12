@@ -201,8 +201,8 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
                                       {'message':  "Unexpected error:"+ e.message},context_instance=RequestContext(request))
 
 
-def list_info(request, fqdn_listname = None, 
-              template = 'mailman-django/lists/info.html'):
+def list_subscriptions(request, fqdn_listname = None, 
+              template = 'mailman-django/lists/subscriptions.html',option="",*args, **kwargs):
     """
     Display the information there is available for a list. This 
     function also enables subscribing or unsubscribing a user to a 
@@ -214,58 +214,58 @@ def list_info(request, fqdn_listname = None,
         the_list = c.get_list(fqdn_listname)
     except Exception, e:
         return HttpResponse(e)
+    if option:
+        if option == "subscribe":
+            form_subscribe = ListSubscribe()
+        if option == "unsubscribe":
+            form_unsubscribe = ListUnsubscribe()
+    else:
+        form_subscribe = None
+        form_unsubscribe = None        
+        
     if request.method == 'POST':
         form = False
         # The form enables both subscribe and unsubscribe. As a result
         # we must find out which was the case.
         action = request.POST.get('name', '')
+        
         if action == "subscribe":
             form = ListSubscribe(request.POST)
+            if form.is_valid():
+                # the form was valid so try to subscribe the user
+                fqdn_listname = form.cleaned_data['listname']
+                try:
+                    response = the_list.subscribe(address=form.cleaned_data['email'],real_name=form.cleaned_data.get('real_name', ''))
+                    return HttpResponseRedirect(reverse('list_subscriptions'))
+                except Exception, e:
+                    return HttpResponse(e)
+            else:
+                form_subscribe = ListSubscribe(request.POST)
+                form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 'name' : 'unsubscribe'})       
         elif action == "unsubscribe":
             form = ListUnsubscribe(request.POST)
-        if form and form.is_valid():
-            listname = form.cleaned_data['listname']
-            email = form.cleaned_data['email']
-            if action == "subscribe":
-                real_name = form.cleaned_data.get('real_name', '')
-                try:
-                    # the form was valid so try to subscribe the user
-                    response = the_list.subscribe(address=email,
-                                                real_name=real_name)
-                    return HttpResponseRedirect(reverse('list_index'))
-                except Exception, e:
-                    return HttpResponse(e)
-            elif action == "unsubscribe":
-                # the form was valid so try to unsubscribe the user
+            if form.is_valid():
+                #the form was valid so try to unsubscribe the user
                 try:
                     response = the_list.unsubscribe(address=email)
-                    template = 'mailman-django/lists/unsubscribed.html'
-                    return render_to_response(template, 
-                                              {'listname': fqdn_listname},context_instance=RequestContext(request))
+                    return render_to_response('mailman-django/lists/unsubscribed.html', 
+                                              {'fqdn_listname': fqdn_listname},context_instance=RequestContext(request))
                 except Exception, e:
-                    return HttpResponse(e)
-        else:
-            # the user tried to post an incorrect form so make sure we
-            # return the filled in values and let the user try again.
-            if action == "subscribe":
-                subscribe = ListSubscribe(request.POST)
-                unsubscribe = ListUnsubscribe(initial = {'listname': fqdn_listname, 
-                                                         'name' : 'unsubscribe'})
-            elif action == "unsubscribe":
-                subscribe = ListSubscribe(initial = {'listname': fqdn_listname, 
-                                                     'name' : 'subscribe'})
-                unsubscribe = ListUnsubscribe(request.POST)
+                    return HttpResponse(e)     
+            else:
+                form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 'name' : 'subscribe'})
+                form_unsubscribe = ListUnsubscribe(request.POST)
+
     else:
         # the request was a GET request so set the two forms to empty
         # forms
-        subscribe = ListSubscribe(initial = {'listname': fqdn_listname, 
+        form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 
                                              'name' : 'subscribe'})
-        unsubscribe = ListUnsubscribe(initial = {'listname': fqdn_listname, 
+        form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 
                                                  'name' : 'unsubscribe'})
-
-    listinfo = c.get_list(fqdn_listname)
-    return render_to_response(template, {'subscribe': subscribe,
-                                         'unsubscribe': unsubscribe,
+    listinfo = c.get_list(fqdn_listname)#TODO
+    return render_to_response(template, {'form_subscribe': form_subscribe,
+                                         'form_unsubscribe': form_unsubscribe,
                                          'fqdn_listname': fqdn_listname,
                                          'listinfo': listinfo}
                                          ,context_instance=RequestContext(request))
@@ -411,7 +411,7 @@ def user_settings(request, member = None, tab = "user",
     """
     message = ""
     membership_lists = []
-    listname = ""
+    fqdn_listname = ""
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         user_object = c.get_user(member)
@@ -446,9 +446,9 @@ def user_settings(request, member = None, tab = "user",
 
     else:
         if tab == "membership":
-            listname = request.GET.get("list", "")
-            if listname:
-                member_object = c.get_member(member, listname)
+            fqdn_listname = request.GET.get("list", "")
+            if fqdn_listname:
+                member_object = c.get_member(member, fqdn_listname)
                 # TODO: add delivery_mode and deliver_status from a 
                 # list of tuples at one point, currently we hard code
                 # them in forms.py
@@ -467,7 +467,7 @@ def user_settings(request, member = None, tab = "user",
 
     return render_to_response(template, {'form': form,
                                          'tab': tab,
-                                         'listname': listname,
+                                         'fqdn_listname': fqdn_listname,
                                          'membership_lists': membership_lists,
                                          'message': message,
                                          'member': member}
