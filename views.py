@@ -26,6 +26,7 @@ from mailman.client import Client
 from forms import *
 from settings import API_USER, API_PASS
 import sys #Error handing info
+from urllib2 import HTTPError
 
 def login_required(fn):
     """
@@ -150,9 +151,8 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             #creating the list
             try:
                 mailing_list = domain.create_list(form.cleaned_data['listname'])
-            except Exception, e:
-                form._errors["NON_FIELD_ERRORS"]=forms.util.ErrorList() 
-                form._errors["NON_FIELD_ERRORS"].append(e)
+            except Exception, e: #TODO catch correct Error class
+                message = e
             #saving settings
             settings = mailing_list.settings
             """
@@ -189,31 +189,27 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
     else:
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-        except Exception, e:
+        except Exception, e: #TODO find correct error class (rest offline → 404 ?)
             return render_to_response('mailman-django/errors/generic.html', 
                                       {'message':  "Unexpected error:"+ e.message},context_instance=RequestContext(request))
+        lists = c.lists
+        return render_to_response(template, {'lists': lists},context_instance=RequestContext(request))
 
-        try:
-            lists = c.lists
-            return render_to_response(template, {'lists': lists},context_instance=RequestContext(request))
-        except Exception, e:
-            return render_to_response('mailman-django/errors/generic.html', 
-                                      {'message':  "Unexpected error:"+ e.message},context_instance=RequestContext(request))
-
-
-def list_subscriptions(request, fqdn_listname = None, 
-              template = 'mailman-django/lists/subscriptions.html',option="",*args, **kwargs):
+def list_subscriptions(request, option=None, fqdn_listname=None, template = 'mailman-django/lists/subscriptions.html', *args, **kwargs): #TODO : do we need  , option=None, fqdn_listname=None ?? - => **kwargs -reverse URl search ?
     """
     Display the information there is available for a list. This 
     function also enables subscribing or unsubscribing a user to a 
     list. For the latter two different forms are available for the 
     user to fill in which are evaluated in this function.
     """
+    fqdn_listname= ""
+
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-        the_list = c.get_list(fqdn_listname)
-    except Exception, e:
-        return HttpResponse(e)
+        the_list = c.get_list(fqdn_listname) 
+    except HTTPError,e :
+        raise Exception("List does not exist ")#debug
+    raise Exception("not not found in list_subscription")#debug
     if option:
         if option == "subscribe":
             form_subscribe = ListSubscribe()
@@ -380,9 +376,8 @@ def mass_subscribe(request, fqdn_listname = None,
                         try:
                             the_list.subscribe(address=email, real_name="")
                             message = "The mass subscription was successful."
-                        except Exception, e:
-                            form._errors["NON_FIELD_ERRORS"]=forms.util.ErrorList() 
-                            form._errors["NON_FIELD_ERRORS"].append(e)       
+                        except Exception, e: #TODO find right exception and catch only this one
+                            message = e
                     else:
                         # At least one email address wasn't valid so 
                         # overwrite the success message and ask them to
