@@ -21,18 +21,17 @@ from django.conf import settings
 
 urlpatterns = patterns('mailman_django.views',
     (r'^$', 'list_index'),
-    url(r'^administration/', 'administration', name = 'administration'),
-    url(r'^domains/', 'domains', name = 'domains'),
+    url(r'^administration/$', 'administration', name = 'administration'),
+    url(r'^domains/$', 'domains', name = 'domains'),
     url(r'^lists/$', 'list_index', name = 'list_index'),
     url(r'^lists/new/$', 'list_new', name = 'list_new'),
     url(r'^lists/logout/$', 'logout', name = 'logout'),
-    url(r'^lists/(?P<fqdn_listname>.+)/subscriptions/$', 'list_subscriptions', kwargs={"option":None}, name = 'list_subscriptions'),
-    url(r'^lists/(?P<fqdn_listname>.+)/subscriptions/subscribe$', 'list_subscriptions', kwargs={"option": "subscribe"}, name = 'list_subscribe'),
-    url(r'^lists/(?P<fqdn_listname>.+)/subscriptions/unsubscribe$', 'list_subscriptions', kwargs={"option": "unsubscribe"}, name = 'list_unsubscribe'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary', name = 'list_summary'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/subscriptions/(?:(?P<option>subscribe|unsubscribe)?)$', 'list_subscriptions', name = 'list_subscriptions'),
     url(r'^delete_list/(?P<fqdn_listname>[^/]+)/$', 'list_delete', name = 'list_delete'),
     url(r'^user_settings/(?P<member>[^/]+)/$', 'user_settings', kwargs={"tab": "user"}, name = 'user_settings'),
     url(r'^membership_settings/(?P<member>[^/]+)/$', 'user_settings', kwargs={"tab": "membership"}, name = 'membership_settings'),
-    url(r'^settings/(?P<fqdn_listname>[^/]+)/$', 'list_settings', name = 'list_settings'),
+    url(r'^settings/(?P<fqdn_listname>.+)/$', 'list_settings', name = 'list_settings'), #TODO use __init__ to inherit option and section values instead of GET
     url(r'^settings/(?P<fqdn_listname>[^/]+)/mass_subscribe/$', 'mass_subscribe', name = 'mass_subscribe'),
     # to override the default templates specifiy your own:
     # url(r'lists/(?P<fqdn_listname>.+)/$', 'list_info', dict(template = 'path/to/template.html'), name = 'list_info'),

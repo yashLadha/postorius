@@ -172,7 +172,7 @@ class ListNew(FieldsetForm):
         layout = [["List Details", "listname", "mail_host", "list_owner", "description", "list_type"],
                   ["Available Languages", "languages"]]
 
-class ListSubscribe(forms.Form):
+class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
     """
     listname = forms.EmailField(
@@ -207,7 +207,7 @@ class ListSubscribe(forms.Form):
         """
         layout = [["Subscribe", "email","real_name"]]    
 
-class ListUnsubscribe(forms.Form):
+class ListUnsubscribe(FieldsetForm):
     """Form fields to leave an existing list.
     """
     listname = forms.EmailField(

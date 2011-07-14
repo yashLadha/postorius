@@ -20,12 +20,12 @@
         </li>
         {% if fqdn_listname %}
         <li {% if selected == "delete_list" %}id="selected"{% endif %}>
-            <a href="{% url list_delete fqdn_listname %}">
+            <a href="{% url list_delete fqdn_listname=fqdn_listname %}">
                 {% trans "Delete List #TODO:really delete dialog" %}
             </a>
         </li>
         <li{% if selected == "administrivia" %}id="selected"{% endif %}>
-            <a href="{% url list_settings fqdn_listname %}?option=administrivia">
+            <a href="{% url list_settings fqdn_listname=fqdn_listname %}?option=administrivia">#TODO
                 {% trans "Administrivia" %}
             </a>
         </li>

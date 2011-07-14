@@ -9,7 +9,7 @@ def lists_of_domain(request):
     """ 
     domain_lists = []
     message = ""
-    if "HTTP_HOST" in request.META.keys() :
+    if "HTTP_HOST" in request.META.keys() :#TODO only lists of current domains if possible
         #get the URL
         web_host = request.META["HTTP_HOST"].split(":")[0]
         #querry the Domain object

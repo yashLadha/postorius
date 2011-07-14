@@ -112,7 +112,7 @@ def domains(request, template = 'mailman-django/domains.html'):
                                         },context_instance=RequestContext(request))        
 
 @login_required
-def administration(request, template = 'mailman-django/lists/new.html'):
+def administration(request): #TODO
     """
     Administration dashboard used for Menu navigation
     """
@@ -184,8 +184,7 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
     """Show a table of all mailing lists.
     """
     if request.method == 'POST':
-        return redirect("/lists/"+request.POST["list"])
-        
+        return redirect("list_summary", fqdn_listname=request.POST["list"])
     else:
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
@@ -195,29 +194,31 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
         lists = c.lists
         return render_to_response(template, {'lists': lists},context_instance=RequestContext(request))
 
-def list_subscriptions(request, option=None, fqdn_listname=None, template = 'mailman-django/lists/subscriptions.html', *args, **kwargs): #TODO : do we need  , option=None, fqdn_listname=None ?? - => **kwargs -reverse URl search ?
+
+def list_summary(request,fqdn_listname=None,option=None):#TODO
+    """
+    Administration dashboard used for Menu navigation
+    """
+    
+    return render_to_response('mailman-django/errors/generic.html', 
+                                  {'fqdn_listname':fqdn_listname,
+                                   'message':  "This Site is in preperation. +DEBUG"+fqdn_listname})#TODO
+
+def list_subscriptions(request, option=None, fqdn_listname=None, template = 'mailman-django/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
     """
     Display the information there is available for a list. This 
     function also enables subscribing or unsubscribing a user to a 
     list. For the latter two different forms are available for the 
     user to fill in which are evaluated in this function.
     """
-    fqdn_listname= ""
-
+    #create Values for Template usage      
+    form_subscribe = None
+    form_unsubscribe = None
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname) 
     except HTTPError,e :
-        raise Exception("List does not exist ")#debug
-    raise Exception("not not found in list_subscription")#debug
-    if option:
-        if option == "subscribe":
-            form_subscribe = ListSubscribe()
-        if option == "unsubscribe":
-            form_unsubscribe = ListUnsubscribe()
-    else:
-        form_subscribe = None
-        form_unsubscribe = None        
+        raise Exception(str(e)+fqdn_listname+"List does not exist ")#debug
         
     if request.method == 'POST':
         form = False
@@ -255,9 +256,11 @@ def list_subscriptions(request, option=None, fqdn_listname=None, template = 'mai
     else:
         # the request was a GET request so set the two forms to empty
         # forms
-        form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 
+        if option=="subscribe" or not option:
+            form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 
                                              'name' : 'subscribe'})
-        form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 
+        if option=="unsubscribe" or not option:                                             
+            form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 
                                                  'name' : 'unsubscribe'})
     listinfo = c.get_list(fqdn_listname)#TODO
     return render_to_response(template, {'form_subscribe': form_subscribe,
