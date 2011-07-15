@@ -15,6 +15,7 @@ def lists_of_domain(request):
         #querry the Domain object
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+<<<<<<< TREE
             try:            
                 d = c.get_domain(None,web_host)
                 #workaround LP:802971
@@ -27,6 +28,19 @@ def lists_of_domain(request):
                 message = str(e.code) + _(" - Accesing from an unregistered Domain - showing all lists")
         except AttributeError, e:
             message="REST API not found / Offline"
+=======
+            d = c.get_domain(None,web_host)
+            raise Exception(d)#debug
+            #workaround LP:802971
+            domainname= d.email_host
+
+            for list in c.lists:
+                if list.host_name == domainname:
+                    domain_lists.append(list)
+        except HTTPError, e:
+            domain_lists = c.lists
+            message = str(e.code) + _(" - Accesing from an unregistered Domain - showing all lists")
+>>>>>>> MERGE-SOURCE
 
     #return a Dict with the key used in templates
     return {"lists":domain_lists, "message":message}
