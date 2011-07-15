@@ -292,23 +292,18 @@ def list_delete(request, fqdn_listname = None,
     return redirect("list_index")
 
 #@login_required #debug
-def list_settings(request, fqdn_listname = None, 
+def list_settings(request, fqdn_listname = None, visible_section=None, visible_option=None,
                   template = 'mailman-django/lists/settings.html'):
     """
     View and edit the settings of a list.
     The function requires the user to be logged in and have the 
     permissions necessary to perform the action.
     
-    Use ?section=<NAMEOFTHESECTION>
-    or ?option=<NAMEOFTHEOPTION>
+    Use /<NAMEOFTHESECTION>/<NAMEOFTHEOPTION>
     to show only parts of the settings
+    <param> is optional / is used to differ in between section and option might result in using //option
     """
     message = ""
-    #check for GET values
-    try:   visible_section=request.GET["section"]
-    except:visible_section=None
-    try:   visible_option=request.GET["option"]
-    except:visible_option=None
     
     #Create the Connection
     try:
@@ -319,7 +314,7 @@ def list_settings(request, fqdn_listname = None,
                                   {'message': "REST API not found / Offline"},context_instance=RequestContext(request))
     except HTTPError,e :
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message': -("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
+                                  {'message': _("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
     #Save a Form Processed by POST  
     if request.method == 'POST':
         form = ListSettings(visible_section,visible_option,data=request.POST)

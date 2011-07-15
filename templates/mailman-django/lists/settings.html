@@ -16,12 +16,10 @@
 
 <h1>{% trans "List Settings for " %}{{ fqdn_listname }}</h1>
 
-<p id=logout><a href="{% url logout %}">Logout</a></p>
+<p>{% trans "This page visualizes all list settings. This gives an idea of what the settings page could look like." %}</p>
 
-<p>{% trans "This page visualizes all list settings. Currently the page is not connected to the rest server so the settings will not be saved when changing them. However, this gives an idea of what the settings page could look like." %}</p>
-
-<form action="{% url list_settings fqdn_listname %}?section={{visible_section}}&option={{visible_option}}" method="post" class="list_settings">
-{{ form.as_div }}
+<form action="{% url list_settings fqdn_listname=fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings">
+TODO:url not GET{{ form.as_div }}
 
     <div class="field">
         <button type="submit">{%trans "Save changes" %}</button>
