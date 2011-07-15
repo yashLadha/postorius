@@ -97,7 +97,7 @@ def domains(request, template = 'mailman-django/domains.html'):
                 message=e
     else:
         try:
-            c = Client('http://localhost:8002/3.0', API_USER, API_PASS)
+            c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
             existing_domains = c.domains
         except AttributeError, e:
             return render_to_response('mailman-django/errors/generic.html', 
