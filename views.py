@@ -82,19 +82,21 @@ def domains(request, template = 'mailman-django/domains.html'):
     message=""
     if request.method == 'POST':
         form = DomainNew(request.POST)
+        existing_domains = None
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+            if form.is_valid():
+                mail_host = form.cleaned_data['mail_host']
+                web_host = form.cleaned_data['web_host']
+                description = form.cleaned_data['description']
+                try:
+                    domain = c.create_domain(mail_host,web_host,description)
+                except HTTPError, e:
+                    message=e
+            existing_domains = c.domains
         except AttributeError, e:
             return render_to_response('mailman-django/errors/generic.html', 
                                       {'message': "REST API not found / Offline"},context_instance=RequestContext(request))
-        if form.is_valid():
-            mail_host = form.cleaned_data['mail_host']
-            web_host = form.cleaned_data['web_host']
-            description = form.cleaned_data['description']
-            try:
-                domain = c.create_domain(mail_host,web_host,description)
-            except Exception, e:
-                message=e
     else:
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
@@ -146,7 +148,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             #creating the list
             try:
                 mailing_list = domain.create_list(form.cleaned_data['listname'])
-            except Exception, e: #TODO catch correct Error class
+            except HTTPError, e: #TODO catch correct Error class
                 message = e
             #saving settings
             settings = mailing_list.settings
@@ -211,8 +213,12 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname) 
+    except AttributeError, e:
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message': "REST API not found / Offline"},context_instance=RequestContext(request))
     except HTTPError,e :
-        raise Exception(str(e)+fqdn_listname+"List does not exist ")#debug
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message': -("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
         
     if request.method == 'POST':
         form = False
@@ -228,7 +234,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                 try:
                     response = the_list.subscribe(address=form.cleaned_data['email'],real_name=form.cleaned_data.get('real_name', ''))
                     return HttpResponseRedirect(reverse('list_subscriptions'))
-                except Exception, e:
+                except Exception, e: #TODO-Exception
                     return HttpResponse(e)
             else:
                 form_subscribe = ListSubscribe(request.POST)
@@ -241,7 +247,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                     response = the_list.unsubscribe(address=email)
                     return render_to_response('mailman-django/lists/unsubscribed.html', 
                                               {'fqdn_listname': fqdn_listname},context_instance=RequestContext(request))
-                except Exception, e:
+                except Exception, e:#TODO-Exception
                     return HttpResponse(e)     
             else:
                 form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 'name' : 'subscribe'})
@@ -274,17 +280,16 @@ def list_delete(request, fqdn_listname = None,
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
-    except Exception, e:
-        return HttpResponse(e)
-    the_list.delete()
-    # let the user return to the list index page
-    try:
-        lists = c.lists
-        return redirect("/lists/")
-    except Exception, e:
+        the_list.delete()
+    except AttributeError, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'message':  "Unexpected error:"+ str(e)}
-                                  ,context_instance=RequestContext(request))
+                                  {'message': "REST API not found / Offline"},context_instance=RequestContext(request))
+    except HTTPError,e :
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message': -("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
+    # let the user return to the list index page
+    lists = c.lists
+    return redirect("list_index")
 
 #@login_required #debug
 def list_settings(request, fqdn_listname = None, 
@@ -309,8 +314,12 @@ def list_settings(request, fqdn_listname = None,
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
-    except Exception, e:
-        return HttpResponse(e)
+    except AttributeError, e:
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message': "REST API not found / Offline"},context_instance=RequestContext(request))
+    except HTTPError,e :
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message': -("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
     #Save a Form Processed by POST  
     if request.method == 'POST':
         form = ListSettings(visible_section,visible_option,data=request.POST)
@@ -357,8 +366,12 @@ def mass_subscribe(request, fqdn_listname = None,
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
-    except Exception, e:
-        return HttpResponse(e)
+    except AttributeError, e:
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message': "REST API not found / Offline"},context_instance=RequestContext(request))
+    except HTTPError,e :
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'message': -("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
     if request.method == 'POST':
         form = ListMassSubscription(request.POST)
         if form.is_valid():
@@ -410,7 +423,7 @@ def user_settings(request, member = None, tab = "user",
         # address_choices for the 'address' field must be a list of 
         # tuples of length 2
         address_choices = [[addr, addr] for addr in user_object.get_email_addresses()]
-    except Exception, e:
+    except Exception, e: #TODO-Exceptions
         return HttpResponse(e)
     if request.method == 'POST':
         # The form enables both user and member settings. As a result
