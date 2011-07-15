@@ -16,8 +16,10 @@ def lists_of_domain(request):
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
             d = c.get_domain(None,web_host)
+            raise Exception(d)#debug
             #workaround LP:802971
             domainname= d.email_host
+
             for list in c.lists:
                 if list.host_name == domainname:
                     domain_lists.append(list)
