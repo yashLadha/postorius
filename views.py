@@ -204,7 +204,8 @@ def list_summary(request,fqdn_listname=None,option=None):#TODO
                                   {'fqdn_listname':fqdn_listname,
                                    'message':  "This Site is in preperation. +DEBUG"+fqdn_listname})#TODO
 
-def list_subscriptions(request, option=None, fqdn_listname=None, template = 'mailman-django/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
+def list_subscriptions(request, option=None, fqdn_listname=None, user_email = None,
+                       template = 'mailman-django/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
     """
     Display the information there is available for a list. This 
     function also enables subscribing or unsubscribing a user to a 
@@ -257,10 +258,10 @@ def list_subscriptions(request, option=None, fqdn_listname=None, template = 'mai
         # the request was a GET request so set the two forms to empty
         # forms
         if option=="subscribe" or not option:
-            form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 
+            form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 'email':user_email, 
                                              'name' : 'subscribe'})
         if option=="unsubscribe" or not option:                                             
-            form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 
+            form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 'email':user_email, 
                                                  'name' : 'unsubscribe'})
     listinfo = c.get_list(fqdn_listname)#TODO
     return render_to_response(template, {'form_subscribe': form_subscribe,
