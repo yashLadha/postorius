@@ -8,7 +8,7 @@
 
 
     {% blocktrans %}
-    You can also <a href="{{url_list_info}}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{{url_list_delete}}">delete</a> the list. If you wish to mass subscribe users to this list, please click <a href="{{url_mass_subscription}}">here</a>.
+ If you wish to mass subscribe users to this list, please click <a href="{{url_mass_subscription}}">here</a>.
     {% endblocktrans %}
 {% endblock %}
 
@@ -19,7 +19,7 @@
 <p>{% trans "This page visualizes all list settings. This gives an idea of what the settings page could look like." %}</p>
 
 <form action="{% url list_settings fqdn_listname=fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings">
-TODO:url not GET{{ form.as_div }}
+{{ form.as_div }}
 
     <div class="field">
         <button type="submit">{%trans "Save changes" %}</button>
