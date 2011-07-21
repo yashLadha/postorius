@@ -1,30 +1,33 @@
 {% extends "mailman-django/base.html" %}
 {% load i18n %}
 
-{% block links%}
-    {% url list_info fqdn_listname as url_list_info %}
-    {% url list_delete fqdn_listname as url_list_delete %}
-    {% url mass_subscribe fqdn_listname as url_mass_subscription %}
-
-
-    {% blocktrans %}
- If you wish to mass subscribe users to this list, please click <a href="{{url_mass_subscription}}">here</a>.
-    {% endblocktrans %}
+{% block heading %}
+    {{list.list_name}} <span>{{list.real_name}}</span>
 {% endblock %}
 
-{% block content %}
+{% block header%}
+    <div class="mm_box">
+        <div class="mm_boxHeader">{% trans "List Settings for " %}{{ fqdn_listname }}</div>
+        <p>{% trans "This page visualizes all list settings. This gives an idea of what the settings page could look like." %}</p>
 
-<h1>{% trans "List Settings for " %}{{ fqdn_listname }}</h1>
-
-<p>{% trans "This page visualizes all list settings. This gives an idea of what the settings page could look like." %}</p>
-
-<form action="{% url list_settings fqdn_listname=fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings">
-{{ form.as_div }}
-
-    <div class="field">
-        <button type="submit">{%trans "Save changes" %}</button>
+        <form action="{% url list_settings fqdn_listname=fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings">
+        {{ form.as_div }}
+            <div class="field">
+                <button type="submit">{%trans "Save changes" %}</button>
+            </div>
+        </form>
     </div>
+{% endblock %}
 
-</form>
 
+
+{% block smallBoxLeft %}
+    <div class="mm_box mm_smallBox mm_smallBoxLeft">
+        <div class="mm_boxHeader">{% trans "Links" %}</div>
+        <ul>
+            <li><a href="{% url list_summary fqdn_listname %}">{% trans "List Summary" %} </a></li>
+            <li><a href="{% url list_delete fqdn_listname %}">{% trans "Delete List" %} </a></li>
+            <li><a href="{% url mass_subscribe fqdn_listname %}">{% trans "Mass Subscribe to List" %} </a></li>
+        </ul>
+    </div>
 {% endblock %}
