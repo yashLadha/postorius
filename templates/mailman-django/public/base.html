@@ -17,7 +17,24 @@
 	<script src="{{MEDIA_URL}}js/public/libs/modernizr-1.7.min.js"></script>
 </head>
 <body>
-    {% block content %}{% endblock %}
+    <div id="mm_page">
+        <h1>{% block heading %}{% endblock %}</h1>
+        <div class="mm_box">
+            {% block header%}{% endblock %}
+        </div>
+        <ul class="mm_actionButtons">
+            {% block actionButtonsList %}{% endblock %}
+        </ul>
+        <div class="mm_box mm_smallBox mm_smallBoxLeft">
+            {% block smallBoxLeft %}{% endblock %}
+        </div>
+        <div class="mm_box mm_smallBox mm_smallBoxRight">
+            {% block smallBoxRight %}{% endblock %}
+        </div>
+        <div id="mm_footer">
+            {% block footer %}{% endblock %}
+        </div>
+    </div>
     <script src="{{MEDIA_URL}}js/public/libs/jquery-1.5.1.min.js"></script>
 	<script src="{{MEDIA_URL}}js/public/plugins.js"></script>
 	<script src="{{MEDIA_URL}}js/public/script.js"></script>
