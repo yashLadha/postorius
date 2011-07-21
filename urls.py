@@ -18,6 +18,8 @@
 
 from django.conf.urls.defaults import *
 from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = patterns('mailman_django.views',
     (r'^$', 'list_index'),
@@ -26,7 +28,7 @@ urlpatterns = patterns('mailman_django.views',
     url(r'^lists/$', 'list_index', name = 'list_index'),
     url(r'^lists/new/$', 'list_new', name = 'list_new'),
     url(r'^lists/logout/$', 'logout', name = 'logout'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary', name = 'list_summary'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary', name = 'list_summary'), #PUBLIC
     url(r'^subscriptions/(?P<fqdn_listname>[^/]+)/(?:(?P<option>subscribe|unsubscribe)?)(/(?P<user_email>.+))?$', 'list_subscriptions', name = 'list_subscriptions'),
     url(r'^delete_list/(?P<fqdn_listname>[^/]+)/$', 'list_delete', name = 'list_delete'),
     url(r'^user_settings/(?P<member>[^/]+)/$', 'user_settings', kwargs={"tab": "user"}, name = 'user_settings'),
@@ -34,14 +36,6 @@ urlpatterns = patterns('mailman_django.views',
     #url(r'^settings/(?P<fqdn_listname>[^/]+)/(?P<visible_section>[^/]+)?/(?P<visible_option>.+)?$', 'list_settings', name = 'list_settings'),
     url(r'^settings/(?P<fqdn_listname>[^/]+)/(?P<visible_section>[^/]+)?(?:/(?P<visible_option>.*))?$', 'list_settings', name = 'list_settings'),    
     url(r'^settings/(?P<fqdn_listname>[^/]+)/mass_subscribe/$', 'mass_subscribe', name = 'mass_subscribe'),
-    # to override the default templates specifiy your own:
-    # url(r'lists/(?P<fqdn_listname>.+)/$', 'list_info', dict(template = 'path/to/template.html'), name = 'list_info'),
-)
-
-if settings.DEBUG:
-    urlpatterns += patterns('',
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve',  
-     {'document_root': settings.STATIC_MAILMAN_DJANGO}),
-)
+    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)#https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
 
 

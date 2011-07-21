@@ -196,14 +196,28 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
         return render_to_response(template, {'lists': lists,'error':error},context_instance=RequestContext(request))
 
 
-def list_summary(request,fqdn_listname=None,option=None):#TODO
+def list_summary(request,fqdn_listname=None,option=None):
     """
-    Administration dashboard used for Menu navigation
+    PUBLIC
+    an entry page for each lists which allows some simple tasks per LIST
     """
-    
-    return render_to_response('mailman-django/errors/generic.html', 
+    error=None
+    if request.method == 'POST':
+        return redirect("list_summary", fqdn_listname=request.POST["list"])
+    else:
+        try:
+            c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+            current_list = c.get_list(fqdn_listname)
+        except AttributeError, e:
+            return render_to_response('mailman-django/errors/generic.html', 
+                                      {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
+    return render_to_response('mailman-django/public/list_summary.html', 
                                   {'fqdn_listname':fqdn_listname,
-                                   'message':  "This Site is in preperation. +DEBUG"+fqdn_listname})#TODO
+                                   'list':current_list,
+                                   'message':  None,
+                                  },
+                                  context_instance=RequestContext(request)
+                                  )
 
 def list_subscriptions(request, option=None, fqdn_listname=None, user_email = None,
                        template = 'mailman-django/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
@@ -345,11 +359,17 @@ def list_settings(request, fqdn_listname = None, visible_section=None, visible_o
         #recreate the form using the settings
         form = ListSettings(visible_section,visible_option,data=used_settings)
         form.truncate()
-                
+    if visible_option:
+        selected = visible_option
+    elif visible_section:
+        selected = visible_section
+    else:
+        selected = None
         
     return render_to_response(template, {'form': form,
                                          'message': message,
                                          'fqdn_listname': the_list.settings['fqdn_listname'],
+                                         'selected':selected,
                                          'visible_option':visible_option,
                                          'visible_section':visible_section,
                                          }

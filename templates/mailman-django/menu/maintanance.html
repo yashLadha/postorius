@@ -1,31 +1,32 @@
 {% load i18n %}
 
 {% block menu_maintanance %}
+{% if fqdn_listname %}
     {% trans "Maintanance" %}
     <div><ul class="menu">
         <li {% if selected == "archive" %}id="selected"{% endif %}>
             <a href="{% url domains %}">
-                {% trans "Archive" %} Link:TODO
+                {% trans "Archive" %} #TODO link
             </a>
         </li>
         <li {% if selected == "auto_resonder" %}id="selected"{% endif %}>
-            <a href="{% url list_settings fqdn_listname=fqdn_listname visible_section="Automatic Responses" visible_option=None %}">
+            <a href="{% url list_settings fqdn_listname=fqdn_listname visible_section='Automatic Responses' visible_option=None %}">
                 {% trans "Auto Responder" %}
             </a>
             <div><ul>
-                <li {% if selected == "auto_respond_postings" %}id="selected"{% endif %}>
-                    <a href="{% comment %}{% url ... %}{% endcomment %}">
-                        {% trans "Postings" %} Link:TODO
+                <li {% if selected == "autorespond_postings" %}id="selected"{% endif %}>
+                    <a href="{% url list_settings fqdn_listname=fqdn_listname visible_section='Automatic Responses' visible_option='autorespond_postings' %}">
+                        {% trans "Postings" %}
                     </a>
                 </li>
-                <li {% if selected == "auto_respond_requests" %}id="selected"{% endif %}>
-                    <a href="{% comment %}{% url ... %}{% endcomment %}">
-                        {% trans "Requests" %} Link:TODO
+                <li {% if selected == "autorespond_requests" %}id="selected"{% endif %}>
+                    <a href="{% url list_settings fqdn_listname=fqdn_listname visible_section='Automatic Responses' visible_option='autorespond_requests' %}">
+                        {% trans "Requests" %}
                     </a>
                 </li>
-                <li {% if selected == "auto_respond_owner" %}id="selected"{% endif %}>
-                    <a href="{% comment %}{% url ... %}{% endcomment %}">
-                        {% trans "Owner" %} Link:TODO
+                <li {% if selected == "autorespond_owner" %}id="selected"{% endif %}>
+                    <a href="{% url list_settings fqdn_listname=fqdn_listname visible_section='Automatic Responses' visible_option='autorespond_owner' %}">
+                        {% trans "Owner" %}
                     </a>
                 </li>                                
             </ul></div>
@@ -78,4 +79,5 @@
         {% comment %}{% endif %}{% endcomment %}
         
     </ul></div>
+{% endif %}
 {% endblock%}

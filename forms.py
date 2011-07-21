@@ -284,34 +284,25 @@ class ListSettings(FieldsetForm):
         required = False,
         label = _('Include RFC2369 headers'),
     )
-    autorespond_owner = forms.IntegerField(
+    autorespond_owner = forms.BooleanField(
         label = _('Autorespond owner'),
-        error_messages = {
-            'invalid': _('Please provide an integer.'),
-        },
     )
     autoresponse_owner_text = forms.CharField(
         label = _('Autoresponse owner text'),
     )
-    autorespond_postings = forms.IntegerField(
+    autorespond_postings = forms.BooleanField(
         label = _('Autorespond postings'),
-        error_messages = {
-            'invalid': _('Please provide an integer.'),
-        },
     )
     autoresponse_postings_text = forms.CharField(
         label = _('Autoresponse postings text'),
     )
-    autorespond_requests = forms.IntegerField(
+    autorespond_requests = forms.BooleanField(
         label = _('Autorespond requests'),
-        error_messages = {
-            'invalid': _('Please provide an integer.'),
-        },
     )
     autoresponse_request_text = forms.CharField(
         label = _('Autoresponse request text'),
     )
-    autoresponse_grace_period = forms.CharField(
+    autoresponse_grace_period = forms.CharField(#TODO - either different type or different Validator !
         label = _('Autoresponse grace period'),
     )
     bounces_address = forms.EmailField(

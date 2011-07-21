@@ -1,5 +1,5 @@
 from mailman.client import Client
-from settings import API_USER, API_PASS
+from settings import API_USER, API_PASS, MAILMAN_THEME
 from django.utils.translation import gettext as _
 from urllib2 import HTTPError
 
@@ -30,3 +30,8 @@ def lists_of_domain(request):
 
     #return a Dict with the key used in templates
     return {"lists":domain_lists, "message":message}
+    
+def render_MAILMAN_THEME(request):
+    """ This function is a wrapper to render the Mailman Theme Variable from Settings
+    """
+    return {"MAILMAN_THEME":MAILMAN_THEME}
