@@ -1,4 +1,4 @@
-{% extends "mailman-django/public/base.html" %}
+{% extends "mailman-django/base.html" %}
 {% load i18n %}
 
 {% block heading %}
@@ -14,10 +14,10 @@
 
 {% block actionButtonsList %}
     <ul class="mm_actionButtons">
-        <li class="mm_subscribe"><a href="{% url list_subscriptions fqdn_listname=fqdn_listname option='subscribe' %}">{% trans "Subscribe" %}</a></li>
-        <li class="mm_archives"><a href="#archives">{% trans "View Archives" %}</a></li>
-        <li class="mm_options"><a href="{% url list_settings fqdn_listname=fqdn_listname %}">{% trans "Edit Options" %}</a></li>
-        <li class="mm_unsubscribe mm_last"><a href="{% url list_subscriptions fqdn_listname=fqdn_listname option='unsubscribe' %}">{% trans "Unsubscribe" %}</a></li>
+        <li class="mm_subscribe"><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname option='subscribe' %}">{% trans "Subscribe" %}</a></li>
+        <li class="mm_archives"><a href="#archives">{% trans "View Archives" %}TODO</a></li>
+        <li class="mm_options"><a href="{% url list_settings fqdn_listname=list.fqdn_listname %}">{% trans "Edit Options" %}</a></li>
+        <li class="mm_unsubscribe mm_last"><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname option='unsubscribe' %}">{% trans "Unsubscribe" %}</a></li>
     </ul>    
 {% endblock %}
 

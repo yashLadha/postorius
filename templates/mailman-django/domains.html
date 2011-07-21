@@ -1,39 +1,41 @@
 {% extends "mailman-django/base.html" %}
 {% load i18n %}
 
-{% block content %}
-
-<h1>{% trans "Add a new Domain" %}</h1>
-<p id=logout><a href="{% url logout %}">{% trans "Logout" %}</a></p>
-    <table cellpadding="0" cellspacing="0">
-	    <tr>
-		    <th>{% trans "Domain" %}</th>
-		    <th>{% trans "Contact Address" %}</th>
-		    <th>{% trans "Description" %}</th>
-	    </tr>
-	{% if domains %}
-    {% for domain in domains %}
-	    <tr>
-		    <td>{{ domain.base_url }}</td>
-		    <td>{{ domain.contact_address }}</td>
-		    <td>
-		        {% if domain.description %}
-		            {{ domain.description }}
-		        {% endif %}
-		    </td>
-	    </tr>
-    {% endfor %}
-    {% endif %}
-    </table>
-    
-<br>
-<form action="{% url domains %}" method="post" class="newdomain">
-
-    {{ form.as_div }}
-
-    <div class="field">
-        <button type="submit">{% trans "Create Domain" %}</button>
-    </div>
-
-</form>
+{% block heading %}
+    {% trans "Add a new Domain" %}
 {% endblock %}
+
+{% block header %}
+    <div class="mm_box">
+        <div class="mm_boxHeader">{% trans "About" %}</div>
+        <p id=logout><a href="{% url logout %}">{% trans "Logout" %}</a></p>
+            <table cellpadding="0" cellspacing="0">
+	            <tr>
+		            <th>{% trans "Domain" %}</th>
+		            <th>{% trans "Contact Address" %}</th>
+		            <th>{% trans "Description" %}</th>
+	            </tr>
+	        {% if domains %}
+            {% for domain in domains %}
+	            <tr>
+		            <td>{{ domain.base_url }}</td>
+		            <td>{{ domain.contact_address }}</td>
+		            <td>
+		                {% if domain.description %}
+		                    {{ domain.description }}
+		                {% endif %}
+		            </td>
+	            </tr>
+            {% endfor %}
+            {% endif %}
+            </table>
+{% endblock %}
+{% block actionButtonsList %}
+        TODO JS Form
+        <form action="{% url domains %}" method="post" class="newdomain">
+            {{ form.as_div }}
+            <div class="field">
+                <button type="submit">{% trans "Create Domain" %}</button>
+            </div>
+        </form>
+{% endblock %}        

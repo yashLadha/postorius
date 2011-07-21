@@ -81,6 +81,7 @@ def login_required(fn):
 def domains(request, template = 'mailman-django/domains.html'):
     message=""
     error=""
+    raise Exception("DOMAIN TODO")#todo
     if request.method == 'POST':
         form = DomainNew(request.POST)
         existing_domains = None
@@ -106,7 +107,6 @@ def domains(request, template = 'mailman-django/domains.html'):
             return render_to_response('mailman-django/errors/generic.html', 
                                       {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
         form = DomainNew()
-        
     return render_to_response(template, {'form': form,
                                         'domains':existing_domains,
                                         'message':message,
