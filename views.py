@@ -162,7 +162,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             #settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
             #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
             settings.save()"""
-            return render_to_response('mailman-django/lists/created.html', {'fqdn_listname': settings['fqdn_listname'],
+            return render_to_response('mailman-django/lists/created.html', {'list': mailing_list,
                                         'message':message,
                                         'error':error},
                                       context_instance=RequestContext(request))
@@ -212,8 +212,7 @@ def list_summary(request,fqdn_listname=None,option=None):
             return render_to_response('mailman-django/errors/generic.html', 
                                       {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
     return render_to_response('mailman-django/lists/list_summary.html', 
-                                  {'fqdn_listname':fqdn_listname,
-                                   'list':current_list,
+                                  {'list':current_list,
                                    'message':  None,
                                   },
                                   context_instance=RequestContext(request)
@@ -282,11 +281,11 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
         if option=="unsubscribe" or not option:                                             
             form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 'email':user_email, 
                                                  'name' : 'unsubscribe'})
-    listinfo = c.get_list(fqdn_listname)#TODO
+    the_list = c.get_list(fqdn_listname)#TODO
     return render_to_response(template, {'form_subscribe': form_subscribe,
                                          'form_unsubscribe': form_unsubscribe,
-                                         'fqdn_listname': fqdn_listname,
-                                         'listinfo': listinfo}
+                                         'list': the_list,
+                                         }
                                          ,context_instance=RequestContext(request))
 
 @login_required
@@ -368,7 +367,7 @@ def list_settings(request, fqdn_listname = None, visible_section=None, visible_o
         
     return render_to_response(template, {'form': form,
                                          'message': message,
-                                         'fqdn_listname': the_list.settings['fqdn_listname'],
+                                         'list': the_list,
                                          'selected':selected,
                                          'visible_option':visible_option,
                                          'visible_section':visible_section,
@@ -424,7 +423,7 @@ def mass_subscribe(request, fqdn_listname = None,
         form = ListMassSubscription()
     return render_to_response(template, {'form': form,
                                          'message': message,
-                                         'fqdn_listname': the_list.settings['fqdn_listname']}
+                                         'list': the_list}
                                          ,context_instance=RequestContext(request))
 
 @login_required
