@@ -1,61 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 {% load i18n %}
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
-<head>
-	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-	<title>Mailman</title>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]--><!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]--><!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]--><!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]--><!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]--><head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	
+	<title></title>
 	<meta name="description" content="">
 	<meta name="author" content="">
-
-	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
-
-	<link rel="shortcut icon" href="/favicon.ico">
-	<!--link rel="apple-touch-icon" href="/apple-touch-icon.png"-->
- 
-    
-    <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}css/basics.css">
-    <!--<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}css/left_tab.css">-->
-    <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}css/mega_dropdown.css">
-    <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}css/forms.css">
-	<link rel="stylesheet" type="text/css" media="handheld" href="{{MEDIA_URL}}css/handheld.css?v=1">
-
-	<script src="{{MEDIA_URL}}js/lib/modernizr-1.5.min.js"></script>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="{{MEDIA_URL}}/images/favicon.ico">
+	<link rel="apple-touch-icon" href="{{MEDIA_URL}}images/apple-touch-icon.png">
+	
+	<link rel="stylesheet" href="{{MEDIA_URL}}{{MAILMAN_THEME}}/css/style.css?v=2">
+	
+	<script src="{{MEDIA_URL}}js/public/libs/modernizr-1.7.min.js"></script>
 </head>
-
 <body>
-        <div id="list_selector">{% include "mailman-django/list_selector.html" %}</div>
-	<div id="page">
-        <a id="logo" href="{% url list_index %}"></a>
-
-        <div class="menu">
-            {% include "mailman-django/menu/index.html" %}
+    <div id="mm_page">
+        <h1>{% block heading %}{% endblock %}</h1>
+        {% block header%}{% endblock %}
+        {% block actionButtonsList %}{% endblock %}
+        {% block smallBoxLeft %}{% endblock %}
+        {% block smallBoxRight %}{% endblock %}
+        <div id="mm_footer">
+            {% block footer %}{% endblock %}
         </div>
-        {% if message %}
-            <p id="message">{{ message }}</p>
-        {% endif %}
-        {% if error %}
-            <p id="error">{{ error }}</p>
-        {% endif %}
-		<div id="content">
-        	{% block content %}{% endblock %}
-		</div>
     </div>
-    REGRESSION:
-    {% block links %}{% endblock %}
-
-
-	<script type="text/javascript" src="{{MEDIA_URL}}js/lib/jquery-1.4.2.min.js"></script>
-	<script type="text/javascript" src="{{MEDIA_URL}}js/plugins.js?v=1"></script>
-	<script type="text/javascript" src="{{MEDIA_URL}}js/script.js?v=1"></script>
-    <!--[if lt IE 7 ]>
-        <script src="js/dd_belatedpng.js?v=1"></script>
-    <![endif]-->
-
+    <script src="{{MEDIA_URL}}js/public/libs/jquery-1.5.1.min.js"></script>
+	<script src="{{MEDIA_URL}}js/public/plugins.js"></script>
+	<script src="{{MEDIA_URL}}js/public/script.js"></script>
 </body>
-</html>

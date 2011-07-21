@@ -211,7 +211,7 @@ def list_summary(request,fqdn_listname=None,option=None):
         except AttributeError, e:
             return render_to_response('mailman-django/errors/generic.html', 
                                       {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
-    return render_to_response('mailman-django/public/list_summary.html', 
+    return render_to_response('mailman-django/lists/list_summary.html', 
                                   {'fqdn_listname':fqdn_listname,
                                    'list':current_list,
                                    'message':  None,
