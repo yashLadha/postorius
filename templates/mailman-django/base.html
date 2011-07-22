@@ -18,15 +18,22 @@
 </head>
 <body>
     <div id="mm_page">
-        <h1>{% block heading %}
-            {{list.list_name}} <span>{{list.real_name}}</span>
+        <h1>
+        {% block heading %}
+            {% if list %}
+                {{list.list_name}} <span>{{list.real_name}}</span>
+            {% else %}
+                <span>on {{domain}}</span>
+            {% endif %}
         {% endblock %}</h1>
         {% block header%}{% endblock %}
         {% block actionButtonsList %}{% endblock %}
         {% block smallBoxLeft %}{% endblock %}
         {% block smallBoxRight %}{% endblock %}
         <div id="mm_footer">
-            {% block footer %}{% endblock %}
+            {% block footer %}
+            <p id=logout><a href="{% url logout %}">{% trans "Logout" %}</a></p>
+            {% endblock %}
         </div>
     </div>
     <script src="{{MEDIA_URL}}js/public/libs/jquery-1.5.1.min.js"></script>

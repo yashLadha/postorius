@@ -52,7 +52,7 @@ def login_required(fn):
                 return fn(*args, **kwargs)
         except:
             pass
-        template = 'mailman-django/login.html'
+        template = url("login")
         # Authenticate the user
         # This is just a mockup since the authenticate functionality in 
         # the rest server is still missing.
@@ -494,7 +494,7 @@ def user_settings(request, member = None, tab = "user",
                                          'member': member}
                                          ,context_instance=RequestContext(request))
 
-def logout(request):
+def logout(request,action="login"):
     """
     Let the user logout.
     Some functions requires the user to be logged in to perform the

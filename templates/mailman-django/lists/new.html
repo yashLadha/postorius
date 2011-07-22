@@ -1,17 +1,14 @@
 {% extends "mailman-django/base.html" %}
 {% load i18n %}
 
-{% block content %}
-
-<h1>{% trans "Create a new list" %}</h1>
-
-<p id=logout><a href="{% url logout %}">{% trans "Logout" %}</a></p>
-
-<form action="{% url list_new %}" method="post" class="newlist">
-    {{ form.as_div }}
-    <div class="field">
-        <button type="submit">{% trans "Create List" %}</button>
+{% block header %}
+    <div class="mm_box">
+        <div class="mm_boxHeader">{% trans "Create a new list" %}</div>
+        <form action="{% url list_new %}" method="post" class="newlist">
+            {{ form.as_div }}
+            <div class="field">
+                <button type="submit">{% trans "Create List" %}</button>
+            </div>
+        </form>
     </div>
-
-</form>
 {% endblock %}

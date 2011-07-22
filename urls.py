@@ -23,11 +23,11 @@ from django.conf.urls.static import static
 
 urlpatterns = patterns('mailman_django.views',
     (r'^$', 'list_index'),
+    url(r'^logout/$', 'logout', name = 'logout'),
     url(r'^administration/$', 'administration', name = 'administration'),
     url(r'^domains/$', 'domains', name = 'domains'),
     url(r'^lists/$', 'list_index', name = 'list_index'),
     url(r'^lists/new/$', 'list_new', name = 'list_new'),
-    url(r'^lists/logout/$', 'logout', name = 'logout'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary', name = 'list_summary'), #PUBLIC
     url(r'^subscriptions/(?P<fqdn_listname>[^/]+)/(?:(?P<option>subscribe|unsubscribe)?)(/(?P<user_email>.+))?$', 'list_subscriptions', name = 'list_subscriptions'),
     url(r'^delete_list/(?P<fqdn_listname>[^/]+)/$', 'list_delete', name = 'list_delete'),
