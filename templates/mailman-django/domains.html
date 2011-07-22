@@ -5,37 +5,43 @@
     {% trans "Add a new Domain" %}
 {% endblock %}
 
+{% block smallBoxLeft %}
+    {% for domain in domains %}
+    <div class="mm_box mm_smallBox mm_smallBoxLeft">
+        <div class="mm_boxHeader">{{ domain.contact_address }}</div>
+            <ul>
+                <li><a href="http://{{ domain.base_url }}">{{ domain.base_url }}</a></li>
+                {% if domain.description %}
+                <li>{{ domain.description }}</li>
+                {% endif %}
+        </ul>
+    </div>
+    {% endfor %}
+{% endblock %}
+
 {% block header %}
     <div class="mm_box">
         <div class="mm_boxHeader">{% trans "About" %}</div>
-        <p id=logout><a href="{% url logout %}">{% trans "Logout" %}</a></p>
-            <table cellpadding="0" cellspacing="0">
-	            <tr>
-		            <th>{% trans "Domain" %}</th>
-		            <th>{% trans "Contact Address" %}</th>
-		            <th>{% trans "Description" %}</th>
-	            </tr>
-	        {% if domains %}
-            {% for domain in domains %}
-	            <tr>
-		            <td>{{ domain.base_url }}</td>
-		            <td>{{ domain.contact_address }}</td>
-		            <td>
-		                {% if domain.description %}
-		                    {{ domain.description }}
-		                {% endif %}
-		            </td>
-	            </tr>
-            {% endfor %}
-            {% endif %}
-            </table>
+            This site allows to register a new Domain, due to restriction in the REST API we can't delete them here yet. Please modify the Mailman DB directly if you need to remove a Domain. If interested take a look at the <a href="https://bugs.launchpad.net/mailmanwebgsoc2011/+bug/799689"> Launchapd Bug Report</a>
+        </p>
+    </div>
 {% endblock %}
 {% block actionButtonsList %}
-        TODO JS Form
-        <form action="{% url domains %}" method="post" class="newdomain">
+    <ul class="mm_actionButtons">
+        <li class="mm_new_domain"><a href="#JS new_domain">{% trans "New Domain" %}</a></li>
+        <!--<form action="{% url domains %}" method="post" class="newdomain">
             {{ form.as_div }}
             <div class="field">
                 <button type="submit">{% trans "Create Domain" %}</button>
             </div>
-        </form>
+        </form>-->
+        {% if not domain == "unregistered Domain" %}
+        <li class="mm_delete_domain">
+            <a href="#JS delete_domain">{% trans "Delete Domain" %}</br>
+            {{domain}}
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+
 {% endblock %}        

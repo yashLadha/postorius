@@ -82,7 +82,6 @@ def login_required(fn):
 def domains(request, template = 'mailman-django/domains.html'):
     message=""
     error=""
-    raise Exception("DOMAIN TODO")#todo
     if request.method == 'POST':
         form = DomainNew(request.POST)
         existing_domains = None
@@ -495,7 +494,7 @@ def user_settings(request, member = None, tab = "user",
                                          'member': member}
                                          ,context_instance=RequestContext(request))
 
-def logout(request,action="login"):
+def logout(request):
     """
     Let the user logout.
     Some functions requires the user to be logged in to perform the
