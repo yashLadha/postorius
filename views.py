@@ -52,7 +52,7 @@ def login_required(fn):
                 return fn(*args, **kwargs)
         except:
             pass
-        template = url("login")
+        template = "mailman-django/login.html"
         # Authenticate the user
         # This is just a mockup since the authenticate functionality in 
         # the rest server is still missing.
@@ -74,7 +74,8 @@ def login_required(fn):
         else:
             message = ""
         return render_to_response(template, {'form': Login(), 
-                                             'message': message})
+                                             'message': message},
+                                             context_instance=RequestContext(request))
     return _login_decorator
 
 @login_required
@@ -176,7 +177,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
         for domain in c.domains:
             choosable_domains.append((domain.email_host,domain.email_host))
         form = ListNew(choosable_domains)
-        
+        login.html
     return render_to_response(template, {'form': form, error:None}, context_instance=RequestContext(request))
 
 

@@ -1,24 +1,23 @@
 {% extends "mailman-django/base.html" %}
 {% load i18n %}
 
-{% block content %}
+{% block heading %}
+    {% trans "Login Required" %}
+{% endblock %}
 
-<h1>{% trans "Login Required" %}</h1>
 
-<p>{% trans "You are required to login to continue. Please provide a valid email address and a password." %}</p>
-
-{% if message %}
-    <p id="message">{{ message }}</p>
-{% endif %}
-
-<form action="" method="post" class="login">
-
-{{ form.as_div }}
-
-    <div class="field">
-        <button type="submit">{% trans "Login" %}</button>
+{% block header %}
+    <div class="mm_box">
+        <div class="mm_boxHeader">{% trans "Login required" %}</div>
+        <p>{% trans "You are required to login to continue. Please provide a valid email address and a password." %}</p>
     </div>
-
-</form>
-
+    <div class="mm_box">
+        <div class="mm_boxHeader">{% trans "Loginform" %}</div>
+        <form action="" method="post" class="login">
+            {{ form.as_div }}
+            <div class="field">
+                <button type="submit">{% trans "Login" %}</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}
