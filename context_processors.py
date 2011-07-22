@@ -12,12 +12,13 @@ def lists_of_domain(request):
     if "HTTP_HOST" in request.META.keys() :#TODO only lists of current domains if possible
         #get the URL
         web_host = request.META["HTTP_HOST"].split(":")[0]
+        domainname = "unregistered Domain"
         #querry the Domain object
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
             try:            
                 d = c.get_domain(None,web_host)
-                #workaround LP:802971
+                #workaround LP:802971 - only lists of the current domain #todo a8
                 domainname= d.email_host
                 for list in c.lists:
                     if list.host_name == domainname:
@@ -29,7 +30,7 @@ def lists_of_domain(request):
             message="REST API not found / Offline"
 
     #return a Dict with the key used in templates
-    return {"lists":domain_lists, "message":message}
+    return {"lists":domain_lists,"domain":domainname, "message":message}
     
 def render_MAILMAN_THEME(request):
     """ This function is a wrapper to render the Mailman Theme Variable from Settings

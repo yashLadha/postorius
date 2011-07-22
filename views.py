@@ -187,13 +187,7 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
     if request.method == 'POST':
         return redirect("list_summary", fqdn_listname=request.POST["list"])
     else:
-        try:
-            c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-            lists = c.lists
-        except AttributeError, e:
-            return render_to_response('mailman-django/errors/generic.html', 
-                                      {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
-        return render_to_response(template, {'lists': lists,'error':error},context_instance=RequestContext(request))
+        return render_to_response(template, {'error':error},context_instance=RequestContext(request)) #lists by context processor
 
 
 def list_summary(request,fqdn_listname=None,option=None):

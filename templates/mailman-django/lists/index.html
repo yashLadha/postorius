@@ -1,31 +1,33 @@
 {% extends "mailman-django/base.html" %}
 {% load i18n %}
 
-{% block content %}
+{% block heading %}
+    All available Lists <span>on {{domain}}</span>
+{% endblock %}
 
-<h1>{% trans "All mailing lists" %}</h1>
+{% block smallBoxLeft %}
+    {% for list in lists %}
+    <div class="mm_box mm_smallBox mm_smallBoxLeft">
+        <div class="mm_boxHeader">{{ list.real_name }}</div>
+            <ul>
+                <li><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname %}">{%trans "Subscriptions" %}</a></li>
+                <li><a href="{% url list_summary fqdn_listname=list.fqdn_listname %}">{%trans "Info" %}</a></li>
+                <li><a href="{% url list_settings list.fqdn_listname %}">{%trans "Settings" %}</a></li>
+                <li><a href="{% url list_delete list.fqdn_listname %}">{%trans "Delete list" %}</a></li>
+        </ul>
+    </div>
+    {% endfor %}
+{% endblock %}
 
-<table cellpadding="0" cellspacing="0">
-	<tr>
-		<th>{% trans "Real Name" %}</th>
-		<th>{% trans "List Name" %}</th>
-		<th colspan="3">&nbsp;</th>
-		<!--<th>&nbsp;</th>-->
-	</tr>
-{% for list in lists %}
-	<tr>
-		<td>{{ list.real_name }}</td>
-		<td>{{ list.fqdn_listname }}</td>
-		<td>
-            <a href="{% comment %} url list_subscriptions fqdn_listname=list.fqdn_listname option=None {% endcomment %}">{%trans "Info / Subscribe" %} #TODO - LINK</a>
-        </td>
-		<td>
-            <a href="{% url list_settings list.fqdn_listname %}">{%trans "Settings" %}</a>
-        </td>
-        <td>
-            <a href="{% url list_delete list.fqdn_listname %}">{%trans "Delete list" %}</a>
-        </td>
-	</tr>
-{% endfor %}
-</table>
+{% block header %}
+    <div class="mm_box">
+        <div class="mm_boxHeader">{% trans "About" %}</div>
+        {% trans "list_index site shows all available lists, either on the registered Domain or the whole server. Please bare in mind that we can only show public advertised lists."%}
+    </div>
+{% endblock %}
+
+{% block actionButtonsList %}
+    <ul class="mm_actionButtons">
+        <li class="mm_subscribe"><a href="{% url list_new %}">{% trans "Create new List" %}</a></li>
+    </ul>    
 {% endblock %}
