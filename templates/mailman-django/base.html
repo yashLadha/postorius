@@ -26,6 +26,18 @@
                 <span>on {{domain}}</span>
             {% endif %}
         {% endblock %}</h1>
+        {% if error %}
+        <div class="mm_box mm_smallBox">
+            <div class="mm_boxHeader">{% trans "Error" %}</div>
+            {{error}}        
+        </div>
+        {% endif %}
+        {% if message %}
+        <div class="mm_box mm_smallBox">
+            <div class="mm_boxHeader">{% trans "Message" %}</div>
+            {{message}}        
+        </div>
+        {% endif %}
         {% block header%}{% endblock %}
         {% block actionButtonsList %}{% endblock %}
         {% block smallBoxLeft %}{% endblock %}
