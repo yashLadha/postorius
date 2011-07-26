@@ -125,7 +125,7 @@ def administration(request): #TODO
     return render_to_response('mailman-django/errors/generic.html', 
                                   {'message':  "This Site is in preperation."})#TODO
 
-@login_required
+#@login_required
 def list_new(request, template = 'mailman-django/lists/new.html'):
     """
     Add a new mailing list. 
@@ -138,6 +138,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
     """
     error=None
     message=None
+    mailing_list=None
     if request.method == 'POST':
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
@@ -155,17 +156,16 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
             #creating the list
             try:
                 mailing_list = domain.create_list(form.cleaned_data['listname'])
+                settings = mailing_list.settings
+                settings["description"] = form.cleaned_data['description']
+                settings["owner_address"] = form.cleaned_data['list_owner'] #TODO: Readonly
+                settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
+                settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
+                #settings.save()"""
             except HTTPError, e: #TODO catch correct Error class
                 error = e
-            #saving settings
-            settings = mailing_list.settings
-            """
-            settings["description"] = form.cleaned_data['description']
-            #settings["owner_address"] = form.cleaned_data['list_owner'] #TODO: Readonly
-            #settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
-            #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
-            settings.save()"""
-            return render_to_response('mailman-django/lists/created.html', {'list': mailing_list,
+            return render_to_response('mailman-django/lists/created.html', 
+                                        {'list': mailing_list,
                                         'message':message,
                                         'error':error},
                                       context_instance=RequestContext(request))
