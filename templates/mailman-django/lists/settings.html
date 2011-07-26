@@ -1,4 +1,4 @@
-{% extends "mailman-django/base.html" %}
+{% extends extend_template %}
 {% load i18n %}
 
 {% block heading %}
@@ -17,12 +17,7 @@
             </div>
         </form>
     </div>
-{% endblock %}
-
-
-
-{% block smallBoxLeft %}
-    <div class="mm_box mm_smallBox mm_smallBoxLeft">
+    <div class="mm_box mm_smallBox">
         <div class="mm_boxHeader">{% trans "Links" %}</div>
         <ul>
             <li><a href="{% url list_summary list.fqdn_listname %}">{% trans "List Summary" %} </a></li>
