@@ -193,7 +193,7 @@ def list_index(request, template = 'mailman-django/lists/index.html'):
         return render_to_response(template, {'error':error},context_instance=RequestContext(request)) #lists by context processor
 
 
-def list_summary(request,fqdn_listname=None,option=None):
+def list_summary(request,fqdn_listname=None,option=None,template='mailman-django/lists/summary.html'):
     """
     PUBLIC
     an entry page for each lists which allows some simple tasks per LIST
@@ -208,7 +208,7 @@ def list_summary(request,fqdn_listname=None,option=None):
         except AttributeError, e:
             return render_to_response('mailman-django/errors/generic.html', 
                                       {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
-    return render_to_response('mailman-django/lists/list_summary.html', 
+    return render_to_response(template, 
                                   {'list':current_list,
                                    'message':  None,
                                   },
@@ -508,4 +508,4 @@ def logout(request):
         del request.session['member_id']
     except KeyError:
         pass
-    return list_index(request, template = 'mailman-django/lists/index.html')
+    return list_index(request)
