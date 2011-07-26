@@ -159,9 +159,10 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 settings = mailing_list.settings
                 settings["description"] = form.cleaned_data['description']
                 settings["owner_address"] = form.cleaned_data['list_owner'] #TODO: Readonly
-                settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
-                settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
-                #settings.save()"""
+                #settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
+                #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
+                settings.save()
+                return redirect("list_index")
             except HTTPError, e: #TODO catch correct Error class
                 error = e
             return render_to_response('mailman-django/lists/created.html', 
