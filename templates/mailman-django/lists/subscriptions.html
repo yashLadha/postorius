@@ -1,4 +1,4 @@
-{% extends "mailman-django/base.html" %}
+{% extends extend_template %}
 {% load i18n %}
 
 {% block heading %}
@@ -7,7 +7,7 @@
 
 {% block header %}
     <div class="mm_box">
-        <div class="mm_boxHeader">{% trans "About" %}</div>
+        <div class="mm_boxHeader">{% trans "Subscriptions" %}</div>
             {% if form_subscribe %}
             <form action="{% url list_subscriptions list.fqdn_listname %}" method="post" class="subscribe" name="subscribe">
                 {{ form_subscribe.as_div }}
