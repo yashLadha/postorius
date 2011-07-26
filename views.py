@@ -162,13 +162,10 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 #settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
                 #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
                 settings.save()
-                return redirect("list_index")
+                return redirect("list_summary",fqdn_listname=mailing_list.fqdn_listname)
             except HTTPError, e: #TODO catch correct Error class
-                error = e
-            return render_to_response('mailman-django/lists/created.html', 
-                                        {'list': mailing_list,
-                                        'message':message,
-                                        'error':error},
+                return render_to_response('mailman-django/errors/generic.html', 
+                                      {'error':e},
                                       context_instance=RequestContext(request))
     else:
         try:
