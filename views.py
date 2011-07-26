@@ -79,12 +79,22 @@ def login_required(fn):
     return _login_decorator
 
 @login_required
-def domains(request, template = 'mailman-django/domains.html'):
-    message=""
-    error=""
+def domain_index(request, template = 'mailman-django/domain_index.html'):
+    try:
+        c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
+        existing_domains = c.domains
+    except AttributeError, e:
+        return render_to_response('mailman-django/errors/generic.html', 
+                                 {'error': "REST API not found / Offline"},
+				 context_instance=RequestContext(request))
+    return render_to_response(template, {'domains':existing_domains,},
+					          context_instance=RequestContext(request))  
+
+@login_required
+def domain_new(request, template = 'mailman-django/domain_new.html'):
+    message = None
     if request.method == 'POST':
         form = DomainNew(request.POST)
-        existing_domains = None
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
             if form.is_valid():
@@ -94,24 +104,17 @@ def domains(request, template = 'mailman-django/domains.html'):
                 try:
                     domain = c.create_domain(mail_host,web_host,description)
                 except HTTPError, e:
-                    error=e
-            existing_domains = c.domains
+                    message=e
+                return redirect("domain_index")
         except AttributeError, e:
             return render_to_response('mailman-django/errors/generic.html', 
-                                      {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
+                                      {'error': "REST API not found / Offline", 
+                                      'is_ajax':is_ajax},
+                                      context_instance=RequestContext(request))
     else:
-        try:
-            c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-            existing_domains = c.domains
-        except AttributeError, e:
-            return render_to_response('mailman-django/errors/generic.html', 
-                                      {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
         form = DomainNew()
-    return render_to_response(template, {'form': form,
-                                        'domains':existing_domains,
-                                        'message':message,
-                                        'error':error,
-                                        },context_instance=RequestContext(request))        
+    return render_to_response(template, {'form': form,'message':message},   
+                              context_instance=RequestContext(request))        
 
 @login_required
 def administration(request): #TODO
@@ -176,7 +179,6 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
         for domain in c.domains:
             choosable_domains.append((domain.email_host,domain.email_host))
         form = ListNew(choosable_domains)
-        login.html
     return render_to_response(template, {'form': form, error:None}, context_instance=RequestContext(request))
 
 

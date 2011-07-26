@@ -36,3 +36,13 @@ def render_MAILMAN_THEME(request):
     """ This function is a wrapper to render the Mailman Theme Variable from Settings
     """
     return {"MAILMAN_THEME":MAILMAN_THEME}
+
+def extend_ajax(request):
+    """ This function checks if the request was made using AJAX
+    Using Ajax template_extend will base_ajax.html else it will be base.html
+    """
+    if request.is_ajax():
+        extend_template = "mailman-django/base_ajax.html"        
+    else:        
+        extend_template = "mailman-django/base.html"
+    return {"extend_template":extend_template}        
