@@ -220,36 +220,42 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
     list. For the latter two different forms are available for the 
     user to fill in which are evaluated in this function.
     """
-    #create Values for Template usage      
+    #create Values for Template usage   
+    message = None
+    error = None
     form_subscribe = None
     form_unsubscribe = None
+    # connect REST and catch issues getting the list
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-        the_list = c.get_list(fqdn_listname) 
+        the_list = c.get_list(fqdn_listname)
     except AttributeError, e:
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
     except HTTPError,e :
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'error': _("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
-        
+    #process submitted form    
     if request.method == 'POST':
         form = False
         # The form enables both subscribe and unsubscribe. As a result
         # we must find out which was the case.
         action = request.POST.get('name', '')
-        
         if action == "subscribe":
             form = ListSubscribe(request.POST)
             if form.is_valid():
                 # the form was valid so try to subscribe the user
                 fqdn_listname = form.cleaned_data['listname']
                 try:
-                    response = the_list.subscribe(address=form.cleaned_data['email'],real_name=form.cleaned_data.get('real_name', ''))
-                    return HttpResponseRedirect(reverse('list_subscriptions'))
+                    email = form.cleaned_data['email']
+                    response = the_list.subscribe(address=email,real_name=form.cleaned_data.get('real_name', ''))
+                    return render_to_response('mailman-django/lists/index.html', 
+                                              {'fqdn_listname': fqdn_listname,
+                                               'option':option,
+                                               'message':_("Subscribed ")+ email },context_instance=RequestContext(request))
                 except Exception, e: #TODO-Exception
                     return HttpResponse(e)
-            else:
+            else: #invalid subscribe form
                 form_subscribe = ListSubscribe(request.POST)
                 form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 'name' : 'unsubscribe'})       
         elif action == "unsubscribe":
@@ -258,14 +264,16 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                 #the form was valid so try to unsubscribe the user
                 try:
                     response = the_list.unsubscribe(address=email)
-                    return render_to_response('mailman-django/lists/unsubscribed.html', 
-                                              {'fqdn_listname': fqdn_listname},context_instance=RequestContext(request))
+                    return render_to_response('mailman-django/lists/index.html', 
+                                              {'fqdn_listname': fqdn_listname, 'message':_("Unsubscribed ")+ email },context_instance=RequestContext(request))
                 except Exception, e:#TODO-Exception
                     return HttpResponse(e)     
-            else:
-                form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 'name' : 'subscribe'})
+            else:#invalid unsubscribe form
+                form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname,
+                                                               'option':option,
+                                                               'name' : 'subscribe'})
                 form_unsubscribe = ListUnsubscribe(request.POST)
-
+    #Show the forms
     else:
         # the request was a GET request so set the two forms to empty
         # forms
@@ -278,6 +286,8 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
     the_list = c.get_list(fqdn_listname)#TODO
     return render_to_response(template, {'form_subscribe': form_subscribe,
                                          'form_unsubscribe': form_unsubscribe,
+                                         'message':message,
+                                         'error':error,
                                          'list': the_list,
                                          }
                                          ,context_instance=RequestContext(request))

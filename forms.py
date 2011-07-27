@@ -191,9 +191,9 @@ class ListSubscribe(FieldsetForm):
         required = False,
     )
     name = forms.CharField(
-        label = _('Name of action'), 
+        label = '', #Name of action
         widget = forms.HiddenInput(),
-        #initial = 'subscribe',
+        initial = 'subscribe',
     )
     
     # should add password! TODO
@@ -205,7 +205,7 @@ class ListSubscribe(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["Subscribe", "email","real_name"]]    
+        layout = [["Subscribe", "email","real_name","name"]]    
 
 class ListUnsubscribe(FieldsetForm):
     """Form fields to leave an existing list.
@@ -226,9 +226,9 @@ class ListUnsubscribe(FieldsetForm):
         }
     )
     name = forms.CharField(
-    label = _('Name of action'), 
-    widget = forms.HiddenInput(),
-    #initial = 'unsubscribe'
+        label = '', #Name of action
+        widget = forms.HiddenInput(),
+        initial = 'unsubscribe',
     )
     class Meta:
         """
@@ -238,7 +238,7 @@ class ListUnsubscribe(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["Unsubscribe", "email"]]        
+        layout = [["Unsubscribe", "email","name"]]        
 
     # should at one point add the password to be required as well! #TODO
 class ListSettings(FieldsetForm):
