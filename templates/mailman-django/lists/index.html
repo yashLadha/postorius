@@ -7,7 +7,7 @@
 
 {% block smallBoxLeft %}
     {% for list in lists %}
-    <div class="mm_box mm_smallBox mm_smallBoxLeft">
+    <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
         <div class="mm_boxHeader">{{ list.real_name }}</div>
             <ul>
                 <li><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname %}">{%trans "Subscriptions" %}</a></li>
@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block header %}
-    <div class="mm_box">
+    <div class="mm_box mm_clear">
         <div class="mm_boxHeader">{% trans "About" %}</div>
         {% trans "list_index site shows all available lists, either on the registered Domain or the whole server. Please bare in mind that we can only show public advertised lists."%}
     </div>
