@@ -44,7 +44,8 @@
         {% block smallBoxRight %}{% endblock %}
         <div id="mm_footer">
             {% block footer %}
-            <p id=logout><a href="{% url logout %}">{% trans "Logout" %}</a></p>
+            {% include "mailman-django/list_selector.html" %}
+            <p id="logout"><a href="{% url logout %}">{% trans "Logout" %}</a></p>
             {% endblock %}
         </div>
     </div>

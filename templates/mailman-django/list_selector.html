@@ -1,16 +1,19 @@
 {% load i18n %}
 
 {% block selector %}
-
-{%if lists %}
-<form id=list_selector method="post" action="/lists/">
-    <select name="list">
-        {% for list in lists %}
-            <option selected="" value="{{list.fqdn_listname}}">{{list.real_name}}</option>
-        {% endfor %}
-    </select>
-<input type="submit" value="Go to">
-</div></form>
-</form>
+<div id="list_selector">
+{%if lists|length >= 1 and lists|length <= 15 %}
+    <form id=list_selector method="post" action="/lists/">
+        <select name="list">
+            {% for list in lists %}
+                <option selected="" value="{{list.fqdn_listname}}">{{list.real_name}}</option>
+            {% endfor %}
+        </select>
+    <input type="submit" value="Go to">
+    </div></form>
+    </form>
+{% else %}
+    <a href="{% url list_index %}">{% trans "List Index" %}</a>
 {%endif%}
+</div>
 {% endblock %}
