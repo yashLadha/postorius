@@ -292,7 +292,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                                          }
                                          ,context_instance=RequestContext(request))
 
-#@login_required
+#@login_required #debug
 def list_delete(request, fqdn_listname = None, 
                 template = 'mailman-django/lists/index.html'):
     """
@@ -386,7 +386,7 @@ def list_settings(request, fqdn_listname = None, visible_section=None, visible_o
                                          }
                                          ,context_instance=RequestContext(request))
 
-@login_required
+#@login_required #debug
 def mass_subscribe(request, fqdn_listname = None, 
                    template = 'mailman-django/lists/mass_subscribe.html'):
     """

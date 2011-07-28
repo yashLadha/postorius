@@ -1,36 +1,23 @@
 {% extends "mailman-django/base.html" %}
 {% load i18n %}
 
-{% block links%}
-{% url list_info fqdn_listname as url_list_info %}
-{% url list_delete fqdn_listname as url_list_delete %}
-{% url list_settings fqdn_listname as url_list_settings %}
-
-{% blocktrans %}
-
-You can also <a href="{{url_list_info}}">subscribe or unsubscribe</a> a user to the list "the normal way" or <a href="{{ url_list_delete }}">delete</a> the list. To go back to the general settings page, please click <a href="{{ url_list_settings}}">here</a>.{% endblocktrans %}
+{% block heading %}
+    {% trans "Mass Subscribe Users <span> to" %} {{list.fqdn_listname}}</span>
 {% endblock %}
 
-{% block content %}
+{% block header %}
+    <div class="mm_box">
+        <div class="mm_boxHeader">{% trans "Form" %}</div>
 
-<h1>{% trans "Mass Subscribe Users" %}</h1>
+        <p>{% blocktrans %}Here you can mass subscribe users to the list    <em>{{ list.fqdn_listname }}</em>. To do so, please enter one name on each row.{% endblocktrans %}</p>
 
-<p id=logout><a href="{% url logout %}">{% trans "Logout" %}</a></p>
+        <form action="{% url mass_subscribe list.fqdn_listname %}" method="post" class="mass_subscribe">
 
-<p>{% blocktrans %}Here you can mass subscribe users to the list <em>{{ fqdn_listname }}</em>. To do so, please enter one name on each row.{% endblocktrans %}</p>
+        {{ form.as_div }}
 
-{% if message %}
-    <p id="message">{{ message }}</p>
-{% endif %}
-
-<form action="{% url mass_subscribe fqdn_listname %}" method="post" class="mass_subscribe">
-
-{{ form.as_div }}
-
-    <div class="field">
-        <button type="submit">{% trans "Subscribe users" %}</button>
+            <div class="field">
+                <button type="submit">{% trans "Subscribe users" %}</button>
+            </div>
+        </form>
     </div>
-
-</form>
-
 {% endblock %}
