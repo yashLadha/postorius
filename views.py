@@ -292,27 +292,35 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                                          }
                                          ,context_instance=RequestContext(request))
 
-@login_required
+#@login_required
 def list_delete(request, fqdn_listname = None, 
                 template = 'mailman-django/lists/index.html'):
     """
     Delete a list by providing the full list name including domain.
     """
-
     # create a connection to Mailman and get the list
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         the_list = c.get_list(fqdn_listname)
-        the_list.delete()
+        if request.method == 'POST':
+            the_list.delete()
+            # let the user return to the list index page
+            lists = c.lists
+            return redirect("list_index")
+        else:
+            submit_url = reverse('list_delete',kwargs={'fqdn_listname':fqdn_listname})
+            cancel_url = reverse('list_index',)
+            return render_to_response('mailman-django/confirm_dialog.html',
+                        {'submit_url': submit_url,
+                         'cancel_url': cancel_url,
+                        'list':the_list,},
+                        context_instance=RequestContext(request))
     except AttributeError, e:
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
     except HTTPError,e :
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'error': _("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
-    # let the user return to the list index page
-    lists = c.lists
-    return redirect("list_index")
 
 #@login_required #debug
 def list_settings(request, fqdn_listname = None, visible_section=None, visible_option=None,
