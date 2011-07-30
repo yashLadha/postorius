@@ -369,11 +369,17 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Private Archive'),
         #)
-    advertised = forms.BooleanField(
-        widget = forms.RadioSelect(choices=choices),
-        required = False,
-        label = _('Advertised'),
-    )
+    advertised = forms.ChoiceField(
+        widget = forms.RadioSelect(),
+        label = _('List Type (advertised)'), 
+        error_messages = {
+            'required': _("Please choose a list type."), 
+        },
+        required = True,
+        choices = (
+            (True, _("Advertise this list in List Index")),
+            (False, _("Hide this list in Liste Index")),
+        ))
     filter_content = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
         required = False,
