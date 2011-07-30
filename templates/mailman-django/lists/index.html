@@ -7,8 +7,9 @@
 
 {% block smallBoxLeft %}
     {% for list in lists %}
+    <!-- #TODO ACL - advertised for admin only-->
     <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
-        <div class="mm_boxHeader">{{ list.real_name }}</div>
+        <div class="mm_boxHeader">{{ list.real_name }} {% if not list.settings.advertised %}(non-public){% endif %}</div>
             <ul>
                 <li><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname %}">{%trans "Subscriptions" %}</a></li>
                 <li><a href="{% url list_summary fqdn_listname=list.fqdn_listname %}">{%trans "Info" %}</a></li>

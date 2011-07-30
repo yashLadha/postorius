@@ -6,7 +6,9 @@
     <form id=list_selector method="post" action="/lists/">
         <select name="list">
             {% for list in lists %}
-                <option selected="" value="{{list.fqdn_listname}}">{{list.real_name}}</option>
+                {% if list.settings.advertised %}
+                    <option selected="" value="{{list.fqdn_listname}}">{{list.real_name}}</option>
+                {% endif %}
             {% endfor %}
         </select>
     <input type="submit" value="Go to">
