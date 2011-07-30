@@ -118,17 +118,16 @@ class ListNew(FieldsetForm):
             'required': _("Please enter the list owner's email address."), 
         },
         required = True)
-    list_type = forms.ChoiceField(
-        widget = forms.Select(),
+    advertised = forms.ChoiceField(
+        widget = forms.RadioSelect(),
         label = _('List Type'), 
         error_messages = {
             'required': _("Please choose a list type."), 
         },
         required = True,
         choices = (
-            ("", _("Please choose")),
-            ("closed_discussion", _("Closed discussion list")),
-            ("announcement", _("Announcement list")),
+            (True, _("Advertise this list in List Index")),
+            (False, _("Hide this list in Liste Index")),
         ))
 
     languages = forms.MultipleChoiceField(
@@ -169,7 +168,7 @@ class ListNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["List Details", "listname", "mail_host", "list_owner", "description", "list_type"],
+        layout = [["List Details", "listname", "mail_host", "list_owner", "description", "advertised"],
                   ["Available Languages", "languages"]]
 
 class ListSubscribe(FieldsetForm):

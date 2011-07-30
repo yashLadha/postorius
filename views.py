@@ -159,7 +159,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                 settings = mailing_list.settings
                 settings["description"] = form.cleaned_data['description']
                 settings["owner_address"] = form.cleaned_data['list_owner'] #TODO: Readonly
-                #settings["???"] = form.cleaned_data['list_type'] #TODO not found in REST
+                settings["advertised"] = form.cleaned_data['advertised']
                 #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST
                 settings.save()
                 return redirect("list_summary",fqdn_listname=mailing_list.fqdn_listname)
