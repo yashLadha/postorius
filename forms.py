@@ -402,6 +402,7 @@ class ListSettings(FieldsetForm):
     #)
     description = forms.CharField(
         label = _('Description'),
+        widget = forms.Textarea()
     )
     #digest_footer = forms.CharField(
         #label = _('Digest footer'),
