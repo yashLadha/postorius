@@ -25,7 +25,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import re
 from mailman.client import Client
-from forms import *
+from forms import * #TODO ?
 from settings import API_USER, API_PASS
 import sys #Error handing info
 from urllib2 import HTTPError
@@ -446,7 +446,7 @@ def user_settings(request, member = None, tab = "user",
     """
     Change the user or the membership settings.
     The user must be logged in to be allowed to change any settings.
-    TODO: * add CSS to display tabs
+    TODO: * add CSS to display tabs ??
           * add missing functionality in REST server and client and 
             change to the correct calls here
     """

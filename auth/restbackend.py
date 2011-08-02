@@ -33,23 +33,30 @@ class RESTBackend:
     supports_anonymous_user = False
     supports_inactive_user = False
 
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, **credentials):
+        """
+        This authenticate function will check with the REST Middleware  
+        wheteher the user exists and did provide a valid password.
+        
+        DEV: TODO - needs Middleware connection
+        """
+        # make_password is used to create sha1 strings
         valid_users = {"james@example.com": "james", #workaround until middleware exists
                        "katie@example.com": "katie",
                        "kevin@example.com": "kevin"}
-        login_valid = username in valid_users.keys()
+        login_valid = credentials["username"] in valid_users.keys()
         try:
-            pwd_valid = check_password(password, valid_users["username"])
+            pwd_valid = (credentials["password"] == valid_users[credentials["username"]])
         except KeyError:
             pwd_valid = False
         if login_valid and pwd_valid:
             try:
-                user = User.objects.get(username=username)
+                user = User.objects.get(username=credentials["username"])
             except User.DoesNotExist:
                 # Create a new user. Note that we can set password
                 # to anything, because it won't be checked; the password
                 # from settings.py will.
-                user = User(username=username, password='get from settings.py')
+                user = User(username=credentials["username"], password='doesnt matter')
                 user.is_staff = False
                 user.is_superuser = False
                 user.save()
@@ -66,4 +73,4 @@ class RESTBackend:
         if user_obj.username == "james@example.com":
             return True
         else:
-            return False            
+            return False
