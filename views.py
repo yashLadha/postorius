@@ -21,6 +21,8 @@ from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 import re
 from mailman.client import Client
 from forms import *
@@ -28,16 +30,16 @@ from settings import API_USER, API_PASS
 import sys #Error handing info
 from urllib2 import HTTPError
 
-def login_required(fn):
-    """
+#def login_required(fn):
+"""
     Function (decorator) making sure the user has to log in before 
     they can continue. 
     To use it, add @login_required above the function that requires a 
     user to be logged in. The function requiring login will 
     automatically be added as an argument in the call.
     """
-    def _login_decorator(*args, **kwargs):
-        """
+    #def _login_decorator(*args, **kwargs):
+"""
         Inner decorator to require a user to login. This inner 
         function gets access to the arguments of the function demanding
         login to be processed. 
@@ -46,7 +48,7 @@ def login_required(fn):
         redirected to the original function.
         """
         # If the user is already logged in, let them continue directly.
-        request = args[0]
+"""request = args[0]
         try:
             if request.session['member_id']:
                 return fn(*args, **kwargs)
@@ -77,7 +79,7 @@ def login_required(fn):
                                              'message': message},
                                              context_instance=RequestContext(request))
     return _login_decorator
-
+"""
 @login_required
 def domain_index(request, template = 'mailman-django/domain_index.html'):
     try:
@@ -512,15 +514,53 @@ def user_settings(request, member = None, tab = "user",
                                          'member': member}
                                          ,context_instance=RequestContext(request))
 
-def logout(request):
+def login(request,template = 'mailman-django/login.html'):
     """
     Let the user logout.
     Some functions requires the user to be logged in to perform the
     actions. After the user is done, logging out is possible to avoid
     others having rights they should not have.
     """
-    try:
+    """try:
         del request.session['member_id']
     except KeyError:
         pass
     return list_index(request)
+    """ #used to be old style logout - workaround for local django usage
+    
+    """
+    New Login page used with the RESTBackend, will allow login and logout depending on the current user status.
+    """
+    from django.contrib.auth import authenticate
+    error = None
+    message = None
+    form=None
+    
+    if request.user.is_authenticated():
+        message = _("You can end your user session here")
+        return render_to_response(template, {'form': form,
+                                         'message': message,}
+                                         ,context_instance=RequestContext(request))
+    else:
+        if request.POST:
+            form = Login(request.POST)
+            if form.is_valid():
+                user = authenticate(username=form.cleaned_data["user"],
+                                    password=form.cleaned_data["password"])
+                if user is not None:
+                    if user.is_active:
+                        redirect(request.GET["next"])
+                    else:
+                        error= _("Your account has been disabled!")
+                else:
+                    error = _("Your username and password were incorrect.")
+        else:
+            form = Login()
+            message = "You are required to login to continue. Please provide a valid email address and a password."
+        return render_to_response(template, {'form': form,
+                                         'error': error,
+                                         'message': message,}
+                                         ,context_instance=RequestContext(request))
+    
+
+            

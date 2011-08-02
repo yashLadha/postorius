@@ -23,7 +23,7 @@ from django.conf.urls.static import static
 
 urlpatterns = patterns('mailman_django.views',
     (r'^$', 'list_index'),
-    url(r'^logout/$', 'logout', name = 'logout'),
+    url(r'^accounts/login/$', 'login', name = 'login'),
     url(r'^administration/$', 'administration', name = 'administration'),
     url(r'^domains/$', 'domain_index', name = 'domain_index'),
     url(r'^domains/new/$', 'domain_new', name = 'domain_new'),

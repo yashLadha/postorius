@@ -850,13 +850,13 @@ class ListSettings(FieldsetForm):
 class Login(FieldsetForm):
     """Form fields to let the user log in.
     """
-    addr = forms.EmailField(
+    user = forms.EmailField(
         label = _('Email address'),
         error_messages = {'required': _('Please enter an email address.'), 
                           'invalid': _('Please enter a valid email address.')},
         required = True,
     )
-    psw = forms.CharField(
+    password = forms.CharField(
         label = _('Password'),
         widget = forms.PasswordInput,
         error_messages = {'required': _('Please enter your password.'), 
@@ -869,7 +869,7 @@ class Login(FieldsetForm):
         Class to define the name of the fieldsets and what should be
         included in each.
         """
-        layout = [["Login", "addr", "psw"],]
+        layout = [["Login", "user", "password"],]
 
 class ListMassSubscription(FieldsetForm):
     """Form fields to masssubscribe users to a list.

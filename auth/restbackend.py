@@ -20,7 +20,7 @@
 
 from django.contrib.auth.models import User, check_password
 
-class SettingsBackend:
+class RESTBackend:
     """
     Authenticate against the settings the REST Middleware
     checking permissions ...
@@ -32,12 +32,11 @@ class SettingsBackend:
     supports_object_permissions = False
     supports_anonymous_user = False
     supports_inactive_user = False
-    
-    valid_users = {"james@example.com": "james",
-                       "katie@example.com": "katie",
-                       "kevin@example.com": "kevin"}
 
     def authenticate(self, username=None, password=None):
+        valid_users = {"james@example.com": "james", #workaround until middleware exists
+                       "katie@example.com": "katie",
+                       "kevin@example.com": "kevin"}
         login_valid = username in valid_users.keys()
         try:
             pwd_valid = check_password(password, valid_users["username"])
