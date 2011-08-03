@@ -514,7 +514,12 @@ def user_settings(request, member = None, tab = "user",
                                          'member': member}
                                          ,context_instance=RequestContext(request))
 
-def login(request,template = 'mailman-django/login.html'):
+def user_logout(request):
+    from django.contrib.auth import logout
+    logout(request)
+    return redirect('user_login')
+
+def user_login(request,template = 'mailman-django/login.html'):
     """
     Let the user logout.
     Some functions requires the user to be logged in to perform the
@@ -531,39 +536,30 @@ def login(request,template = 'mailman-django/login.html'):
     """
     New Login page used with the RESTBackend, will allow login and logout depending on the current user status.
     """
-    from django.contrib.auth import authenticate
+    from django.contrib.auth import authenticate, login
     error = None
     message = None
     form=None
-    
-    if request.user.is_authenticated():
-        message = _("You can end your user session here")
-        return render_to_response(template, {'form': form,
-                                         'message': message,}
-                                         ,context_instance=RequestContext(request))
-    else:
-        if request.POST:
-            form = Login(request.POST)
-            if form.is_valid():
-                user = authenticate(username=form.cleaned_data["user"],
-                                    password=form.cleaned_data["password"])
-                if user is not None:
-                    if user.is_active:
-                        if "next" in request.GET.keys():
-                            return redirect(request.GET["next"])
-                        else:
-                            return redirect("list_index")
+    if request.POST:
+        form = Login(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data["user"],
+                                password=form.cleaned_data["password"])
+            if user is not None:
+                if user.is_active:
+                    if "next" in request.GET.keys():
+                        login(request,user)
+                        return redirect(request.GET["next"])        
                     else:
-                        error= _("Your account has been disabled!")
+                        return redirect("list_index")
                 else:
-                    error = _("Your username and password were incorrect.")
-        else:
-            form = Login()
-            message = "You are required to login to continue. Please provide a valid email address and a password."
-        return render_to_response(template, {'form': form,
+                    error= _("Your account has been disabled!")
+            else:
+                error = _("Your username and password were incorrect.")
+    else:
+        form = Login()
+        message = "You are required to login to continue. Please provide a valid email address and a password."
+    return render_to_response(template, {'form': form,
                                          'error': error,
                                          'message': message,}
                                          ,context_instance=RequestContext(request))
-    
-
-            

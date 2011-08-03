@@ -45,7 +45,11 @@
         <div id="mm_footer">
             {% block footer %}
             {% include "mailman-django/list_selector.html" %}
-            <p id="logout"><a href="{% url login %}">{% trans "Login" %}</a></p>
+            {% if request.user.is_authenticated %}
+                <p id="login"><a href="{% url user_login %}">{% trans "Login" %}</a></p>
+            {% else %}
+                <p id="logout"><a href="{% url user_logout %}">{% trans "Logout" %}</a></p>
+            {% endif %}
             {% endblock %}
         </div>
     </div>
