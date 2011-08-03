@@ -25,61 +25,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import re
 from mailman.client import Client
-from forms import * #TODO ?
+from forms import *
 from settings import API_USER, API_PASS
 import sys #Error handing info
 from urllib2 import HTTPError
 
-#def login_required(fn):
-"""
-    Function (decorator) making sure the user has to log in before 
-    they can continue. 
-    To use it, add @login_required above the function that requires a 
-    user to be logged in. The function requiring login will 
-    automatically be added as an argument in the call.
-    """
-    #def _login_decorator(*args, **kwargs):
-"""
-        Inner decorator to require a user to login. This inner 
-        function gets access to the arguments of the function demanding
-        login to be processed. 
-        The function checks that a valid user name and password has 
-        been provided and when this is the case the user gets 
-        redirected to the original function.
-        """
-        # If the user is already logged in, let them continue directly.
-"""request = args[0]
-        try:
-            if request.session['member_id']:
-                return fn(*args, **kwargs)
-        except:
-            pass
-        template = "mailman-django/login.html"
-        # Authenticate the user
-        # This is just a mockup since the authenticate functionality in 
-        # the rest server is still missing.
-        # TODO: implement real authenticate when possible
-        valid_users = {"james@example.com": "james",
-                       "katie@example.com": "katie",
-                       "kevin@example.com": "kevin"}
-        if request.method == 'POST':
-            form = Login(request.POST)
-            if form.is_valid():
-                if request.POST["addr"] in valid_users.keys():
-                    if request.POST["psw"] == valid_users[request.POST["addr"]]:
-                        # TODO: change this to a better id when possible
-                        request.session['member_id'] = request.POST["addr"]
-                        # make sure to "reset" the method before continuing
-                        request.method = 'GET'
-                        return fn(*args, **kwargs)
-            message = "Your username and password didn't match."
-        else:
-            message = ""
-        return render_to_response(template, {'form': Login(), 
-                                             'message': message},
-                                             context_instance=RequestContext(request))
-    return _login_decorator
-"""
 @login_required
 def domain_index(request, template = 'mailman-django/domain_index.html'):
     try:
@@ -127,7 +77,7 @@ def administration(request): #TODO
     return render_to_response('mailman-django/errors/generic.html', 
                                   {'message':  "This Site is in preperation."})#TODO
 
-#@login_required
+@login_required
 def list_new(request, template = 'mailman-django/lists/new.html'):
     """
     Add a new mailing list. 
@@ -294,7 +244,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                                          }
                                          ,context_instance=RequestContext(request))
 
-#@login_required #debug
+@login_required
 def list_delete(request, fqdn_listname = None, 
                 template = 'mailman-django/lists/index.html'):
     """
@@ -324,7 +274,7 @@ def list_delete(request, fqdn_listname = None,
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'error': _("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
 
-#@login_required #debug
+@login_required
 def list_settings(request, fqdn_listname = None, visible_section=None, visible_option=None,
                   template = 'mailman-django/lists/settings.html'):
     """
@@ -388,7 +338,7 @@ def list_settings(request, fqdn_listname = None, visible_section=None, visible_o
                                          }
                                          ,context_instance=RequestContext(request))
 
-#@login_required #debug
+@login_required
 def mass_subscribe(request, fqdn_listname = None, 
                    template = 'mailman-django/lists/mass_subscribe.html'):
     """
