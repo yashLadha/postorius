@@ -549,7 +549,10 @@ def login(request,template = 'mailman-django/login.html'):
                                     password=form.cleaned_data["password"])
                 if user is not None:
                     if user.is_active:
-                        redirect(request.GET["next"])
+                        if "next" in request.GET.keys():
+                            return redirect(request.GET["next"])
+                        else:
+                            return redirect("list_index")
                     else:
                         error= _("Your account has been disabled!")
                 else:
