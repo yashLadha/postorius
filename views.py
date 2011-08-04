@@ -391,7 +391,7 @@ def mass_subscribe(request, fqdn_listname = None,
                                          ,context_instance=RequestContext(request))
 
 @login_required
-def user_settings(request, member = None, tab = "user",
+def user_settings(request, tab = "user",
                   template = 'mailman-django/user_settings.html'):
     """
     Change the user or the membership settings.
@@ -400,12 +400,16 @@ def user_settings(request, member = None, tab = "user",
           * add missing functionality in REST server and client and 
             change to the correct calls here
     """
+    member = request.user.username
     message = ""
     membership_lists = []
     fqdn_listname = ""
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-        user_object = c.get_user(member)
+        for user in c.members[member]:
+            raise Exception(user)
+        user_object = ""
+        raise Exception(user_object)
         # address_choices for the 'address' field must be a list of 
         # tuples of length 2
         address_choices = [[addr, addr] for addr in user_object.get_email_addresses()]
