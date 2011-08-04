@@ -412,14 +412,12 @@ def user_settings(request, tab = "user",
             user_object = l.get_member(member)
         else:
             raise Exception("Error: user not found without a fqdn_listname → LP:820827")
-        user_object = ""
-        raise Exception(user_object)
         # address_choices for the 'address' field must be a list of 
         # tuples of length 2
-        address_choices = [[addr, addr] for addr in user_object.get_email_addresses()]
+        address_choices = [[addr, addr] for addr in user_object.address]
     except AttributeError, e:
         return render_to_response('mailman-django/errors/generic.html', 
-                                  {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
+                                  {'error': str(e)+"REST API not found / Offline"},context_instance=RequestContext(request))
     except ValueError, e:
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'error': e},context_instance=RequestContext(request))                                  
