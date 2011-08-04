@@ -392,7 +392,8 @@ def mass_subscribe(request, fqdn_listname = None,
 
 @login_required
 def user_settings(request, tab = "user",
-                  template = 'mailman-django/user_settings.html'):
+                  template = 'mailman-django/user_settings.html',
+                  fqdn_listname = None,):
     """
     Change the user or the membership settings.
     The user must be logged in to be allowed to change any settings.
@@ -403,18 +404,27 @@ def user_settings(request, tab = "user",
     member = request.user.username
     message = ""
     membership_lists = []
-    fqdn_listname = ""
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-        for user in c.members[member]:
-            raise Exception(user)
+        if fqdn_listname:
+            l = c.get_list(fqdn_listname)
+            user_object = l.get_member(member)
+        else:
+            raise Exception("Error: user not found without a fqdn_listname → LP:820827")
         user_object = ""
         raise Exception(user_object)
         # address_choices for the 'address' field must be a list of 
         # tuples of length 2
         address_choices = [[addr, addr] for addr in user_object.get_email_addresses()]
-    except Exception, e: #TODO-Exceptions
-        return HttpResponse(e)
+    except AttributeError, e:
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
+    except ValueError, e:
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'error': e},context_instance=RequestContext(request))                                  
+    except HTTPError,e :
+        return render_to_response('mailman-django/errors/generic.html', 
+                                  {'error': _("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
     if request.method == 'POST':
         # The form enables both user and member settings. As a result
         # we must find out which was the case.
