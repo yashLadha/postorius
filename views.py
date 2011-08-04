@@ -177,6 +177,8 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
     error = None
     form_subscribe = None
     form_unsubscribe = None
+    if request.POST.get('fqdn_listname', ''):
+        fqdn_listname = request.POST.get('fqdn_listname', '')
     # connect REST and catch issues getting the list
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
@@ -192,34 +194,34 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
         form = False
         # The form enables both subscribe and unsubscribe. As a result
         # we must find out which was the case.
-        action = request.POST.get('name', '')
-        if action == "subscribe":
+        if request.POST.get('name', '') == "subscribe":
             form = ListSubscribe(request.POST)
             if form.is_valid():
                 # the form was valid so try to subscribe the user
-                fqdn_listname = form.cleaned_data['listname']
                 try:
                     email = form.cleaned_data['email']
                     response = the_list.subscribe(address=email,real_name=form.cleaned_data.get('real_name', ''))
-                    return render_to_response('mailman-django/lists/index.html', 
-                                              {'fqdn_listname': fqdn_listname,
+                    return render_to_response('mailman-django/lists/summary.html', 
+                                              {'list': the_list,
                                                'option':option,
                                                'message':_("Subscribed ")+ email },context_instance=RequestContext(request))
-                except Exception, e: #TODO-Exception
-                    return HttpResponse(e)
+                except HTTPError, e:
+                    return render_to_response('mailman-django/errors/generic.html', 
+                                      {'error':e}, context_instance=RequestContext(request))
             else: #invalid subscribe form
-                form_subscribe = ListSubscribe(request.POST)
+                form_subscribe = form
                 form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 'name' : 'unsubscribe'})       
-        elif action == "unsubscribe":
+        elif request.POST.get('name', '') == "unsubscribe":
             form = ListUnsubscribe(request.POST)
             if form.is_valid():
                 #the form was valid so try to unsubscribe the user
                 try:
-                    response = the_list.unsubscribe(address=email)
-                    return render_to_response('mailman-django/lists/index.html', 
-                                              {'fqdn_listname': fqdn_listname, 'message':_("Unsubscribed ")+ email },context_instance=RequestContext(request))
-                except Exception, e:#TODO-Exception
-                    return HttpResponse(e)     
+                    response = the_list.unsubscribe(address=form.cleaned_data["email"])
+                    return render_to_response('mailman-django/lists/summary.html', 
+                                              {'list': the_list, 'message':_("Unsubscribed ")+ email },context_instance=RequestContext(request))
+                except ValueError, e:
+                    return render_to_response('mailman-django/errors/generic.html', 
+                                      {'error':e}, context_instance=RequestContext(request))   
             else:#invalid unsubscribe form
                 form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname,
                                                                'option':option,

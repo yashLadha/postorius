@@ -174,8 +174,8 @@ class ListNew(FieldsetForm):
 class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
     """
-    listname = forms.EmailField(
-        label = _('List Name'), 
+    fqdn_listname = forms.EmailField(
+        label = '',#_('List Name'), 
         widget = forms.HiddenInput(),
         error_messages = {
             'required': _('Please enter the mailing list address.'), 
@@ -204,13 +204,13 @@ class ListSubscribe(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["Subscribe", "email","real_name","name"]]    
+        layout = [["Subscribe", "email","real_name","name","fqdn_listname"]]    
 
 class ListUnsubscribe(FieldsetForm):
     """Form fields to leave an existing list.
     """
-    listname = forms.EmailField(
-        label = _('List Name'), 
+    fqdn_listname = forms.EmailField(
+        label = '',#_('List Name'), 
         widget = forms.HiddenInput(),
         error_messages = {
             'required': _('Please enter the mailing list address.'), 
@@ -237,7 +237,7 @@ class ListUnsubscribe(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["Unsubscribe", "email","name"]]        
+        layout = [["Unsubscribe", "email","name","fqdn_listname"]]        
 
     # should at one point add the password to be required as well! #TODO
 class ListSettings(FieldsetForm):
