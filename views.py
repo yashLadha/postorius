@@ -225,15 +225,14 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                                                                'option':option,
                                                                'name' : 'subscribe'})
                 form_unsubscribe = ListUnsubscribe(request.POST)
-    #Show the forms
     else:
         # the request was a GET request so set the two forms to empty
         # forms
         if option=="subscribe" or not option:
-            form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 'email':user_email, 
+            form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname, 'email':request.user.username, 
                                              'name' : 'subscribe'})
         if option=="unsubscribe" or not option:                                             
-            form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 'email':user_email, 
+            form_unsubscribe = ListUnsubscribe(initial = {'fqdn_listname': fqdn_listname, 'email':request.user.username, 
                                                  'name' : 'unsubscribe'})
     the_list = c.get_list(fqdn_listname)#TODO
     return render_to_response(template, {'form_subscribe': form_subscribe,
