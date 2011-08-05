@@ -18,11 +18,14 @@
         <li class="mm_archives"><a href="#archives">{% trans "View Archives" %}TODO</a></li>
         <li class="mm_options"><a href="{% url list_settings fqdn_listname=list.fqdn_listname %}">{% trans "Edit Options" %}</a></li>
         <li class="mm_unsubscribe mm_last"><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname option='unsubscribe' %}">{% trans "Unsubscribe" %}</a></li>
+        {% if user_is_subscribed %}
+        <li class="mm_membership"><a href="{% url membership_settings fqdn_listname=list.fqdn_listname %}">{% trans "My Membership" %}</a></li>        
+        {% endif %}
     </ul>    
 {% endblock %}
 
 {% block smallBoxLeft %}
-    <div class="mm_box mm_smallBox">
+    <div class="mm_box mm_smallBox mm_clear">
         <div class="mm_boxHeader">{% trans "Contact" %}</div>
         <a href="#contactowner">{% trans "Contact Owner" %} #TODO</a>
     </div>

@@ -148,18 +148,24 @@ def list_summary(request,fqdn_listname=None,option=None,template='mailman-django
     an entry page for each lists which allows some simple tasks per LIST
     """
     error=None
+    user_is_subscribed = False
     if request.method == 'POST':
         return redirect("list_summary", fqdn_listname=request.POST["list"])
     else:
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-            current_list = c.get_list(fqdn_listname)
+            the_list = c.get_list(fqdn_listname)
+            try:
+                the_list.get_member(request.user.username)
+                user_is_subscribed = True
+            except: pass #init
         except AttributeError, e:
             return render_to_response('mailman-django/errors/generic.html', 
                                       {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
     return render_to_response(template, 
-                                  {'list':current_list,
+                                  {'list':the_list,
                                    'message':  None,
+                                   'user_is_subscribed':user_is_subscribed,
                                   },
                                   context_instance=RequestContext(request)
                                   )
