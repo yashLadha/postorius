@@ -889,7 +889,7 @@ class ListMassSubscription(FieldsetForm):
 class MembershipSettings(FieldsetForm):
     """Form handling the membership settings.
     """
-    choices = ((True, 'Yes'), (False, 'No'),)
+    choices = ((True, _('Yes')), (False, _('No')),)
     acknowledge_posts = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
         required = False,

@@ -408,8 +408,8 @@ def user_settings(request, tab = "user",
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         if fqdn_listname:
-            l = c.get_list(fqdn_listname)
-            user_object = l.get_member(member)
+            the_list = c.get_list(fqdn_listname)
+            user_object = the_list.get_member(member)
         else:
             raise Exception("Error: user not found without a fqdn_listname → LP:820827")
         # address_choices for the 'address' field must be a list of 
@@ -427,6 +427,7 @@ def user_settings(request, tab = "user",
     if request.method == 'POST':
         # The form enables both user and member settings. As a result
         # we must find out which was the case.
+        raise Exception("Please fix bug prior submitting the form")
         if tab == "membership":
             form = MembershipSettings(request.POST)
             if form.is_valid():
@@ -450,28 +451,35 @@ def user_settings(request, tab = "user",
 
     else:
         if tab == "membership":
-            fqdn_listname = request.GET.get("list", "")
-            if fqdn_listname:
-                member_object = c.get_member(member, fqdn_listname)
-                # TODO: add delivery_mode and deliver_status from a 
-                # list of tuples at one point, currently we hard code
-                # them in forms.py
-                # instantiate the form with the correct member info
-                form = MembershipSettings(member_object.info)
-            else:
-                form = None
-                membership_lists = user_object.get_lists()
-        else:
+            #TODO : fix LP:821069 in mailman.client
+            the_list = c.get_list(fqdn_listname)
+            member_object = the_list.get_member(member)
+            # TODO: add delivery_mode and deliver_status from a 
+            # list of tuples at one point, currently we hard code
+            # them in forms.py
+            # instantiate the form with the correct member info
+            """
+            acknowledge_posts
+            hide_address
+            receive_list_copy
+            receive_own_postings
+            delivery_mode
+            delivery_status
+            """
+            data = {} #Todo https://bugs.launchpad.net/mailman/+bug/821438
+            form = MembershipSettings(data)
+        elif tab == "user":
             # TODO: should return the correct settings from the DB,
             # not just the address_choices (add mock data to _User 
-            # class and make the call with 'user_object.info') The 'language'
+            # class and make the call with 'user_object._info') The 'language'
             # field must also be added as a list of tuples with correct
             # values (is currently hard coded in forms.py).
-            form = UserSettings(address_choices)
+            data ={}#Todo https://bugs.launchpad.net/mailman/+bug/821438
+            form = UserSettings(data)
 
     return render_to_response(template, {'form': form,
                                          'tab': tab,
-                                         'fqdn_listname': fqdn_listname,
+                                         'list': the_list,
                                          'membership_lists': membership_lists,
                                          'message': message,
                                          'member': member}
