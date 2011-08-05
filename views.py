@@ -404,17 +404,29 @@ def user_settings(request, tab = "user",
     """
     member = request.user.username
     message = ""
+    form = None
+    the_list=None
     membership_lists = []
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-        if fqdn_listname:
-            the_list = c.get_list(fqdn_listname)
-            user_object = the_list.get_member(member)
+        if tab == "membership":
+            if fqdn_listname:
+                the_list = c.get_list(fqdn_listname)
+                user_object = the_list.get_member(member)
+            else:
+                message = ("Using a workaround to replace missing Client functionality → LP:820827")
+                #### BEGIN workaround
+                for list in c.lists: 
+                    try: 
+                        list.get_member(member)
+                        membership_lists.append(list)    
+                    except: # if user is not subscribed to this list
+                        pass
+                #### END workaround
         else:
-            raise Exception("Error: user not found without a fqdn_listname → LP:820827")
-        # address_choices for the 'address' field must be a list of 
-        # tuples of length 2
-        address_choices = [[addr, addr] for addr in user_object.address]
+           # address_choices for the 'address' field must be a list of 
+           # tuples of length 2
+           address_choices = [[addr, addr] for addr in user_object.address]
     except AttributeError, e:
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'error': str(e)+"REST API not found / Offline"},context_instance=RequestContext(request))
@@ -424,6 +436,7 @@ def user_settings(request, tab = "user",
     except HTTPError,e :
         return render_to_response('mailman-django/errors/generic.html', 
                                   {'error': _("List ")+fqdn_listname+_(" does not exist")},context_instance=RequestContext(request))
+    #-----------------------------------------------------------------
     if request.method == 'POST':
         # The form enables both user and member settings. As a result
         # we must find out which was the case.
@@ -450,24 +463,25 @@ def user_settings(request, tab = "user",
                 message = "The user settings have been updated."
 
     else:
-        if tab == "membership":
-            #TODO : fix LP:821069 in mailman.client
-            the_list = c.get_list(fqdn_listname)
-            member_object = the_list.get_member(member)
-            # TODO: add delivery_mode and deliver_status from a 
-            # list of tuples at one point, currently we hard code
-            # them in forms.py
-            # instantiate the form with the correct member info
-            """
-            acknowledge_posts
-            hide_address
-            receive_list_copy
-            receive_own_postings
-            delivery_mode
-            delivery_status
-            """
-            data = {} #Todo https://bugs.launchpad.net/mailman/+bug/821438
-            form = MembershipSettings(data)
+        if tab == "membership" and fqdn_listname :
+            if fqdn_listname:
+                #TODO : fix LP:821069 in mailman.client
+                the_list = c.get_list(fqdn_listname)
+                member_object = the_list.get_member(member)
+                # TODO: add delivery_mode and deliver_status from a 
+                # list of tuples at one point, currently we hard code
+                # them in forms.py
+                # instantiate the form with the correct member info
+                """
+                acknowledge_posts
+                hide_address
+                receive_list_copy
+                receive_own_postings
+                delivery_mode
+                delivery_status
+                """
+                data = {} #Todo https://bugs.launchpad.net/mailman/+bug/821438
+                form = MembershipSettings(data)
         elif tab == "user":
             # TODO: should return the correct settings from the DB,
             # not just the address_choices (add mock data to _User 

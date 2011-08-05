@@ -11,34 +11,36 @@
     {% endifequal %}
 {% endblock %}
 
-{% block actionButtonsList %}
-    <ul class="mm_actionButtons">
-        <li class="mm_user_settings" ><a href="{% url user_settings %}">{% trans "User Settings" %}</a></li>
-        <li class="mm_membership_tab"><a href="{% url membership_settings fqdn_listname=list.fqdn_listname %}">{% trans "Membership Settings" %}</a></li>
-    </ul>
-{% endblock %}
-
-    {% block header %}
-    <div class="mm_box">
+{% block header %}
+    <div class="mm_box mm_clear">
         <div class="mm_boxHeader">
         {% trans "Content" %}
         </div>  
-        <p>{%trans "This page only shows the values which will be available at this place once <a href='https://bugs.launchpad.net/mailman/+bug/821438' >LP:821438</a> is solved" %}</p>
+        <p>{%trans "Use this page to manage your account. You'll be able to see a list of your subscirbed lists, modify these membership settings of the list and your personal preferences in user_settings <a href='https://bugs.launchpad.net/mailman/+bug/821438' >LP:821438</a> is solved <br>" %}</p>
         {% if form %}
-        <form action="" method="post" class="user" name="user">
-        <ul class="">
-            {{ form.as_div }}
-            <li class="field">
-                <button type="submit">{% trans "Save changes" %}</button>
-            </li>
-        </ul>
-        </form>
-        {% else %}
-        <ul>
-            {% for list in membership_lists %}
-            <li><a href="{% url membership_settings fqdn_listname=list.fqdn_listname%}">{{ list.fqdn_listname}} </li>
-            {% endfor %}
-        </ul>
+            <form action="" method="post" class="user" name="user">
+            <ul class="">
+                {{ form.as_div }}
+                <li class="field">
+                    <button type="submit">{% trans "Save changes" %}</button>
+                </li>
+            </ul>
+            </form>
         {% endif %}
     </div>
+{% endblock %}
+{% block smallBoxLeft %}
+    {% if membership_lists %}
+        {% for list in membership_lists %}
+        <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
+            <div class="mm_boxHeader">{{ list.real_name }} {% if not list.settings.advertised %}(non-public){% endif %}</div>
+            <ul>
+                <li><a href="{% url membership_settings fqdn_listname=list.fqdn_listname%}"> My Membership</li>
+                <li><a href="#TODO"> 
+                <!--url subscriptions fqdn_listname=list.fqdn_listname-->
+                My Subscription</li>
+            </ul>
+        </div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
