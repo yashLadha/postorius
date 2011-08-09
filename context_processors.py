@@ -8,6 +8,7 @@ def lists_of_domain(request):
     available List registered to the current request URL
     """ 
     domain_lists = []
+    domainname = None
     message = ""
     if "HTTP_HOST" in request.META.keys() :#TODO only lists of current domains if possible
         #get the URL
