@@ -5,20 +5,6 @@
     {% trans "Add a new Domain" %}
 {% endblock %}
 
-{% block smallBoxLeft %}
-    {% for domain in domains %}
-    <div class="mm_box mm_smallBox mm_smallBoxLeft">
-        <div class="mm_boxHeader">{{ domain.contact_address }}</div>
-            <ul>
-                <li><a href="http://{{ domain.base_url }}">{{ domain.base_url }}</a></li>
-                {% if domain.description %}
-                <li>{{ domain.description }}</li>
-                {% endif %}
-        </ul>
-    </div>
-    {% endfor %}
-{% endblock %}
-
 {% block header %}
     <div class="mm_box">
         <div class="mm_boxHeader">{% trans "About" %}</div>
@@ -37,5 +23,18 @@
         </li>
         {% endif %}
     </ul>
-
 {% endblock %}        
+
+{% block smallBoxLeft %}
+    {% for domain in domains %}
+    <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
+        <div class="mm_boxHeader">{{ domain.contact_address }}</div>
+            <ul>
+                <li><a href="http://{{ domain.base_url }}">{{ domain.base_url }}</a></li>
+                {% if domain.description %}
+                <li>{{ domain.description }}</li>
+                {% endif %}
+        </ul>
+    </div>
+    {% endfor %}
+{% endblock %}
