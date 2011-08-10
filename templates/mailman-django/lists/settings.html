@@ -17,12 +17,12 @@
             </div>
         </form>
     </div>
-    <div class="mm_box mm_smallBox">
-        <div class="mm_boxHeader">{% trans "Links" %}</div>
-        <ul>
-            <li><a href="{% url list_summary list.fqdn_listname %}">{% trans "List Summary" %} </a></li>
-            <li><a href="{% url list_delete list.fqdn_listname %}">{% trans "Delete List" %} </a></li>
-            <li><a href="{% url mass_subscribe list.fqdn_listname %}">{% trans "Mass Subscribe to List" %} </a></li>
-        </ul>
-    </div>
+
+{% endblock %}
+{% block actionButtonsList %}
+    <ul class="mm_actionButtons">
+        <li class="mm_list_summary"><a href="{% url list_summary list.fqdn_listname %}">{% trans "List Summary" %}</a></li>
+        <li class="mm_delete_list"><a href="{% url list_delete list.fqdn_listname %}">{% trans "Delete List" %}</a></li>
+        <li class="mm_mass_subscribe"><a href="{% url mass_subscribe list.fqdn_listname %}">{% trans "Mass Subscribe to List" %}</a></li>
+    </ul>    
 {% endblock %}
