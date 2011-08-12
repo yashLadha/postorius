@@ -56,24 +56,42 @@ Please be aware that this test only checks for authentification ONCE.
 
     >>> response = c.get('/domains/')
 
-Check that login required was in the HTML content of what was loaded
+Check that Http Redirect is returned
 
-    >>> print "Login Required" in response.content
+    >>> from django.http import HttpResponseRedirect
+    >>> print type(response) == HttpResponseRedirect
     True
-    >>> print response.content
 
+User + Login
+===================
+For authentification we do need to setup a test user into the system.
+This including the login will be checked here:
+    
+    >>> #c.... adduser() #TODO
+    
+    Check user login directly via our own Auth Framework
+    >>> c.login(username='james@example.com', password='james')
+    True
+    
+    Logout and try again, but using our own login form
+    >>> c.logout()
+    
+    >>> response = c.post('/accounts/login/',
+    ...                   {"user": "james@example.com",
+    ...                   "password": "james"})
+    
+    Login was successful if we get a return object to either the list index or a specified url
+    >>> print type(response) == HttpResponseRedirect
+    True
+
+Domains Page
+===================
 Hence, we log in as an admin on the login page we get as a response 
 to our call.    
 
-    >>> response = c.post('/accounts/login/',
-    ...                   {"user": "kevin@example.com",
-    ...                   "password": "kevin"})
-
+    >>> response = c.get('/domains/')
     >>> print "Add a new Domain" in response.content
     True
-
-
-
 
 Finishing Test
 ===============
