@@ -68,20 +68,17 @@ For authentification we do need to setup a test user into the system.
 This including the login will be checked here:
     
     >>> #c.... adduser() #TODO
-    
-    Check user login directly via our own Auth Framework
-    >>> c.login(username='james@example.com', password='james')
-    True
-    
-    Logout and try again, but using our own login form
-    >>> c.logout()
-    
+
+    Check our own login form, which should redirect the user to a usable page after every successful login
+    Login was successful if we get a return object to either the list index or a specified url
     >>> response = c.post('/accounts/login/',
     ...                   {"user": "james@example.com",
     ...                   "password": "james"})
-    
-    Login was successful if we get a return object to either the list index or a specified url
     >>> print type(response) == HttpResponseRedirect
+    True
+    
+    Check user login directly via our own Auth Framework which will save the Login Cookie which is needed for further testing
+    >>> c.login(username='james@example.com', password='james')
     True
 
 Domains Page
@@ -92,6 +89,7 @@ to our call.
     >>> response = c.get('/domains/')
     >>> print "Add a new Domain" in response.content
     True
+    >>> print response
 
 Finishing Test
 ===============
