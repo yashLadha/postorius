@@ -1,25 +1,6 @@
     
-Create a New Domain
-=================
-Check the content to see that we came to the create page after 
-logging in.
 
-    >>> response = c.post('/domains/')
-
-    >>> print "Add a new Domain" in response.content
-    True
-
-Now create a new Domain called 'mail.example.com'.
-
-    >>> response = c.post('/domains/',
-    ...                   {"mail_host": "mail.example.com",
-    ...                    "web_host": "example.com",
-    ...                    "description": "doctest testing domain"})  
-
-Check that the new Domain exists in the list of existing domains which is above new_domain form
-
-    >>> print "doctest testing domain" in response.content
-    True
+    
       
 
 Create a New List

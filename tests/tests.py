@@ -81,15 +81,35 @@ This including the login will be checked here:
     >>> c.login(username='james@example.com', password='james')
     True
 
-Domains Page
-===================
-Hence, we log in as an admin on the login page we get as a response 
-to our call.    
+Create a New Domain
+=================
+Check the content to see that we came to the create page after 
+logging in.
 
-    >>> response = c.get('/domains/')
-    >>> print "Add a new Domain" in response.content
+    >>> response = c.post('/domains/')
+
+    >>> print "Domain Index" in response.content #TODO - change heading
     True
-    >>> print response
+    
+Check the button which should allow creation of a new domains
+    >>> '<li class="mm_new_domain"><a href="/domains/new/">New Domain</a></li>' in response.content
+    True
+
+Now go to the Domains creation page
+    >>> response = c.post('/domains/new/')
+    >>> print "Add a new Domain" in response.content #TODO - change heading
+    True
+
+    
+and create a new Domain called 'mail.example.com'.    
+Check that the new Domain exists in the list of existing domains which is above new_domain form
+    >>> response = c.post('/domains/new/',
+    ...                   {"mail_host": "mail.example.com",
+    ...                    "web_host": "example.com",
+    ...                    "description": "doctest testing domain"})  
+    >>> response = c.post('/domains/')
+    >>> print "doctest testing domain" in response.content
+    True
 
 Finishing Test
 ===============
