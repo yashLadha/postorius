@@ -111,6 +111,58 @@ Check that the new Domain exists in the list of existing domains which is above 
     >>> print "doctest testing domain" in response.content
     True
 
+Create a New List
+=================
+
+Try to access the list index
+    >>> response = c.get('/lists/')
+    >>> "All available Lists" in response.content
+    True
+
+Try to create a new list. 
+And check the content to see that we came to the create page after 
+logging in.
+
+    >>> response = c.get('/lists/new/')
+    >>> print "Create a new list" in response.content
+    True
+    
+Now create a new list called 'new_list'.
+We should end up on a redirect
+    >>> response = c.post('/lists/new/',
+    ...                   {"listname": "new_list1",
+    ...                    "mail_host": "mail.example.com",
+    ...                    "list_owner": "james@example.com",
+    ...                    "description": "doctest testing list",
+    ...                    "advertised": "True",    
+    ...                    "languages": "English (USA)"})    
+    >>> print type(response) == HttpResponseRedirect
+    True
+    
+List index page should now include the realname of the list
+
+    >>> response = c.get('/lists/',HTTP_HOST='example.com')
+    >>> "New_list1" in response.content
+    True
+    
+List Summary
+=================
+
+Four options appear on this page. The first one is to subscribe, 
+2. to view archives
+3. to edit the list settings #at least if you do have permission to do so
+4. to unsubscribe
+
+    >>> response = c.get('/lists/new_list1%40mail.example.com/',)    
+    >>> "Subscribe" in response.content
+    True
+    >>> "Archives" in response.content
+    True
+    >>> "Edit Options" in response.content
+    True
+    >>> "Unsubscribe" in response.content
+    True
+
 Finishing Test
 ===============
 

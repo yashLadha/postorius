@@ -1,55 +1,18 @@
+  
+
+Subscribe users    
+====================
+
+Using List Summary Subscribed users should get a 5th. button allowing them to modify their own subscription
+... Mass Subscribe to List
     
-
-    
-      
-
-Create a New List
-=================
-
-Try to create a new list. 
-
-    >>> response = c.post('/lists/new/')
-
-Check the content to see that we came to the create page after 
-logging in.
-
-    >>> print "Create a new list" in response.content
-    True
-    
-Now create a new list called 'new_list'.
-
-    >>> response = c.post('/lists/new/',
-    ...                   {"listname": "new_list",
-    ...                    "mail_host": "mail.example.com",
-    ...                    "list_owner": "kevin@example.com",
-    ...                    "list_type": "closed_discussion",
-    ...                    "description": "doctest testing domain",
-    ...                    "languages": "English (USA)"})    
-
-We should now end up on a success page offering what to do next. 
-Let's check that this was the case.
-
-    >>> print "What would you like to do next?" in response.content
-    True
-    
-
-Three options appear on this page. The first one is to mass subscribe
-users, the second is to go to the settings page of the list just 
-created and the third is to create another list. 
-We're still logged in so go to the page where the settings can be 
-changed (this page also requires admin authority).
-
-    >>> response = c.get('/settings/new_list%40mail.example.com/',)    
-    
-    
-
 Mass Subscribe Users
 ====================
 
 Now we want to mass subscribe a few users to the list. Therefore, 
 go to the mass subscription page.
 
-    >>> url = '/settings/new_list%40mail.example.com/mass_subscribe/'
+    >>> url = '/settings/new_list1%40mail.example.com/mass_subscribe/'
 
     >>> response = c.get(url)
 
@@ -66,7 +29,7 @@ line so add '\\n' between the names to indicate that this was done
 the double '\\' instead of a single one is to escape the string 
 parsing of Python).
 
-    >>> url = '/settings/new_list%40mail.example.com/mass_subscribe/'
+    >>> url = '/settings/new_list1%40mail.example.com/mass_subscribe/'
 
     >>> response = c.post(url,
     ...                   {"emails": "liza@example.com\\ngeorge@example.com"})
@@ -178,7 +141,7 @@ On this page we can also subscribe or unsubscribe an email address
 to the list. Let's try to subscribe to the list in the "normal" way 
 (i.e. not using mass subscription). First we go to the page.
 
-    >>> response = c.get('/lists/new_list%40mail.example.com/',)
+    >>> response = c.get('/lists/new_list1%40mail.example.com/',)
 
 Then we check that everything went well.
 
@@ -190,7 +153,7 @@ Subscribe a User
 
 And finally we try to subscribe a user named 'Meg'.
 
-    >>> response = c.post('/lists/new_list%40mail.example.com/',
+    >>> response = c.post('/lists/new_list1%40mail.example.com/',
     ...                   {"email": "meg@example.com",
     ...                   "real_name": "Meg",
     ...                   "name": "subscribe",
@@ -213,7 +176,7 @@ Unsubscribe a User
 
 We'll now try unsubscribing the address for Meg.
 
-    >>> response = c.post('/lists/new_list%40mail.example.com/',
+    >>> response = c.post('/lists/new_list1%40mail.example.com/',
     ...                   {"email": "meg@example.com",
     ...                   "real_name": "Meg",
     ...                   "name": "unsubscribe",
@@ -238,7 +201,7 @@ We start by checking that the list is really there (for reference).
 
 Then we delete the list...
 
-    >>> response = c.post('/delete_list/new_list%40mail.example.com/',)
+    >>> response = c.post('/delete_list/new_list1%40mail.example.com/',)
 
 ...and check that it's been deleted.
 
