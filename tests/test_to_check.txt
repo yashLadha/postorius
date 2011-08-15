@@ -1,6 +1,3 @@
-
-## was success until here (old template)
-
 Change the User Settings
 ========================
 
@@ -34,28 +31,8 @@ a confirmation that everything went well.
     >>> print "The user settings have been updated." in response.content
     True
 
-Change the Memebership Settings
-===============================
 
-Now let's go to the membership settings page. Once we go there we 
-should get a list of all the available lists.
-
-    >>> response = c.get('/membership_settings/katie%40example.com/')
-
-Check that we came to the right place...
-
-    >>> print "Membership Settings" in response.content
-    True
-
-...and select the list 'test-one@example.com'.
-
-    >>> response = c.get('/membership_settings/katie%40example.com/?list=test-one@example.com')
-
-Lets make sure we got to the right page.
-
-    >>> print "Membership Settings for test-one@example.com" in response.content
-    True
-
+#MEMBERSHIP SETTINGS part2 #TODO
 We want to make sure we don't hide our address when posting to the 
 list, so we change this option and save the form.
 
@@ -77,62 +54,6 @@ Again, if the request was successful we should end up on the list info
 page. Make sure that we got redirected there.
 
     >>> print "All mailing lists" in response.content
-    True
-
-View the List Info Page
-=======================
-
-Apart from just viewing a list of all the available lists we can 
-view the information about one particular list on a list info page. 
-On this page we can also subscribe or unsubscribe an email address 
-to the list. Let's try to subscribe to the list in the "normal" way 
-(i.e. not using mass subscription). First we go to the page.
-
-    >>> response = c.get('/lists/new_list1%40mail.example.com/',)
-
-Then we check that everything went well.
-
-    >>> response.status_code
-    200
-
-Subscribe a User
-================
-
-And finally we try to subscribe a user named 'Meg'.
-
-    >>> response = c.post('/lists/new_list1%40mail.example.com/',
-    ...                   {"email": "meg@example.com",
-    ...                   "real_name": "Meg",
-    ...                   "name": "subscribe",
-    ...                   "listname": "new_list@example.com"})
-
-This page contains a redirect so we check the status code for this.
-
-    >>> response.status_code
-    302
-
-Then we check that the redirect gives the correct status code.
-
-    >>> response = c.get("http://testserver/lists/")
-
-    >>> response.status_code
-    200
-
-Unsubscribe a User
-==================
-
-We'll now try unsubscribing the address for Meg.
-
-    >>> response = c.post('/lists/new_list1%40mail.example.com/',
-    ...                   {"email": "meg@example.com",
-    ...                   "real_name": "Meg",
-    ...                   "name": "unsubscribe",
-    ...                   "listname": "new_list@example.com"})
-
-If everything went well, we'll get a positive response saying so.
-
-    >>> print "You have now been unsubscribed from new_list@example.com." in \
-    response.content
     True
 
 Delete the List

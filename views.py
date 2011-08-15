@@ -410,10 +410,11 @@ def user_settings(request, tab = "user",
             change to the correct calls here
     """
     member = request.user.username
-    message = ""
+    message = ''
     form = None
     the_list=None
     membership_lists = []
+
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
         if tab == "membership":
@@ -433,6 +434,7 @@ def user_settings(request, tab = "user",
         else:
            # address_choices for the 'address' field must be a list of 
            # tuples of length 2
+           raise Exception("WORK in PROGRRESS needs REST Auth Middleware! - TODO")
            address_choices = [[addr, addr] for addr in user_object.address]
     except AttributeError, e:
         return render_to_response('mailman-django/errors/generic.html', 

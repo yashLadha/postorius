@@ -270,6 +270,28 @@ the page. We'll check that this was the case.
     >>> print _("The mass subscription was successful.") in response.content
     True
     
+Change the Memebership Settings
+===============================
+
+Now let's go to the membership settings page. Once we go there we 
+should get a list of all the available lists.
+
+    >>> response = c.get('/membership_settings/new_list1%40mail.example.com/')
+
+Check that we came to the right place...
+
+    >>> print "Membership Settings" in response.content
+    True
+
+...and select the list 'test-one@example.com'.
+
+    >>> response = c.get('/membership_settings/new_list1%40mail.example.com/')
+
+Lets make sure we got to the right page.
+
+    >>> print ("Membership Settings" in response.content) and ("for new_list1@mail.example.com" in response.content)
+    True
+    
 Finishing Test
 ===============
 
