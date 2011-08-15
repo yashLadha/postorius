@@ -60,7 +60,7 @@ Please be aware that this test only checks for authentification ONCE.
 
     >>> response = c.get('/domains/')
 
-Check that Http Redirect is returned
+Check that Http Redirect to the login is returned #TODO check url
 
     >>> from django.http import HttpResponseRedirect
     >>> print type(response) == HttpResponseRedirect
@@ -71,7 +71,7 @@ User + Login
 For authentification we do need to setup a test user into the system.
 This including the login will be checked here:
     
-    >>> #c.... adduser() #TODO
+    >>> #c.... adduser() #TODO add user
 
     Check our own login form, which should redirect the user to a usable page after every successful login
     Login was successful if we get a return object to either the list index or a specified url
@@ -90,8 +90,11 @@ Create a New Domain
 Check the content to see that we came to the create page after 
 logging in.
 
-    >>> response = c.post('/domains/')
-
+    >>> response = c.get('/domains/')
+    
+Then we check that everything went well.
+    >>> response.status_code
+    200
     >>> print "Domain Index" in response.content #TODO - change heading
     True
     
@@ -100,7 +103,12 @@ Check the button which should allow creation of a new domains
     True
 
 Now go to the Domains creation page
-    >>> response = c.post('/domains/new/')
+    >>> response = c.get('/domains/new/')
+
+Then we check that everything went well.
+
+    >>> response.status_code
+    200
     >>> print "Add a new Domain" in response.content #TODO - change heading
     True
 
@@ -111,7 +119,11 @@ Check that the new Domain exists in the list of existing domains which is above 
     ...                   {"mail_host": "mail.example.com",
     ...                    "web_host": "example.com",
     ...                    "description": "doctest testing domain"})  
-    >>> response = c.post('/domains/')
+    >>> response = c.get('/domains/')
+        
+Then we check that everything went well.
+    >>> response.status_code
+    200
     >>> print "doctest testing domain" in response.content
     True
 
@@ -120,6 +132,11 @@ Create a New List
 
 Try to access the list index
     >>> response = c.get('/lists/')
+    
+Then we check that everything went well.
+    >>> response.status_code
+    200
+    
     >>> "All available Lists" in response.content
     True
 
@@ -128,9 +145,14 @@ And check the content to see that we came to the create page after
 logging in.
 
     >>> response = c.get('/lists/new/')
+    
+Then we check that everything went well.
+    >>> response.status_code
+    200
+    
     >>> print "Create a new list" in response.content
     True
-    
+
 Now create a new list called 'new_list'.
 We should end up on a redirect
     >>> response = c.post('/lists/new/',
@@ -146,9 +168,13 @@ We should end up on a redirect
 List index page should now include the realname of the list
 
     >>> response = c.get('/lists/',HTTP_HOST='example.com')
+
+Then we check that everything went well.
+    >>> response.status_code
+    200
     >>> "New_list1" in response.content
     True
-    
+
 List Summary
 =================
 
@@ -158,6 +184,10 @@ Four options appear on this page. The first one is to subscribe,
 4. to unsubscribe
 
     >>> response = c.get('/lists/new_list1%40mail.example.com/',)    
+
+Then we check that everything went well.
+    >>> response.status_code
+    200
     >>> "Subscribe" in response.content
     True
     >>> "Archives" in response.content
@@ -166,13 +196,17 @@ Four options appear on this page. The first one is to subscribe,
     True
     >>> "Unsubscribe" in response.content
     True
-
+    
 Subscriptions   
 ====================
 
 Get the Subscriptions Page and check that the form was prefilled with the users E-Mail
     >>> url = '/subscriptions/new_list1%40mail.example.com/subscribe'
     >>> response = c.get(url)
+
+Then we check that everything went well.
+    >>> response.status_code
+    200
     >>> "james@example.com" in response.content
     True
     
@@ -203,7 +237,7 @@ Using the same subscription page we can unsubscribe as well.
     ...                   "fqdn_listname": "new_list1@mail.example.com"})
     >>> print (_('Unsubscribed')+' katie@example.com') in response.content
     True
-
+    
 Mass Subscribe Users (within settings)
 ====================
 
