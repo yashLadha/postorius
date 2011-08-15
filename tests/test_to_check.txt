@@ -1,4 +1,4 @@
-Change the User Settings
+Change the User Settings #TODO → LP:820827
 ========================
 
 Now let's check out the user settings. Start by accessing the user 
@@ -32,7 +32,7 @@ a confirmation that everything went well.
     True
 
 
-#MEMBERSHIP SETTINGS part2 #TODO
+#MEMBERSHIP SETTINGS part2 #TODO - → LP:820827
 We want to make sure we don't hide our address when posting to the 
 list, so we change this option and save the form.
 
@@ -55,27 +55,4 @@ page. Make sure that we got redirected there.
 
     >>> print "All mailing lists" in response.content
     True
-
-Delete the List
-===============
-
-Finally, let's delete the list.
-We start by checking that the list is really there (for reference).
-
-    >>> response = c.get('/lists/')
-
-    >>> print "new_list@example.com" in response.content
-    True
-
-Then we delete the list...
-
-    >>> response = c.post('/delete_list/new_list1%40mail.example.com/',)
-
-...and check that it's been deleted.
-
-    >>> print "new_list@example.com" in response.content
-    False
-
-So far this is what you can do in the UI. More tests can be added 
-here later.
 """
