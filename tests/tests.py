@@ -292,6 +292,32 @@ Lets make sure we got to the right page.
     >>> print ("Membership Settings" in response.content) and ("for new_list1@mail.example.com" in response.content)
     True
     
+Delete the List
+===============
+
+Finally, let's delete the list.
+We start by checking that the list is really there (for reference).
+
+    >>> response = c.get('/lists/',HTTP_HOST='example.com')
+    >>> print "New_list1" in response.content
+    True
+
+Trying to delete the List we have to confirm this action
+    >>> response = c.get('/delete_list/new_list1%40mail.example.com/',)
+    >>> print "Please confirm" in response.content
+    True
+
+Confirmed by pressing the button which requests the same page using POST
+    >>> response = c.post('/delete_list/new_list1%40mail.example.com/',)
+
+...and check that it's been deleted.
+    >>> response = c.get('/lists/',HTTP_HOST='example.com')
+    >>> print "new_list1%40example.com" in response.content
+    False
+
+So far this is what you can do in the UI. More tests can be added 
+here later.    
+    
 Finishing Test
 ===============
 
