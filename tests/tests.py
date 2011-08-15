@@ -27,6 +27,10 @@ in the UI as well as documenting what has been done.
     >>> from setup import setup_mm, Testobject, teardown_mm
     >>> testobject = setup_mm(Testobject())
 
+Import Translation Module to check success messages
+    >>> from django.utils.translation import gettext as _
+
+
 Getting Started
 ===============
 
@@ -163,6 +167,43 @@ Four options appear on this page. The first one is to subscribe,
     >>> "Unsubscribe" in response.content
     True
 
+Subscriptions   
+====================
+
+Get the Subscriptions Page and check that the form was prefilled with the users E-Mail
+    >>> url = '/subscriptions/new_list1%40mail.example.com/subscribe'
+    >>> response = c.get(url)
+    >>> "james@example.com" in response.content
+    True
+    
+Now subscribe James and Katie and check that you get redirected to List Summary which should now have an additional Button allowing to modify your user options.
+    
+    >>> response = c.post(url,
+    ...                   {"email": "james@example.com",
+    ...                   "real_name": "James Watt",
+    ...                   "name": "subscribe",
+    ...                   "fqdn_listname": "new_list1@mail.example.com"})
+    >>> response = c.post(url,
+    ...                   {"email": "katie@example.com",
+    ...                   "real_name": "Katie Doe",
+    ...                   "name": "subscribe",
+    ...                   "fqdn_listname": "new_list1@mail.example.com"})   
+    >>> print (_('Subscribed')+' katie@example.com') in response.content
+    True
+    
+The logged in user (james@example.com) can now modify his own membership using a button which is displayed in list_summary   
+    >>> response = c.get('/lists/new_list1%40mail.example.com/')
+    >>> "mm_membership" in response.content
+    True
+    
+Using the same subscription page we can unsubscribe as well.    
+    >>> response = c.post('/subscriptions/new_list1%40mail.example.com/unsubscribe',
+    ...                   {"email": "katie@example.com",
+    ...                   "name": "unsubscribe",
+    ...                   "fqdn_listname": "new_list1@mail.example.com"})
+    >>> print (_('Unsubscribed')+' katie@example.com') in response.content
+    True
+    
 Finishing Test
 ===============
 

@@ -222,7 +222,8 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
             if form.is_valid():
                 #the form was valid so try to unsubscribe the user
                 try:
-                    response = the_list.unsubscribe(address=form.cleaned_data["email"])
+                    email = form.cleaned_data["email"]
+                    response = the_list.unsubscribe(address=email)
                     return render_to_response('mailman-django/lists/summary.html', 
                                               {'list': the_list, 'message':_("Unsubscribed ")+ email },context_instance=RequestContext(request))
                 except ValueError, e:
