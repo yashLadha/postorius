@@ -203,6 +203,38 @@ Using the same subscription page we can unsubscribe as well.
     ...                   "fqdn_listname": "new_list1@mail.example.com"})
     >>> print (_('Unsubscribed')+' katie@example.com') in response.content
     True
+
+Mass Subscribe Users (within settings)
+====================
+
+Now we want to mass subscribe a few users to the list. Therefore, 
+go to the mass subscription page.
+
+    >>> url = '/subscriptions/new_list1%40mail.example.com/mass_subscribe/'
+    >>> response = c.get(url)
+
+Check that everything went well by making sure the status code 
+was correct.
+
+    >>> response.status_code
+    200
+
+Try mass subscribing the users 'liza@example.com' and 
+'george@example.com'. Each address should be provided on a separate 
+line so add '\\n' between the names to indicate that this was done 
+(we're on a Linux machine which is why the letter 'n' was used and 
+the double '\\' instead of a single one is to escape the string 
+parsing of Python).
+
+    >>> url = '/subscriptions/new_list1%40mail.example.com/mass_subscribe/'
+    >>> response = c.post(url,
+    ...                   {"emails": "liza@example.com\\ngeorge@example.com"})
+
+If everything was successful, we shall get a positive response from 
+the page. We'll check that this was the case.
+    
+    >>> print _("The mass subscription was successful.") in response.content
+    True
     
 Finishing Test
 ===============
