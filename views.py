@@ -319,28 +319,32 @@ def list_settings(request, fqdn_listname = None, visible_section=None, visible_o
         else:
             message = _("Validation Error - The list has not been updated.")
     
-    else:#Provide a form with existing values
+    else:
+        #collect all Form sections for the links:
+        temp = ListSettings('','')
+        form_sections = []
+        for section in temp.layout:
+            try:
+                form_sections.append((section[0],temp.section_descriptions[section[0]]))
+            except KeyError, e:
+                error=e
+        del temp
+        #Provide a form with existing values
         #create form and process layout into form.layout
         form = ListSettings(visible_section,visible_option,data=None)
         #create a Dict of all settings which are used in the form
         used_settings={}
         for section in form.layout:
+
             for option in section[1:]:
                 used_settings[option] = the_list.settings[option]
         #recreate the form using the settings
         form = ListSettings(visible_section,visible_option,data=used_settings)
         form.truncate()
-    if visible_option:
-        selected = visible_option
-    elif visible_section:
-        selected = visible_section
-    else:
-        selected = None
-        
     return render_to_response(template, {'form': form,
+                                         'form_sections': form_sections,
                                          'message': message,
                                          'list': the_list,
-                                         'selected':selected,
                                          'visible_option':visible_option,
                                          'visible_section':visible_section,
                                          }

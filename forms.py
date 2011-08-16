@@ -747,6 +747,15 @@ class ListSettings(FieldsetForm):
         label = _('Posting Address'),
         required = False,
     )
+    #Descriptions used in the Settings Overview Page
+    section_descriptions = {
+        "List Indentity":_("General List settings use"),
+        "Automatic Responses":_("All options for Autoreply"),
+        "Content Filtering":_("Decide how incoming mails might be filtered"),
+        "Digest": _("Modify and check some Digest options"),
+        "Privacy" : _("Check the lists privacy standards"),
+        "Assorted" : _("Some other Admin stuff"),
+        }
     def __init__(self,visible_section,visible_option, *args, **kwargs):  
         super(ListSettings, self).__init__(*args, **kwargs)  
         #if settings:raise Exception(settings) #debug
@@ -790,7 +799,7 @@ class ListSettings(FieldsetForm):
         To use it: add a list for each wished fieldset. The first item in 
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
-        """
+        """        
         # just a really temporary layout to see that it works. -- Anna
         layout = [
             ["List Indentity", "real_name", "include_list_post_header", 
@@ -830,7 +839,7 @@ class ListSettings(FieldsetForm):
             #["Addresses", "bounces_address", "join_address", "leave_address", 
              #"no_reply_address", "owner_address", "posting_address", 
              #"request_address"],
-            ["Assorted", "acceptable_aliases", "administrivia", "pipeline"]]
+            ["Assorted", "acceptable_aliases", "administrivia", "pipeline"]
              #"post_id", "encode_ascii_prefixes", "first_strip_reply_to",
              #"forward_auto_discards", "gateway_to_mail", "gateway_to_news",
              #"header_matches", "linked_newsgroup", "max_days_to_hold",
@@ -846,6 +855,7 @@ class ListSettings(FieldsetForm):
              #"start_chain", "subject_prefix", "subscribe_auto_approval",
              #"subscribe_policy", "topics", "topics_bodylines_limit",
              #"topics_enabled", "unsubscribe_policy"]]
+             ]
 
 class Login(FieldsetForm):
     """Form fields to let the user log in.
