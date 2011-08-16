@@ -29,17 +29,27 @@
         {% endif %}
     </div>
 {% endblock %}
+
+{% block actionButtonsList %}
+    <ul class="mm_actionButtons">
+        <li class="mm_user_settings"><a href="{% url user_settings %}">{% trans "My Account" %}</a></li>
+        <li class="mm_user_subscriptions"><a href="{% url membership_settings %}">{% trans "All my Subscriptions" %}</a></li>
+    </ul>    
+{% endblock %}
+
 {% block smallBoxLeft %}
     {% if membership_lists %}
         {% for list in membership_lists %}
         <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
-            <div class="mm_boxHeader">{{ list.real_name }} {% if not list.settings.advertised %}(non-public){% endif %}</div>
+            <div class="mm_boxHeader">
+                <a href="{% url list_summary fqdn_listname=list.fqdn_listname%}">
+                    {{ list.real_name }} {% if not list.settings.advertised %}(non-public){% endif %}
+                </a>
+            </div>
             <ul>
                 <li><a href="{% url membership_settings fqdn_listname=list.fqdn_listname%}"> My Membership</li>
-                <li><a href="#TODO"> 
-                <!--url subscriptions fqdn_listname=list.fqdn_listname-->
-                My Subscription</li>
-                <li><a href="{% url list_summary fqdn_listname=list.fqdn_listname%}"> List Summary</li>
+                <li><a href="{% url membership_settings fqdn_listname=list.fqdn_listname %}"> 
+                My Subscription</a></li>
             </ul>
         </div>
         {% endfor %}
