@@ -69,7 +69,8 @@ Check that Http Redirect to the login is returned #TODO check url
 User + Login
 ===================
 For authentification we do need to setup a test user into the system.
-This including the login will be checked here:
+This including the login will be with our own Auth Backend. Additional information on how to expand the Auth Backend with e.g. user perms could be found on a well documented Django Help page:
+https://docs.djangoproject.com/en/dev/topics/auth/
     
     >>> #c.... adduser() #TODO add user
 
