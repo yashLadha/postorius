@@ -64,7 +64,7 @@ class DomainNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["New Domain","mail_host", "web_host", "description",]]
+        layout = [["","mail_host", "web_host", "description",]]
 
     
 class ListNew(FieldsetForm):

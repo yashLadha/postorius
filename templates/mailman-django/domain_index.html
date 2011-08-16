@@ -17,7 +17,7 @@
         <li class="mm_new_domain"><a href="{% url domain_new %}">{% trans "New Domain" %}</a></li>
         {% if not domain == "unregistered Domain" %}
         <li class="mm_delete_domain">
-            <a href="#JS delete_domain">{% trans "Delete Domain" %}</br>
+            <a href="#missing_REST_function">{% trans "Delete Domain" %}</br>
             {{domain}}
             </a>
         </li>
@@ -28,13 +28,10 @@
 {% block smallBoxLeft %}
     {% for domain in domains %}
     <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
-        <div class="mm_boxHeader">{{ domain.contact_address }}</div>
-            <ul>
-                <li><a href="http://{{ domain.base_url }}">{{ domain.base_url }}</a></li>
-                {% if domain.description %}
-                <li>{{ domain.description }}</li>
-                {% endif %}
-        </ul>
+        <div class="mm_boxHeader">{{ domain.contact_address }} (<a href="http://{{ domain.base_url }}">{{ domain.base_url }}</a>)</div>
+        {% if domain.description %}
+            {{ domain.description }}
+        {% endif %}
     </div>
     {% endfor %}
 {% endblock %}
