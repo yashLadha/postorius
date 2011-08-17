@@ -21,7 +21,7 @@ from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 import re
 from mailman.client import Client
@@ -31,6 +31,7 @@ import sys #Error handing info
 from urllib2 import HTTPError
 
 @login_required
+@permission_required('server_admin')
 def domain_index(request, template = 'mailman-django/domain_index.html'):
     try:
         c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
@@ -43,6 +44,7 @@ def domain_index(request, template = 'mailman-django/domain_index.html'):
 					          context_instance=RequestContext(request))  
 
 @login_required
+@permission_required('server_admin')
 def domain_new(request, template = 'mailman-django/domain_new.html'):
     message = None
     if request.method == 'POST':

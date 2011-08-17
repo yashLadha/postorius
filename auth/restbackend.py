@@ -68,7 +68,12 @@ class RESTBackend:
             return None
             
     def has_perm(self, user_obj, perm):
-        if user_obj.username == "james@example.com":
-            return True
+        if perm == "server_admin":
+            if user_obj.username == "james@example.com":
+                return True
+            else:
+                return False
+        elif perm == "perm": #Test Fallback
+            pass
         else:
-            return False
+            raise Exception(perm+" Permisson unknown")

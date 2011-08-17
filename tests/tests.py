@@ -83,7 +83,21 @@ https://docs.djangoproject.com/en/dev/topics/auth/
     True
     
     Check user login directly via our own Auth Framework which will save the Login Cookie which is needed for further testing
-    >>> c.login(username='james@example.com', password='james')
+    >>> c.login(username='katie@example.com', password='katie')
+    True
+    
+Permissions
+=================
+Check that only James does have the permission to get the domains administration
+#TODO - ACL is hardcoded in auth backend : permission domain_admin → == james@...
+    
+    >>> response = c.get('/domains/')
+    >>> print type(response) == HttpResponseRedirect
+    True
+    
+    >>> c.logout() #katie
+
+    >>> c.login(username='james@example.com', password='james') #now Domains should work - see tests below
     True
 
 Create a New Domain
@@ -151,7 +165,7 @@ Then we check that everything went well.
     >>> response.status_code
     200
     
-    >>> print "Create a new list" in response.content
+    >>> print "Create a new List on" in response.content
     True
 
 Now create a new list called 'new_list'.
