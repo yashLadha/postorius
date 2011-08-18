@@ -13,6 +13,10 @@
 
 import sys, os
 
+#import the source code directory into Python Path for use with Auto Module
+APP_ROOT = os.path.dirname(__file__)
+sys.path.insert(0, os.path.split(APP_ROOT)[0])
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.

@@ -1,9 +1,8 @@
 Installation
-================
-Some text, *italic text*, **bold text**
+============
 
 Mailman3 - a7
---------------
+-------------
  
 * Check Dependecys
     .. note::
@@ -146,7 +145,7 @@ Now that you know about all these you might start the development server. As usu
 
 >>> python manage.py runserver
 
-within the Django Site Directory - as usual the default address is localhost:8080
+within the Django Site Directory - as usual the default address is localhost:8000
 Of course it will only be able to start once our app is in place as well.
 
 Django Application

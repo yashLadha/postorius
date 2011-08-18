@@ -12,11 +12,6 @@ Contents:
    :maxdepth: 2
    
    setup.rst
+   using.rst
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
-

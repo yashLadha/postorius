@@ -52,7 +52,7 @@ Make sure the load was a success by checking the status code.
     200
 
 Check that login is required for a couple of pages
-=================
+==================================================
 Try to access some of the admin Pages. Accessing these pages
 redirects to a login page since we need admin authority to view and use them
 #TODO - ACL tests will be implemented for each site at a central place at later stages of development.
@@ -67,7 +67,7 @@ Check that Http Redirect to the login is returned #TODO check url
     True
 
 User + Login
-===================
+============
 For authentification we do need to setup a test user into the system.
 This including the login will be with our own Auth Backend. Additional information on how to expand the Auth Backend with e.g. user perms could be found on a well documented Django Help page:
 https://docs.djangoproject.com/en/dev/topics/auth/
@@ -87,7 +87,7 @@ https://docs.djangoproject.com/en/dev/topics/auth/
     True
     
 Permissions
-=================
+===========
 Check that only James does have the permission to get the domains administration
 #TODO - ACL is hardcoded in auth backend : permission domain_admin → == james@...
     
@@ -101,7 +101,7 @@ Check that only James does have the permission to get the domains administration
     True
 
 Create a New Domain
-=================
+===================
 Check the content to see that we came to the create page after 
 logging in.
 
@@ -191,7 +191,7 @@ Then we check that everything went well.
     True
 
 List Summary
-=================
+============
 
 Four options appear on this page. The first one is to subscribe, 
 2. to view archives
@@ -213,7 +213,7 @@ Then we check that everything went well.
     True
     
 Subscriptions   
-====================
+=============
 
 Get the Subscriptions Page and check that the form was prefilled with the users E-Mail
     >>> url = '/subscriptions/new_list1%40mail.example.com/subscribe'
@@ -254,7 +254,7 @@ Using the same subscription page we can unsubscribe as well.
     True
     
 Mass Subscribe Users (within settings)
-====================
+======================================
 
 Now we want to mass subscribe a few users to the list. Therefore, 
 go to the mass subscription page.
@@ -334,7 +334,7 @@ So far this is what you can do in the UI. More tests can be added
 here later.    
     
 Finishing Test
-===============
+==============
 
     >>> teardown_mm(testobject)    
 """
