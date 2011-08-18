@@ -23,6 +23,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="mailman_django v0.1 documentation" href="index.html" />
+    <link rel="next" title="Acknowledgements" href="acknowledgements.html" />
     <link rel="prev" title="Installation" href="setup.html" /> 
   </head>
   <body>
@@ -35,6 +36,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="acknowledgements.html" title="Acknowledgements"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="setup.html" title="Installation"
              accesskey="P">previous</a> |</li>
@@ -431,6 +435,32 @@ here later.</p>
 </div>
 </div>
 </div>
+<div class="section" id="running-the-tests-explained-above">
+<h2>Running the tests explained above.<a class="headerlink" href="#running-the-tests-explained-above" title="Permalink to this headline">¶</a></h2>
+<p>We&#8217;ve added our own test-suite to the Django App which will be executed together with the Django Test. Last thing you should do is running these tests. If they fail you did something wrong, if they succeed you can enjoy the site.</p>
+<p>Run the following in the Site Directory</p>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py <span class="nb">test</span>
+</pre></div>
+</div>
+</blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please be aware that we want to run a development instance of mailman you need to stop the stable one first and the tests will open it&#8217;s own mailman temporily.</p>
+</div>
+</div>
+<div class="section" id="accessing-the-rest-client-for-testing">
+<h2>Accessing the REST Client for Testing<a class="headerlink" href="#accessing-the-rest-client-for-testing" title="Permalink to this headline">¶</a></h2>
+<p>If you want to access the Functions, which we use in the views, directly feel free to run the following block of code within a Shell which does have it&#8217;s current Directory within the Django Site Directory.</p>
+<blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">API_USER</span><span class="p">,</span> <span class="n">API_PASS</span>
+<span class="kn">from</span> <span class="nn">mailman.client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="s">&#39;http://localhost:8001/3.0&#39;</span><span class="p">,</span> <span class="n">API_USER</span><span class="p">,</span> <span class="n">API_PASS</span><span class="p">)</span>
+<span class="c">#DEBUG: Python Session</span>
+</pre></div>
+</div>
+</blockquote>
+</div>
 </div>
 
 
@@ -457,6 +487,8 @@ here later.</p>
 <li><a class="reference internal" href="#finishing-test">Finishing Test</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#running-the-tests-explained-above">Running the tests explained above.</a></li>
+<li><a class="reference internal" href="#accessing-the-rest-client-for-testing">Accessing the REST Client for Testing</a></li>
 </ul>
 </li>
 </ul>
@@ -464,6 +496,9 @@ here later.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="setup.html"
                         title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="acknowledgements.html"
+                        title="next chapter">Acknowledgements</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/using.txt"
@@ -495,6 +530,9 @@ here later.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="acknowledgements.html" title="Acknowledgements"
+             >next</a> |</li>
         <li class="right" >
           <a href="setup.html" title="Installation"
              >previous</a> |</li>
