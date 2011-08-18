@@ -12,12 +12,23 @@ Mailman3 - a7
     .. note::
         Please be aware that the following steps only work if you're really in that DIR. If you consider adding a subfolder name to the commands those woun't work !
 * Run the Installation from a Shell (not Python)
-    >>> bootstrap.py
-    >>> bin/buildout
+
+    .. code-block:: bash
+
+        $ bootstrap.py
+        $ bin/buildout
+    
 * Vertify that everything was setup correclty and your branch fullfills the version requirements by running it's own test module
-    >>> bin/test
+
+    .. code-block:: bash
+    
+        $ bin/test
+        
 * Now you're able to run mailman using
-    >>> bin/mailman
+
+    .. code-block:: bash
+    
+        $ bin/mailman
     
 Mailman Client / REST Api
 -------------------------
@@ -27,18 +38,25 @@ The Python Bindings were used later on within our Django Application to access t
 
 Once again start by branching the code which is on Launchpad
 
->>> bzr branch lp:mailman.client
+    .. code-block:: bash
+    
+        $ bzr branch lp:mailman.client
 
 .. note::
     We've successfully tested our functionality with Revision 16 - In case the Client gets updated which it surely will in future we can't guarentee that it is compatible anymore.
     
 As you only want to run the Client and not modify it's code you're fine with running the install command from within the directory. At the moment this requires Sudo Priveledges as files will copied to the Python Site-Packages Directory which is available to all users.
 
->>> sudo python setup.py install
+    .. code-block:: bash
+    
+        $ sudo python setup.py install
 
 .. note::
     If you want to change parts of the Client you can use the development option which will create a Symlink instead of a Hardcopy of all files:
->>> sudo python setup.py develop
+
+    .. code-block:: bash
+    
+        $ sudo python setup.py develop
 
 All changes will apply once you restart Mailman itself.
 
@@ -139,12 +157,17 @@ INSTALLED_APPS = (
     'mailman_django',
 
     .. note::
-        Makes sure that Django knows about our directory as an App and creates needed Tables () when 
->>> running manage.py syncdb
+        Makes sure that Django knows about our directory as an App and creates needed Tables () when running
+
+    .. code-block:: bash
+    
+        $ python manage.py syncdb
 
 Now that you know about all these you might start the development server. As usual in Django this is done by running
 
->>> python manage.py runserver
+    .. code-block:: bash
+    
+        $ python manage.py runserver
 
 within the Django Site Directory - as usual the default address is localhost:8000
 Of course it will only be able to start once our app is in place as well.
@@ -153,10 +176,15 @@ Django Application
 ------------------
 First get the files, and make sure you paste them into your Project directory and adjust it's name to the appropriate configuration you've made earlier in the Django Site. Remeber our default is mailman_django
 
->>> bzr branch lp:mailmanwebgsoc2011
+    .. code-block:: bash
+    
+        $ bzr branch lp:mailmanwebgsoc2011
 
 .. note:: 
     We've tested Revision 172
+    
+.. note::
+    We're planning to ease up installation by creating an egg    
 
 Test the Sites functionality
 ----------------------------
@@ -164,7 +192,9 @@ We've added our own test-suite to the Django App which will be executed together
 
 Run the following in the Site Directory
 
->>> python manage.py test
+    .. code-block:: bash
+    
+        $ python manage.py test
 
 .. note::
     Please be aware that we want to run a development instance of mailman you need to stop the stable one first and the tests will open it's own mailman temporily.

@@ -76,30 +76,27 @@
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Run the Installation from a Shell (not Python)</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap</span><span class="o">.</span><span class="n">py</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">bin</span><span class="o">/</span><span class="n">buildout</span>
+<li><p class="first">Run the Installation from a Shell (not Python)</p>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bootstrap.py
+<span class="nv">$ </span>bin/buildout
 </pre></div>
 </div>
-</dd>
-</dl>
+</blockquote>
 </li>
-<li><dl class="first docutils">
-<dt>Vertify that everything was setup correclty and your branch fullfills the version requirements by running it&#8217;s own test module</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">bin</span><span class="o">/</span><span class="n">test</span>
+<li><p class="first">Vertify that everything was setup correclty and your branch fullfills the version requirements by running it&#8217;s own test module</p>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bin/test
 </pre></div>
 </div>
-</dd>
-</dl>
+</blockquote>
 </li>
-<li><dl class="first docutils">
-<dt>Now you&#8217;re able to run mailman using</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">bin</span><span class="o">/</span><span class="n">mailman</span>
+<li><p class="first">Now you&#8217;re able to run mailman using</p>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bin/mailman
 </pre></div>
 </div>
-</dd>
-</dl>
+</blockquote>
 </li>
 </ul>
 </div>
@@ -108,23 +105,27 @@
 <p>Next thing you need to do is installing the Plugin used for communication with non-mailman-code parts like our WebUI. Within the Client Branch we&#8217;ve put both, Classes to access the Core which are run as a Plugin and some Python Bindings.
 The Python Bindings were used later on within our Django Application to access the Server. Failing to install the Client would result in an offline version of WebUI</p>
 <p>Once again start by branching the code which is on Launchpad</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">bzr</span> <span class="n">branch</span> <span class="n">lp</span><span class="p">:</span><span class="n">mailman</span><span class="o">.</span><span class="n">client</span>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bzr branch lp:mailman.client
 </pre></div>
 </div>
+</blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">We&#8217;ve successfully tested our functionality with Revision 16 - In case the Client gets updated which it surely will in future we can&#8217;t guarentee that it is compatible anymore.</p>
 </div>
 <p>As you only want to run the Client and not modify it&#8217;s code you&#8217;re fine with running the install command from within the directory. At the moment this requires Sudo Priveledges as files will copied to the Python Site-Packages Directory which is available to all users.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sudo</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo python setup.py install
 </pre></div>
 </div>
+</blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If you want to change parts of the Client you can use the development option which will create a Symlink instead of a Hardcopy of all files:</p>
-</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sudo</span> <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">develop</span>
+<p>If you want to change parts of the Client you can use the development option which will create a Symlink instead of a Hardcopy of all files:</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo python setup.py develop
 </pre></div>
+</div>
 </div>
 <p>All changes will apply once you restart Mailman itself.</p>
 </div>
@@ -239,40 +240,50 @@ You need to keep the Django one for testing fallback.</p>
 &#8216;django.contrib.sites&#8217;,
 &#8216;django.contrib.admin&#8217;,
 &#8216;mailman_django&#8217;,</p>
-<div class="last admonition note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Makes sure that Django knows about our directory as an App and creates needed Tables () when</p>
+<p class="last">Makes sure that Django knows about our directory as an App and creates needed Tables () when running</p>
+</div>
+<div class="last highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py syncdb
+</pre></div>
 </div>
 </dd>
 </dl>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">running</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">syncdb</span>
-</pre></div>
-</div>
 <p>Now that you know about all these you might start the development server. As usual in Django this is done by running</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">runserver</span>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py runserver
 </pre></div>
 </div>
+</blockquote>
 <p>within the Django Site Directory - as usual the default address is localhost:8000
 Of course it will only be able to start once our app is in place as well.</p>
 </div>
 <div class="section" id="django-application">
 <h2>Django Application<a class="headerlink" href="#django-application" title="Permalink to this headline">¶</a></h2>
 <p>First get the files, and make sure you paste them into your Project directory and adjust it&#8217;s name to the appropriate configuration you&#8217;ve made earlier in the Django Site. Remeber our default is mailman_django</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">bzr</span> <span class="n">branch</span> <span class="n">lp</span><span class="p">:</span><span class="n">mailmanwebgsoc2011</span>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bzr branch lp:mailmanwebgsoc2011
 </pre></div>
 </div>
+</blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">We&#8217;ve tested Revision 172</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We&#8217;re planning to ease up installation by creating an egg</p>
 </div>
 </div>
 <div class="section" id="test-the-sites-functionality">
 <h2>Test the Sites functionality<a class="headerlink" href="#test-the-sites-functionality" title="Permalink to this headline">¶</a></h2>
 <p>We&#8217;ve added our own test-suite to the Django App which will be executed together with the Django Test. Last thing you should do is running these tests. If they fail you did something wrong, if they succeed you can enjoy the site.</p>
 <p>Run the following in the Site Directory</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">test</span>
+<blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py <span class="nb">test</span>
 </pre></div>
 </div>
+</blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Please be aware that we want to run a development instance of mailman you need to stop the stable one first and the tests will open it&#8217;s own mailman temporily.</p>
