@@ -46,6 +46,7 @@ Django 1.3
 ----------
 During our development we started a Django Site based on the 1.2 Version which is included into Ubuntu's repositorys. This made the installation easy but we ended up having some points which would get a much better code when using some elements introducing in 1.3.
 As Mailman is supposed to be long-time stable - or however you call it - we decided that we should stick to the latest stable version right away. For this reason you're required to install Django 1.3+ which is descriped on their Website. (https://www.djangoproject.com/download/)
+
 .. note::
     Please be Aware that it's not recommended to run both 1.2 and 1.3 at the same time
     

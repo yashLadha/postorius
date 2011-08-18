@@ -1,0 +1,509 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using the Django App - Developers Resource &mdash; mailman_django v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="mailman_django v0.1 documentation" href="index.html" />
+    <link rel="prev" title="Installation" href="setup.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="setup.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mailman_django v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-tests.tests">
+<span id="using-the-django-app-developers-resource"></span><h1>Using the Django App - Developers Resource<a class="headerlink" href="#module-tests.tests" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="test-suite-for-the-mailman-ui">
+<h2>Test suite for the Mailman UI.<a class="headerlink" href="#test-suite-for-the-mailman-ui" title="Permalink to this headline">¶</a></h2>
+<p>This document both acts as a test for all the functions implemented
+in the UI as well as documenting what has been done.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setup</span> <span class="kn">import</span> <span class="n">setup_mm</span><span class="p">,</span> <span class="n">Testobject</span><span class="p">,</span> <span class="n">teardown_mm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">testobject</span> <span class="o">=</span> <span class="n">setup_mm</span><span class="p">(</span><span class="n">Testobject</span><span class="p">())</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Import Translation Module to check success messages</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="kn">import</span> <span class="n">gettext</span> <span class="k">as</span> <span class="n">_</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<div class="section" id="getting-started">
+<h3>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h3>
+<p>To start the test, import the django test client.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.test.client</span> <span class="kn">import</span> <span class="n">Client</span>
+</pre></div>
+</div>
+<p>Then instantiate a test client.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Go to the start page listing all lists.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">,)</span>
+</pre></div>
+</div>
+<p>Make sure the load was a success by checking the status code.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-that-login-is-required-for-a-couple-of-pages">
+<h3>Check that login is required for a couple of pages<a class="headerlink" href="#check-that-login-is-required-for-a-couple-of-pages" title="Permalink to this headline">¶</a></h3>
+<p>Try to access some of the admin Pages. Accessing these pages
+redirects to a login page since we need admin authority to view and use them
+#TODO - ACL tests will be implemented for each site at a central place at later stages of development.
+Please be aware that this test only checks for authentification ONCE.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check that Http Redirect to the login is returned #TODO check url</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponseRedirect</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="n">HttpResponseRedirect</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="user-login">
+<h3>User + Login<a class="headerlink" href="#user-login" title="Permalink to this headline">¶</a></h3>
+<p>For authentification we do need to setup a test user into the system.
+This including the login will be with our own Auth Backend. Additional information on how to expand the Auth Backend with e.g. user perms could be found on a well documented Django Help page:
+<a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/auth/">https://docs.djangoproject.com/en/dev/topics/auth/</a></p>
+<blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c">#c.... adduser() #TODO add user</span>
+</pre></div>
+</div>
+<p>Check our own login form, which should redirect the user to a usable page after every successful login
+Login was successful if we get a return object to either the list index or a specified url
+&gt;&gt;&gt; response = c.post(&#8216;/accounts/login/&#8217;,
+...                   {&#8220;user&#8221;: &#8220;<a class="reference external" href="mailto:james&#37;&#52;&#48;example&#46;com">james<span>&#64;</span>example<span>&#46;</span>com</a>&#8220;,
+...                   &#8220;password&#8221;: &#8220;james&#8221;})
+&gt;&gt;&gt; print type(response) == HttpResponseRedirect
+True</p>
+<p>Check user login directly via our own Auth Framework which will save the Login Cookie which is needed for further testing
+&gt;&gt;&gt; c.login(<a class="reference external" href="mailto:username='katie&#37;&#52;&#48;example&#46;com">username='katie<span>&#64;</span>example<span>&#46;</span>com</a>&#8216;, password=&#8217;katie&#8217;)
+True</p>
+</blockquote>
+</div>
+<div class="section" id="permissions">
+<h3>Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h3>
+<p>Check that only James does have the permission to get the domains administration
+#TODO - ACL is hardcoded in auth backend : permission domain_admin → == james&#64;...</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="n">HttpResponseRedirect</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span> <span class="c">#katie</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">&#39;james@example.com&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;james&#39;</span><span class="p">)</span> <span class="c">#now Domains should work - see tests below</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-a-new-domain">
+<h3>Create a New Domain<a class="headerlink" href="#create-a-new-domain" title="Permalink to this headline">¶</a></h3>
+<p>Check the content to see that we came to the create page after 
+logging in.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Then we check that everything went well.</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Domain Index&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span> <span class="c">#TODO - change heading</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+<dt>Check the button which should allow creation of a new domains</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;&lt;li class=&quot;mm_new_domain&quot;&gt;&lt;a href=&quot;/domains/new/&quot;&gt;New Domain&lt;/a&gt;&lt;/li&gt;&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+<dt>Now go to the Domains creation page</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/new/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Then we check that everything went well.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Add a new Domain&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span> <span class="c">#TODO - change heading</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>and create a new Domain called &#8216;mail.example.com&#8217;.    
+Check that the new Domain exists in the list of existing domains which is above new_domain form</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/domains/new/&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;mail_host&quot;</span><span class="p">:</span> <span class="s">&quot;mail.example.com&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s">&quot;web_host&quot;</span><span class="p">:</span> <span class="s">&quot;example.com&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;doctest testing domain&quot;</span><span class="p">})</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Then we check that everything went well.</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;doctest testing domain&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="create-a-new-list">
+<h3>Create a New List<a class="headerlink" href="#create-a-new-list" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Try to access the list index</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Then we check that everything went well.</dt>
+<dd><div class="first highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+</pre></div>
+</div>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;All available Lists&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Try to create a new list. 
+And check the content to see that we came to the create page after 
+logging in.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/new/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Then we check that everything went well.</dt>
+<dd><div class="first highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+</pre></div>
+</div>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Create a new List on&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Now create a new list called &#8216;new_list&#8217;.
+We should end up on a redirect</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/lists/new/&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;listname&quot;</span><span class="p">:</span> <span class="s">&quot;new_list1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s">&quot;mail_host&quot;</span><span class="p">:</span> <span class="s">&quot;mail.example.com&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s">&quot;list_owner&quot;</span><span class="p">:</span> <span class="s">&quot;james@example.com&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;doctest testing list&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="s">&quot;advertised&quot;</span><span class="p">:</span> <span class="s">&quot;True&quot;</span><span class="p">,</span>    
+<span class="gp">... </span>                   <span class="s">&quot;languages&quot;</span><span class="p">:</span> <span class="s">&quot;English (USA)&quot;</span><span class="p">})</span>    
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="n">HttpResponseRedirect</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>List index page should now include the realname of the list</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">,</span><span class="n">HTTP_HOST</span><span class="o">=</span><span class="s">&#39;example.com&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Then we check that everything went well.</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;New_list1&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="list-summary">
+<h3>List Summary<a class="headerlink" href="#list-summary" title="Permalink to this headline">¶</a></h3>
+<p>Four options appear on this page. The first one is to subscribe, 
+2. to view archives
+3. to edit the list settings #at least if you do have permission to do so
+4. to unsubscribe</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/new_list1%40mail.example.com/&#39;</span><span class="p">,)</span>    
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Then we check that everything went well.</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Subscribe&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Archives&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Edit Options&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Unsubscribe&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="subscriptions">
+<h3>Subscriptions<a class="headerlink" href="#subscriptions" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Get the Subscriptions Page and check that the form was prefilled with the users E-Mail</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="s">&#39;/subscriptions/new_list1%40mail.example.com/subscribe&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Then we check that everything went well.</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;james@example.com&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Now subscribe James and Katie and check that you get redirected to List Summary which should now have an additional Button allowing to modify your user options.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;email&quot;</span><span class="p">:</span> <span class="s">&quot;james@example.com&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s">&quot;real_name&quot;</span><span class="p">:</span> <span class="s">&quot;James Watt&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;subscribe&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s">&quot;fqdn_listname&quot;</span><span class="p">:</span> <span class="s">&quot;new_list1@mail.example.com&quot;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;email&quot;</span><span class="p">:</span> <span class="s">&quot;katie@example.com&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s">&quot;real_name&quot;</span><span class="p">:</span> <span class="s">&quot;Katie Doe&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;subscribe&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s">&quot;fqdn_listname&quot;</span><span class="p">:</span> <span class="s">&quot;new_list1@mail.example.com&quot;</span><span class="p">})</span>   
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Subscribed&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; katie@example.com&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>The logged in user (<a class="reference external" href="mailto:james&#37;&#52;&#48;example&#46;com">james<span>&#64;</span>example<span>&#46;</span>com</a>) can now modify his own membership using a button which is displayed in list_summary   </dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/new_list1%40mail.example.com/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;mm_membership&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+<dt>Using the same subscription page we can unsubscribe as well.    </dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/subscriptions/new_list1%40mail.example.com/unsubscribe&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;email&quot;</span><span class="p">:</span> <span class="s">&quot;katie@example.com&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;unsubscribe&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s">&quot;fqdn_listname&quot;</span><span class="p">:</span> <span class="s">&quot;new_list1@mail.example.com&quot;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Unsubscribed&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; katie@example.com&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="mass-subscribe-users-within-settings">
+<h3>Mass Subscribe Users (within settings)<a class="headerlink" href="#mass-subscribe-users-within-settings" title="Permalink to this headline">¶</a></h3>
+<p>Now we want to mass subscribe a few users to the list. Therefore, 
+go to the mass subscription page.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="s">&#39;/subscriptions/new_list1%40mail.example.com/mass_subscribe/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check that everything went well by making sure the status code 
+was correct.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+</pre></div>
+</div>
+<p>Try mass subscribing the users <a class="reference external" href="mailto:'liza&#37;&#52;&#48;example&#46;com">'liza<span>&#64;</span>example<span>&#46;</span>com</a>&#8216; and 
+<a class="reference external" href="mailto:'george&#37;&#52;&#48;example&#46;com">'george<span>&#64;</span>example<span>&#46;</span>com</a>&#8216;. Each address should be provided on a separate 
+line so add &#8216;n&#8217; between the names to indicate that this was done 
+(we&#8217;re on a Linux machine which is why the letter &#8216;n&#8217; was used and 
+the double &#8216;&#8217; instead of a single one is to escape the string 
+parsing of Python).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="s">&#39;/subscriptions/new_list1%40mail.example.com/mass_subscribe/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;emails&quot;</span><span class="p">:</span> <span class="s">&quot;liza@example.com</span><span class="se">\n</span><span class="s">george@example.com&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>If everything was successful, we shall get a positive response from 
+the page. We&#8217;ll check that this was the case.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">_</span><span class="p">(</span><span class="s">&quot;The mass subscription was successful.&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="change-the-memebership-settings">
+<h3>Change the Memebership Settings<a class="headerlink" href="#change-the-memebership-settings" title="Permalink to this headline">¶</a></h3>
+<p>Now let&#8217;s go to the membership settings page. Once we go there we 
+should get a list of all the available lists.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/membership_settings/new_list1%40mail.example.com/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check that we came to the right place...</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Membership Settings&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>...and select the list <a class="reference external" href="mailto:'test-one&#37;&#52;&#48;example&#46;com">'test-one<span>&#64;</span>example<span>&#46;</span>com</a>&#8216;.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/membership_settings/new_list1%40mail.example.com/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Lets make sure we got to the right page.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="s">&quot;Membership Settings&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;for new_list1@mail.example.com&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-the-list">
+<h3>Delete the List<a class="headerlink" href="#delete-the-list" title="Permalink to this headline">¶</a></h3>
+<p>Finally, let&#8217;s delete the list.
+We start by checking that the list is really there (for reference).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">,</span><span class="n">HTTP_HOST</span><span class="o">=</span><span class="s">&#39;example.com&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;New_list1&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Trying to delete the List we have to confirm this action</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/delete_list/new_list1%40mail.example.com/&#39;</span><span class="p">,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Please confirm&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+<dt>Confirmed by pressing the button which requests the same page using POST</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/delete_list/new_list1%40mail.example.com/&#39;</span><span class="p">,)</span>
+</pre></div>
+</div>
+</dd>
+<dt>...and check that it&#8217;s been deleted.</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">,</span><span class="n">HTTP_HOST</span><span class="o">=</span><span class="s">&#39;example.com&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;new_list1</span><span class="si">%40e</span><span class="s">xample.com&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>So far this is what you can do in the UI. More tests can be added 
+here later.</p>
+</div>
+<div class="section" id="finishing-test">
+<h3>Finishing Test<a class="headerlink" href="#finishing-test" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">teardown_mm</span><span class="p">(</span><span class="n">testobject</span><span class="p">)</span>    
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using the Django App - Developers Resource</a><ul>
+<li><a class="reference internal" href="#test-suite-for-the-mailman-ui">Test suite for the Mailman UI.</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#check-that-login-is-required-for-a-couple-of-pages">Check that login is required for a couple of pages</a></li>
+<li><a class="reference internal" href="#user-login">User + Login</a></li>
+<li><a class="reference internal" href="#permissions">Permissions</a></li>
+<li><a class="reference internal" href="#create-a-new-domain">Create a New Domain</a></li>
+<li><a class="reference internal" href="#create-a-new-list">Create a New List</a></li>
+<li><a class="reference internal" href="#list-summary">List Summary</a></li>
+<li><a class="reference internal" href="#subscriptions">Subscriptions</a></li>
+<li><a class="reference internal" href="#mass-subscribe-users-within-settings">Mass Subscribe Users (within settings)</a></li>
+<li><a class="reference internal" href="#change-the-memebership-settings">Change the Memebership Settings</a></li>
+<li><a class="reference internal" href="#delete-the-list">Delete the List</a></li>
+<li><a class="reference internal" href="#finishing-test">Finishing Test</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setup.html"
+                        title="previous chapter">Installation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/using.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="setup.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">mailman_django v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Benedict Stein.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+    </div>
+  </body>
+</html>

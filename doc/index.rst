@@ -13,5 +13,6 @@ Contents:
    
    setup.rst
    using.rst
+   license.rst
 
 * :ref:`search`
