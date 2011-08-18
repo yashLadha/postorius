@@ -53,21 +53,40 @@
             
   <div class="section" id="module-tests.tests">
 <span id="using-the-django-app-developers-resource"></span><h1>Using the Django App - Developers Resource<a class="headerlink" href="#module-tests.tests" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="test-suite-for-the-mailman-ui">
-<h2>Test suite for the Mailman UI.<a class="headerlink" href="#test-suite-for-the-mailman-ui" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functionality-and-test">
+<h2>Functionality and Test<a class="headerlink" href="#functionality-and-test" title="Permalink to this headline">¶</a></h2>
 <p>This document both acts as a test for all the functions implemented
-in the UI as well as documenting what has been done.</p>
+in the UI as well as documenting what can be done</p>
+<div class="section" id="test-pre-requirements">
+<h3>Test Pre Requirements<a class="headerlink" href="#test-pre-requirements" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">We&#8217;ve created a special Testobject which will run it&#8217;s own instance of Mailman3 with a new empty Database.</p>
+<blockquote>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setup</span> <span class="kn">import</span> <span class="n">setup_mm</span><span class="p">,</span> <span class="n">Testobject</span><span class="p">,</span> <span class="n">teardown_mm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">testobject</span> <span class="o">=</span> <span class="n">setup_mm</span><span class="p">(</span><span class="n">Testobject</span><span class="p">())</span>
 </pre></div>
 </div>
-<dl class="docutils">
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You need to stop all Mailman3 instances before running the tests</p>
+</div>
+</blockquote>
+</li>
+<li><dl class="first docutils">
+<dt>Modules needed</dt>
+<dd><p class="first">As we can&#8217;t make sure that you&#8217;re running the same language as we did we made sure that each test below is executed using the exact same translation mechanism as we use to Display you Status Messages and other GUI Texts.</p>
+<dl class="last docutils">
 <dt>Import Translation Module to check success messages</dt>
 <dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="kn">import</span> <span class="n">gettext</span> <span class="k">as</span> <span class="n">_</span>
 </pre></div>
 </div>
 </dd>
 </dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
 <div class="section" id="getting-started">
 <h3>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h3>
 <p>To start the test, import the django test client.</p>
@@ -472,7 +491,8 @@ here later.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Using the Django App - Developers Resource</a><ul>
-<li><a class="reference internal" href="#test-suite-for-the-mailman-ui">Test suite for the Mailman UI.</a><ul>
+<li><a class="reference internal" href="#functionality-and-test">Functionality and Test</a><ul>
+<li><a class="reference internal" href="#test-pre-requirements">Test Pre Requirements</a></li>
 <li><a class="reference internal" href="#getting-started">Getting Started</a></li>
 <li><a class="reference internal" href="#check-that-login-is-required-for-a-couple-of-pages">Check that login is required for a couple of pages</a></li>
 <li><a class="reference internal" href="#user-login">User + Login</a></li>

@@ -18,18 +18,28 @@
 
 """
 ==============================
-Test suite for the Mailman UI.
+Functionality and Test
 ==============================
 
 This document both acts as a test for all the functions implemented
-in the UI as well as documenting what has been done.
+in the UI as well as documenting what can be done
+
+Test Pre Requirements
+=====================
+
+* We've created a special Testobject which will run it's own instance of Mailman3 with a new empty Database.
 
     >>> from setup import setup_mm, Testobject, teardown_mm
     >>> testobject = setup_mm(Testobject())
 
-Import Translation Module to check success messages
-    >>> from django.utils.translation import gettext as _
+    .. note:: 
+        You need to stop all Mailman3 instances before running the tests
 
+* Modules needed
+    As we can't make sure that you're running the same language as we did we made sure that each test below is executed using the exact same translation mechanism as we use to Display you Status Messages and other GUI Texts.
+
+    Import Translation Module to check success messages
+        >>> from django.utils.translation import gettext as _
 
 Getting Started
 ===============

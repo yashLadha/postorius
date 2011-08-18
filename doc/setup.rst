@@ -185,17 +185,3 @@ First get the files, and make sure you paste them into your Project directory an
     
 .. note::
     We're planning to ease up installation by creating an egg    
-
-Test the Sites functionality
-----------------------------
-We've added our own test-suite to the Django App which will be executed together with the Django Test. Last thing you should do is running these tests. If they fail you did something wrong, if they succeed you can enjoy the site.
-
-Run the following in the Site Directory
-
-    .. code-block:: bash
-    
-        $ python manage.py test
-
-.. note::
-    Please be aware that we want to run a development instance of mailman you need to stop the stable one first and the tests will open it's own mailman temporily.
-
