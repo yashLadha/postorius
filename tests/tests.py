@@ -40,59 +40,66 @@ Test Pre Requirements
 
     Import Translation Module to check success messages
         >>> from django.utils.translation import gettext as _
+    
+    Import HTTPRedirectObject to check whether a response redirects
+        >>> from django.http import HttpResponseRedirect
 
 Getting Started
 ===============
 
-To start the test, import the django test client.
+Starting the test module we do use a special Django Test Client which needs to be imported first.
 
     >>> from django.test.client import Client
-
-Then instantiate a test client.
-
     >>> c = Client()
 
-Go to the start page listing all lists.
+Once this is created we can try accessing our first Page and check that this was done successful
 
-    >>> response = c.get('/',)
-
-Make sure the load was a success by checking the status code.
-
+    >>> response = c.get('/lists/',)
     >>> response.status_code
     200
 
-Check that login is required for a couple of pages
+Login Required
 ==================================================
-Try to access some of the admin Pages. Accessing these pages
-redirects to a login page since we need admin authority to view and use them
-#TODO - ACL tests will be implemented for each site at a central place at later stages of development.
-Please be aware that this test only checks for authentification ONCE.
+
+As described within the installation instructions we *already* started using authentification. The easiest way testing it is that we simply load a page which is restricted to some users only.
+This was done using Django's @login_required Decorator in front of the View.
+One of the pages which requires a Login is the Domain Administration, if we can load the page without a redirect to the Login page, you're either already logged in or something went wrong.
 
     >>> response = c.get('/domains/')
-
-Check that Http Redirect to the login is returned #TODO check url
-
-    >>> from django.http import HttpResponseRedirect
     >>> print type(response) == HttpResponseRedirect
     True
 
-User + Login
-============
-For authentification we do need to setup a test user into the system.
-This including the login will be with our own Auth Backend. Additional information on how to expand the Auth Backend with e.g. user perms could be found on a well documented Django Help page:
-https://docs.djangoproject.com/en/dev/topics/auth/
+Login of a User
+===============
+
+We've decided to write our own Authentification Backend to use with Django.
+This will handle all @login_required .authenticate() .login() requests.
+
+As we do not have the Authenticating Part which connects Both Mailman and the WebUI we had to hardcode usernames and permissions into the file (auth/restbackend.py)
+For more information what we're planning to implement here take a look at the Acknowledgements.
+
+    .. note::
+        If you're planning to expand this feel free to use this wonderful resource:
+        https://docs.djangoproject.com/en/dev/topics/auth/
+
+Once the new middleware is in place we will need to create a user first. At the moment the user is automaticly created upon success of the login procedure.
     
     >>> #c.... adduser() #TODO add user
 
-    Check our own login form, which should redirect the user to a usable page after every successful login
-    Login was successful if we get a return object to either the list index or a specified url
+Users will have to use the Login form which is located at (/accounts/login/) in order to authenticate themself. The Login / Logout button is linked in the bottom left corner of each page as well.
+
+After each successful login users should be redirected either to the site which they requested before - stored in a GET Value named next - or get the List index. Only if they've used a faulty login they should stay on the Login Page to try again.
+    
     >>> response = c.post('/accounts/login/',
     ...                   {"user": "james@example.com",
     ...                   "password": "james"})
+    
     >>> print type(response) == HttpResponseRedirect
     True
     
-    Check user login directly via our own Auth Framework which will save the Login Cookie which is needed for further testing
+Unfortuneatly the Test Client requires to use the Login directly because it does handle each request seperately. For this reason we have to use the following part in the Tests only to authenticate a user.
+Each successful Login will return True and write the users object into the request context, which allows simple checks whether there is a user logged in and what his name is.
+
     >>> c.login(username='katie@example.com', password='katie')
     True
     
