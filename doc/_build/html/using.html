@@ -53,8 +53,8 @@
             
   <div class="section" id="module-tests.tests">
 <span id="using-the-django-app-developers-resource"></span><h1>Using the Django App - Developers Resource<a class="headerlink" href="#module-tests.tests" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="functionality-and-test">
-<h2>Functionality and Test<a class="headerlink" href="#functionality-and-test" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="tests-login-and-permissions">
+<h2>Tests Login and Permissions<a class="headerlink" href="#tests-login-and-permissions" title="Permalink to this headline">¶</a></h2>
 <p>This document both acts as a test for all the functions implemented
 in the UI as well as documenting what can be done</p>
 <div class="section" id="test-pre-requirements">
@@ -154,58 +154,71 @@ Each successful Login will return True and write the users object into the reque
 </div>
 <div class="section" id="permissions">
 <h3>Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h3>
-<p>Check that only James does have the permission to get the domains administration
-#TODO - ACL is hardcoded in auth backend : permission domain_admin → == james&#64;...</p>
+<p>Our own Auth Backend allows the use of Djangos own Permission Decorator which is</p>
+<div class="highlight-python"><pre>@permission_required(NAME_OF_PERMISSION)</pre>
+</div>
+<p>At the moment we&#8217;ve installed this for Domain Administration,</p>
+<blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please take a look at the ackownledgement to see what is working in this part</p>
+</div>
+</blockquote>
+<p>Get the Domains page and get redirected because Katie who is logged in doesn&#8217;t have the Permission</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="n">HttpResponseRedirect</span>
 <span class="go">True</span>
 </pre></div>
 </div>
+<p>Logout Katie who isn&#8217;t a Domain-Owner and Login James who should be allowed to view this page</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span> <span class="c">#katie</span>
-</pre></div>
-</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">&#39;james@example.com&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;james&#39;</span><span class="p">)</span> <span class="c">#now Domains should work - see tests below</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">&#39;james@example.com&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;james&#39;</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>
+<p>Check that the Page now loads correctly</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+</pre></div>
 </div>
+</div>
+</div>
+<div class="section" id="pages">
+<h2>Pages<a class="headerlink" href="#pages" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="create-a-new-domain">
 <h3>Create a New Domain<a class="headerlink" href="#create-a-new-domain" title="Permalink to this headline">¶</a></h3>
-<p>Check the content to see that we came to the create page after 
-logging in.</p>
+<p>Domain Administration is called by opening the URL mentioned below. Prequirements like Authorisation and Permissions have been covered before.
+Now we do check that the response really does have the correct heading.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Domain Index&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>On this page there should be a button which allows to create a new Domain.
+If you&#8217;re running Mailman for the first time you need to create a Domain before creating Mailinglists. That&#8217;s only because each List is Part of a Domain and could not be created without it&#8217;s reference.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;&lt;li class=&quot;mm_new_domain&quot;&gt;&lt;a href=&quot;/domains/new/&quot;&gt;New Domain&lt;/a&gt;&lt;/li&gt;&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 <dl class="docutils">
-<dt>Then we check that everything went well.</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
-<span class="go">200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Domain Index&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span> <span class="c">#TODO - change heading</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd>
-<dt>Check the button which should allow creation of a new domains</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;&lt;li class=&quot;mm_new_domain&quot;&gt;&lt;a href=&quot;/domains/new/&quot;&gt;New Domain&lt;/a&gt;&lt;/li&gt;&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd>
-<dt>Now go to the Domains creation page</dt>
+<dt>For sure the page allowing the creation of a new Domain should open correclty as well</dt>
 <dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/new/&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-<p>Then we check that everything went well.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Add a new Domain&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span> <span class="c">#TODO - change heading</span>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>and create a new Domain called &#8216;mail.example.com&#8217;.    
-Check that the new Domain exists in the list of existing domains which is above new_domain form</p>
+</dd>
+</dl>
+<p>Each Domain has two main Data Parts, most obvious for a mailinglist we do need a mail_host that&#8217;s the part behind the &#64; when getting an email. In addition we offer you this WebUI for configuration, some may have multiple URLs they can use to access the same installation of mailman. For this reason each Mailinglist gets it&#8217;s own web_host as well - which doesn&#8217;t need to be unique.</p>
+<p>Testing the Site we do now submit the form we&#8217;ve loaded earlier by sending all necessary data in a POST request. The new Domain will be called mail.example.com and available via it&#8217;s web_host example.com.</p>
+<blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you do want to use web_host filtering in your webUI you need to remember adding the URL to your /etc/hosts - at least for development</p>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/domains/new/&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;mail_host&quot;</span><span class="p">:</span> <span class="s">&quot;mail.example.com&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                   <span class="s">&quot;web_host&quot;</span><span class="p">:</span> <span class="s">&quot;example.com&quot;</span><span class="p">,</span>
@@ -213,6 +226,7 @@ Check that the new Domain exists in the list of existing domains which is above 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</blockquote>
 <dl class="docutils">
 <dt>Then we check that everything went well.</dt>
 <dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
@@ -226,43 +240,24 @@ Check that the new Domain exists in the list of existing domains which is above 
 </div>
 <div class="section" id="create-a-new-list">
 <h3>Create a New List<a class="headerlink" href="#create-a-new-list" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Try to access the list index</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-<dt>Then we check that everything went well.</dt>
-<dd><div class="first highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<p>After creating a Domain you should be able to create new Lists. The Button for doing so is shown on the List index Page which should offer a list of all available (adverrtised) lists.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
-</pre></div>
-</div>
-<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;All available Lists&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;All available Lists&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
 </pre></div>
 </div>
-</dd>
-</dl>
-<p>Try to create a new list. 
-And check the content to see that we came to the create page after 
-logging in.</p>
+<p>The new List creation form is opened by clicking on the Button mentioned above or accessing the page directly</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/new/&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils">
-<dt>Then we check that everything went well.</dt>
-<dd><div class="first highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
-</pre></div>
-</div>
-<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Create a new List on&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Create a new List on&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
 </pre></div>
 </div>
-</dd>
-</dl>
-<p>Now create a new list called &#8216;new_list&#8217;.
-We should end up on a redirect</p>
+<p>Creating a new List we do need to specify at least the below mentioned items. Those were entered using some nice GUI Forms which do only show up available Values or offer you to choose a name which will be checked during validation.
+We&#8217;re now submitting the form using a POST request and get redirected to the List Index Page</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/lists/new/&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;listname&quot;</span><span class="p">:</span> <span class="s">&quot;new_list1&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                   <span class="s">&quot;mail_host&quot;</span><span class="p">:</span> <span class="s">&quot;mail.example.com&quot;</span><span class="p">,</span>
@@ -274,46 +269,31 @@ We should end up on a redirect</p>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>List index page should now include the realname of the list</p>
+<p>As List index is an overview of all advertised Lists and we&#8217;ve choosen to do so we should now see our new List within the overview. HTTP_HOST is added as META Data for the request because we do only want to see Domains which belong to the example.com web_host</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">,</span><span class="n">HTTP_HOST</span><span class="o">=</span><span class="s">&#39;example.com&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="docutils">
-<dt>Then we check that everything went well.</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;New_list1&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 </div>
 <div class="section" id="list-summary">
 <h3>List Summary<a class="headerlink" href="#list-summary" title="Permalink to this headline">¶</a></h3>
-<p>Four options appear on this page. The first one is to subscribe, 
-2. to view archives
-3. to edit the list settings #at least if you do have permission to do so
-4. to unsubscribe</p>
+<p>List summary is a dashboard for each List. It does have Links to the most useful functions which are only related to that Domain. These include the Values mentioned below. _(function) is used to Translate these to you local language.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/new_list1%40mail.example.com/&#39;</span><span class="p">,)</span>    
-</pre></div>
-</div>
-<dl class="docutils">
-<dt>Then we check that everything went well.</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Subscribe&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Subscribe&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Archives&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Archives&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Edit Options&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Edit Options&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Unsubscribe&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">(</span><span class="s">&quot;Unsubscribe&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 </div>
 <div class="section" id="subscriptions">
 <h3>Subscriptions<a class="headerlink" href="#subscriptions" title="Permalink to this headline">¶</a></h3>
@@ -499,12 +479,15 @@ here later.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Using the Django App - Developers Resource</a><ul>
-<li><a class="reference internal" href="#functionality-and-test">Functionality and Test</a><ul>
+<li><a class="reference internal" href="#tests-login-and-permissions">Tests Login and Permissions</a><ul>
 <li><a class="reference internal" href="#test-pre-requirements">Test Pre Requirements</a></li>
 <li><a class="reference internal" href="#getting-started">Getting Started</a></li>
 <li><a class="reference internal" href="#login-required">Login Required</a></li>
 <li><a class="reference internal" href="#login-of-a-user">Login of a User</a></li>
 <li><a class="reference internal" href="#permissions">Permissions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pages">Pages</a><ul>
 <li><a class="reference internal" href="#create-a-new-domain">Create a New Domain</a></li>
 <li><a class="reference internal" href="#create-a-new-list">Create a New List</a></li>
 <li><a class="reference internal" href="#list-summary">List Summary</a></li>

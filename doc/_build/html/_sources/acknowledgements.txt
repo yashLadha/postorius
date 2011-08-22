@@ -19,7 +19,14 @@ Missing Functionality
 ACL
 ---
 
-* Middleware ...
+* Middleware
+
+    We don't have the Middleware which is required to work with users and it's permissions yet. For this reason we had to tweak some functions to be a hardcoded Demo object.
+
+    * Login Check
+        At the moment we're using a hardcoded List of allowed usernames and Passwords which are all stored in Plain within the AuthBackends Source File.
+    * has_perm Decorator
+        As we don't have a middleware to check for users and it's permissions we do only use one permission at the moment. The permission site domain_admin is hardcoded to user.username == "james@example.com"
 
 
 

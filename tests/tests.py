@@ -18,7 +18,7 @@
 
 """
 ==============================
-Functionality and Test
+Tests Login and Permissions
 ==============================
 
 This document both acts as a test for all the functions implemented
@@ -105,48 +105,72 @@ Each successful Login will return True and write the users object into the reque
     
 Permissions
 ===========
-Check that only James does have the permission to get the domains administration
-#TODO - ACL is hardcoded in auth backend : permission domain_admin → == james@...
+
+Our own Auth Backend allows the use of Djangos own Permission Decorator which is
+
+.. code-block:: python
+
+    @permission_required(NAME_OF_PERMISSION)
+    
+At the moment we've installed this for Domain Administration, 
+
+ .. note::
+    Please take a look at the ackownledgement to see what is working in this part
+    
+Get the Domains page and get redirected because Katie who is logged in doesn't have the Permission
     
     >>> response = c.get('/domains/')
     >>> print type(response) == HttpResponseRedirect
     True
     
+Logout Katie who isn't a Domain-Owner and Login James who should be allowed to view this page    
+    
     >>> c.logout() #katie
-
-    >>> c.login(username='james@example.com', password='james') #now Domains should work - see tests below
+    >>> c.login(username='james@example.com', password='james')
     True
+    
+Check that the Page now loads correctly
+
+    >>> response = c.get('/domains/')
+    >>> response.status_code
+    200
+
+
+=====
+Pages
+=====
+
 
 Create a New Domain
 ===================
-Check the content to see that we came to the create page after 
-logging in.
+
+Domain Administration is called by opening the URL mentioned below. Prequirements like Authorisation and Permissions have been covered before.
+Now we do check that the response really does have the correct heading.
 
     >>> response = c.get('/domains/')
-    
-Then we check that everything went well.
-    >>> response.status_code
-    200
-    >>> print "Domain Index" in response.content #TODO - change heading
+    >>> print "Domain Index" in response.content
     True
     
-Check the button which should allow creation of a new domains
+On this page there should be a button which allows to create a new Domain.
+If you're running Mailman for the first time you need to create a Domain before creating Mailinglists. That's only because each List is Part of a Domain and could not be created without it's reference.
+
     >>> '<li class="mm_new_domain"><a href="/domains/new/">New Domain</a></li>' in response.content
     True
 
-Now go to the Domains creation page
+For sure the page allowing the creation of a new Domain should open correclty as well
     >>> response = c.get('/domains/new/')
-
-Then we check that everything went well.
-
     >>> response.status_code
     200
     >>> print "Add a new Domain" in response.content #TODO - change heading
     True
 
+Each Domain has two main Data Parts, most obvious for a mailinglist we do need a mail_host that's the part behind the @ when getting an email. In addition we offer you this WebUI for configuration, some may have multiple URLs they can use to access the same installation of mailman. For this reason each Mailinglist gets it's own web_host as well - which doesn't need to be unique.
+
+Testing the Site we do now submit the form we've loaded earlier by sending all necessary data in a POST request. The new Domain will be called mail.example.com and available via it's web_host example.com.
+
+    .. note::
+        If you do want to use web_host filtering in your webUI you need to remember adding the URL to your /etc/hosts - at least for development
     
-and create a new Domain called 'mail.example.com'.    
-Check that the new Domain exists in the list of existing domains which is above new_domain form
     >>> response = c.post('/domains/new/',
     ...                   {"mail_host": "mail.example.com",
     ...                    "web_host": "example.com",
@@ -162,31 +186,25 @@ Then we check that everything went well.
 Create a New List
 =================
 
-Try to access the list index
+After creating a Domain you should be able to create new Lists. The Button for doing so is shown on the List index Page which should offer a list of all available (adverrtised) lists.
+
     >>> response = c.get('/lists/')
-    
-Then we check that everything went well.
     >>> response.status_code
     200
-    
     >>> "All available Lists" in response.content
     True
 
-Try to create a new list. 
-And check the content to see that we came to the create page after 
-logging in.
+The new List creation form is opened by clicking on the Button mentioned above or accessing the page directly
 
     >>> response = c.get('/lists/new/')
-    
-Then we check that everything went well.
     >>> response.status_code
     200
-    
     >>> print "Create a new List on" in response.content
     True
 
-Now create a new list called 'new_list'.
-We should end up on a redirect
+Creating a new List we do need to specify at least the below mentioned items. Those were entered using some nice GUI Forms which do only show up available Values or offer you to choose a name which will be checked during validation.
+We're now submitting the form using a POST request and get redirected to the List Index Page
+
     >>> response = c.post('/lists/new/',
     ...                   {"listname": "new_list1",
     ...                    "mail_host": "mail.example.com",
@@ -197,11 +215,9 @@ We should end up on a redirect
     >>> print type(response) == HttpResponseRedirect
     True
     
-List index page should now include the realname of the list
+As List index is an overview of all advertised Lists and we've choosen to do so we should now see our new List within the overview. HTTP_HOST is added as META Data for the request because we do only want to see Domains which belong to the example.com web_host 
 
     >>> response = c.get('/lists/',HTTP_HOST='example.com')
-
-Then we check that everything went well.
     >>> response.status_code
     200
     >>> "New_list1" in response.content
@@ -210,23 +226,18 @@ Then we check that everything went well.
 List Summary
 ============
 
-Four options appear on this page. The first one is to subscribe, 
-2. to view archives
-3. to edit the list settings #at least if you do have permission to do so
-4. to unsubscribe
+List summary is a dashboard for each List. It does have Links to the most useful functions which are only related to that Domain. These include the Values mentioned below. _(function) is used to Translate these to you local language.
 
     >>> response = c.get('/lists/new_list1%40mail.example.com/',)    
-
-Then we check that everything went well.
     >>> response.status_code
     200
-    >>> "Subscribe" in response.content
+    >>> _("Subscribe") in response.content
     True
-    >>> "Archives" in response.content
+    >>> _("Archives") in response.content
     True
-    >>> "Edit Options" in response.content
+    >>> _("Edit Options") in response.content
     True
-    >>> "Unsubscribe" in response.content
+    >>> _("Unsubscribe") in response.content
     True
     
 Subscriptions   
