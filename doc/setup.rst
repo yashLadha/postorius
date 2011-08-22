@@ -15,7 +15,7 @@ Mailman3 - a7
 
     .. code-block:: bash
 
-        $ bootstrap.py
+        $ python bootstrap.py
         $ bin/buildout
     
 * Vertify that everything was setup correclty and your branch fullfills the version requirements by running it's own test module
