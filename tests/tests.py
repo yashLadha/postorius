@@ -352,7 +352,7 @@ Confirmed by pressing the button which requests the same page using POST
 ...and check that it's been deleted.
     >>> response = c.get('/lists/',HTTP_HOST='example.com')
     >>> print "new_list1%40example.com" in response.content
-    False  
+    False
     
 ==============
 Finishing Test
