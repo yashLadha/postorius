@@ -243,17 +243,19 @@ List summary is a dashboard for each List. It does have Links to the most useful
 Subscriptions   
 =============
 
-Get the Subscriptions Page and check that the form was prefilled with the users E-Mail
+The Subscriptions form is found on the below URL. Last part of the Url is one of [None,'subscribe','unsubscribe']
+
     >>> url = '/subscriptions/new_list1%40mail.example.com/subscribe'
     >>> response = c.get(url)
-
-Then we check that everything went well.
     >>> response.status_code
     200
+    
+Forms will be prefilled with the Users Email if so. is logged in.    
+    
     >>> "james@example.com" in response.content
     True
     
-Now subscribe James and Katie and check that you get redirected to List Summary which should now have an additional Button allowing to modify your user options.
+Now we can subscribe James and Katie and check that we get redirected to List Summary.
     
     >>> response = c.post(url,
     ...                   {"email": "james@example.com",
@@ -268,7 +270,8 @@ Now subscribe James and Katie and check that you get redirected to List Summary 
     >>> print (_('Subscribed')+' katie@example.com') in response.content
     True
     
-The logged in user (james@example.com) can now modify his own membership using a button which is displayed in list_summary   
+The logged in user (james@example.com) can now modify his own membership using a button which is displayed in list_summary.  
+
     >>> response = c.get('/lists/new_list1%40mail.example.com/')
     >>> "mm_membership" in response.content
     True
