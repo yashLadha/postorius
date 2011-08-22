@@ -276,7 +276,8 @@ The logged in user (james@example.com) can now modify his own membership using a
     >>> "mm_membership" in response.content
     True
     
-Using the same subscription page we can unsubscribe as well.    
+Using the same subscription page we can unsubscribe as well. 
+   
     >>> response = c.post('/subscriptions/new_list1%40mail.example.com/unsubscribe',
     ...                   {"email": "katie@example.com",
     ...                   "name": "unsubscribe",
@@ -287,15 +288,10 @@ Using the same subscription page we can unsubscribe as well.
 Mass Subscribe Users (within settings)
 ======================================
 
-Now we want to mass subscribe a few users to the list. Therefore, 
-go to the mass subscription page.
+Another page related to Mass Subscriptions will be available to List Owners as well. This page will allow adding a couple of users to one lists at the same time. 
 
     >>> url = '/subscriptions/new_list1%40mail.example.com/mass_subscribe/'
     >>> response = c.get(url)
-
-Check that everything went well by making sure the status code 
-was correct.
-
     >>> response.status_code
     200
 
