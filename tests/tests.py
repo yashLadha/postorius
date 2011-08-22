@@ -319,20 +319,17 @@ Now let's go to the membership settings page. Once we go there we
 should get a list of all the available lists.
 
     >>> response = c.get('/membership_settings/new_list1%40mail.example.com/')
-
-Check that we came to the right place...
-
     >>> print "Membership Settings" in response.content
     True
 
-...and select the list 'test-one@example.com'.
+Select the list 'new_list1@example.com'.
 
     >>> response = c.get('/membership_settings/new_list1%40mail.example.com/')
-
-Lets make sure we got to the right page.
-
     >>> print ("Membership Settings" in response.content) and ("for new_list1@mail.example.com" in response.content)
     True
+    
+.. note::
+    This page relies on the Middleware connecting the Django Project with Mailman - see acknowledgements
     
 Delete the List
 ===============
