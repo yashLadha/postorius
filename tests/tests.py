@@ -354,11 +354,14 @@ Confirmed by pressing the button which requests the same page using POST
     >>> print "new_list1%40example.com" in response.content
     False
 
+Addition
 So far this is what you can do in the UI. More tests can be added 
 here later.    
     
+==============
 Finishing Test
 ==============
 
+Don't forget to remove the test object after testing all functions
     >>> teardown_mm(testobject)    
 """
