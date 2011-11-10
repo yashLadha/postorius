@@ -8,7 +8,7 @@
 {% block header %}
     <div class="mm_box mm_clear">
         <div class="mm_boxHeader">{% trans "About" %}</div>
-        {% trans "This site shows all available lists, either on the registered Domain or the whole server. Please bare in mind that we can only show public advertised lists. - Because of missing ACL functionality we show non-advertised list as well, but ammending a litle comment (non-public) <br>Please be aware that this will change in future releases "%}
+        {% trans "This site shows all available lists, either on the registered Domain or the whole server."%}
     </div>
 {% endblock %}
 
@@ -28,10 +28,10 @@
                 {% if not list.settings.advertised %}(non-public){% endif %}
             </a>
         </div>
-            <ul>
-                <li><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname %}">{%trans "Subscriptions" %}</a></li>
-                <li><a href="{% url list_settings list.fqdn_listname %}">{%trans "Settings" %}</a></li>
-                <li><a href="{% url list_delete list.fqdn_listname %}">{%trans "Delete list" %}</a></li>
+        <ul>
+            <li><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname %}">{%trans "Subscriptions" %}</a></li>
+            <li><a href="{% url list_settings list.fqdn_listname %}">{%trans "Settings" %}</a></li>
+            <li><a href="{% url list_delete list.fqdn_listname %}">{%trans "Delete list" %}</a></li>
         </ul>
     </div>
     {% endfor %}

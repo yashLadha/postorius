@@ -749,7 +749,7 @@ class ListSettings(FieldsetForm):
     )
     #Descriptions used in the Settings Overview Page
     section_descriptions = {
-        "List Indentity":_("General List settings use"),
+        "List Identity":_("General List settings use"),
         "Automatic Responses":_("All options for Autoreply"),
         "Content Filtering":_("Decide how incoming mails might be filtered"),
         "Digest": _("Modify and check some Digest options"),
@@ -802,7 +802,7 @@ class ListSettings(FieldsetForm):
         """        
         # just a really temporary layout to see that it works. -- Anna
         layout = [
-            ["List Indentity", "real_name", "include_list_post_header", 
+            ["List Identity", "real_name", "include_list_post_header", 
              "include_rfc2369_headers"], 
              #"info", "list_name", "host_name", "list_id", "fqdn_listname", 
              #"http_etag", "volume", "web_host"

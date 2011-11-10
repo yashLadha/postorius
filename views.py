@@ -26,7 +26,7 @@ from django.contrib.auth.models import User
 import re
 from mailman.client import Client
 from forms import *
-from settings import API_USER, API_PASS
+from mailmanweb.settings import API_USER, API_PASS
 import sys #Error handing info
 from urllib2 import HTTPError
 
@@ -101,7 +101,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                                       {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
         choosable_domains = [("",_("Choose a Domain"))]
         for domain in c.domains:
-            choosable_domains.append((domain.email_host,domain.email_host))
+            choosable_domains.append((domain.mail_host,domain.mail_host))
         form = ListNew(choosable_domains,request.POST)
 
         if form.is_valid():
@@ -129,7 +129,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
                                       {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
         choosable_domains = [("",_("Choose a Domain"))]
         for domain in c.domains:
-            choosable_domains.append((domain.email_host,domain.email_host))
+            choosable_domains.append((domain.mail_host,domain.mail_host))
         form = ListNew(choosable_domains)
     return render_to_response(template, {'form': form, error:None}, context_instance=RequestContext(request))
 
@@ -165,12 +165,12 @@ def list_summary(request,fqdn_listname=None,option=None,template='mailman-django
             return render_to_response('mailman-django/errors/generic.html', 
                                       {'error': "REST API not found / Offline"},context_instance=RequestContext(request))
     return render_to_response(template, 
-                                  {'list':the_list,
-                                   'message':  None,
-                                   'user_is_subscribed':user_is_subscribed,
-                                  },
-                                  context_instance=RequestContext(request)
-                                  )
+                              {'list':the_list,
+                               'message':  None,
+                               'user_is_subscribed':user_is_subscribed,
+                              },
+                              context_instance=RequestContext(request)
+                              )
 
 def list_subscriptions(request, option=None, fqdn_listname=None, user_email = None,
                        template = 'mailman-django/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
@@ -297,6 +297,7 @@ def list_settings(request, fqdn_listname = None, visible_section=None, visible_o
     <param> is optional / is used to differ in between section and option might result in using //option
     """
     message = ""
+    form_sections = []
     
     #Create the Connection
     try:
@@ -324,7 +325,6 @@ def list_settings(request, fqdn_listname = None, visible_section=None, visible_o
     else:
         #collect all Form sections for the links:
         temp = ListSettings('','')
-        form_sections = []
         for section in temp.layout:
             try:
                 form_sections.append((section[0],temp.section_descriptions[section[0]]))

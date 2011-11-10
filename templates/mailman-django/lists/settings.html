@@ -8,17 +8,16 @@
 {% block header %}
 {% if visible_section %}
     <div class="mm_box mm_clear">
-        <div class="mm_boxHeader">{% trans "List Settings " %}{{ fqdn_listname }}<br>
-        </div>
+        <div class="mm_boxHeader">{% trans "List Settings " %}{{ fqdn_listname }}</div>
         <p>{% trans "This page visualizes all list settings. This gives an idea of what the settings page could look like." %}</p>
 
-        <form action="{% url list_settings fqdn_listname=list.fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings">
-        {{ form.as_div }}
-            <div class="field">
-                <button type="submit">{%trans "Save changes" %}</button>
-            </div>
-        </form>
     </div>
+    <form action="{% url list_settings fqdn_listname=list.fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings">
+    {{ form.as_div }}
+        <div class="field">
+	    <button type="submit">{%trans "Save changes" %}</button>
+        </div>
+    </form>
 {% endif %}
 {% endblock %}
 

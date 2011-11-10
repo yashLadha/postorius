@@ -1,5 +1,5 @@
 from mailman.client import Client
-from settings import API_USER, API_PASS, MAILMAN_THEME
+from mailmanweb.settings import API_USER, API_PASS, MAILMAN_THEME
 from django.utils.translation import gettext as _
 from urllib2 import HTTPError
 
@@ -12,23 +12,23 @@ def lists_of_domain(request):
     message = ""
     if "HTTP_HOST" in request.META.keys() :#TODO only lists of current domains if possible
         #get the URL
-        web_host = request.META["HTTP_HOST"].split(":")[0]
+        web_host = ('http://%s' % request.META["HTTP_HOST"].split(":")[0])
         domainname = "unregistered Domain"
         #querry the Domain object
         try:
             c = Client('http://localhost:8001/3.0', API_USER, API_PASS)
-            try:            
-                d = c.get_domain(None,web_host)
-                #workaround LP:802971 - only lists of the current domain #todo a8
-                domainname= d.email_host
-                for list in c.lists:
-                    if list.host_name == domainname:
-                        domain_lists.append(list)
-            except HTTPError, e:
-                domain_lists = c.lists
-                message = str(e.code) + _(" - Accesing from an unregistered Domain - showing all lists")
         except AttributeError, e:
             message="REST API not found / Offline"
+        try:            
+    	    d = c.get_domain(web_host=web_host)
+    	    #workaround LP:802971 - only lists of the current domain #todo a8
+	    domainname= d.mail_host
+	    for list in c.lists:
+	        if list.mail_host == domainname:
+		    domain_lists.append(list)
+        except HTTPError, e:
+	    domain_lists = c.lists
+	    message = str(e.code) + _(" - Accesing from an unregistered Domain - showing all lists")
 
     #return a Dict with the key used in templates
     return {"lists":domain_lists,"domain":domainname, "message":message}
