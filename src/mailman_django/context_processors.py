@@ -32,10 +32,10 @@ def lists_of_domain(request):
     #return a Dict with the key used in templates
     return {"lists": domain_lists,"domain": domain_name, "message": message}
     
-def render_MAILMAN_THEME(request):
+def render_css_theme(request):
     """ This function is a wrapper to render the Mailman Theme Variable from Settings
     """
-    return {"settings.MAILMAN_THEME":settings.MAILMAN_THEME}
+    return {"MAILMAN_THEME": settings.MAILMAN_THEME}
 
 def extend_ajax(request):
     """ This function checks if the request was made using AJAX
