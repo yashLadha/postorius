@@ -1,0 +1,38 @@
+{% extends "mailman-django/base.html" %}
+{% load i18n %}
+
+{% block heading %}
+    All available Lists <span>on {{domain}}</span>
+{% endblock %}
+
+{% block header %}
+    <div class="mm_box mm_clear">
+        <div class="mm_boxHeader">{% trans "About" %}</div>
+        {% trans "This site shows all available lists, either on the registered Domain or the whole server."%}
+    </div>
+{% endblock %}
+
+{% block actionButtonsList %}
+    <ul class="mm_actionButtons">
+        <li class="mm_list_new"><a href="{% url list_new %}">{% trans "Create new List" %}</a></li>
+    </ul>    
+{% endblock %}
+
+{% block smallBoxLeft %}
+    {% for list in lists %}
+    <!-- #TODO ACL - advertised for admin only-->
+    <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
+        <div class="mm_boxHeader">
+            <a href="{% url list_summary fqdn_listname=list.fqdn_listname %}">
+                {{ list.real_name }} 
+                {% if not list.settings.advertised %}(non-public){% endif %}
+            </a>
+        </div>
+        <ul>
+            <li><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname %}">{%trans "Subscriptions" %}</a></li>
+            <li><a href="{% url list_settings list.fqdn_listname %}">{%trans "Settings" %}</a></li>
+            <li><a href="{% url list_delete list.fqdn_listname %}">{%trans "Delete list" %}</a></li>
+        </ul>
+    </div>
+    {% endfor %}
+{% endblock %}

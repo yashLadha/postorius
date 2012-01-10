@@ -1,0 +1,30 @@
+{% extends extend_template %}
+{% load i18n %}
+
+{% block heading %}
+    {{list.list_name}} <span>{{list.real_name}}</span>
+{% endblock %}
+
+{% block header %}
+    <!--<div class="mm_box">
+        <div class="mm_boxHeader">{% trans "Subscriptions" %}</div>-->
+            {% if form_subscribe %}
+            <form action="{%url list_subscriptions fqdn_listname=list.fqdn_listname option='subscribe' %}" method="post" class="subscribe mm_clear" name="subscribe">
+                {{ form_subscribe.as_div }}
+	            <div class="field">
+		            <button type="submit">{% trans "Subscribe" %}</button>
+	            </div>
+
+            </form>
+            {% endif %}
+            {% if form_unsubscribe %}
+            <form action="{% url list_subscriptions fqdn_listname=list.fqdn_listname  option='unsubscribe' %}" method="post" class="unsubscribe mm_clear" name="unsubscribe">
+                {{ form_unsubscribe.as_div }}
+                <div class="field">
+                    <button type="submit">{% trans "Unsubscribe" %}</button>
+                </div>
+
+            </form>
+            {% endif %}
+    <!--</div>-->
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "mailman-django/base.html" %}
+{% load i18n %}
+
+{% block heading %}
+    {{list.list_name}} <span>{{list.real_name}}</span>
+{% endblock %}
+
+{% block header %}
+    <div class="mm_box mm_clear">
+        <div class="mm_boxHeader">{% trans "About" %}</div>
+        {{list.settings.description}}
+    </div>
+{% endblock %}
+
+{% block actionButtonsList %}
+    <ul class="mm_actionButtons">
+        <li class="mm_subscribe"><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname option='subscribe' %}">{% trans "Subscribe" %}</a></li>
+        <li class="mm_archives"><a href="#archives">{% trans "View Archives" %}</a></li>
+        <li class="mm_options"><a href="{% url list_settings fqdn_listname=list.fqdn_listname %}">{% trans "Edit Options" %}</a></li>
+        <li class="mm_unsubscribe"><a href="{% url list_subscriptions fqdn_listname=list.fqdn_listname option='unsubscribe' %}">{% trans "Unsubscribe" %}</a></li>
+        {% if user_is_subscribed %}
+        <li class="mm_membership"><a href="{% url membership_settings fqdn_listname=list.fqdn_listname %}">{% trans "My Membership" %}</a></li>        
+        {% endif %}
+    </ul>    
+{% endblock %}
+
+{% block smallBoxLeft %}
+    <div class="mm_box mm_smallBox mm_clear">
+        <div class="mm_boxHeader">{% trans "Contact" %}</div>
+        <a href="#contactowner">{% trans "Contact Owner" %} #TODO</a>
+    </div>
+    <div class="mm_box mm_smallBox">
+        <div class="mm_boxHeader">{% trans "Other Lists" %}</div>
+        <a href="{% url list_index %}">{% trans "View overview of all mailing lists" %}</a>
+    </div>
+{% endblock %}

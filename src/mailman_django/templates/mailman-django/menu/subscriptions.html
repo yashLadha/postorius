@@ -1,0 +1,48 @@
+{% load i18n %}
+
+{% block menu_subscriptions %}
+    {% if fqdn_listname %}
+    <a href="{% url list_subscriptions fqdn_listname=fqdn_listname option=None %}">{% trans "Subscriptions" %}</a>
+    <div><ul class="menu">
+         <li{% if selected == "description" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                {% trans "Description" %} Link:TODO
+            </a>
+         </li>
+         <li{% if selected == "subscribe" %}id="selected"{% endif %}>
+            <a href="{% url list_subscriptions fqdn_listname=fqdn_listname option='subscribe' %}">
+                {% trans "Subscribe" %}
+            </a>
+            <div><ul class="menu">
+                 <li{% if selected == "join_adress" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                        {% trans "Join Adress" %} Link:TODO
+                    </a>
+                </li>  
+                <li{% if selected == "owner_adress" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                        {% trans "Owner Adress" %} Link:TODO
+                    </a>
+                </li>   
+                <li{% if selected == "mass_subscribe" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url mass_subscribe fqdn_listname=fqdn_listname %}TODO add List{% endcomment %}">
+                        {% trans "Mass subscribe" %} 
+                    </a>
+                </li>                   
+            </ul></div>
+        </li>  
+        <li{% if selected == "remove" %}id="selected"{% endif %}>
+            <a href="{% url list_subscriptions fqdn_listname=fqdn_listname option='unsubscribe' %}">
+                {% trans "Unsubscribe" %}
+            </a>
+            <div><ul class="menu">
+                 <li{% if selected == "leave_adress" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                        {% trans "Leave Adress" %} Link:TODO
+                    </a>
+                </li>  
+            </ul></div>         
+        </li>  
+    </ul></div>
+    {%endif%}
+{% endblock%}

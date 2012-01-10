@@ -1,0 +1,18 @@
+{% extends extend_template %}
+{% load i18n %}
+
+{% block heading %}
+    {% trans "Create a new List on" %} {{ block.super }} 
+{% endblock %}
+
+{% block header %}
+    <div class="mm_box mm_clear">
+        <div class="mm_boxHeader">{% trans "New List Preferences" %}</div>
+        <form action="{% url list_new %}" method="post" class="newlist">
+            {{ form.as_div }}
+            <div class="field">
+                <button type="submit">{% trans "Create List" %}</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
