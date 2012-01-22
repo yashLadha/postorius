@@ -126,8 +126,8 @@ class ListNew(FieldsetForm):
         },
         required = True,
         choices = (
-            (True, _("Advertise this list in List Index")),
-            (False, _("Hide this list in Liste Index")),
+            (True, _("Advertise this list in list index")),
+            (False, _("Hide this list in list index")),
         ))
 
     languages = forms.MultipleChoiceField(

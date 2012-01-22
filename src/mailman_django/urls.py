@@ -30,14 +30,13 @@ urlpatterns = patterns('mailman_django.views',
     url(r'^domains/new/$', 'domain_new', name = 'domain_new'),
     url(r'^lists/$', 'list_index', name = 'list_index'),
     url(r'^lists/new/$', 'list_new', name = 'list_new'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary', name = 'list_summary'), #PUBLIC
-    url(r'^subscriptions/(?P<fqdn_listname>[^/]+)/(?:(?P<option>subscribe|unsubscribe)?)(/(?P<user_email>.+))?$', 'list_subscriptions', name = 'list_subscriptions'),#public
-    url(r'^subscriptions/(?P<fqdn_listname>[^/]+)/mass_subscribe/$', 'mass_subscribe', name = 'mass_subscribe'),#admin
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary', name = 'list_summary'),
+    url(r'^subscriptions/(?P<fqdn_listname>[^/]+)/(?:(?P<option>subscribe|unsubscribe)?)(/(?P<user_email>.+))?$', 'list_subscriptions', name = 'list_subscriptions'),
+    url(r'^subscriptions/(?P<fqdn_listname>[^/]+)/mass_subscribe/$', 'mass_subscribe', name = 'mass_subscribe'),
     url(r'^delete_list/(?P<fqdn_listname>[^/]+)/$', 'list_delete', name = 'list_delete'),
     url(r'^user_settings/$', 'user_settings', kwargs={"tab": "user"}, name = 'user_settings'),
-    url(r'^membership_settings/(?:(?P<fqdn_listname>[^/]+)/)?$', 'user_settings', kwargs={"tab": "membership"}, name = 'membership_settings'), #todo improve regexp of above 2 urls
-    #url(r'^settings/(?P<fqdn_listname>[^/]+)/(?P<visible_section>[^/]+)?/(?P<visible_option>.+)?$', 'list_settings', name = 'list_settings'),
+    url(r'^membership_settings/(?:(?P<fqdn_listname>[^/]+)/)?$', 'user_settings', kwargs={"tab": "membership"}, name = 'membership_settings'),
     url(r'^settings/(?P<fqdn_listname>[^/]+)/(?P<visible_section>[^/]+)?(?:/(?P<visible_option>.*))?$', 'list_settings', name = 'list_settings'),    
-    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)#https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
+    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
