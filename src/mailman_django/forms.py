@@ -142,8 +142,8 @@ class ListNew(FieldsetForm):
 
     mail_host = forms.ChoiceField()
 
-    def __init__(self,domain_choices, *args, **kwargs):  
-        super(ListNew, self).__init__(*args, **kwargs)  
+    def __init__(self,domain_choices, usermail="", *args, **kwargs):  
+        super(ListNew, self).__init__(*args, **kwargs)
         self.fields["mail_host"] = forms.ChoiceField(
             widget = forms.Select(),
             label = _('Mail Host'),
@@ -152,7 +152,10 @@ class ListNew(FieldsetForm):
             error_messages = {'required': _("Choose an existing Domain."),
                               'invalid':"ERROR-todo_forms.py"  }#todo
             )
-            
+	self.fields["list_owner"] = forms.EmailField(
+	    initial = usermail
+	    )            
+
     def clean_listname(self):
         try:    
             validate_email(self.cleaned_data['listname']+'@example.net')
