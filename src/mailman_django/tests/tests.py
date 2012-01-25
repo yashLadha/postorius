@@ -194,12 +194,14 @@ After creating a Domain you should be able to create new Lists. The Button for d
     >>> "All available Lists" in response.content
     True
 
-The new List creation form is opened by clicking on the Button mentioned above or accessing the page directly
+The new List creation form is opened by clicking on the Button mentioned above or accessing the page directly it should include a prefilled list owner field with the currently logged in user.
 
     >>> response = c.get('/lists/new/')
     >>> response.status_code
     200
     >>> print "Create a new List on" in response.content
+    True
+    >>> print "james@example.com" in response.content
     True
 
 Creating a new List we do need to specify at least the below mentioned items. Those were entered using some nice GUI Forms which do only show up available Values or offer you to choose a name which will be checked during validation.
