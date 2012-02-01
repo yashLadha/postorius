@@ -148,7 +148,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
         choosable_domains = [("",_("Choose a Domain"))]
         for domain in c.domains:
             choosable_domains.append((domain.mail_host,domain.mail_host))
-        form = ListNew(choosable_domains)
+        form = ListNew(choosable_domains,initial={'list_owner': request.user.username})
     return render_to_response(template, {'form': form, error:None},
                               context_instance=RequestContext(request))
 
