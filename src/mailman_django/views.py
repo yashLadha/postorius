@@ -117,7 +117,7 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
         for domain in c.domains:
             choosable_domains.append((domain.mail_host,
                                       domain.mail_host))
-        form = ListNew(choosable_domains, request.POST)
+        form = ListNew(choosable_domains,None, request.POST)
 
         if form.is_valid():
             #grab domain
