@@ -191,7 +191,7 @@ After creating a Domain you should be able to create new Lists. The Button for d
     >>> response = c.get('/lists/')
     >>> response.status_code
     200
-    >>> "All available Lists" in response.content
+    >>> "Lists <span>on" in response.content
     True
 
 The new List creation form is opened by clicking on the Button mentioned above or accessing the page directly

@@ -3,7 +3,7 @@ import time
 import shutil
 import tempfile
 import subprocess
-from settings import MAILMAN_TEST_BINDIR
+from django.conf import settings
 
 class Testobject:
     bindir = None
@@ -11,7 +11,7 @@ class Testobject:
     cfgfile = None
 
 def setup_mm(testobject):
-    os.environ['MAILMAN_TEST_BINDIR'] = MAILMAN_TEST_BINDIR
+    os.environ['MAILMAN_TEST_BINDIR'] = settings.MAILMAN_TEST_BINDIR
     bindir = testobject.bindir = os.environ.get('MAILMAN_TEST_BINDIR')
     if bindir is None:
         raise RuntimeError("something's not quite right")
@@ -24,27 +24,27 @@ layout: tmpdir
 [paths.tmpdir]
 var_dir: {vardir}
 log_dir: /tmp/mmclient/logs
-[qrunner.archive]
+[runner.archive]
 start: no
-[qrunner.bounces]
+[runner.bounces]
 start: no
-[qrunner.command]
+[runner.command]
 start: no
-[qrunner.in]
+[runner.in]
 start: no
-[qrunner.lmtp]
+[runner.lmtp]
 start: no
-[qrunner.news]
+[runner.news]
 start: no
-[qrunner.out]
+[runner.out]
 start: no
-[qrunner.pipeline]
+[runner.pipeline]
 start: no
-[qrunner.retry]
+[runner.retry]
 start: no
-[qrunner.virgin]
+[runner.virgin]
 start: no
-[qrunner.digest]
+[runner.digest]
 start: no
 """.format(vardir=vardir)
     mailman = os.path.join(bindir, 'mailman')
