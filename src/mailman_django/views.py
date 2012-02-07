@@ -144,28 +144,27 @@ def list_new(request, template = 'mailman-django/lists/new.html'):
 
 
 def list_index(request, template = 'mailman-django/lists/index.html'):
-    """Show a table of all mailing lists.
+    """Show a table of all public mailing lists.
     """
     lists = []
     error = None
     domain_name = None
     domain = None
+    if request.user.is_authenticated():
+        only_public = False
+    else:
+        only_public = True
     if "HTTP_HOST" in request.META.keys():
         scheme = 'http'
         if "HTTPS" in request.META.keys():
             scheme = 'https'
         domain_name = request.META["HTTP_HOST"].split(":")[0]
-        web_host = '%s://%s' % (scheme, domain_name)
         try:
-            domain = Domain.objects.get(web_host=web_host)
+            domain = Domain.objects.get(web_host=domain_name)
             if domain is not None:
-                domain_name = domain.mail_host
-                lists = List.objects.all()
-                for list in Lists.objects.all():
-                    if list.mail_host == domain_name:
-                        lists.append(list)
+                lists = List.objects.by_mail_host(domain.mail_host, only_public=only_public)
             else:
-                lists = List.objects.all()
+                lists = List.objects.all(only_public=only_public)
         except MailmanApiError:
             return render_api_error(request)
     if request.method == 'POST':

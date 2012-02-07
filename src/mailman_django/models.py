@@ -95,6 +95,34 @@ class MailmanRestManager(object):
         pass
 
 
+class MailmanListManager(MailmanRestManager):
+
+    def __init__(self):
+        super(MailmanListManager, self).__init__('list', 'lists')
+
+    def all(self, only_public=False):
+        try:
+            objects = getattr(self.client, self.resource_name_plural)
+        except AttributeError:
+            raise MailmanApiError
+        if only_public:
+            public = []
+            for obj in objects:
+                if obj.settings.get('advertised', False):
+                    public.append(obj)
+            return public
+        else:
+            return objects
+
+    def by_mail_host(self, mail_host, only_public=False):
+        objects = self.all(only_public)
+        host_objects = []
+        for obj in objects:
+            if obj.mail_host == mail_host:
+                host_objects.append(obj)
+        return host_objects
+
+
 class MailmanRestModel(object):
     """Simple REST Model class to make REST API calls Django style.
     """
@@ -120,4 +148,6 @@ class Domain(MailmanRestModel):
 class List(MailmanRestModel):
     """List model class.
     """
-    objects = MailmanRestManager('list', 'lists')
+    objects = MailmanListManager()
+
+
