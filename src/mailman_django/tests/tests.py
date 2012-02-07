@@ -21,13 +21,7 @@
 Tests Login and Permissions
 ==============================
 
-This document both acts as a test for all the functions implemented
-in the UI as well as documenting what can be done
-
-Test Pre Requirements
-=====================
-
-* We've created a special Testobject which will run it's own instance of Mailman3 with a new empty Database.
+Setup Testobject (starts Mailman3 with an empty Database).
 
     >>> from setup import setup_mm, Testobject, teardown_mm
     >>> testobject = setup_mm(Testobject())
@@ -35,7 +29,7 @@ Test Pre Requirements
     .. note:: 
         You need to stop all Mailman3 instances before running the tests
 
-* Modules needed
+Modules needed
     As we can't make sure that you're running the same language as we did we made sure that each test below is executed using the exact same translation mechanism as we use to Display you Status Messages and other GUI Texts.
 
     Import Translation Module to check success messages
@@ -44,19 +38,21 @@ Test Pre Requirements
     Import HTTPRedirectObject to check whether a response redirects
         >>> from django.http import HttpResponseRedirect
 
-Getting Started
-===============
-
-Starting the test module we do use a special Django Test Client which needs to be imported first.
+Import Django test client.
 
     >>> from django.test.client import Client
     >>> c = Client()
 
-Once this is created we can try accessing our first Page and check that this was done successful
+
+List index
+==========
+
+Try accessing the list index page.
 
     >>> response = c.get('/lists/',)
     >>> response.status_code
     200
+
 
 Login Required
 ==================================================
