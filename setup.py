@@ -4,8 +4,8 @@ ez_setup.use_setuptools()
 from setuptools import setup, find_packages
 
 setup(
-    name = "mailman_django",
-    version = "0.1",
+    name = "mailmanweb",
+    version = '0.0.1',
     description = "A web user interface for GNU Mailman",
     long_description=open('README.rst').read(),
     maintainer = "The Mailman GSOC Coders",

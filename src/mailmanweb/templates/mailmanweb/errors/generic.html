@@ -1,0 +1,14 @@
+{% extends "mailmanweb/base.html" %}
+{% load i18n %}
+
+{% block heading %}
+ERROR
+{% endblock %}
+
+{% block header %}
+    <div class="mm_box mm_clear">
+        <div class="mm_boxHeader">{% trans "Error-Site" %}</div>
+        {% if error %}<p id="error">{{ error }}</p> {% endif %}
+        {% if message %}<p id="message">{{ message }}</p> {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends extend_template %}
+{% load i18n %}
+
+{% block main %}
+    {% if user.is_superuser %}
+        {% include 'mailmanweb/menu/list_nav.html' %}
+    {% endif %}
+    <h1>{% trans "Create a new List" %} {{ block.super }}</h1> 
+
+        <form action="{% url list_new %}" method="post" class="well">
+            {{ form.as_p }}
+            <div class="field">
+                <button type="submit">{% trans "Create List" %}</button>
+            </div>
+        </form>
+{% endblock %}

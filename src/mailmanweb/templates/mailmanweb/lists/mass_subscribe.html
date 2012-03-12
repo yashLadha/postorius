@@ -1,0 +1,18 @@
+{% extends "mailmanweb/base.html" %}
+{% load i18n %}
+
+{% block main %}
+    {% if user.is_superuser %}
+        {% include 'mailmanweb/menu/list_nav.html' %}
+    {% endif %}
+    <h1>{% trans "Mass Subscribe" %} <span>- {{list.fqdn_listname}}</span></h1>
+
+        <form action="{% url mass_subscribe list.fqdn_listname %}" method="post" class="well">
+
+        {{ form.as_p }}
+
+            <div class="field">
+                <button type="submit">{% trans "Subscribe users" %}</button>
+            </div>
+        </form>
+{% endblock main %}

@@ -1,0 +1,12 @@
+{% extends "mailmanweb/base.html" %}
+{% load i18n %}
+
+{% block main %}
+    {% if user.is_superuser %}
+        {% include 'mailmanweb/menu/list_nav.html' %}
+    {% endif %}
+    <h1>{{list.settings.description}}</h1>
+
+    <!-- a href="{% url membership_settings fqdn_listname=list.fqdn_listname %}">{% trans "My Membership" %}</a -->
+
+{% endblock %}

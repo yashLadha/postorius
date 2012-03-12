@@ -1,0 +1,24 @@
+{% extends extend_template %}
+{% load i18n %}
+
+{% block main %}
+    {{list.list_name}} <span>{{list.real_name}}</span>
+    {% if form_subscribe %}
+    <form action="{%url list_subscriptions fqdn_listname=list.fqdn_listname option='subscribe' %}" method="post" class="subscribe mm_clear" name="subscribe">
+        {{ form_subscribe.as_div }}
+        <div class="field">
+            <button type="submit">{% trans "Subscribe" %}</button>
+        </div>
+
+    </form>
+    {% endif %}
+    {% if form_unsubscribe %}
+    <form action="{% url list_subscriptions fqdn_listname=list.fqdn_listname  option='unsubscribe' %}" method="post" class="unsubscribe mm_clear" name="unsubscribe">
+        {{ form_unsubscribe.as_div }}
+        <div class="field">
+            <button type="submit">{% trans "Unsubscribe" %}</button>
+        </div>
+
+    </form>
+    {% endif %}
+{% endblock main %}
