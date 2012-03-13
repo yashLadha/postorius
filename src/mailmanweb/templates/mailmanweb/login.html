@@ -8,4 +8,54 @@
                 <button type="submit">{% trans "Login" %}</button>
             </div>
         </form>
+<ul>
+  <li>
+    <a href="{% url socialauth_begin 'openid' %}">Enter using OpenID</a>
+  </li>
+  <li>
+    <a href="{% url socialauth_begin 'browserid' %}">Enter using BrowserID</a>
+  </li>
+</ul>
+<ul>
+  <li>
+<form method="post" action="{% url socialauth_begin 'openid' %}">
+	<input type="text" name="openid_identifier" /> 
+	<input type="submit" value="Login using OpenID" />
+</form>
+  <li>
+    <!-- Include BrowserID JavaScript -->
+<script src="https://browserid.org/include.js"
+type="text/javascript"></script>
+
+<!-- Define a form to send the POST data -->
+<form method="post" action="{% url socialauth_complete "browserid" %}">
+    <input type="hidden" name="assertion" value="" />
+    <a rel="nofollow" id="browserid" href="#">BrowserID</a>
+</form>
+
+<!-- Setup click handler that retieves BrowserID assertion code and sends
+     POST data -->
+<script type="text/javascript">
+    $(function () {
+        $('#browserid').click(function (e) {
+            e.preventDefault();
+            var self = $(this);
+
+            navigator.id.get(function (assertion) {
+                if (assertion) {
+                    self.parent('form')
+                            .find('input[type=hidden]')
+                                .attr('value', assertion)
+                                .end()
+                            .submit();
+                } else {
+                    alert('Some error occurred');
+                }
+            });
+        });
+    });
+</script>
+<!-- end browserid stuff -->
+</li>
+</ul>
 {% endblock %}
