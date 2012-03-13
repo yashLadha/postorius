@@ -23,12 +23,14 @@
             <div class="mm_canvas">
                 <a href="{% url list_index %}" class="mm_logo"><img src="{{ STATIC_URL }}/mailmanweb/default/img/mailman_logo_trans.png" alt="{% trans 'Home' %}" /></a>
                 <ul class="mm_metaNav">
-                	<li>
-                		<a class="mm_todos" href="#">Todos</a>
-                	</li>
-                	<li>
-                		<a class="mm_settings" href="#">Settings</a>
-                	</li>
+                    {% if user.is_authenticated %}
+                        <li>
+                            <a class="mm_todos" href="#">Todos</a>
+                        </li>
+                        <li>
+                            <a class="mm_settings" href="#">Settings</a>
+                        </li>
+                    {% endif %}
                 	<li>
                         {% if user.is_authenticated %}
                             Logged in as: <a href="{% url user_profile %}">{{ user.username }}</a>
