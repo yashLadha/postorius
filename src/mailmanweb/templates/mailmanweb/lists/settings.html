@@ -5,7 +5,6 @@
     {% include 'mailmanweb/menu/list_nav.html' %}
     <h1>{{list.real_name}} <span>- {{list.fqdn_listname}}</span></h1>
 
-    <p style="border: 2px solid darkred">{{list.settings}}</p>
     <ul class="nav nav-pills">
         {% for section in form_sections %}
         <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url list_settings fqdn_listname=list.fqdn_listname visible_section=section.0 visible_option=None %}">{{section.0}}</a></li>
@@ -13,7 +12,6 @@
     </ul>
 
     {% if visible_section %}
-        <p>{% trans "This page visualizes all list settings. This gives an idea of what the settings page could look like." %}</p>
         <form class="well" action="{% url list_settings fqdn_listname=list.fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings">
             {{ form.as_p }}
 	        <button class="btn btn-large btn-primary" type="submit">{%trans "Save changes" %}</button>
