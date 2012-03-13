@@ -16,9 +16,21 @@
 # You should have received a copy of the GNU General Public License along with
 # GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.shortcuts import render_to_response, redirect
+
+
 def get_domain_name(request):
     """Extracts a domain name from the request object.
     """ 
     if "HTTP_HOST" in request.META.keys():
         return request.META["HTTP_HOST"].split(":")[0]
     return None
+
+def render_api_error(request):
+    """Renders an error template.
+    Use if MailmanApiError is catched.
+    """
+    return render_to_response('mailmanweb/errors/generic.html', 
+          {'error': "REST API not found / Offline"},
+          context_instance=RequestContext(request))
+

@@ -41,11 +41,6 @@ from urllib2 import HTTPError
 logger = logging.getLogger(__name__)
 
 
-def render_api_error(request):
-    return render_to_response('mailmanweb/errors/generic.html', 
-          {'error': "REST API not found / Offline"},
-          context_instance=RequestContext(request))
-
 @login_required
 @permission_required('server_admin')
 def domain_index(request, template = 'mailmanweb/domain_index.html'):
@@ -53,7 +48,7 @@ def domain_index(request, template = 'mailmanweb/domain_index.html'):
         existing_domains = Domain.objects.all()
         logger.debug(Domain.objects)
     except MailmanApiError:
-        return render_api_error(request)
+        return utils.render_api_error(request)
     return render_to_response(template, {'domains':existing_domains,},
 					          context_instance=RequestContext(request))
 
@@ -70,7 +65,7 @@ def domain_new(request, template = 'mailmanweb/domain_new.html'):
             try:
                 domain.save()
             except MailmanApiError:
-                return render_api_error(request)
+                return utils.render_api_error(request)
             except HTTPError, e:
                 message=e
             return redirect("domain_index")
@@ -107,7 +102,7 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
         try:
             domains = Domain.objects.all()
         except MailmanApiError:
-            return render_api_error(request)
+            return utils.render_api_error(request)
         choosable_domains = [("",_("Choose a Domain"))]
         for domain in domains:
             choosable_domains.append((domain.mail_host,
@@ -136,7 +131,7 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
         try:
             domains = Domain.objects.all()
         except MailmanApiError:
-            return render_api_error(request)
+            return utils.render_api_error(request)
         choosable_domains = [("",_("Choose a Domain"))]
         for domain in domains:
             choosable_domains.append((domain.mail_host,domain.mail_host))
@@ -156,7 +151,7 @@ def list_index(request, template = 'mailmanweb/lists/index.html'):
     try:
         lists = List.objects.all(only_public=only_public)
     except MailmanApiError:
-        return render_api_error(request)
+        return utils.render_api_error(request)
     if request.method == 'POST':
         return redirect("list_summary", fqdn_listname=request.POST["list"])
     else:
@@ -165,32 +160,35 @@ def list_index(request, template = 'mailmanweb/lists/index.html'):
                                    'lists': lists,},
                                   context_instance=RequestContext(request))
 
-def list_summary(request,fqdn_listname=None,option=None,template='mailmanweb/lists/summary.html'):
+def list_summary(request, fqdn_listname, option=None ,template='mailmanweb/lists/summary.html'):
     """
     PUBLIC
     an entry page for each lists which allows some simple tasks per LIST
     """
-    error=None
-    user_is_subscribed = False
-    if request.method == 'POST':
-        return redirect("list_summary", fqdn_listname=request.POST["list"])
-    else:
-        try:
-            the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
-            try:
-                the_list.get_member(request.user.username)
-                user_is_subscribed = True
-            except:
-                pass #init
-        except MailmanApiError:
-            return render_api_error(request)
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+    except MailmanApiError:
+        return utils.render_api_error(request)
     return render_to_response(template, 
-                              {'list':the_list,
-                               'message':  None,
-                               'user_is_subscribed':user_is_subscribed,
-                              },
-                              context_instance=RequestContext(request)
-                              )
+                              {'list': the_list,
+                               'subscribe_form': ListSubscribe(),
+                               'unsubscribe_form': ListUnsubscribe()},
+                              context_instance=RequestContext(request))
+
+def list_subscribe(request, fqdn_listname):
+    """Subscribe to a list.
+    """
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    if request.method == 'POST':
+        form = ListSubscribe(request.POST)
+    else:
+        form = ListSubscribe()
+    return render_to_response('mailmanweb/lists/subscribe.html', 
+                              {'form': form, 'list': the_list,},
+                              context_instance=RequestContext(request))
 
 def list_subscriptions(request, option=None, fqdn_listname=None, user_email = None,
                        template = 'mailmanweb/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
@@ -272,16 +270,13 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                                          ,context_instance=RequestContext(request))
 
 @login_required
-def list_delete(request, fqdn_listname = None, 
-                template = 'mailmanweb/lists/index.html'):
+def list_delete(request, fqdn_listname):
+    """Deletes a list but asks for confirmation first.
     """
-    Delete a list by providing the full list name including domain.
-    """
-    # create a connection to Mailman and get the list
     try:
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
-        return render_api_error(request)
+        return utils.render_api_error(request)
     if request.method == 'POST':
         the_list.delete()
         # let the user return to the list index page
@@ -316,7 +311,7 @@ def list_settings(request, fqdn_listname=None, visible_section=None, visible_opt
     try:
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
-        return render_api_error(request)
+        return utils.render_api_error(request)
     #Save a Form Processed by POST  
     if request.method == 'POST':
         form = ListSettings(visible_section,visible_option,data=request.POST)
@@ -371,7 +366,7 @@ def mass_subscribe(request, fqdn_listname=None,
     try:
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
-        return render_api_error(request)
+        return utils.render_api_error(request)
     if request.method == 'POST':
         form = ListMassSubscription(request.POST)
         if form.is_valid():

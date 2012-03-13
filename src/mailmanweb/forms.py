@@ -175,72 +175,21 @@ class ListNew(FieldsetForm):
 class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
     """
-    fqdn_listname = forms.EmailField(
-        label = '',#_('List Name'), 
-        widget = forms.HiddenInput(),
-        error_messages = {
-            'required': _('Please enter the mailing list address.'), 
-            'invalid': _('Please enter a valid email address.')
-        })
-    email = forms.EmailField(
-        label = _('Your email address'), 
+    fqdn_listname = forms.EmailField(widget = forms.HiddenInput())
+    email = forms.EmailField(label = _('Your email address'), 
         error_messages = {'required': _('Please enter an email address.'), 
                           'invalid': _('Please enter a valid email address.')})
-    real_name = forms.CharField(
-        label = _('Your name'), 
-        required = False,
-    )
-    name = forms.CharField(
-        label = '', #Name of action
-        widget = forms.HiddenInput(),
-        initial = 'subscribe',
-    )
+    real_name = forms.CharField(label=_('Your name'), required=False)
     
-    # should add password! TODO
-    class Meta:
-        """
-        Class to handle the automatic insertion of fieldsets and divs.
-        
-        To use it: add a list for each wished fieldset. The first item in 
-        the list should be the wished name of the fieldset, the following 
-        the fields that should be included in the fieldset.
-        """
-        layout = [["Subscribe", "email","real_name","name","fqdn_listname"]]    
-
 class ListUnsubscribe(FieldsetForm):
     """Form fields to leave an existing list.
     """
-    fqdn_listname = forms.EmailField(
-        label = '',#_('List Name'), 
-        widget = forms.HiddenInput(),
-        error_messages = {
-            'required': _('Please enter the mailing list address.'), 
-            'invalid': _('Please enter a valid email address.')
-        }
-    )
-    email = forms.EmailField(
-        label = _('Your email address'), 
+    fqdn_listname = forms.EmailField(widget=forms.HiddenInput())
+    email = forms.EmailField(label = _('Your email address'), 
         error_messages = {
             'required': _('Please enter an email address.'), 
-            'invalid': _('Please enter a valid email address.')
-        }
-    )
-    name = forms.CharField(
-        label = '', #Name of action
-        widget = forms.HiddenInput(),
-        initial = 'unsubscribe',
-    )
-    class Meta:
-        """
-        Class to handle the automatic insertion of fieldsets and divs.
-        
-        To use it: add a list for each wished fieldset. The first item in 
-        the list should be the wished name of the fieldset, the following 
-        the fields that should be included in the fieldset.
-        """
-        layout = [["Unsubscribe", "email","name","fqdn_listname"]]        
+            'invalid': _('Please enter a valid email address.')})
 
-    # should at one point add the password to be required as well! #TODO
 class ListSettings(FieldsetForm):
     """Form fields dealing with the list settings.
     """
@@ -1015,3 +964,6 @@ class UserSettings(FieldsetForm):
         """
         layout = [["User settings", "real_name", "password", 
                    "conf_password", "preferred_language", "address"],]
+
+class ListDeleteForm(forms.Form):
+    list_name = forms.EmailField(widget=forms.HiddenInput())
