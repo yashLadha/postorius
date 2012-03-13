@@ -822,7 +822,8 @@ class ListSettings(FieldsetForm):
             #["Addresses", "bounces_address", "join_address", "leave_address", 
              #"no_reply_address", "owner_address", "posting_address", 
              #"request_address"],
-            ["Assorted", "acceptable_aliases", "administrivia", "pipeline"]
+            ["Assorted", "acceptable_aliases", "administrivia",
+"posting_pipeline"]
              #"post_id", "encode_ascii_prefixes", "first_strip_reply_to",
              #"forward_auto_discards", "gateway_to_mail", "gateway_to_news",
              #"header_matches", "linked_newsgroup", "max_days_to_hold",
