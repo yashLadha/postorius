@@ -144,38 +144,25 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
     return render_to_response(template, {'form': form, error:None},
                               context_instance=RequestContext(request))
 
-
 def list_index(request, template = 'mailmanweb/lists/index.html'):
     """Show a table of all public mailing lists.
     """
     lists = []
     error = None
-    domain_name = None
     domain = None
+    only_public = True
     if request.user.is_authenticated():
         only_public = False
-    else:
-        only_public = True
-    if "HTTP_HOST" in request.META.keys():
-        scheme = 'http'
-        if "HTTPS" in request.META.keys():
-            scheme = 'https'
-        domain_name = request.META["HTTP_HOST"].split(":")[0]
-        try:
-            domain = Domain.objects.get(web_host=domain_name)
-            if domain is not None:
-                lists = List.objects.by_mail_host(domain.mail_host, only_public=only_public)
-            else:
-                lists = List.objects.all(only_public=only_public)
-        except MailmanApiError:
-            return render_api_error(request)
+    try:
+        lists = List.objects.all(only_public=only_public)
+    except MailmanApiError:
+        return render_api_error(request)
     if request.method == 'POST':
         return redirect("list_summary", fqdn_listname=request.POST["list"])
     else:
         return render_to_response(template,
                                   {'error': error,
-                                   'lists': lists,
-                                   'domain_name': domain_name,},
+                                   'lists': lists,},
                                   context_instance=RequestContext(request))
 
 def list_summary(request,fqdn_listname=None,option=None,template='mailmanweb/lists/summary.html'):
