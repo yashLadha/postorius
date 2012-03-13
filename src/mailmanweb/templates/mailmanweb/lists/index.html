@@ -3,6 +3,11 @@
 
 
 {% block main %}
+    {% if user.is_superuser %}
+        <ul class="mm_nav">
+            <li class="mm_new_list"><a class="btn btn-mini btn-success" href="{% url list_new %}">{% trans "New List" %}</a></li>
+        </ul>    
+    {% endif %}
     <h1>{% trans 'Lists' %}</h1>
 
     <table class="table table-bordered table-striped">
