@@ -42,6 +42,10 @@ class DomainNew(FieldsetForm):
         label = _('Description'), 
         required = False
     )
+    info = forms.CharField(
+        label = _('Information'), 
+        required = False
+    )
     def clean_mail_host(self):
         mail_host = self.cleaned_data['mail_host']
         try:    validate_email('mail@' + mail_host)
@@ -333,6 +337,34 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Default member moderation'),
     #)
+    default_member_action = forms.ChoiceField(
+        widget = forms.RadioSelect(),
+        label = _('Default action to take when a member posts to the list: '),
+        error_messages = {
+            'required': _("Please choose a default non-member action."),
+        },
+        required = True,
+        choices = (
+            ("accept", _("Accept message")),
+            ("defer", _("Defer decision")),
+            ("hold", _("Hold for moderator approval")),
+            ("reject", _("Reject message (notifying sender)")),
+            ("discard", _("Discard message")),
+        ))
+    default_nonmember_action = forms.ChoiceField(
+        widget = forms.RadioSelect(),
+        label = _('Default action to take when a non-member posts to the list: '),
+        error_messages = {
+            'required': _("Please choose a default non-member action."),
+        },
+        required = True,
+        choices = (
+            ("accept", _("Accept message")),
+            ("defer", _("Defer decision")),
+            ("hold", _("Hold for moderator approval")),
+            ("reject", _("Reject message (notifying sender)")),
+            ("discard", _("Discard message")),
+        ))
     description = forms.CharField(
         label = _('Description'),
         widget = forms.Textarea()
@@ -405,12 +437,12 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Gateway to news'),
     #)
-    #generic_nonmember_action = forms.IntegerField(
-        #label = _('Generic nonmember action'),
-        #error_messages = {
-            #'invalid': _('Please provide an integer.')
-        #}
-    #)
+    generic_nonmember_action = forms.IntegerField(
+        label = _('Generic nonmember action'),
+        error_messages = {
+            'invalid': _('Please provide an integer.')
+        }
+    )
     #goodbye_msg = forms.CharField(
         #label = _('Goodbye message'),
     #)
@@ -428,6 +460,12 @@ class ListSettings(FieldsetForm):
     #linked_newsgroup = forms.CharField(
         #label = _('Linked newsgroup'),
     #)
+    mail_host = forms.CharField(
+        label = _('Mail Host'),
+        error_messages = {'required': _('Please a domain name'),
+                          'invalid': _('Please enter a valid domain name.')},
+        required = True
+    )
     #max_days_to_hold = forms.IntegerField(
         #label = _('Maximum days to hold'),
         #error_messages = {
@@ -540,9 +578,18 @@ class ListSettings(FieldsetForm):
         #label = _('Reject these nonmembers'),
         #widget = forms.Textarea
     #)
-    #reply_goes_to_list = forms.CharField(
-        #label = _('Reply goes to list'),
-    #)
+    
+    reply_goes_to_list = forms.ChoiceField(
+        label = _('Reply goes to list'),
+        widget = forms.Select(),
+        error_messages = {
+            'required': _("Please choose a reply-to action."),
+        },
+        choices = (
+            ("no_munging", _("No Munging")),
+            ("munge", _("Munge reply-to address")),
+			),
+    )
     #reply_to_address = forms.EmailField(
         #label = _('Reply to address'),
     #)
@@ -575,11 +622,11 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Send reminders'),
     #)
-    #send_welcome_msg = forms.BooleanField(
-        #widget = forms.RadioSelect(choices = choices), 
-        #required = False,
-        #label = _('Send welcome message'),
-    #)
+    send_welcome_message = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices), 
+        required = False,
+        label = _('Send welcome message'),
+    )
     #start_chain = forms.CharField(
         #label = _('Start chain'),
     #)
@@ -736,13 +783,16 @@ class ListSettings(FieldsetForm):
         # just a really temporary layout to see that it works. -- Anna
         layout = [
             ["List Identity", "real_name", "include_list_post_header", 
-             "include_rfc2369_headers"], 
+             "include_rfc2369_headers", "description", "reply_goes_to_list",
+             "mail_host"], 
              #"info", "list_name", "host_name", "list_id", "fqdn_listname", 
              #"http_etag", "volume", "web_host"
             ["Automatic Responses", "autorespond_owner",
              "autoresponse_owner_text", "autorespond_postings",
              "autoresponse_postings_text", "autorespond_requests",
-             "autoresponse_request_text", "autoresponse_grace_period"],
+             "autoresponse_request_text", "autoresponse_grace_period",
+             "default_nonmember_action", "default_member_action",
+             "send_welcome_message"],
              #["Bounce", "ban_list", 
              #"bounce_info_stale_after", "bounce_matching_headers", 
              # "bounce_notify_owner_on_disable",
@@ -753,7 +803,7 @@ class ListSettings(FieldsetForm):
              #"bounce_you_are_disabled_warnings_interval"],
             #["Archiving", "archive"],
             ["Content Filtering", "filter_content", "collapse_alternatives",
-             "convert_html_to_plaintext", "description"], 
+             "convert_html_to_plaintext"], 
              #"default_member_moderation", "scheme"
             ["Digest", "digest_size_threshold"], #"next_digest_number", 
              #"last_post_at", "digest_last_sent_at", "digest_footer", 
