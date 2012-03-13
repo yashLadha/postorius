@@ -729,12 +729,11 @@ class ListSettings(FieldsetForm):
     )
     #Descriptions used in the Settings Overview Page
     section_descriptions = {
-        "List Identity":_("General List settings use"),
+        "List Identity":_("Basic identity settings for the list"),
         "Automatic Responses":_("All options for Autoreply"),
-        "Content Filtering":_("Decide how incoming mails might be filtered"),
-        "Digest": _("Modify and check some Digest options"),
-        "Privacy" : _("Check the lists privacy standards"),
-        "Assorted" : _("Some other Admin stuff"),
+        "Alter Messages":_("Settings that modify messages to be sent to members"),
+        "Digest": _("Digest-related options"),
+        "Assorted": _("tko:I don't know what to call this category"),
         }
     def __init__(self,visible_section,visible_option, *args, **kwargs):  
         super(ListSettings, self).__init__(*args, **kwargs)  
@@ -782,17 +781,23 @@ class ListSettings(FieldsetForm):
         """        
         # just a really temporary layout to see that it works. -- Anna
         layout = [
-            ["List Identity", "real_name", "include_list_post_header", 
-             "include_rfc2369_headers", "description", "reply_goes_to_list",
-             "mail_host"], 
+            ["List Identity", "real_name", "mail_host", "description", 
+             "advertised"], 
              #"info", "list_name", "host_name", "list_id", "fqdn_listname", 
              #"http_etag", "volume", "web_host"
             ["Automatic Responses", "autorespond_owner",
              "autoresponse_owner_text", "autorespond_postings",
              "autoresponse_postings_text", "autorespond_requests",
              "autoresponse_request_text", "autoresponse_grace_period",
-             "default_nonmember_action", "default_member_action",
-             "send_welcome_message"],
+             "send_welcome_message", "admin_immed_notify",
+             "admin_notify_mchanges"],
+            ["Alter Messages", "filter_content", "collapse_alternatives", 
+             "convert_html_to_plaintext", "anonymous_list",
+             "include_rfc2369_headers", "reply_goes_to_list",
+             "include_list_post_header", "posting_pipeline"], 
+            ["Digest", "digest_size_threshold"],
+            ["Assorted", "acceptable_aliases", "administrivia", 
+             "default_nonmember_action", "default_member_action"],
              #["Bounce", "ban_list", 
              #"bounce_info_stale_after", "bounce_matching_headers", 
              # "bounce_notify_owner_on_disable",
@@ -802,10 +807,10 @@ class ListSettings(FieldsetForm):
              #"bounce_you_are_disabled_warnings",
              #"bounce_you_are_disabled_warnings_interval"],
             #["Archiving", "archive"],
-            ["Content Filtering", "filter_content", "collapse_alternatives",
-             "convert_html_to_plaintext"], 
+            #["Content Filtering", "filter_content", "collapse_alternatives",
+             #"convert_html_to_plaintext"], 
              #"default_member_moderation", "scheme"
-            ["Digest", "digest_size_threshold"], #"next_digest_number", 
+            #["Digest", "digest_size_threshold"], #"next_digest_number", 
              #"last_post_at", "digest_last_sent_at", "digest_footer", 
              #"digest_header", "digest_is_default",
              #"digest_send_periodic", "digest_size_threshold",
@@ -816,14 +821,14 @@ class ListSettings(FieldsetForm):
              #"moderator_password", "hold_these_nonmembers"],
              #["Message Text", "msg_header", "msg_footer", "welcome_msg", 
              #"goodbye_msg"],
-            ["Privacy", "advertised", "admin_immed_notify", 
-             "admin_notify_mchanges", "anonymous_list"], #"archive_private", 
+            #["Privacy", "advertised", "admin_immed_notify", 
+            # "admin_notify_mchanges", "anonymous_list"], #"archive_private", 
             #"obscure_addresses", "private_roster",
             #["Addresses", "bounces_address", "join_address", "leave_address", 
              #"no_reply_address", "owner_address", "posting_address", 
              #"request_address"],
-            ["Assorted", "acceptable_aliases", "administrivia",
-"posting_pipeline"]
+            #["Assorted", "acceptable_aliases", "administrivia", 
+             #"posting_pipeline"]
              #"post_id", "encode_ascii_prefixes", "first_strip_reply_to",
              #"forward_auto_discards", "gateway_to_mail", "gateway_to_news",
              #"header_matches", "linked_newsgroup", "max_days_to_hold",
