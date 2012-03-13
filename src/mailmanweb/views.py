@@ -319,6 +319,7 @@ def list_settings(request, fqdn_listname=None, visible_section=None, visible_opt
         return render_api_error(request)
     #Save a Form Processed by POST  
     if request.method == 'POST':
+        logger.debug('POST')
         form = ListSettings(visible_section,visible_option,data=request.POST)
         form.truncate()
         if form.is_valid():

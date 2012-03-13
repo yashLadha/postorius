@@ -2,27 +2,33 @@
 {% load i18n %}
 
 {% block main %}
-        <form action="" method="post" class="login mm_clear">
-            {{ form.as_p }}
-            <div class="field">
-                <button type="submit">{% trans "Login" %}</button>
-            </div>
-        </form>
-<ul>
-<form method="post" action="{% url socialauth_begin 'openid' %}">
-	OpenID URL: <input type="text" name="openid_identifier" /> 
-	<input type="submit" value="Login using OpenID" />
-</form>
+    
+    <h2>Login with username and password</h2>
 
+    <form action="" method="post" class="login mm_clear">
+        {{ form.as_p }}
+        <div class="field">
+            <button type="submit">{% trans "Login" %}</button>
+        </div>
+    </form>
 
-<!-- Define a form to send the POST data -->
-<form method="post" action="{% url socialauth_complete "browserid" %}">
-    <input type="hidden" name="assertion" value="" />
-    <a rel="nofollow" id="browserid" href="#">BrowserID</a>
-</form>
+    <hr />
 
-</li>
-</ul>
+    <h2>Login using OpenID</h2>
+
+    <form method="post" action="{% url socialauth_begin 'openid' %}">
+        OpenID URL: <input type="text" name="openid_identifier" /> 
+        <input type="submit" value="Login using OpenID" />
+    </form>
+
+    <hr />
+
+    <h2>Login using BrowserID</h2>
+
+    <form method="post" action="{% url socialauth_complete "browserid" %}">
+        <input type="hidden" name="assertion" value="" />
+        <a rel="nofollow" id="browserid" href="#"><img src="{{ STATIC_URL }}mailmanweb/default/img/sign_in_blue.png" alt="Login using BrowserID" /></a>
+    </form>
 {% endblock %}
 
 {% block additionaljs %}
