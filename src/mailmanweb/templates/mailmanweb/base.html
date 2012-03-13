@@ -33,12 +33,15 @@
                     {% endif %}
                 	<li>
                         {% if user.is_authenticated %}
-                            Logged in as: <a href="{% url user_profile %}">{{ user.username }}</a>
+                		    <a class="mm_logout" href="{% url user_logout %}">Logout</a>
                         {% else %}
-                		<a class="mm_user" href="{% url user_login %}">Login</a>
+                		    <a class="mm_user" href="{% url user_login %}">Login</a>
                         {% endif %}
                 	</li>
                 </ul>
+                {% if user.is_authenticated %}
+                    <div class="mm_loginName">Logged in as: <a href="{% url user_profile %}">{{ user.username }}</a></div>
+                {% endif %}
             </div>
         </div>
     </header>
