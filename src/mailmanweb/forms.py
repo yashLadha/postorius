@@ -362,7 +362,7 @@ class ListSettings(FieldsetForm):
         required = True,
         choices = (
             (True, _("Advertise this list in List Index")),
-            (False, _("Hide this list in Liste Index")),
+            (False, _("Hide this list in List Index")),
         ))
     filter_content = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
@@ -566,7 +566,7 @@ class ListSettings(FieldsetForm):
     #personalize = forms.CharField(
         #label = _('Personalize'),
     #)
-    pipeline = forms.CharField(
+    posting_pipeline = forms.CharField(
         label = _('Pipeline'),
     )
     post_id = forms.IntegerField(
