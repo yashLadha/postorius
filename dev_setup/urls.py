@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License along with
 # GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
 
+import mailmanweb
+
 from django.conf.urls.defaults import *
 from django.conf import settings
 
@@ -23,16 +25,14 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-import mailmanweb
 # Import mailman urls and set urlpatterns if you want to hook
 # mailman_django into an existing django site. 
 # Otherwise set ROOT_URLCONF in settings.py to
 # `mailman_django.urls`.
 # from mailman_django import urls as mailman_urls
 
-print 'mailmanweb was here'
-print mailmanweb.__file__
 urlpatterns = patterns('',
-   (r'^mailmanweb/', include('mailmanweb.urls')),
+    url(r'^$', 'mailmanweb.views.list_index'),
+    (r'^mailmanweb/', include('mailmanweb.urls')),
 	url(r'', include('social_auth.urls')),
 )
