@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = patterns('mailmanweb.views',
-    (r'^$', 'list_index'),
+    (r'^$', 'user_profile'),
     url(r'^accounts/login/$', 'user_login', name='user_login'),
     url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
     url(r'^accounts/profile/$', 'user_profile', name='user_profile'),

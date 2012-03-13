@@ -1,9 +1,12 @@
 {% load i18n %}
-<ul class="mm_nav">
-    <li class="mm_list_summary"><a href="{% url list_summary list.fqdn_listname %}">{% trans "Info" %}</a></li>
-    <li class="mm_list_metrics"><a href="{% url list_metrics list.fqdn_listname %}">{% trans "Metrics" %}</a></li>
-    <li class="mm_list_settings"><a href="{% url list_settings list.fqdn_listname %}">{% trans "Settings" %}</a></li>
-    <li class="mm_mass_subscribe"><a href="{% url mass_subscribe list.fqdn_listname %}">{% trans "Mass Subscribe" %}</a></li>
-    <li class="mm_delete_list"><a class="btn btn-mini btn-danger" href="{% url list_delete list.fqdn_listname %}">{% trans "Delete List" %}</a></li>
-    <li class="mm_new_list"><a class="btn btn-mini btn-success" href="{% url list_new %}">{% trans "New List" %}</a></li>
-</ul>    
+<div class="mm_subHeader">
+    <span class="mm_context">{{ list.fqdn_listname }}</span>
+    <ul class="mm_nav">
+        <li class="mm_list_summary"><a href="{% url list_summary list.fqdn_listname %}">{% trans "Info" %}</a></li>
+        <li class="mm_list_metrics"><a href="{% url list_metrics list.fqdn_listname %}">{% trans "Metrics" %}</a></li>
+        <li class="mm_list_settings"><a href="{% url list_settings list.fqdn_listname %}">{% trans "Settings" %}</a></li>
+        <li class="mm_mass_subscribe"><a href="{% url mass_subscribe list.fqdn_listname %}">{% trans "Mass Subscribe" %}</a></li>
+        <li class="mm_delete_list"><a class="btn btn-mini btn-danger" href="{% url list_delete list.fqdn_listname %}">{% trans "Delete List" %}</a></li>
+        <li class="mm_new_list"><a class="btn btn-mini btn-success" href="{% url list_new %}">{% trans "New List" %}</a></li>
+    </ul>    
+</div>

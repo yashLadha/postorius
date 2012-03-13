@@ -21,8 +21,11 @@
     <header>
         <div class="mm_header">
             <div class="mm_canvas">
-                <a href="{% url list_index %}" class="mm_logo"><img src="{{ STATIC_URL }}/mailmanweb/default/img/mailman_logo_trans.png" alt="{% trans 'Home' %}" /></a>
+                <a href="{% url user_profile %}" class="mm_logo"><img src="{{ STATIC_URL }}/mailmanweb/default/img/mailman_logo_trans.png" alt="{% trans 'Home' %}" /></a>
                 <ul class="mm_metaNav">
+                    <li>
+                        <a class="mm_lists" href="{% url list_index %}">Lists</a>
+                    </li>
                     {% if user.is_authenticated %}
                         <li>
                             <a class="mm_todos" href="#">Todos</a>
