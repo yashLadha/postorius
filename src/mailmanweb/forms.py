@@ -112,6 +112,9 @@ class ListNew(FieldsetForm):
         error_messages = {'required': _('Please enter a name for your list.'), 
                           'invalid': _('Please enter a valid list name.')}
         )                         
+
+    mail_host = forms.ChoiceField()
+
     list_owner = forms.EmailField(
         label = _('Inital list owner address'),
         error_messages = {
@@ -139,8 +142,6 @@ class ListNew(FieldsetForm):
     description = forms.CharField(
         label = _('Description'),
         required = True)           
-
-    mail_host = forms.ChoiceField()
 
     def __init__(self,domain_choices, *args, **kwargs):  
         super(ListNew, self).__init__(*args, **kwargs)  
