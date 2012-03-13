@@ -511,6 +511,12 @@ class ListSettings(FieldsetForm):
     #linked_newsgroup = forms.CharField(
         #label = _('Linked newsgroup'),
     #)
+    mail_host = forms.CharField(
+        label = _('Mail Host'),
+        error_messages = {'required': _('Please a domain name'),
+                          'invalid': _('Please enter a valid domain name.')},
+        required = True
+    )
     #max_days_to_hold = forms.IntegerField(
         #label = _('Maximum days to hold'),
         #error_messages = {
@@ -828,7 +834,8 @@ class ListSettings(FieldsetForm):
         # just a really temporary layout to see that it works. -- Anna
         layout = [
             ["List Identity", "real_name", "include_list_post_header", 
-             "include_rfc2369_headers", "description", "reply_goes_to_list"], 
+             "include_rfc2369_headers", "description", "reply_goes_to_list",
+             "mail_host"], 
              #"info", "list_name", "host_name", "list_id", "fqdn_listname", 
              #"http_etag", "volume", "web_host"
             ["Automatic Responses", "autorespond_owner",
