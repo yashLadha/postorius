@@ -95,7 +95,6 @@ TEMPLATE_LOADERS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'mailmanweb.auth.restbackend.RESTBackend',
     'django.contrib.auth.backends.ModelBackend',
     'social_auth.backends.OpenIDBackend',
     'social_auth.backends.browserid.BrowserIDBackend'
@@ -149,7 +148,7 @@ INSTALLED_APPS = (
     #'debug_toolbar',
 )
 LOGIN_URL          = '/login-form/'
-LOGIN_REDIRECT_URL = '/logged-in/'
+LOGIN_REDIRECT_URL = '/mailmanweb/'
 LOGIN_ERROR_URL    = '/login-error/'
 SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
