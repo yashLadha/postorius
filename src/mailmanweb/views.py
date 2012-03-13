@@ -160,6 +160,34 @@ def list_index(request, template = 'mailmanweb/lists/index.html'):
                                    'lists': lists,},
                                   context_instance=RequestContext(request))
 
+def list_metrics(request,fqdn_listname=None,option=None,template='mailmanweb/lists/metrics.html'):
+    """
+    PUBLIC
+    an entry page for each list which displays additional (non-editable)
+    information about the list such as the date of the last post and the
+    time the last digest is sent.
+    """
+    error=None
+    user_is_subscribed = False
+    if request.method == 'POST':
+        return redirect("list_summary", fqdn_listname=request.POST["list"])
+    else:
+        try:
+            the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+            try:
+                the_list.get_member(request.user.username)
+                user_is_subscribed = True
+            except:
+                pass #init
+        except MailmanApiError:
+            return render_api_error(request)
+    return render_to_response(template,
+                              {'list':the_list,
+                               'message':  None,
+                               'user_is_subscribed':user_is_subscribed,
+                              },
+                              context_instance=RequestContext(request)
+                              )
 def list_summary(request, fqdn_listname, option=None ,template='mailmanweb/lists/summary.html'):
     """
     PUBLIC

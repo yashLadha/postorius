@@ -1,0 +1,17 @@
+{% extends "mailmanweb/base.html" %}
+{% load i18n %}
+
+{% block main %}
+    {% if user.is_superuser %}
+        {% include 'mailmanweb/menu/list_nav.html' %}
+    {% endif %}
+
+    <h1>{% trans "List metrics" %}: {{list.fqdn_listname}} </h1>
+
+    <p>{% trans "List created at" %}:  {{list.settings.created_at}}</p>
+    <p>{% trans "Last post at" %}:  {{list.settings.last_post_at}}</p>
+    <p>{% trans "Digest last sent at" %}:  {{list.settings.digest_last_sent_at}}</p>
+    <p>{% trans "Digest Volume" %}:  {{list.settings.volume}}</p>
+    
+
+{% endblock main %}

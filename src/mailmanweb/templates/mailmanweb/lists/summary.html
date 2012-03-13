@@ -7,10 +7,22 @@
     {% endif %}
     <h1>{{list.real_name}}</h1>
 
-    <p><em>{{ list.settings.description }}</em></p>
+    <p><em>{{list.settings.description }}</em></h1>
 
-    
-    
-    
+    <h2>{% trans "Subscribe / Join this list" %}</h2>
+    <form action="{% url list_subscriptions list.fqdn_listname %}" method="post" class="list_subscribe
+mm_clear">
+		{{form.as_p}}
+	</form>
+
+    <h2>{% trans "Unsubscribe / Leave this list" %}</h2>
+    <form action"url_unsubscribe" method="post" class="list_unsubscribe
+mm_clear">
+    </form>
+  
+    <h2>{% trans "Edit list options" %}</h2>
+    <form action"url_options" method="post" class="member_options
+mm_clear">
+    </form> 
 
 {% endblock %}
