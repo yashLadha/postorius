@@ -147,9 +147,9 @@ INSTALLED_APPS = (
     'social_auth',
     #'debug_toolbar',
 )
-LOGIN_URL          = '/login-form/'
+LOGIN_URL          = '/mailmanweb/accounts/login/'
 LOGIN_REDIRECT_URL = '/mailmanweb/'
-LOGIN_ERROR_URL    = '/login-error/'
+LOGIN_ERROR_URL    = '/mailmanweb/accounts/login/'
 SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 SOCIAL_AUTH_DEFAULT_USERNAME = 'new_social_auth_user'
