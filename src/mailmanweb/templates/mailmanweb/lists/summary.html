@@ -5,8 +5,12 @@
     {% if user.is_superuser %}
         {% include 'mailmanweb/menu/list_nav.html' %}
     {% endif %}
-    <h1>{{list.settings.description}}</h1>
+    <h1>{{list.real_name}}</h1>
 
-    <!-- a href="{% url membership_settings fqdn_listname=list.fqdn_listname %}">{% trans "My Membership" %}</a -->
+    <p><em>{{ list.settings.description }}</em></p>
+
+    
+    
+    
 
 {% endblock %}
