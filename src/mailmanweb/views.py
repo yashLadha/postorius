@@ -337,6 +337,14 @@ def list_settings(request, fqdn_listname=None, visible_section=None, visible_opt
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
         return utils.render_api_error(request)
+    #collect all Form sections for the links:
+    temp = ListSettings('','')
+    for section in temp.layout:
+        try:
+            form_sections.append((section[0],temp.section_descriptions[section[0]]))
+        except KeyError, e:
+            error=e
+    del temp
     #Save a Form Processed by POST  
     if request.method == 'POST':
         form = ListSettings(visible_section,visible_option,data=request.POST)
@@ -351,14 +359,6 @@ def list_settings(request, fqdn_listname=None, visible_section=None, visible_opt
             message = _("Validation Error - The list has not been updated.")
     
     else:
-        #collect all Form sections for the links:
-        temp = ListSettings('','')
-        for section in temp.layout:
-            try:
-                form_sections.append((section[0],temp.section_descriptions[section[0]]))
-            except KeyError, e:
-                error=e
-        del temp
         #Provide a form with existing values
         #create form and process layout into form.layout
         form = ListSettings(visible_section,visible_option,data=None)

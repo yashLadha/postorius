@@ -127,7 +127,7 @@ class ListNew(FieldsetForm):
         required = True)
     advertised = forms.ChoiceField(
         widget = forms.RadioSelect(),
-        label = _('List Type'), 
+        label = _('Advertise this list?'), 
         error_messages = {
             'required': _("Please choose a list type."), 
         },
@@ -197,7 +197,7 @@ class ListUnsubscribe(FieldsetForm):
 class ListSettings(FieldsetForm):
     """Form fields dealing with the list settings.
     """
-    choices = ((True, 'Yes'), (False, 'No'),)
+    choices = ((True, _('Yes')), (False, _('No')))
     list_name = forms.CharField(
         label = _('List Name'),
         required = False,
@@ -210,33 +210,54 @@ class ListSettings(FieldsetForm):
         label = _('Fqdn listname'),
         required = False,
     )
-    include_list_post_header = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    include_list_post_header = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Include list post header'),
     )
-    include_rfc2369_headers = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    include_rfc2369_headers = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Include RFC2369 headers'),
     )
-    autorespond_owner = forms.BooleanField(
-        label = _('Autorespond owner'),
+    autorespond_choices = (
+        ("none", _("No automatic response")),
+        ("respond_and_discard", _("Respond and discard message")),
+        ("respond_and_continue", _("Respond and continue processing the message")),
+    )
+    autorespond_owner = forms.ChoiceField(
+        choices = autorespond_choices,
+        widget = forms.RadioSelect,
+        label = _('Autorespond to list owner'),
     )
     autoresponse_owner_text = forms.CharField(
         label = _('Autoresponse owner text'),
+        widget = forms.Textarea(),
+        required = False,
     )
-    autorespond_postings = forms.BooleanField(
+    autorespond_postings = forms.ChoiceField(
+        choices = autorespond_choices,
+        widget = forms.RadioSelect,
         label = _('Autorespond postings'),
     )
     autoresponse_postings_text = forms.CharField(
         label = _('Autoresponse postings text'),
+        widget = forms.Textarea(),
+        required = False,
     )
-    autorespond_requests = forms.BooleanField(
+    autorespond_requests = forms.ChoiceField(
+        choices = autorespond_choices,
+        widget = forms.RadioSelect,
         label = _('Autorespond requests'),
     )
     autoresponse_request_text = forms.CharField(
         label = _('Autoresponse request text'),
+        widget = forms.Textarea(),
+        required = False,
     )
     autoresponse_grace_period = forms.CharField(#TODO - either different type or different Validator !
         label = _('Autoresponse grace period'),
@@ -306,29 +327,30 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Private Archive'),
         #)
-    advertised = forms.ChoiceField(
-        widget = forms.RadioSelect(),
-        label = _('List Type (advertised)'), 
-        error_messages = {
-            'required': _("Please choose a list type."), 
-        },
-        required = True,
-        choices = (
-            (True, _("Advertise this list in List Index")),
-            (False, _("Hide this list in List Index")),
-        ))
-    filter_content = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    advertised = forms.TypedChoiceField(
+        coerce=lambda x: x =='True', 
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
+        label = _('Advertise the existance of this list?'), 
+        )
+    filter_content = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Filter content'),
     )
-    collapse_alternatives = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    collapse_alternatives = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Collapse alternatives'),
     )
-    convert_html_to_plaintext = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    convert_html_to_plaintext = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Convert html to plaintext'),
     )
@@ -337,20 +359,22 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Default member moderation'),
     #)
+    action_choices = (
+        ("hold", _("Hold for moderator")),
+        ("reject", _("Reject (with notification)")),
+        ("discard", _("Discard (no notification)")),
+        ("accept", _("Accept")),
+        ("defer", _("Defer")),
+    )
     default_member_action = forms.ChoiceField(
         widget = forms.RadioSelect(),
         label = _('Default action to take when a member posts to the list: '),
         error_messages = {
-            'required': _("Please choose a default non-member action."),
+            'required': _("Please choose a default member action."),
         },
         required = True,
-        choices = (
-            ("accept", _("Accept message")),
-            ("defer", _("Defer decision")),
-            ("hold", _("Hold for moderator approval")),
-            ("reject", _("Reject message (notifying sender)")),
-            ("discard", _("Discard message")),
-        ))
+        choices = action_choices,
+    )
     default_nonmember_action = forms.ChoiceField(
         widget = forms.RadioSelect(),
         label = _('Default action to take when a non-member posts to the list: '),
@@ -358,13 +382,8 @@ class ListSettings(FieldsetForm):
             'required': _("Please choose a default non-member action."),
         },
         required = True,
-        choices = (
-            ("accept", _("Accept message")),
-            ("defer", _("Defer decision")),
-            ("hold", _("Hold for moderator approval")),
-            ("reject", _("Reject message (notifying sender)")),
-            ("discard", _("Discard message")),
-        ))
+        choices = action_choices,
+        )
     description = forms.CharField(
         label = _('Description'),
         widget = forms.Textarea()
@@ -587,7 +606,8 @@ class ListSettings(FieldsetForm):
         },
         choices = (
             ("no_munging", _("No Munging")),
-            ("munge", _("Munge reply-to address")),
+            ("point_to_list", _("Reply goes to list")),
+            ("explicit_header", _("Explicit Reply-to header set")),
 			),
     )
     #reply_to_address = forms.EmailField(
@@ -622,8 +642,10 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Send reminders'),
     #)
-    send_welcome_message = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    send_welcome_message = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Send welcome message'),
     )
@@ -671,16 +693,18 @@ class ListSettings(FieldsetForm):
     #welcome_msg = forms.CharField(
         #label = _('Welcome message'),
     #)
-    volume = forms.IntegerField(
-        label = _('Volume'),
-        required = False,
-    )
-    web_host = forms.CharField(
-        label = _('Web host'),
-        required = False,
-    )
+    #volume = forms.IntegerField(
+    #    label = _('Volume'),
+    #    required = False,
+    #)
+    #web_host = forms.CharField(
+    #    label = _('Web host'),
+    #    required = False,
+    #)
     acceptable_aliases = forms.CharField(
+        widget = forms.Textarea(),
         label = _("Acceptable aliases"),
+        required = False,
     )
     admin_immed_notify = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
@@ -697,8 +721,10 @@ class ListSettings(FieldsetForm):
         required = False,
         label = _('Administrivia'),
     )
-    anonymous_list = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    anonymous_list = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Anonymous list'),
     )
@@ -733,8 +759,12 @@ class ListSettings(FieldsetForm):
         "Automatic Responses":_("All options for Autoreply"),
         "Alter Messages":_("Settings that modify messages to be sent to members"),
         "Digest": _("Digest-related options"),
-        "Assorted": _("tko:I don't know what to call this category"),
+        "Message Acceptance": _("Options related to when messages are accepted"),
         }
+    def clean_recipients(self):
+        data = self.cleaned_data['recipients']
+        data = data.splitlines()
+        return data
     def __init__(self,visible_section,visible_option, *args, **kwargs):  
         super(ListSettings, self).__init__(*args, **kwargs)  
         #if settings:raise Exception(settings) #debug
@@ -796,7 +826,7 @@ class ListSettings(FieldsetForm):
              "include_rfc2369_headers", "reply_goes_to_list",
              "include_list_post_header", "posting_pipeline"], 
             ["Digest", "digest_size_threshold"],
-            ["Assorted", "acceptable_aliases", "administrivia", 
+            ["Message Acceptance", "acceptable_aliases", "administrivia", 
              "default_nonmember_action", "default_member_action"],
              #["Bounce", "ban_list", 
              #"bounce_info_stale_after", "bounce_matching_headers", 
