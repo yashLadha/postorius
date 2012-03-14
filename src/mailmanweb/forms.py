@@ -127,7 +127,7 @@ class ListNew(FieldsetForm):
         required = True)
     advertised = forms.ChoiceField(
         widget = forms.RadioSelect(),
-        label = _('List Type'), 
+        label = _('Advertise this list?'), 
         error_messages = {
             'required': _("Please choose a list type."), 
         },
@@ -220,23 +220,37 @@ class ListSettings(FieldsetForm):
         required = False,
         label = _('Include RFC2369 headers'),
     )
+    autorespond_choices = (
+        ("none", _("No automatic response")),
+        ("respond_and_discard", _("Respond and discard message")),
+        ("respond_and_continue", _("Respond and continue processing the message")),
+    )
     autorespond_owner = forms.BooleanField(
-        label = _('Autorespond owner'),
+        widget = forms.RadioSelect(choices = autorespond_choices),
+        label = _('Autorespond to list owner'),
     )
     autoresponse_owner_text = forms.CharField(
         label = _('Autoresponse owner text'),
+        widget = forms.Textarea(),
+        required = False,
     )
     autorespond_postings = forms.BooleanField(
+        widget = forms.RadioSelect(choices = autorespond_choices), 
         label = _('Autorespond postings'),
     )
     autoresponse_postings_text = forms.CharField(
         label = _('Autoresponse postings text'),
+        widget = forms.Textarea(),
+        required = False,
     )
     autorespond_requests = forms.BooleanField(
+        widget = forms.RadioSelect(choices = autorespond_choices), 
         label = _('Autorespond requests'),
     )
     autoresponse_request_text = forms.CharField(
         label = _('Autoresponse request text'),
+        widget = forms.Textarea(),
+        required = False,
     )
     autoresponse_grace_period = forms.CharField(#TODO - either different type or different Validator !
         label = _('Autoresponse grace period'),
@@ -306,17 +320,10 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Private Archive'),
         #)
-    advertised = forms.ChoiceField(
-        widget = forms.RadioSelect(),
-        label = _('List Type (advertised)'), 
-        error_messages = {
-            'required': _("Please choose a list type."), 
-        },
-        required = True,
-        choices = (
-            (True, _("Advertise this list in List Index")),
-            (False, _("Hide this list in List Index")),
-        ))
+    advertised = forms.BooleanField(
+        widget = forms.RadioSelect(choices = choices),
+        label = _('Advertise the existance of this list?'), 
+        )
     filter_content = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
         required = False,
@@ -337,20 +344,22 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Default member moderation'),
     #)
+    action_choices = (
+        ("hold", _("Hold for moderator")),
+        ("reject", _("Reject (with notification)")),
+        ("discard", _("Discard (no notification)")),
+        ("accept", _("Accept")),
+        ("defer", _("Defer")),
+    )
     default_member_action = forms.ChoiceField(
         widget = forms.RadioSelect(),
         label = _('Default action to take when a member posts to the list: '),
         error_messages = {
-            'required': _("Please choose a default non-member action."),
+            'required': _("Please choose a default member action."),
         },
         required = True,
-        choices = (
-            ("accept", _("Accept message")),
-            ("defer", _("Defer decision")),
-            ("hold", _("Hold for moderator approval")),
-            ("reject", _("Reject message (notifying sender)")),
-            ("discard", _("Discard message")),
-        ))
+        choices = action_choices,
+    )
     default_nonmember_action = forms.ChoiceField(
         widget = forms.RadioSelect(),
         label = _('Default action to take when a non-member posts to the list: '),
@@ -358,13 +367,8 @@ class ListSettings(FieldsetForm):
             'required': _("Please choose a default non-member action."),
         },
         required = True,
-        choices = (
-            ("accept", _("Accept message")),
-            ("defer", _("Defer decision")),
-            ("hold", _("Hold for moderator approval")),
-            ("reject", _("Reject message (notifying sender)")),
-            ("discard", _("Discard message")),
-        ))
+        choices = action_choices,
+        )
     description = forms.CharField(
         label = _('Description'),
         widget = forms.Textarea()
@@ -680,7 +684,9 @@ class ListSettings(FieldsetForm):
     #    required = False,
     #)
     acceptable_aliases = forms.CharField(
+        widget = forms.Textarea(),
         label = _("Acceptable aliases"),
+        required = False,
     )
     admin_immed_notify = forms.BooleanField(
         widget = forms.RadioSelect(choices = choices), 
