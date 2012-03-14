@@ -43,18 +43,24 @@ logger = logging.getLogger(__name__)
 
 @login_required
 @permission_required('server_admin')
-def domain_index(request, template = 'mailmanweb/domain_index.html'):
+def site_settings(request):
+    return render_to_response('mailmanweb/site_settings.html',
+					          context_instance=RequestContext(request))
+
+@login_required
+@permission_required('server_admin')
+def domain_index(request):
     try:
         existing_domains = Domain.objects.all()
         logger.debug(Domain.objects)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response(template, {'domains':existing_domains,},
+    return render_to_response('mailmanweb/domain_index.html', {'domains':existing_domains,},
 					          context_instance=RequestContext(request))
 
 @login_required
 @permission_required('server_admin')
-def domain_new(request, template = 'mailmanweb/domain_new.html'):
+def domain_new(request):
     message = None
     if request.method == 'POST':
         form = DomainNew(request.POST)
@@ -71,18 +77,9 @@ def domain_new(request, template = 'mailmanweb/domain_new.html'):
             return redirect("domain_index")
     else:
         form = DomainNew()
-    return render_to_response(template,
+    return render_to_response('mailmanweb/domain_new.html',
                               {'form': form,'message': message},
                               context_instance=RequestContext(request))
-
-@login_required
-def administration(request):
-    """
-    Administration dashboard used for Menu navigation
-    """
-    
-    return render_to_response('mailmanweb/errors/generic.html', 
-          {'message':  "This Site is in preperation."})
 
 @login_required
 def list_new(request, template = 'mailmanweb/lists/new.html'):
@@ -454,14 +451,12 @@ def user_settings(request, tab = "membership",
                 user_object = the_list.get_member(member)
             else:
                 message = ("Using a workaround to replace missing Client functionality → LP:820827")
-                #### BEGIN workaround
-                for mlist in Lists.objects.all(): 
+                for mlist in List.objects.all(): 
                     try: 
                         mlist.get_member(member)
                         membership_lists.append(mlist)
-                    except: # if user is not subscribed to this list
+                    except:
                         pass
-                #### END workaround
         else:
            # address_choices for the 'address' field must be a list of 
            # tuples of length 2
@@ -565,5 +560,9 @@ def user_profile(request):
     if not request.user.is_authenticated():
         return redirect('user_login')
     return render_to_response('mailmanweb/user_profile.html',
+                              context_instance=RequestContext(request))
+    
+def user_todos(request):
+    return render_to_response('mailmanweb/user_todos.html',
                               context_instance=RequestContext(request))
     

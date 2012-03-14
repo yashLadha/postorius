@@ -1,18 +1,13 @@
 {% extends extend_template %}
 {% load i18n %}    
 
-{% block heading %}
-    {% trans "Add a new Domain" %}
-{% endblock %}
-
-{% block header %}
-    <!--<div class="mm_box mm_clear">
-        <div class="mm_boxHeader">{% trans "New Domain" %}</div>   -->     
-        <form action="{% url domain_new %}" method="post" class="newdomain mm_clear">
-            {{ form.as_div }}
-            <div class="field">
-                <button type="submit">{% trans "Create Domain" %}</button>
-            </div>
-        </form>
-    <!--</div>-->
-{% endblock %}
+{% block main %}
+    {% include 'mailmanweb/menu/settings_nav.html' %}
+    <h1>{% trans "Add a new Domain" %}</h1>
+    <form action="{% url domain_new %}" method="post" class="well">
+        {{ form.as_p }}
+        <div class="field">
+            <button class="btn btn-primary" type="submit">{% trans "Create Domain" %}</button>
+        </div>
+    </form>
+{% endblock main %}
