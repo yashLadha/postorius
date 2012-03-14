@@ -761,6 +761,10 @@ class ListSettings(FieldsetForm):
         "Digest": _("Digest-related options"),
         "Message Acceptance": _("Options related to when messages are accepted"),
         }
+    def clean_recipients(self):
+        data = self.cleaned_data['recipients']
+        data = data.splitlines()
+        return data
     def __init__(self,visible_section,visible_option, *args, **kwargs):  
         super(ListSettings, self).__init__(*args, **kwargs)  
         #if settings:raise Exception(settings) #debug
