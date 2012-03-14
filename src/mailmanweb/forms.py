@@ -671,14 +671,14 @@ class ListSettings(FieldsetForm):
     #welcome_msg = forms.CharField(
         #label = _('Welcome message'),
     #)
-    volume = forms.IntegerField(
-        label = _('Volume'),
-        required = False,
-    )
-    web_host = forms.CharField(
-        label = _('Web host'),
-        required = False,
-    )
+    #volume = forms.IntegerField(
+    #    label = _('Volume'),
+    #    required = False,
+    #)
+    #web_host = forms.CharField(
+    #    label = _('Web host'),
+    #    required = False,
+    #)
     acceptable_aliases = forms.CharField(
         label = _("Acceptable aliases"),
     )
