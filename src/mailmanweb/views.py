@@ -544,7 +544,7 @@ def user_settings(request, tab = "membership",
 
 def user_logout(request):
     logout(request)
-    return redirect('list_index')
+    return redirect('user_login')
 
 def user_login(request,template = 'mailmanweb/login.html'):
     if request.method == 'POST':
@@ -555,7 +555,7 @@ def user_login(request,template = 'mailmanweb/login.html'):
             logger.debug(user)
             if user.is_active:
                 login(request,user)
-                return redirect(request.GET.get('next', 'list_index'))
+                return redirect(request.GET.get('next', 'user_profile'))
     else:
         form = AuthenticationForm()
     return render_to_response(template, {'form': form,},
