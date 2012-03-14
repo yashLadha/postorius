@@ -733,7 +733,7 @@ class ListSettings(FieldsetForm):
         "Automatic Responses":_("All options for Autoreply"),
         "Alter Messages":_("Settings that modify messages to be sent to members"),
         "Digest": _("Digest-related options"),
-        "Assorted": _("tko:I don't know what to call this category"),
+        "Message Acceptance": _("Options related to when messages are accepted"),
         }
     def __init__(self,visible_section,visible_option, *args, **kwargs):  
         super(ListSettings, self).__init__(*args, **kwargs)  
@@ -796,7 +796,7 @@ class ListSettings(FieldsetForm):
              "include_rfc2369_headers", "reply_goes_to_list",
              "include_list_post_header", "posting_pipeline"], 
             ["Digest", "digest_size_threshold"],
-            ["Assorted", "acceptable_aliases", "administrivia", 
+            ["Message Acceptance", "acceptable_aliases", "administrivia", 
              "default_nonmember_action", "default_member_action"],
              #["Bounce", "ban_list", 
              #"bounce_info_stale_after", "bounce_matching_headers", 
