@@ -197,7 +197,7 @@ class ListUnsubscribe(FieldsetForm):
 class ListSettings(FieldsetForm):
     """Form fields dealing with the list settings.
     """
-    choices = ((True, 'Yes'), (False, 'No'),)
+    choices = ((True, _('Yes')), (False, _('No')))
     list_name = forms.CharField(
         label = _('List Name'),
         required = False,
@@ -210,13 +210,17 @@ class ListSettings(FieldsetForm):
         label = _('Fqdn listname'),
         required = False,
     )
-    include_list_post_header = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    include_list_post_header = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Include list post header'),
     )
-    include_rfc2369_headers = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    include_rfc2369_headers = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Include RFC2369 headers'),
     )
@@ -225,8 +229,9 @@ class ListSettings(FieldsetForm):
         ("respond_and_discard", _("Respond and discard message")),
         ("respond_and_continue", _("Respond and continue processing the message")),
     )
-    autorespond_owner = forms.BooleanField(
-        widget = forms.RadioSelect(choices = autorespond_choices),
+    autorespond_owner = forms.ChoiceField(
+        choices = autorespond_choices,
+        widget = forms.RadioSelect,
         label = _('Autorespond to list owner'),
     )
     autoresponse_owner_text = forms.CharField(
@@ -234,8 +239,9 @@ class ListSettings(FieldsetForm):
         widget = forms.Textarea(),
         required = False,
     )
-    autorespond_postings = forms.BooleanField(
-        widget = forms.RadioSelect(choices = autorespond_choices), 
+    autorespond_postings = forms.ChoiceField(
+        choices = autorespond_choices,
+        widget = forms.RadioSelect,
         label = _('Autorespond postings'),
     )
     autoresponse_postings_text = forms.CharField(
@@ -243,8 +249,9 @@ class ListSettings(FieldsetForm):
         widget = forms.Textarea(),
         required = False,
     )
-    autorespond_requests = forms.BooleanField(
-        widget = forms.RadioSelect(choices = autorespond_choices), 
+    autorespond_requests = forms.ChoiceField(
+        choices = autorespond_choices,
+        widget = forms.RadioSelect,
         label = _('Autorespond requests'),
     )
     autoresponse_request_text = forms.CharField(
@@ -320,22 +327,30 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Private Archive'),
         #)
-    advertised = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices),
+    advertised = forms.TypedChoiceField(
+        coerce=lambda x: x =='True', 
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         label = _('Advertise the existance of this list?'), 
         )
-    filter_content = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    filter_content = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Filter content'),
     )
-    collapse_alternatives = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    collapse_alternatives = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Collapse alternatives'),
     )
-    convert_html_to_plaintext = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    convert_html_to_plaintext = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Convert html to plaintext'),
     )
@@ -591,7 +606,8 @@ class ListSettings(FieldsetForm):
         },
         choices = (
             ("no_munging", _("No Munging")),
-            ("munge", _("Munge reply-to address")),
+            ("point_to_list", _("Reply goes to list")),
+            ("explicit_header", _("Explicit Reply-to header set")),
 			),
     )
     #reply_to_address = forms.EmailField(
@@ -626,8 +642,10 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Send reminders'),
     #)
-    send_welcome_message = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    send_welcome_message = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Send welcome message'),
     )
@@ -703,8 +721,10 @@ class ListSettings(FieldsetForm):
         required = False,
         label = _('Administrivia'),
     )
-    anonymous_list = forms.BooleanField(
-        widget = forms.RadioSelect(choices = choices), 
+    anonymous_list = forms.TypedChoiceField(
+        coerce=lambda x: x =='True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget = forms.RadioSelect,
         required = False,
         label = _('Anonymous list'),
     )
