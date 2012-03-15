@@ -34,7 +34,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
 from django.utils.translation import gettext as _
 from mailman.client import Client
-from models import Domain, List, MailmanApiError
+from models import Domain, List, Member, User, MailmanApiError, Mailman404Error
 from forms import *
 from urllib2 import HTTPError
 
@@ -53,7 +53,6 @@ def site_settings(request):
 def domain_index(request):
     try:
         existing_domains = Domain.objects.all()
-        logger.debug(Domain.objects)
     except MailmanApiError:
         return utils.render_api_error(request)
     return render_to_response('mailmanweb/domain_index.html', {'domains':existing_domains,},

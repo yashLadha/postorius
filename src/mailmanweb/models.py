@@ -44,7 +44,6 @@ class MailmanRestManager(object):
     """
     
     def __init__(self, resource_name, resource_name_plural, cls_name=None):
-        logger.debug(cls_name)
         self.client = Client('%s/3.0' % settings.REST_SERVER,
                              settings.API_USER, settings.API_PASS)
         self.resource_name = resource_name
@@ -151,3 +150,13 @@ class List(MailmanRestModel):
     objects = MailmanListManager()
 
 
+class User(MailmanRestModel):
+    """User model class.
+    """
+    objects = MailmanRestManager('user', 'users')
+
+
+class Member(MailmanRestModel):
+    """Member model class.
+    """
+    objects = MailmanRestManager('member', 'members')
