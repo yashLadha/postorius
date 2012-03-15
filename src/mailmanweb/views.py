@@ -23,6 +23,7 @@ import logging
 
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import AuthenticationForm
@@ -73,7 +74,9 @@ def domain_new(request):
             except MailmanApiError:
                 return utils.render_api_error(request)
             except HTTPError, e:
-                message=e
+                messages.error(request,e)
+            else:
+                messages.success(request,_("New Domain registered"))
             return redirect("domain_index")
     else:
         form = DomainNew()
@@ -92,8 +95,6 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
     filled in before the last POST request is returned. The user must
     be logged in to create a new list.
     """
-    error = None
-    message = None
     mailing_list = None
     if request.method == 'POST':
         try:
@@ -118,12 +119,16 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
                 #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST:
                 list_settings["advertised"] = form.cleaned_data['advertised']
                 list_settings.save()
+                messages.success(request, _("List created"))
                 return redirect("list_summary",fqdn_listname=mailing_list.fqdn_listname)
             #TODO catch correct Error class:
             except HTTPError, e:
+                messages.error(request,e)
                 return render_to_response('mailmanweb/errors/generic.html', 
                                       {'error':e},
                                       context_instance=RequestContext(request))
+            else:
+                messages.success(_("New List created"))
     else:
         try:
             domains = Domain.objects.all()
@@ -133,7 +138,7 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
         for domain in domains:
             choosable_domains.append((domain.mail_host,domain.mail_host))
         form = ListNew(choosable_domains,initial={'list_owner': request.user.username})
-    return render_to_response(template, {'form': form, error:None},
+    return render_to_response(template, {'form': form},
                               context_instance=RequestContext(request))
 
 def list_index(request, template = 'mailmanweb/lists/index.html'):
