@@ -432,7 +432,15 @@ def mass_subscribe(request, fqdn_listname=None,
 
 @login_required
 def user_mailmansettings(request):
+    try:
+        the_user = MailmanUser.objects.get(address=request.user.email)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+
+    settingsform = MembershipSettings()
     return render_to_response('mailmanweb/user_mailmansettings.html',
+                              {'mm_user': the_user, 
+                               'settingsform': settingsform},
                               context_instance=RequestContext(request))
 @login_required
 def user_settings(request, tab = "membership",
