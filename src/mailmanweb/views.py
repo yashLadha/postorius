@@ -34,7 +34,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
 from django.utils.translation import gettext as _
 from mailman.client import Client
-from models import Domain, List, Member, User, MailmanApiError, Mailman404Error
+from models import Domain, List, Member, MailmanUser, MailmanApiError, Mailman404Error
 from forms import *
 from urllib2 import HTTPError
 

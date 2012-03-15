@@ -150,8 +150,8 @@ class List(MailmanRestModel):
     objects = MailmanListManager()
 
 
-class User(MailmanRestModel):
-    """User model class.
+class MailmanUser(MailmanRestModel):
+    """MailmanUser model class.
     """
     objects = MailmanRestManager('user', 'users')
 
