@@ -1,0 +1,44 @@
+{% extends extend_template %}
+{% load i18n %}
+
+{% block main %}
+    {% include 'mailmanweb/menu/user_nav.html' %}
+    <h1>{{ user }}'s Profile</h1>
+
+    <p><strong>Mailman display name:</strong> {{ mm_user.real_name}}</p>
+    <p><strong>Django email:</strong> {{ user.email }}</p>
+    <p><strong>Mailman primary email:</strong> {{ mm_user.email }}</p>
+    <p><strong>Mailman display name:</strong> {{ mm_user.real_name}}</p>
+    <p><strong>Valid addresses with this account:</strong> </p>
+    <ul>
+    {% for address in mm_user.addresses %}
+        <li>{{ address }}</li>
+    {% endfor %}
+
+    <form action="#">
+    <table class="mm_settings">
+        <tr>
+            <th>Setting</th>
+            <th>Description</th>
+            <th>Set all</th>
+            <th>list1@example.com</th>
+            <th>kumquat@example.com</th>
+            <th>starfruit@example.com</th>
+        </tr>
+        <tr>
+            <th>Mail delivery</th>
+            <td>       Set this option to <em>Enabled</em> to receive
+messages posted
+        to this mailing list.  Set it to <em>Disabled</em> if you want
+        to stay subscribed, but don't want mail delivered to you for a
+        while (e.g. you're going on vacation).  If you disable mail
+        delivery, don't forget to re-enable it when you come back; it
+        will not be automatically re-enabled.</td>
+            <td><input type="checkbox" /></td>
+            <td><input type="checkbox" /></td>
+            <td><input type="checkbox" /></td>
+            <td><input type="checkbox" /></td>
+    </table>
+    </form>
+{% endblock main %}
+~                      

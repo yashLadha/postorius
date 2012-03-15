@@ -427,6 +427,10 @@ def mass_subscribe(request, fqdn_listname=None,
                                          ,context_instance=RequestContext(request))
 
 @login_required
+def user_mailmansettings(request):
+    return render_to_response('mailmanweb/user_mailmansettings.html',
+                              context_instance=RequestContext(request))
+@login_required
 def user_settings(request, tab = "membership",
                   template = 'mailmanweb/user_settings.html',
                   fqdn_listname = None,):
@@ -556,10 +560,15 @@ def user_login(request,template = 'mailmanweb/login.html'):
     return render_to_response(template, {'form': form,},
                               context_instance=RequestContext(request))
 
-def user_profile(request):
+def user_profile(request, user_email = None):
     if not request.user.is_authenticated():
         return redirect('user_login')
+    #try:
+    #    the_user = User.objects.get_or_404(email=user_email)
+    #except MailmanApiError:
+    #    return utils.render_api_error(request)
     return render_to_response('mailmanweb/user_profile.html',
+    #                          {'mm_user': the_user},
                               context_instance=RequestContext(request))
     
 def user_todos(request):

@@ -31,6 +31,7 @@ urlpatterns = patterns('mailmanweb.views',
     url(r'^accounts/membership/(?:(?P<fqdn_listname>[^/]+)/)?$',
         'user_settings', kwargs={"tab": "membership"},
         name='membership_settings'),
+    url(r'^accounts/mailmansettings/$', 'user_mailmansettings', name='user_mailmansettings'),
     # /settings/
     url(r'^settings/$', 'site_settings', name="site_settings"),
     url(r'^settings/domains/$', 'domain_index', name='domain_index'),
