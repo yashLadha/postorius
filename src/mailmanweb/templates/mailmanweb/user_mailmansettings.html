@@ -3,20 +3,49 @@
 
 {% block main %}
     {% include 'mailmanweb/menu/user_nav.html' %}
-    <h1>{{ user }}'s Profile</h1>
+    <h1>{{ user }}'s List Settings</h1>
 
     <p><strong>Mailman display name:</strong> {{ mm_user.real_name}}</p>
     <p><strong>Django email:</strong> {{ user.email }}</p>
     <p><strong>Mailman primary email:</strong> {{ mm_user.email }}</p>
-    <p><strong>Mailman display name:</strong> {{ mm_user.real_name}}</p>
-    <p><strong>Valid addresses with this account:</strong> </p>
+    <h2>Valid email addresses for this account:</h2>
     <ul>
     {% for address in mm_user.addresses %}
         <li>{{ address }}</li>
     {% endfor %}
+    </ul>
+    <h2>List memberships:</h2>
+    <ul>
+        <li>list1@example.com [<a href="#">listinfo</a>] 
+            [<a href="#">settings</a>]</li>
+        <li>kumquat@example.com [<a href="#">listinfo</a>] 
+            [<a href="#">settings</a>]</li>
+        <li>starfruit@example.com [<a href="#">listinfo</a>] 
+            [<a href="#">settings</a>]</li>
+    </ul>
+    </ul>
+<!--
+    <script type="text/javascript"
+src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#btnHide').click(function() {
+                //if (('#description').is(":visible")) {
+                    $('td:nth-child(2),th:nth-child(2)').hide('slow');
+                //}
+                //else {
+                //    $('td:nth-child(2),th:nth-child(2)').show('slow');
+                //}
+            });
+        });
+    </script> -->
+    <h2>Prefs form</h2>
+    {{ settingsform.asp }}
 
+    <h2>List Preferences Overview</h2>
+    <input id="btnHide" type="button" value="{% trans "Hide Descriptions" %}"/>
     <form action="#">
-    <table class="mm_settings">
+    <table class="table table-bordered table-striped">
         <tr>
             <th>{% trans "Setting" %}</th>
             <th>{% trans "Description" %}</th>
@@ -26,7 +55,7 @@
             <th>starfruit@example.com</th>
         </tr>
         <tr>
-            <th>{% trans "Mail delivery" %}</th>
+            <th>{% trans "Mail delivery" %} ({{ preference }})</th>
             <td>Set this option to <em>Enabled</em> to receive
 messages posted
         to this mailing list.  Set it to <em>Disabled</em> if you want
@@ -39,6 +68,8 @@ messages posted
             <td><input type="checkbox" /></td>
             <td><input type="checkbox" /></td>
         </tr>
+    {% for preference in mm_user.preferences %}
+    {% endfor %}
         <tr>
             <th colspan="6">{% trans "Per-Email subscriptions" %}</th>
         </tr>
