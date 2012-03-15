@@ -9,20 +9,36 @@
 
     <p><em>{{list.settings.description }}</em></h1>
 
-    <h2>{% trans "Subscribe / Join this list" %}</h2>
-    <form action="{% url list_subscriptions list.fqdn_listname %}" method="post" class="list_subscribe
-mm_clear">
-		{{subscribe_form.as_p}}
-	</form>
+    <div class="accordion" id="accordion-subscriptions">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a href="#accordion-subscribe" data-toggle="collapse" data-parent="#accordion-subscriptions" data-target="#accordion-subscribe" class="accordion-toggle">{% trans 'Subscribe' %}</a>
+            </div>
+            <div class="accordion-body collapse" id="accordion-subscribe">
+                <div class="accordion-inner in">
+                    <h2>{% trans "Subscribe list" %}</h2>
+                    <form action="{% url list_subscribe list.fqdn_listname %}" method="post" class="list_subscribe">
+                        {{subscribe_form.as_p}}
+                        <input class="btn btn-primary" type="submit" value="{% trans 'Subscribe' %}" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a href="#accordion-unsubscribe" data-toggle="collapse" data-parent="#accordion-subscriptions" data-target="#accordion-unsubscribe" class="accordion-toggle">{% trans 'Unsubscribe' %}</a>
+            </div>
+            <div class="accordion-body collapse" id="accordion-unsubscribe">
+                <div class="accordion-inner in">
+                    <h2>{% trans "Unsubscribe / Leave this list" %}</h2>
+                    <form action"url list_unsubscribe" method="post">
+                        {{unsubscribe_form.as_p}}
+                        <input class="btn btn-primary" type="submit" value="{% trans 'Unsubscribe' %}" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h2>{% trans "Unsubscribe / Leave this list" %}</h2>
-    <form action"url_unsubscribe" method="post">
-		{{unsubscribe_form.as_p}}
-    </form>
   
-    <!--h2>{% trans "Edit list options" %}</h2>
-    <form action"url_options" method="post" class="member_options
-mm_clear">
-    </form-->
-
 {% endblock %}

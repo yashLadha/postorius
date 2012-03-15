@@ -219,6 +219,21 @@ def list_subscribe(request, fqdn_listname):
                               {'form': form, 'list': the_list,},
                               context_instance=RequestContext(request))
 
+def list_unsubscribe(request, fqdn_listname):
+    """Unsubscribe from a list.
+    """
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    if request.method == 'POST':
+        form = ListUnsubscribe(request.POST)
+    else:
+        form = ListUnsubscribe()
+    return render_to_response('mailmanweb/lists/unsubscribe.html', 
+                              {'form': form, 'list': the_list,},
+                              context_instance=RequestContext(request))
+
 def list_subscriptions(request, option=None, fqdn_listname=None, user_email = None,
                        template = 'mailmanweb/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
     """
