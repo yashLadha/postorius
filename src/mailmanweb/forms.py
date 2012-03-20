@@ -179,7 +179,6 @@ class ListNew(FieldsetForm):
 class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
     """
-    fqdn_listname = forms.EmailField(widget = forms.HiddenInput())
     email = forms.EmailField(label = _('Your email address'), 
         error_messages = {'required': _('Please enter an email address.'), 
                           'invalid': _('Please enter a valid email address.')})
@@ -188,7 +187,6 @@ class ListSubscribe(FieldsetForm):
 class ListUnsubscribe(FieldsetForm):
     """Form fields to leave an existing list.
     """
-    fqdn_listname = forms.EmailField(widget=forms.HiddenInput())
     email = forms.EmailField(label = _('Your email address'), 
         error_messages = {
             'required': _('Please enter an email address.'), 

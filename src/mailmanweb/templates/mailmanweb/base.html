@@ -17,7 +17,7 @@
 	<link rel="stylesheet" href="{{ STATIC_URL }}mailmanweb/{{ MAILMAN_THEME }}/css/style.css">
     
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
 
     <header>
         <div class="mm_header">
@@ -54,7 +54,7 @@
         {% if messages %}
             <ul class="mm_messages">
             {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                <li class="alert {% if message.tags %} class="{{ message.tags }}"{% endif %}">{{ message }}</li>
             {% endfor %}
             </ul>
         {% endif %}

@@ -209,12 +209,23 @@ def list_subscribe(request, fqdn_listname):
     """
     try:
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        if request.method == 'POST':
+            form = ListSubscribe(request.POST)
+            if form.is_valid():
+                email = request.POST.get('email')
+                real_name = request.POST.get('real_name')
+                the_list.subscribe(email, real_name)
+                messages.success(request,_('You are now subscribed to %s.' % the_list.fqdn_listname))
+                return redirect('list_summary', the_list.fqdn_listname)
+            else:
+                logger.debug(form)
+        else:
+            form = ListSubscribe()
     except MailmanApiError:
         return utils.render_api_error(request)
-    if request.method == 'POST':
-        form = ListSubscribe(request.POST)
-    else:
-        form = ListSubscribe()
+    except HTTPError, e:
+        messages.error(request,e.msg)
+        return redirect('list_summary', the_list.fqdn_listname)
     return render_to_response('mailmanweb/lists/subscribe.html', 
                               {'form': form, 'list': the_list,},
                               context_instance=RequestContext(request))
