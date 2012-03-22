@@ -15,20 +15,16 @@
     			<th>{% trans 'List name' %}</th>
     			<th>{% trans 'List address' %}</th>
     			<th>{% trans 'Description' %}</th>
-    			<th>{% trans 'Volume' %}</th>
-    			<th>{% trans 'Members'%}</th>
     		</tr>
     	</thead>
     	<tbody>
             {% for list in lists %}
     		<tr>
     			<td>
-                    <a href="{% url list_summary fqdn_listname=list.fqdn_listname %}">{{ list.real_name }}</a>
+                    <a href="{% url list_summary fqdn_listname=list.fqdn_listname %}">{{ list.display_name }}</a>
                 </td>
     			<td>{{ list.fqdn_listname }}</td>
     			<td>{{ list.settings.description }}</td>
-    			<td></td>
-    			<td></td>
     		</tr>
             {% endfor %}
     	</tbody>

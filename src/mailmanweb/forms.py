@@ -76,40 +76,6 @@ class ListNew(FieldsetForm):
     Form fields to add a new list. Languages are hard coded which should 
     be replaced by a REST lookup of available languages.
     """    
-    languages = (("Arabic", "Arabic"),
-                 ("Catalan", "Catalan"),
-                 ("Chinese (China)", "Chinese (China)"),
-                 ("Chinese (Taiwan)", "Chinese (Taiwan)"),
-                 ("Croatian", "Croatian"),
-                 ("Czech", "Czech"),
-                 ("Danish", "Danish"),
-                 ("Dutch", "Dutch"),
-                 ("English (USA)", "English (USA)"),
-                 ("Estonian", "Estonian"),
-                 ("Estonian", "Estonian"),
-                 ("Euskara", "Euskara"),
-                 ("Finnish", "Finnish"),
-                 ("French", "French"),
-                 ("German", "German"),
-                 ("Hungarian", "Hungarian"),
-                 ("Interlingua", "Interlingua"),
-                 ("Italian", "Italian"),
-                 ("Japanese", "Japanese"),
-                 ("Korean", "Korean"),
-                 ("Lithuanian", "Lithuanian"),
-                 ("Norwegian", "Norwegian"),
-                 ("Polish", "Polish"),
-                 ("Portuguese", "Portuguese"),
-                 ("Portuguese (Brazil)",  "Portuguese (Brazil)"),
-                 ("Romanian", "Romanian"),
-                 ("Russian", "Russian"),
-                 ("Serbian", "Serbian"),
-                 ("Slovenian", "Slovenian"),
-                 ("Spanish (Spain)", "Spanish (Spain)"),
-                 ("Swedish", "Swedish"),
-                 ("Turkish", "Turkish"),
-                 ("Ukrainian", "Ukrainian"),
-                 ("Vietnamese", "Vietnamese"))
     listname = forms.CharField(
         label = _('List Name'), 
         required = True,    
@@ -136,13 +102,6 @@ class ListNew(FieldsetForm):
             (True, _("Advertise this list in list index")),
             (False, _("Hide this list in list index")),
         ))
-
-    languages = forms.MultipleChoiceField(
-        label = _('Language'),
-        widget = forms.CheckboxSelectMultiple(),
-        choices = languages,
-        required = False)   
-    
     description = forms.CharField(
         label = _('Description'),
         required = True)           
@@ -173,8 +132,7 @@ class ListNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["List Details", "listname", "mail_host", "list_owner", "description", "advertised"],
-                  ["Available Languages", "languages"]]
+        layout = [["List Details", "listname", "mail_host", "list_owner", "description", "advertised"],]
 
 class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
@@ -182,7 +140,7 @@ class ListSubscribe(FieldsetForm):
     email = forms.EmailField(label = _('Your email address'), 
         error_messages = {'required': _('Please enter an email address.'), 
                           'invalid': _('Please enter a valid email address.')})
-    real_name = forms.CharField(label=_('Your name'), required=False)
+    display_name = forms.CharField(label=_('Your name'), required=False)
     
 class ListUnsubscribe(FieldsetForm):
     """Form fields to leave an existing list.
@@ -588,8 +546,8 @@ class ListSettings(FieldsetForm):
         #required = False,
         #label = _('Private roster'),
     #)
-    real_name = forms.CharField(
-        label = _('Real name'),
+    display_name = forms.CharField(
+        label = _('Display name'),
     )
     #reject_these_nonmembers = forms.CharField(
         #label = _('Reject these nonmembers'),
@@ -808,7 +766,7 @@ class ListSettings(FieldsetForm):
         """        
         # just a really temporary layout to see that it works. -- Anna
         layout = [
-            ["List Identity", "real_name", "mail_host", "description", 
+            ["List Identity", "display_name", "mail_host", "description", 
              "advertised"], 
              #"info", "list_name", "host_name", "list_id", "fqdn_listname", 
              #"http_etag", "volume", "web_host"
@@ -1006,8 +964,8 @@ class UserSettings(FieldsetForm):
         widget = forms.HiddenInput(),
         required = False,
     )
-    real_name =forms.CharField(
-        label = _('Real name'),
+    display_name =forms.CharField(
+        label = _('Display name'),
         required = False,
     )
     preferred_language = forms.ChoiceField(
@@ -1044,7 +1002,7 @@ class UserSettings(FieldsetForm):
         Class to define the name of the fieldsets and what should be
         included in each.
         """
-        layout = [["User settings", "real_name", "password", 
+        layout = [["User settings", "display_name", "password", 
                    "conf_password", "preferred_language", "address"],]
 
 class ListDeleteForm(forms.Form):

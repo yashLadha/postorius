@@ -19,6 +19,7 @@
 
 import re
 import sys
+import utils
 import logging
 
 
@@ -113,9 +114,7 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
                 mailing_list = domain.create_list(form.cleaned_data['listname'])
                 list_settings = mailing_list.settings
                 list_settings["description"] = form.cleaned_data['description']
-                #TODO: Readonly:
                 list_settings["owner_address"] = form.cleaned_data['list_owner']
-                #settings["???"] = form.cleaned_data['languages'] #TODO not found in REST:
                 list_settings["advertised"] = form.cleaned_data['advertised']
                 list_settings.save()
                 messages.success(request, _("List created"))

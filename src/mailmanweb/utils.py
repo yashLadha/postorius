@@ -17,6 +17,7 @@
 # GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.shortcuts import render_to_response, redirect
+from django.template import RequestContext
 
 
 def get_domain_name(request):
