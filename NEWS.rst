@@ -1,23 +1,23 @@
 ==================================
-postorius - web ui for GNU Mailman
+Postorius - web ui for GNU Mailman
 ==================================
 
 Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
 
-The postorius Django app provides a web user interface to
+The Postorius Django app provides a web user interface to
 access GNU Mailman. 
 
-postorius is free software: you can redistribute it and/or
+Postorius is free software: you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License as
 published by the Free Software Foundation, version 3 of the License.
 
-postorius is distributed in the hope that it will be useful,
+Postorius is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
 General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with postorius. If not, see <http://www.gnu.org/licenses/>.
+along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
 1.0 alpha 1 -- "Space Farm"
