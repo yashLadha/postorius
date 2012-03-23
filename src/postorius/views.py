@@ -192,7 +192,7 @@ def list_metrics(request,fqdn_listname=None,option=None,
             except:
                 pass #init
         except MailmanApiError:
-            return render_api_error(request)
+            return utils.render_api_error(request)
     return render_to_response(template,
                               {'list':the_list,
                                'message':  None,
