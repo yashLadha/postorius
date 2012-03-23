@@ -601,7 +601,7 @@ def user_profile(request, user_email = None):
     if not request.user.is_authenticated():
         return redirect('user_login')
     #try:
-    #    the_user = User.objects.get_or_404(email=user_email)
+    #    the_user = User.objects.get(email=user_email)
     #except MailmanApiError:
     #    return utils.render_api_error(request)
     return render_to_response('mailmanweb/user_profile.html',
