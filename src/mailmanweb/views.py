@@ -26,7 +26,8 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import (login_required, permission_required,
+                                            user_passes_test)
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -35,7 +36,8 @@ from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
 from django.utils.translation import gettext as _
 from mailman.client import Client
-from models import Domain, List, Member, MailmanUser, MailmanApiError, Mailman404Error
+from models import (Domain, List, Member, MailmanUser, MailmanApiError,
+                    Mailman404Error)
 from forms import *
 from urllib2 import HTTPError
 
@@ -344,6 +346,18 @@ def list_delete(request, fqdn_listname):
                      'cancel_url': cancel_url,
                     'list':the_list,},
                     context_instance=RequestContext(request))
+
+@user_passes_test(lambda u: u.is_superuser)
+def list_held_messages(request, fqdn_listname):
+    """Shows a list of held messages.
+    """
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    return render_to_response('mailmanweb/confirm_dialog.html',
+                'list':the_list,},
+                context_instance=RequestContext(request))
 
 @login_required
 def list_settings(request, fqdn_listname=None, visible_section=None, visible_option=None,
