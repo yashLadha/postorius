@@ -1,0 +1,40 @@
+{% extends "mailmanweb/base.html" %}
+{% load i18n %}
+
+{% block body_class %}list_summary{% endblock %}
+
+{% block main %}
+    {% include 'mailmanweb/menu/list_nav.html' %}
+    <h1>{{list.display_name}}</h1>
+
+    <table class="table table-bordered table-striped">
+    	<thead>
+    		<tr>
+    			<th>{% trans 'Subject' %}</th>
+    			<th>{% trans 'Sender' %}</th>
+    			<th>{% trans 'Reason' %}</th>
+    			<th>{% trans 'Hold Date' %}</th>
+                <th>&nbsp;</th>
+    		</tr>
+    	</thead>
+    	<tbody>
+            {% for msg in list.held %}
+    		<tr>
+    			<td>{{ msg.subject }}</td>
+    			<td>{{ msg.sender }}</td>
+    			<td>{{ msg.reason }}</td>
+    			<td>{{ msg.hold_date }}</td>
+                <td class="mm_action">
+                    <a class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
+                    <a class="btn btn-mini btn-warning">{% trans 'Defer' %}</a>
+                    <a class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
+                    <a class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
+                </td>
+                </td>
+    		</tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+
+  
+{% endblock %}

@@ -14,7 +14,17 @@
         <li>{{ address }}</li>
     {% endfor %}
     </ul>
+
+    <h2>Preferences:</h2>
+    {{ mm_user.preferences }}
+    {{ mm_user }}
+    {% for pref in mm_user.preferences %}
+        <li>{{ pref }}</li>
+    {% endfor %}
+    </ul>
+
     <h2>List memberships:</h2>
+    <p><em class="errorlist">Sample output: not real</em></p>
     <ul>
         <li>list1@example.com [<a href="#">listinfo</a>] 
             [<a href="#">settings</a>]</li>
@@ -43,6 +53,7 @@ src="http://code.jquery.com/jquery-latest.js"></script>
     {{ settingsform.asp }}
 
     <h2>List Preferences Overview</h2>
+    <p><em class="errorlist">Sample output: not real</em></p>
     <input id="btnHide" type="button" value="{% trans "Hide Descriptions" %}"/>
     <form action="#">
     <table class="table table-bordered table-striped">
