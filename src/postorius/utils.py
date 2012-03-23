@@ -31,7 +31,7 @@ def render_api_error(request):
     """Renders an error template.
     Use if MailmanApiError is catched.
     """
-    return render_to_response('mailmanweb/errors/generic.html', 
+    return render_to_response('postorius/errors/generic.html', 
           {'error': "REST API not found / Offline"},
           context_instance=RequestContext(request))
 

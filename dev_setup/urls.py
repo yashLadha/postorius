@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License along with
 # GNU Mailman.  If not, see <http://www.gnu.org/licenses/>.
 
-import mailmanweb
+import postorius
 
 from django.conf.urls.defaults import *
 from django.conf import settings
@@ -32,7 +32,7 @@ admin.autodiscover()
 # from mailman_django import urls as mailman_urls
 
 urlpatterns = patterns('',
-    url(r'^$', 'mailmanweb.views.list_index'),
-    (r'^mailmanweb/', include('mailmanweb.urls')),
+    url(r'^$', 'postorius.views.list_index'),
+    (r'^postorius/', include('postorius.urls')),
 	url(r'', include('social_auth.urls')),
 )

@@ -21,7 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-urlpatterns = patterns('mailmanweb.views',
+urlpatterns = patterns('postorius.views',
     (r'^$', 'list_index'),
     # /account/
     url(r'^accounts/login/$', 'user_login', name='user_login'),

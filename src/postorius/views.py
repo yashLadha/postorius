@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 @login_required
 @permission_required('server_admin')
 def site_settings(request):
-    return render_to_response('mailmanweb/site_settings.html',
+    return render_to_response('postorius/site_settings.html',
 					          context_instance=RequestContext(request))
 
 @login_required
@@ -58,7 +58,7 @@ def domain_index(request):
         existing_domains = Domain.objects.all()
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response('mailmanweb/domain_index.html', {'domains':existing_domains,},
+    return render_to_response('postorius/domain_index.html', {'domains':existing_domains,},
 					          context_instance=RequestContext(request))
 
 @login_required
@@ -82,12 +82,12 @@ def domain_new(request):
             return redirect("domain_index")
     else:
         form = DomainNew()
-    return render_to_response('mailmanweb/domain_new.html',
+    return render_to_response('postorius/domain_new.html',
                               {'form': form,'message': message},
                               context_instance=RequestContext(request))
 
 @login_required
-def list_new(request, template = 'mailmanweb/lists/new.html'):
+def list_new(request, template = 'postorius/lists/new.html'):
     """
     Add a new mailing list. 
     If the request to the function is a GET request an empty form for 
@@ -124,7 +124,7 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
             #TODO catch correct Error class:
             except HTTPError, e:
                 messages.error(request,e)
-                return render_to_response('mailmanweb/errors/generic.html', 
+                return render_to_response('postorius/errors/generic.html', 
                                       {'error':e},
                                       context_instance=RequestContext(request))
             else:
@@ -141,7 +141,7 @@ def list_new(request, template = 'mailmanweb/lists/new.html'):
     return render_to_response(template, {'form': form},
                               context_instance=RequestContext(request))
 
-def list_index(request, template = 'mailmanweb/lists/index.html'):
+def list_index(request, template = 'postorius/lists/index.html'):
     """Show a table of all public mailing lists.
     """
     lists = []
@@ -162,7 +162,7 @@ def list_index(request, template = 'mailmanweb/lists/index.html'):
                                    'lists': lists,},
                                   context_instance=RequestContext(request))
 
-def list_metrics(request,fqdn_listname=None,option=None,template='mailmanweb/lists/metrics.html'):
+def list_metrics(request,fqdn_listname=None,option=None,template='postorius/lists/metrics.html'):
     """
     PUBLIC
     an entry page for each list which displays additional (non-editable)
@@ -190,7 +190,7 @@ def list_metrics(request,fqdn_listname=None,option=None,template='mailmanweb/lis
                               },
                               context_instance=RequestContext(request)
                               )
-def list_summary(request, fqdn_listname, option=None ,template='mailmanweb/lists/summary.html'):
+def list_summary(request, fqdn_listname, option=None ,template='postorius/lists/summary.html'):
     """
     an entry page for each lists which allows some simple tasks per LIST
     """
@@ -226,7 +226,7 @@ def list_subscribe(request, fqdn_listname):
     except HTTPError, e:
         messages.error(request,e.msg)
         return redirect('list_summary', the_list.fqdn_listname)
-    return render_to_response('mailmanweb/lists/subscribe.html', 
+    return render_to_response('postorius/lists/subscribe.html', 
                               {'form': form, 'list': the_list,},
                               context_instance=RequestContext(request))
 
@@ -246,7 +246,7 @@ def list_unsubscribe(request, fqdn_listname, email):
     return redirect('list_summary', the_list.fqdn_listname)
 
 def list_subscriptions(request, option=None, fqdn_listname=None, user_email = None,
-                       template = 'mailmanweb/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
+                       template = 'postorius/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
     """
     Display the information there is available for a list. This 
     function also enables subscribing or unsubscribing a user to a 
@@ -264,7 +264,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
     try:
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except AttributeError, e:
-        return render_to_response('mailmanweb/errors/generic.html', 
+        return render_to_response('postorius/errors/generic.html', 
                                   {'error': "REST API not found / Offline"},
                                   context_instance=RequestContext(request))
     #process submitted form    
@@ -279,12 +279,12 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                 try:
                     email = form.cleaned_data['email']
                     response = the_list.subscribe(address=email,real_name=form.cleaned_data.get('real_name', ''))
-                    return render_to_response('mailmanweb/lists/summary.html', 
+                    return render_to_response('postorius/lists/summary.html', 
                                               {'list': the_list,
                                                'option':option,
                                                'message':_("Subscribed ")+ email },context_instance=RequestContext(request))
                 except HTTPError, e:
-                    return render_to_response('mailmanweb/errors/generic.html', 
+                    return render_to_response('postorius/errors/generic.html', 
                                       {'error':e}, context_instance=RequestContext(request))
             else: #invalid subscribe form
                 form_subscribe = form
@@ -296,10 +296,10 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                 try:
                     email = form.cleaned_data["email"]
                     response = the_list.unsubscribe(address=email)
-                    return render_to_response('mailmanweb/lists/summary.html', 
+                    return render_to_response('postorius/lists/summary.html', 
                                               {'list': the_list, 'message':_("Unsubscribed ")+ email },context_instance=RequestContext(request))
                 except ValueError, e:
-                    return render_to_response('mailmanweb/errors/generic.html', 
+                    return render_to_response('postorius/errors/generic.html', 
                                       {'error':e}, context_instance=RequestContext(request))   
             else:#invalid unsubscribe form
                 form_subscribe = ListSubscribe(initial = {'fqdn_listname': fqdn_listname,
@@ -340,7 +340,7 @@ def list_delete(request, fqdn_listname):
     else:
         submit_url = reverse('list_delete',kwargs={'fqdn_listname':fqdn_listname})
         cancel_url = reverse('list_index',)
-        return render_to_response('mailmanweb/confirm_dialog.html',
+        return render_to_response('postorius/confirm_dialog.html',
                     {'submit_url': submit_url,
                      'cancel_url': cancel_url,
                     'list':the_list,},
@@ -354,7 +354,7 @@ def list_held_messages(request, fqdn_listname):
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response('mailmanweb/lists/held_messages.html',
+    return render_to_response('postorius/lists/held_messages.html',
                 {'list':the_list,},
                 context_instance=RequestContext(request))
 
@@ -420,7 +420,7 @@ def reject_held_message(request, fqdn_listname, msg_id):
 
 @login_required
 def list_settings(request, fqdn_listname=None, visible_section=None, visible_option=None,
-                  template='mailmanweb/lists/settings.html'):
+                  template='postorius/lists/settings.html'):
     """
     View and edit the settings of a list.
     The function requires the user to be logged in and have the 
@@ -483,7 +483,7 @@ def list_settings(request, fqdn_listname=None, visible_section=None, visible_opt
 
 @login_required
 def mass_subscribe(request, fqdn_listname=None, 
-                   template='mailmanweb/lists/mass_subscribe.html'):
+                   template='postorius/lists/mass_subscribe.html'):
     """
     Mass subscribe users to a list.
     This functions is part of the settings for a list and requires the
@@ -509,7 +509,7 @@ def mass_subscribe(request, fqdn_listname=None,
                             the_list.subscribe(address=email, real_name="")
                             message = "The mass subscription was successful."
                         except Exception, e: #TODO find right exception and catch only this one
-                            return render_to_response('mailmanweb/errors/generic.html', 
+                            return render_to_response('postorius/errors/generic.html', 
                                   {'error': str(e)})
 
                     else:
@@ -536,13 +536,13 @@ def user_mailmansettings(request):
         return utils.render_api_error(request)
 
     settingsform = MembershipSettings()
-    return render_to_response('mailmanweb/user_mailmansettings.html',
+    return render_to_response('postorius/user_mailmansettings.html',
                               {'mm_user': the_user, 
                                'settingsform': settingsform},
                               context_instance=RequestContext(request))
 @login_required
 def user_settings(request, tab = "membership",
-                  template = 'mailmanweb/user_settings.html',
+                  template = 'postorius/user_settings.html',
                   fqdn_listname = None,):
     """
     Change the user or the membership settings.
@@ -577,15 +577,15 @@ def user_settings(request, tab = "membership",
            raise Exception("WORK in PROGRRESS needs REST Auth Middleware! - TODO")
            address_choices = [[addr, addr] for addr in user_object.address]
     except AttributeError, e:
-        return render_to_response('mailmanweb/errors/generic.html', 
+        return render_to_response('postorius/errors/generic.html', 
                                   {'error': str(e)+"REST API not found / Offline"},
                                   context_instance=RequestContext(request))
     except ValueError, e:
-        return render_to_response('mailmanweb/errors/generic.html', 
+        return render_to_response('postorius/errors/generic.html', 
                                   {'error': e},
                                   context_instance=RequestContext(request))
     except HTTPError,e :
-        return render_to_response('mailmanweb/errors/generic.html', 
+        return render_to_response('postorius/errors/generic.html', 
                                   {'error': _("List ")+fqdn_listname+_(" does not exist")},
                                   context_instance=RequestContext(request))
     #-----------------------------------------------------------------
@@ -655,7 +655,7 @@ def user_logout(request):
     logout(request)
     return redirect('user_login')
 
-def user_login(request,template = 'mailmanweb/login.html'):
+def user_login(request,template = 'postorius/login.html'):
     if request.method == 'POST':
         form = AuthenticationForm(request.POST)
         user = authenticate(username=request.POST.get('username'),
@@ -677,11 +677,11 @@ def user_profile(request, user_email = None):
     #    the_user = User.objects.get(email=user_email)
     #except MailmanApiError:
     #    return utils.render_api_error(request)
-    return render_to_response('mailmanweb/user_profile.html',
+    return render_to_response('postorius/user_profile.html',
     #                          {'mm_user': the_user},
                               context_instance=RequestContext(request))
     
 def user_todos(request):
-    return render_to_response('mailmanweb/user_todos.html',
+    return render_to_response('postorius/user_todos.html',
                               context_instance=RequestContext(request))
     
