@@ -226,8 +226,8 @@ def list_subscribe(request, fqdn_listname):
             form = ListSubscribe(request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
-                real_name = request.POST.get('real_name')
-                the_list.subscribe(email, real_name)
+                display_name = request.POST.get('display_name')
+                the_list.subscribe(email, display_name)
                 messages.success(request,
                     _('You are subscribed to %s.' % the_list.fqdn_listname))
                 return redirect('list_summary', the_list.fqdn_listname)
@@ -296,7 +296,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
                 try:
                     email = form.cleaned_data['email']
                     response = the_list.subscribe(address=email,
-                        real_name=form.cleaned_data.get('real_name', ''))
+                        display_name=form.cleaned_data.get('display_name', ''))
                     return render_to_response('postorius/lists/summary.html', 
                           {'list': the_list,
                            'option':option,
@@ -536,32 +536,21 @@ def mass_subscribe(request, fqdn_listname=None,
     if request.method == 'POST':
         form = ListMassSubscription(request.POST)
         if form.is_valid():
-            try:
-                # The emails to subscribe should each be provided on a
-                # separate line so get each of them.
-                emails = request.POST["emails"].splitlines()
-                for email in emails:
-                    # very simple test if email address is valid
-                    parts = email.split('@')
-                    if len(parts) == 2 and '.' in parts[1]:
-                        try:
-                            the_list.subscribe(address=email, real_name="")
-                            message = "The mass subscription was successful."
-                        except Exception, e:
-                            return render_to_response(
-                               'postorius/errors/generic.html', 
-                               {'error': str(e)})
-
-                    else:
-                        # At least one email address wasn't valid so 
-                        # overwrite the success message and ask them to
-                        # try again.
-                        message = "Please enter valid email addresses."
-            except Exception, e:
-                return HttpResponse(e)
+            emails = request.POST["emails"].splitlines()
+            for email in emails:
+                # very simple test if email address is valid
+                parts = email.split('@')
+                if len(parts) == 2 and '.' in parts[1]:
+                    try:
+                        the_list.subscribe(address=email, display_name="")
+                        message = "The mass subscription was successful."
+                    except HTTPError, e:
+                        messages.error(request, e)
+                        return redirect('mass_subscribe', the_list.fqdn_listname)
+                else:
+                    message = "Please enter valid email addresses."
+            return redirect('mass_subscribe', the_list.fqdn_listname)
     else:
-        # A request to view the page was send so return the form to
-        # mass subscribe users.
         form = ListMassSubscription()
     return render_to_response(template,
                               {'form': form,

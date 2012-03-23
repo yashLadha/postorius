@@ -41,7 +41,8 @@ the GNU Mailman wiki:
 http://wiki.list.org/display/DEV/A+5+minute+guide+to+get+the+Mailman+web+UI+running
 
 You can also find a guide how to run postorius using the Apache web server
-on the Mailman wiki.
+on the Mailman wiki:
+http://wiki.list.org/display/DEV/How+to+get+Postorius+running+on+Apache+and+mod_wsgi
 
 
 Acknowledgements
