@@ -192,7 +192,6 @@ def list_metrics(request,fqdn_listname=None,option=None,template='mailmanweb/lis
                               )
 def list_summary(request, fqdn_listname, option=None ,template='mailmanweb/lists/summary.html'):
     """
-    PUBLIC
     an entry page for each lists which allows some simple tasks per LIST
     """
     try:
@@ -200,10 +199,10 @@ def list_summary(request, fqdn_listname, option=None ,template='mailmanweb/lists
     except MailmanApiError:
         return utils.render_api_error(request)
     return render_to_response(template, 
-                              {'list': the_list,
-                               'subscribe_form': ListSubscribe(),
-                               'unsubscribe_form': ListUnsubscribe()},
-                              context_instance=RequestContext(request))
+        {'list': the_list,
+         'subscribe_form': ListSubscribe(
+            initial={'email':request.user.email}),},
+        context_instance=RequestContext(request))
 
 def list_subscribe(request, fqdn_listname):
     """Subscribe to a list.
@@ -231,20 +230,20 @@ def list_subscribe(request, fqdn_listname):
                               {'form': form, 'list': the_list,},
                               context_instance=RequestContext(request))
 
-def list_unsubscribe(request, fqdn_listname):
+def list_unsubscribe(request, fqdn_listname, email):
     """Unsubscribe from a list.
     """
     try:
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
         return utils.render_api_error(request)
-    if request.method == 'POST':
-        form = ListUnsubscribe(request.POST)
-    else:
-        form = ListUnsubscribe()
-    return render_to_response('mailmanweb/lists/unsubscribe.html', 
-                              {'form': form, 'list': the_list,},
-                              context_instance=RequestContext(request))
+    try:
+        the_list.unsubscribe(email)
+        messages.success(request, '%s has been unsubscribed from this list.' %
+                         email)
+    except ValueError, e:
+        messages.error(request, e)
+    return redirect('list_summary', the_list.fqdn_listname)
 
 def list_subscriptions(request, option=None, fqdn_listname=None, user_email = None,
                        template = 'mailmanweb/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
@@ -358,6 +357,66 @@ def list_held_messages(request, fqdn_listname):
     return render_to_response('mailmanweb/lists/held_messages.html',
                 {'list':the_list,},
                 context_instance=RequestContext(request))
+
+@user_passes_test(lambda u: u.is_superuser)
+def accept_held_message(request, fqdn_listname, msg_id):
+    """Accepts a held message.
+    """
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list.accept_message(msg_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    except HTTPError, e:
+        messages.error(request,e.msg)
+        return redirect('list_held_messages', the_list.fqdn_listname)
+    messages.successful(request, 'The message has been accepted.')
+    return redirect('list_held_messages', the_list.fqdn_listname)
+
+@user_passes_test(lambda u: u.is_superuser)
+def discard_held_message(request, fqdn_listname, msg_id):
+    """Accepts a held message.
+    """
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list.discard_message(msg_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    except HTTPError, e:
+        messages.error(request,e.msg)
+        return redirect('list_held_messages', the_list.fqdn_listname)
+    messages.successful(request, 'The message has been discarded.')
+    return redirect('list_held_messages', the_list.fqdn_listname)
+
+@user_passes_test(lambda u: u.is_superuser)
+def defer_held_message(request, fqdn_listname, msg_id):
+    """Accepts a held message.
+    """
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list.defer_message(msg_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    except HTTPError, e:
+        messages.error(request,e.msg)
+        return redirect('list_held_messages', the_list.fqdn_listname)
+    messages.successful(request, 'The message has been defered.')
+    return redirect('list_held_messages', the_list.fqdn_listname)
+
+@user_passes_test(lambda u: u.is_superuser)
+def reject_held_message(request, fqdn_listname, msg_id):
+    """Accepts a held message.
+    """
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list.reject_message(msg_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    except HTTPError, e:
+        messages.error(request,e.msg)
+        return redirect('list_held_messages', the_list.fqdn_listname)
+    messages.successful(request, 'The message has been rejected.')
+    return redirect('list_held_messages', the_list.fqdn_listname)
 
 @login_required
 def list_settings(request, fqdn_listname=None, visible_section=None, visible_option=None,
@@ -605,7 +664,7 @@ def user_login(request,template = 'mailmanweb/login.html'):
             logger.debug(user)
             if user.is_active:
                 login(request,user)
-                return redirect(request.GET.get('next', 'user_profile'))
+                return redirect(request.GET.get('next', 'list_index'))
     else:
         form = AuthenticationForm()
     return render_to_response(template, {'form': form,},
