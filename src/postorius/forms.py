@@ -48,8 +48,10 @@ class DomainNew(FieldsetForm):
     )
     def clean_mail_host(self):
         mail_host = self.cleaned_data['mail_host']
-        try:    validate_email('mail@' + mail_host)
-        except: raise forms.ValidationError(_("Please enter a valid Mail Host (mail.example.net)"))
+        try:
+            validate_email('mail@' + mail_host)
+        except:
+            raise forms.ValidationError(_("Enter a valid Mail Host"))
         return mail_host
 
     def clean_web_host(self):
@@ -57,7 +59,7 @@ class DomainNew(FieldsetForm):
         try:    
             validate_email('mail@' + web_host)
         except: 
-            raise forms.ValidationError(_("Please enter a valid Web Host (example.net)"))
+            raise forms.ValidationError(_("Please enter a valid Web Host"))
         return web_host
     
     class Meta:
@@ -68,7 +70,10 @@ class DomainNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["Please enter Details","mail_host", "web_host", "description",]]
+        layout = [["Please enter Details",
+                   "mail_host",
+                   "web_host",
+                   "description",]]
 
     
 class ListNew(FieldsetForm):
@@ -121,7 +126,7 @@ class ListNew(FieldsetForm):
         try:    
             validate_email(self.cleaned_data['listname']+'@example.net')
         except: 
-            raise forms.ValidationError(_("Please enter a valid listname (my-list-1)"))
+            raise forms.ValidationError(_("Please enter a valid listname"))
         return self.cleaned_data['listname']
 
     class Meta:
@@ -132,7 +137,12 @@ class ListNew(FieldsetForm):
         the list should be the wished name of the fieldset, the following 
         the fields that should be included in the fieldset.
         """
-        layout = [["List Details", "listname", "mail_host", "list_owner", "description", "advertised"],]
+        layout = [["List Details",
+                   "listname",
+                   "mail_host",
+                   "list_owner",
+                   "description",
+                   "advertised"],]
 
 class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
@@ -141,7 +151,8 @@ class ListSubscribe(FieldsetForm):
         widget = forms.HiddenInput(),
         error_messages = {'required': _('Please enter an email address.'), 
                           'invalid': _('Please enter a valid email address.')})
-    display_name = forms.CharField(label=_('Your name (optional)'), required=False)
+    display_name = forms.CharField(label=_('Your name (optional)'),
+                                   required=False)
     
 class ListUnsubscribe(FieldsetForm):
     """Form fields to leave an existing list.
@@ -185,7 +196,7 @@ class ListSettings(FieldsetForm):
     autorespond_choices = (
         ("none", _("No automatic response")),
         ("respond_and_discard", _("Respond and discard message")),
-        ("respond_and_continue", _("Respond and continue processing the message")),
+        ("respond_and_continue", _("Respond and continue processing")),
     )
     autorespond_owner = forms.ChoiceField(
         choices = autorespond_choices,
@@ -217,7 +228,7 @@ class ListSettings(FieldsetForm):
         widget = forms.Textarea(),
         required = False,
     )
-    autoresponse_grace_period = forms.CharField(#TODO - either different type or different Validator !
+    autoresponse_grace_period = forms.CharField(
         label = _('Autoresponse grace period'),
     )
     bounces_address = forms.EmailField(
@@ -715,9 +726,9 @@ class ListSettings(FieldsetForm):
     section_descriptions = {
         "List Identity":_("Basic identity settings for the list"),
         "Automatic Responses":_("All options for Autoreply"),
-        "Alter Messages":_("Settings that modify messages to be sent to members"),
+        "Alter Messages":_("Settings that modify member messages"),
         "Digest": _("Digest-related options"),
-        "Message Acceptance": _("Options related to when messages are accepted"),
+        "Message Acceptance": _("Options related to accepting messages"),
         }
     def clean_acceptable_aliases(self):
         data = self.cleaned_data['acceptable_aliases']
@@ -748,7 +759,7 @@ class ListSettings(FieldsetForm):
             pass #empty form                        
     def truncate(self):
         """
-           truncates the form to have only those fields which are in self.layout 
+        truncates the form to have only those fields which are in self.layout 
         """
         #delete form.fields which are not in the layout
         used_options=[]
@@ -946,10 +957,10 @@ class UserSettings(FieldsetForm):
         """
         super(UserSettings, self).__init__(*args, **kwargs)
         self.fields['address'] = forms.ChoiceField(choices=(address_choices), 
-                                                   widget = forms.Select(), 
-                                                   error_messages = {'required': _("Please choose an address."),},
-                                                   required = True,
-                                                   label = _('Default email address'),)
+            widget = forms.Select(), 
+            error_messages = {'required': _("Please choose an address."),},
+            required = True,
+            label = _('Default email address'),)
     
     id = forms.IntegerField(    # this should probably not be 
                                 # changeable...

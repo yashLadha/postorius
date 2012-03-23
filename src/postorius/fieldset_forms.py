@@ -62,7 +62,7 @@ class FieldsetForm(Form):
         """
         # Create the divs in each fieldset by calling create_divs.
         return u'<fieldset><legend>%s</legend>%s</fieldset>' % (field[0], 
-                                                                self.create_divs(field[1:]))
+            self.create_divs(field[1:]))
     
     def create_divs(self, fields):
         """Create a <div> for each field."""
