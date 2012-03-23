@@ -23,22 +23,17 @@ import sys
 PROJECT_ROOT = os.path.dirname(__file__)
 sys.path.insert(0, os.path.split(PROJECT_ROOT)[0])
 
-"""Django settings for mailmanweb project."""
+"""Django settings for postorius project."""
 
 import os.path
-
-INTERNAL_IPS = ('127.0.0.1',)
 
 # Mailman API credentials
 REST_SERVER = 'http://localhost:8001'
 API_USER = 'restadmin' 
 API_PASS = 'restpass'
-# Mailman bin directory (necessary to run tests for mailmanweb)
-MAILMAN_TEST_BINDIR = '/home/flo/Development/mailman/bin'
 
 # CSS theme for mailman-django application
 MAILMAN_THEME = "default"
-
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -59,7 +54,7 @@ DATABASE_NAME = os.path.join(PROJECT_PATH, 'mmtest.db')
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Berlin'
+TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -109,7 +104,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.csrf",
     "django.contrib.messages.context_processors.messages",
-    "mailmanweb.context_processors.mailmanweb",
+    "postorius.context_processors.postorius",
     'social_auth.context_processors.social_auth_by_name_backends',
     'social_auth.context_processors.social_auth_backends',
     'social_auth.context_processors.social_auth_by_type_backends',
@@ -120,16 +115,15 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
-# Set `mailmanweb.urls` as main url config if mailmanweb
+# Set `postorius.urls` as main url config if postorius
 # is the only app you want to serve.
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     # uncomment if you like to overwrite the default templates:
-    # os.path.join(PROJECT_PATH, "/templates/mailmanweb"),
+    # os.path.join(PROJECT_PATH, "/templates/postorius"),
 )
 
 STATICFILES_FINDERS = (
@@ -145,13 +139,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.staticfiles',
-    'mailmanweb',
+    'postorius',
     'social_auth',
-    #'debug_toolbar',
 )
-LOGIN_URL          = '/mailmanweb/accounts/login/'
-LOGIN_REDIRECT_URL = '/mailmanweb/'
-LOGIN_ERROR_URL    = '/mailmanweb/accounts/login/'
+LOGIN_URL          = '/postorius/accounts/login/'
+LOGIN_REDIRECT_URL = '/postorius/'
+LOGIN_ERROR_URL    = '/postorius/accounts/login/'
 SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 SOCIAL_AUTH_DEFAULT_USERNAME = 'new_social_auth_user'
