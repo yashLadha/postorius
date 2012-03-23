@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Using the Django App - Developers Resource &mdash; mailman_django v0.1 documentation</title>
+    <title>Using the Django App - Developers Resource &mdash; mailmanweb v0.1 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -22,8 +22,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="mailman_django v0.1 documentation" href="index.html" />
-    <link rel="next" title="Acknowledgements" href="acknowledgements.html" />
+    <link rel="top" title="mailmanweb v0.1 documentation" href="index.html" />
     <link rel="prev" title="Installation" href="setup.html" /> 
   </head>
   <body>
@@ -37,12 +36,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="acknowledgements.html" title="Acknowledgements"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
           <a href="setup.html" title="Installation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mailman_django v0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mailmanweb v0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -51,18 +47,17 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-tests.tests">
-<span id="using-the-django-app-developers-resource"></span><h1>Using the Django App - Developers Resource<a class="headerlink" href="#module-tests.tests" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="tests-login-and-permissions">
+  <div class="section" id="using-the-django-app-developers-resource">
+<h1>Using the Django App - Developers Resource<a class="headerlink" href="#using-the-django-app-developers-resource" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This user guide is outdated and needs to be updated.</p>
+</div>
+<span class="target" id="module-tests.tests"></span><div class="section" id="tests-login-and-permissions">
 <h2>Tests Login and Permissions<a class="headerlink" href="#tests-login-and-permissions" title="Permalink to this headline">¶</a></h2>
-<p>This document both acts as a test for all the functions implemented
-in the UI as well as documenting what can be done</p>
-<div class="section" id="test-pre-requirements">
-<h3>Test Pre Requirements<a class="headerlink" href="#test-pre-requirements" title="Permalink to this headline">¶</a></h3>
-<ul>
-<li><p class="first">We&#8217;ve created a special Testobject which will run it&#8217;s own instance of Mailman3 with a new empty Database.</p>
+<p>Setup Testobject (starts Mailman3 with an empty Database).</p>
 <blockquote>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setup</span> <span class="kn">import</span> <span class="n">setup_mm</span><span class="p">,</span> <span class="n">Testobject</span><span class="p">,</span> <span class="n">teardown_mm</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">setup</span> <span class="kn">import</span> <span class="n">setup_mm</span><span class="p">,</span> <span class="n">Testobject</span><span class="p">,</span> <span class="n">teardown_mm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">testobject</span> <span class="o">=</span> <span class="n">setup_mm</span><span class="p">(</span><span class="n">Testobject</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -70,11 +65,12 @@ in the UI as well as documenting what can be done</p>
 <p class="first admonition-title">Note</p>
 <p class="last">You need to stop all Mailman3 instances before running the tests</p>
 </div>
-</blockquote>
-</li>
-<li><dl class="first docutils">
+</div></blockquote>
+<dl class="docutils">
 <dt>Modules needed</dt>
-<dd><p class="first">As we can&#8217;t make sure that you&#8217;re running the same language as we did we made sure that each test below is executed using the exact same translation mechanism as we use to Display you Status Messages and other GUI Texts.</p>
+<dd><p class="first">As we can&#8217;t make sure that you&#8217;re running the same language as we did we
+made sure that each test below is executed using the exact same translation
+mechanism as we use to Display you Status Messages and other GUI Texts.</p>
 <dl class="last docutils">
 <dt>Import Translation Module to check success messages</dt>
 <dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="kn">import</span> <span class="n">gettext</span> <span class="k">as</span> <span class="n">_</span>
@@ -89,17 +85,14 @@ in the UI as well as documenting what can be done</p>
 </dl>
 </dd>
 </dl>
-</li>
-</ul>
-</div>
-<div class="section" id="getting-started">
-<h3>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h3>
-<p>Starting the test module we do use a special Django Test Client which needs to be imported first.</p>
+<p>Import Django test client.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">django.test.client</span> <span class="kn">import</span> <span class="n">Client</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Once this is created we can try accessing our first Page and check that this was done successful</p>
+<div class="section" id="list-index">
+<h3>List index<a class="headerlink" href="#list-index" title="Permalink to this headline">¶</a></h3>
+<p>Try accessing the list index page.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">,)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
@@ -108,147 +101,36 @@ in the UI as well as documenting what can be done</p>
 </div>
 <div class="section" id="login-required">
 <h3>Login Required<a class="headerlink" href="#login-required" title="Permalink to this headline">¶</a></h3>
-<p>As described within the installation instructions we <em>already</em> started using authentification. The easiest way testing it is that we simply load a page which is restricted to some users only.
+<p>As described within the installation instructions we <em>already</em> started using
+authentification. The easiest way testing it is that we simply load a page
+which is restricted to some users only.
 This was done using Django&#8217;s &#64;login_required Decorator in front of the View.
-One of the pages which requires a Login is the Domain Administration, if we can load the page without a redirect to the Login page, you&#8217;re either already logged in or something went wrong.</p>
+One of the pages which requires a Login is the Domain Administration, if
+we can load the page without a redirect to the Login page, you&#8217;re either
+already logged in or something went wrong.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="n">HttpResponseRedirect</span>
 <span class="go">True</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="login-of-a-user">
-<h3>Login of a User<a class="headerlink" href="#login-of-a-user" title="Permalink to this headline">¶</a></h3>
-<p>We&#8217;ve decided to write our own Authentification Backend to use with Django.
-This will handle all &#64;login_required .authenticate() .login() requests.</p>
-<p>As we do not have the Authenticating Part which connects Both Mailman and the WebUI we had to hardcode usernames and permissions into the file (auth/restbackend.py)
-For more information what we&#8217;re planning to implement here take a look at the Acknowledgements.</p>
-<blockquote>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you&#8217;re planning to expand this feel free to use this wonderful resource:
-<a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/auth/">https://docs.djangoproject.com/en/dev/topics/auth/</a></p>
-</div>
-</blockquote>
-<p>Once the new middleware is in place we will need to create a user first. At the moment the user is automaticly created upon success of the login procedure.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c">#c.... adduser() #TODO add user</span>
-</pre></div>
-</div>
-<p>Users will have to use the Login form which is located at (/accounts/login/) in order to authenticate themself. The Login / Logout button is linked in the bottom left corner of each page as well.</p>
-<p>After each successful login users should be redirected either to the site which they requested before - stored in a GET Value named next - or get the List index. Only if they&#8217;ve used a faulty login they should stay on the Login Page to try again.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/accounts/login/&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;user&quot;</span><span class="p">:</span> <span class="s">&quot;james@example.com&quot;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="s">&quot;password&quot;</span><span class="p">:</span> <span class="s">&quot;james&quot;</span><span class="p">})</span>
-</pre></div>
-</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="n">HttpResponseRedirect</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>Unfortuneatly the Test Client requires to use the Login directly because it does handle each request seperately. For this reason we have to use the following part in the Tests only to authenticate a user.
-Each successful Login will return True and write the users object into the request context, which allows simple checks whether there is a user logged in and what his name is.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">&#39;katie@example.com&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;katie&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="permissions">
-<h3>Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h3>
-<p>Our own Auth Backend allows the use of Djangos own Permission Decorator which is</p>
-<div class="highlight-python"><pre>@permission_required(NAME_OF_PERMISSION)</pre>
-</div>
-<p>At the moment we&#8217;ve installed this for Domain Administration,</p>
-<blockquote>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Please take a look at the ackownledgement to see what is working in this part</p>
-</div>
-</blockquote>
-<p>Get the Domains page and get redirected because Katie who is logged in doesn&#8217;t have the Permission</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="n">HttpResponseRedirect</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>Logout Katie who isn&#8217;t a Domain-Owner and Login James who should be allowed to view this page</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span> <span class="c">#katie</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">&#39;james@example.com&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;james&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>Check that the Page now loads correctly</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
-<span class="go">200</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="pages">
 <h2>Pages<a class="headerlink" href="#pages" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="create-a-new-domain">
-<h3>Create a New Domain<a class="headerlink" href="#create-a-new-domain" title="Permalink to this headline">¶</a></h3>
-<p>Domain Administration is called by opening the URL mentioned below. Prequirements like Authorisation and Permissions have been covered before.
-Now we do check that the response really does have the correct heading.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Domain Index&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>On this page there should be a button which allows to create a new Domain.
-If you&#8217;re running Mailman for the first time you need to create a Domain before creating Mailinglists. That&#8217;s only because each List is Part of a Domain and could not be created without it&#8217;s reference.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;&lt;li class=&quot;mm_new_domain&quot;&gt;&lt;a href=&quot;/domains/new/&quot;&gt;New Domain&lt;/a&gt;&lt;/li&gt;&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<dl class="docutils">
-<dt>For sure the page allowing the creation of a new Domain should open correclty as well</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/new/&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
-<span class="go">200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Add a new Domain&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span> <span class="c">#TODO - change heading</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-<p>Each Domain has two main Data Parts, most obvious for a mailinglist we do need a mail_host that&#8217;s the part behind the &#64; when getting an email. In addition we offer you this WebUI for configuration, some may have multiple URLs they can use to access the same installation of mailman. For this reason each Mailinglist gets it&#8217;s own web_host as well - which doesn&#8217;t need to be unique.</p>
-<p>Testing the Site we do now submit the form we&#8217;ve loaded earlier by sending all necessary data in a POST request. The new Domain will be called mail.example.com and available via it&#8217;s web_host example.com.</p>
-<blockquote>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you do want to use web_host filtering in your webUI you need to remember adding the URL to your /etc/hosts - at least for development</p>
-</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/domains/new/&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;mail_host&quot;</span><span class="p">:</span> <span class="s">&quot;mail.example.com&quot;</span><span class="p">,</span>
-<span class="gp">... </span>                   <span class="s">&quot;web_host&quot;</span><span class="p">:</span> <span class="s">&quot;example.com&quot;</span><span class="p">,</span>
-<span class="gp">... </span>                   <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;doctest testing domain&quot;</span><span class="p">})</span>  
-<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/domains/&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</blockquote>
-<dl class="docutils">
-<dt>Then we check that everything went well.</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
-<span class="go">200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;doctest testing domain&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</div>
 <div class="section" id="create-a-new-list">
 <h3>Create a New List<a class="headerlink" href="#create-a-new-list" title="Permalink to this headline">¶</a></h3>
-<p>After creating a Domain you should be able to create new Lists. The Button for doing so is shown on the List index Page which should offer a list of all available (adverrtised) lists.</p>
+<p>After creating a Domain you should be able to create new Lists. The Button for
+doing so is shown on the List index Page which should offer a list of all
+available (adverrtised) lists.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;All available Lists&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Lists &lt;span&gt;on&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>The new List creation form is opened by clicking on the Button mentioned above or accessing the page directly</p>
+<p>The new List creation form is opened by clicking on the Button mentioned above
+or accessing the page directly</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/new/&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
@@ -256,8 +138,11 @@ If you&#8217;re running Mailman for the first time you need to create a Domain b
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>Creating a new List we do need to specify at least the below mentioned items. Those were entered using some nice GUI Forms which do only show up available Values or offer you to choose a name which will be checked during validation.
-We&#8217;re now submitting the form using a POST request and get redirected to the List Index Page</p>
+<p>Creating a new List we do need to specify at least the below mentioned items.
+Those were entered using some nice GUI Forms which do only show up available
+Values or offer you to choose a name which will be checked during validation.
+We&#8217;re now submitting the form using a POST request and get redirected to
+the List Index Page</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/lists/new/&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                  <span class="p">{</span><span class="s">&quot;listname&quot;</span><span class="p">:</span> <span class="s">&quot;new_list1&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                   <span class="s">&quot;mail_host&quot;</span><span class="p">:</span> <span class="s">&quot;mail.example.com&quot;</span><span class="p">,</span>
@@ -269,7 +154,10 @@ We&#8217;re now submitting the form using a POST request and get redirected to t
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>As List index is an overview of all advertised Lists and we&#8217;ve choosen to do so we should now see our new List within the overview. HTTP_HOST is added as META Data for the request because we do only want to see Domains which belong to the example.com web_host</p>
+<p>As List index is an overview of all advertised Lists and we&#8217;ve choosen to
+do so we should now see our new List within the overview. HTTP_HOST is added
+as META Data for the request because we do only want to see Domains which
+belong to the example.com web_host</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/&#39;</span><span class="p">,</span><span class="n">HTTP_HOST</span><span class="o">=</span><span class="s">&#39;example.com&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
@@ -280,7 +168,10 @@ We&#8217;re now submitting the form using a POST request and get redirected to t
 </div>
 <div class="section" id="list-summary">
 <h3>List Summary<a class="headerlink" href="#list-summary" title="Permalink to this headline">¶</a></h3>
-<p>List summary is a dashboard for each List. It does have Links to the most useful functions which are only related to that Domain. These include the Values mentioned below. _(function) is used to Translate these to you local language.</p>
+<p>List summary is a dashboard for each List. It does have Links to the most
+useful functions which are only related to that Domain. These include the
+Values mentioned below. _(function) is used to Translate these to you local
+language.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/new_list1%40mail.example.com/&#39;</span><span class="p">,)</span>    
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
 <span class="go">200</span>
@@ -297,7 +188,8 @@ We&#8217;re now submitting the form using a POST request and get redirected to t
 </div>
 <div class="section" id="subscriptions">
 <h3>Subscriptions<a class="headerlink" href="#subscriptions" title="Permalink to this headline">¶</a></h3>
-<p>The Subscriptions form is found on the below URL. Last part of the Url is one of [None,&#8217;subscribe&#8217;,&#8217;unsubscribe&#8217;]</p>
+<p>The Subscriptions form is found on the below URL. Last part of the Url is one
+of [None,&#8217;subscribe&#8217;,&#8217;unsubscribe&#8217;]</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="s">&#39;/subscriptions/new_list1%40mail.example.com/subscribe&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
@@ -324,7 +216,8 @@ We&#8217;re now submitting the form using a POST request and get redirected to t
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>The logged in user (<a class="reference external" href="mailto:james&#37;&#52;&#48;example&#46;com">james<span>&#64;</span>example<span>&#46;</span>com</a>) can now modify his own membership using a button which is displayed in list_summary.</p>
+<p>The logged in user (<a class="reference external" href="mailto:james&#37;&#52;&#48;example&#46;com">james<span>&#64;</span>example<span>&#46;</span>com</a>) can now modify his own membership
+using a button which is displayed in list_summary.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/new_list1%40mail.example.com/&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;mm_membership&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
@@ -342,7 +235,9 @@ We&#8217;re now submitting the form using a POST request and get redirected to t
 </div>
 <div class="section" id="mass-subscribe-users-within-settings">
 <h3>Mass Subscribe Users (within settings)<a class="headerlink" href="#mass-subscribe-users-within-settings" title="Permalink to this headline">¶</a></h3>
-<p>Another page related to Mass Subscriptions will be available to List Owners as well. This page will allow adding a couple of users to one lists at the same time.</p>
+<p>Another page related to Mass Subscriptions will be available to List Owners
+as well. This page will allow adding a couple of users to one lists at the
+same time.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="s">&#39;/subscriptions/new_list1%40mail.example.com/mass_subscribe/&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
@@ -365,26 +260,6 @@ the page. We&#8217;ll check that this was the case.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">_</span><span class="p">(</span><span class="s">&quot;The mass subscription was successful.&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
 <span class="go">True</span>
 </pre></div>
-</div>
-</div>
-<div class="section" id="change-the-memebership-settings">
-<h3>Change the Memebership Settings<a class="headerlink" href="#change-the-memebership-settings" title="Permalink to this headline">¶</a></h3>
-<p>Now let&#8217;s go to the membership settings page. Once we go there we 
-should get a list of all the available lists.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/membership_settings/new_list1%40mail.example.com/&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;Membership Settings&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>Select the list <a class="reference external" href="mailto:'new_list1&#37;&#52;&#48;example&#46;com">'new_list1<span>&#64;</span>example<span>&#46;</span>com</a>&#8216;.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/membership_settings/new_list1%40mail.example.com/&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="s">&quot;Membership Settings&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;for new_list1@mail.example.com&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This page relies on the Middleware connecting the Django Project with Mailman - see acknowledgements</p>
 </div>
 </div>
 <div class="section" id="delete-the-list">
@@ -434,10 +309,10 @@ We start by checking that the list is really there (for reference).</p>
 <p>We&#8217;ve added our own test-suite to the Django App which will be executed together with the Django Test. Last thing you should do is running these tests. If they fail you did something wrong, if they succeed you can enjoy the site.</p>
 <p>Run the following in the Site Directory</p>
 <blockquote>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py <span class="nb">test</span>
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py <span class="nb">test</span>
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Please be aware that we want to run a development instance of mailman you need to stop the stable one first and the tests will open it&#8217;s own mailman temporily.</p>
@@ -447,13 +322,13 @@ We start by checking that the list is really there (for reference).</p>
 <h2>Accessing the REST Client for Testing<a class="headerlink" href="#accessing-the-rest-client-for-testing" title="Permalink to this headline">¶</a></h2>
 <p>If you want to access the Functions, which we use in the views, directly feel free to run the following block of code within a Shell which does have it&#8217;s current Directory within the Django Site Directory.</p>
 <blockquote>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">API_USER</span><span class="p">,</span> <span class="n">API_PASS</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">API_USER</span><span class="p">,</span> <span class="n">API_PASS</span>
 <span class="kn">from</span> <span class="nn">mailman.client</span> <span class="kn">import</span> <span class="n">Client</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="s">&#39;http://localhost:8001/3.0&#39;</span><span class="p">,</span> <span class="n">API_USER</span><span class="p">,</span> <span class="n">API_PASS</span><span class="p">)</span>
 <span class="c">#DEBUG: Python Session</span>
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 </div>
 </div>
 
@@ -467,20 +342,15 @@ We start by checking that the list is really there (for reference).</p>
   <ul>
 <li><a class="reference internal" href="#">Using the Django App - Developers Resource</a><ul>
 <li><a class="reference internal" href="#tests-login-and-permissions">Tests Login and Permissions</a><ul>
-<li><a class="reference internal" href="#test-pre-requirements">Test Pre Requirements</a></li>
-<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#list-index">List index</a></li>
 <li><a class="reference internal" href="#login-required">Login Required</a></li>
-<li><a class="reference internal" href="#login-of-a-user">Login of a User</a></li>
-<li><a class="reference internal" href="#permissions">Permissions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#pages">Pages</a><ul>
-<li><a class="reference internal" href="#create-a-new-domain">Create a New Domain</a></li>
 <li><a class="reference internal" href="#create-a-new-list">Create a New List</a></li>
 <li><a class="reference internal" href="#list-summary">List Summary</a></li>
 <li><a class="reference internal" href="#subscriptions">Subscriptions</a></li>
 <li><a class="reference internal" href="#mass-subscribe-users-within-settings">Mass Subscribe Users (within settings)</a></li>
-<li><a class="reference internal" href="#change-the-memebership-settings">Change the Memebership Settings</a></li>
 <li><a class="reference internal" href="#delete-the-list">Delete the List</a></li>
 </ul>
 </li>
@@ -494,9 +364,6 @@ We start by checking that the list is really there (for reference).</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="setup.html"
                         title="previous chapter">Installation</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="acknowledgements.html"
-                        title="next chapter">Acknowledgements</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/using.txt"
@@ -529,17 +396,14 @@ We start by checking that the list is really there (for reference).</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="acknowledgements.html" title="Acknowledgements"
-             >next</a> |</li>
-        <li class="right" >
           <a href="setup.html" title="Installation"
              >previous</a> |</li>
-        <li><a href="index.html">mailman_django v0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mailmanweb v0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Benedict Stein.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

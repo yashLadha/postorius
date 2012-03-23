@@ -1,6 +1,9 @@
 Using the Django App - Developers Resource
 ==========================================
 
+.. warning::
+    This user guide is outdated and needs to be updated.
+
 .. automodule:: tests.tests
 
 Running the tests explained above.

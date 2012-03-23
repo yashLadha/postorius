@@ -9,11 +9,9 @@ Welcome to mailman_django's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    
+   news.rst
    setup.rst
    using.rst
-   acknowledgements.rst
-   license.rst
 
-* :ref:`search`

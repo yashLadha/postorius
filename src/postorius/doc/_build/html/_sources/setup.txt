@@ -1,6 +1,21 @@
 Installation
 ============
 
+    .. warning::
+        This installation guide is outdated and needs to be updated.
+        Please use the following resources instead:
+
+        To install GNU Mailman follow the instructions in the documentation:
+        http://packages.python.org/mailman/
+
+        A description how to run postorius on Django's dev server, can be found in 
+        the GNU Mailman wiki: 
+        http://wiki.list.org/display/DEV/A+5+minute+guide+to+get+the+Mailman+web+UI+running
+
+        You can also find a guide how to run postorius using the Apache web server
+        on the Mailman wiki:
+        http://wiki.list.org/display/DEV/How+to+get+Postorius+running+on+Apache+and+mod_wsgi
+
 Mailman3 - a7
 -------------
  

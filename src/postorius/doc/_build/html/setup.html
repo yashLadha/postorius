@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation &mdash; mailman_django v0.1 documentation</title>
+    <title>Installation &mdash; mailmanweb v0.1 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -22,9 +22,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="mailman_django v0.1 documentation" href="index.html" />
+    <link rel="top" title="mailmanweb v0.1 documentation" href="index.html" />
     <link rel="next" title="Using the Django App - Developers Resource" href="using.html" />
-    <link rel="prev" title="Welcome to mailman_django’s documentation!" href="index.html" /> 
+    <link rel="prev" title="News" href="news.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,9 +40,9 @@
           <a href="using.html" title="Using the Django App - Developers Resource"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to mailman_django’s documentation!"
+          <a href="news.html" title="News"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mailman_django v0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mailmanweb v0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,6 +53,21 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>This installation guide is outdated and needs to be updated.
+Please use the following resources instead:</p>
+<p>To install GNU Mailman follow the instructions in the documentation:
+<a class="reference external" href="http://packages.python.org/mailman/">http://packages.python.org/mailman/</a></p>
+<p>A description how to run postorius on Django&#8217;s dev server, can be found in
+the GNU Mailman wiki:
+<a class="reference external" href="http://wiki.list.org/display/DEV/A+5+minute+guide+to+get+the+Mailman+web+UI+running">http://wiki.list.org/display/DEV/A+5+minute+guide+to+get+the+Mailman+web+UI+running</a></p>
+<p class="last">You can also find a guide how to run postorius using the Apache web server
+on the Mailman wiki:
+<a class="reference external" href="http://wiki.list.org/display/DEV/How+to+get+Postorius+running+on+Apache+and+mod_wsgi">http://wiki.list.org/display/DEV/How+to+get+Postorius+running+on+Apache+and+mod_wsgi</a></p>
+</div>
+</div></blockquote>
 <div class="section" id="mailman3-a7">
 <h2>Mailman3 - a7<a class="headerlink" href="#mailman3-a7" title="Permalink to this headline">¶</a></h2>
 <ul>
@@ -78,25 +93,25 @@
 </li>
 <li><p class="first">Run the Installation from a Shell (not Python)</p>
 <blockquote>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python bootstrap.py
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python bootstrap.py
 <span class="nv">$ </span>bin/buildout
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 </li>
 <li><p class="first">Vertify that everything was setup correclty and your branch fullfills the version requirements by running it&#8217;s own test module</p>
 <blockquote>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bin/test
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bin/test
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 </li>
 <li><p class="first">Now you&#8217;re able to run mailman using</p>
 <blockquote>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bin/mailman
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bin/mailman
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 </li>
 </ul>
 </div>
@@ -106,20 +121,20 @@
 The Python Bindings were used later on within our Django Application to access the Server. Failing to install the Client would result in an offline version of WebUI</p>
 <p>Once again start by branching the code which is on Launchpad</p>
 <blockquote>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bzr branch lp:mailman.client
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bzr branch lp:mailman.client
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">We&#8217;ve successfully tested our functionality with Revision 16 - In case the Client gets updated which it surely will in future we can&#8217;t guarentee that it is compatible anymore.</p>
 </div>
 <p>As you only want to run the Client and not modify it&#8217;s code you&#8217;re fine with running the install command from within the directory. At the moment this requires Sudo Priveledges as files will copied to the Python Site-Packages Directory which is available to all users.</p>
 <blockquote>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo python setup.py install
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo python setup.py install
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>If you want to change parts of the Client you can use the development option which will create a Symlink instead of a Hardcopy of all files:</p>
@@ -152,45 +167,45 @@ As we wanted to have the possibility to include the App into any Django Site whi
 <p>We&#8217;ve created this branch for quick development - everyone is free to use his own Django site, but this one already includes a couple of modifications we&#8217;ve made that will allow running the Development Server just a few seconds after Branching both Site and App.</p>
 <p>As far as I know at the moment we&#8217;ve made the following alignments: (All of these are in the settings.py file of the Django Site)</p>
 <blockquote>
-<p>REST_SERVER = &#8216;localhost:8001&#8217;
+<div><p>REST_SERVER = &#8216;localhost:8001&#8217;
 API_USER = &#8216;restadmin&#8217;
 API_PASS = &#8216;restpass&#8217;</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">These are the default values used by the Mailman Client we&#8217;ve installed earlier. Feel free to modify the password and username if you need to.</p>
 </div>
-</blockquote>
+</div></blockquote>
 <p>MAILMAN_TEST_BINDIR = &#8216;/home/benste/Projects/Gsoc_mailman/mailman-3.0.0a7/bin&#8217;
 #/home/florian/Development/mailman/bin&#8217;</p>
 <blockquote>
-<div class="admonition note">
+<div><div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Running the test modules requires to launch a special version of mailman with it&#8217;s own testing DB otherwise you&#8217;d destroy you&#8217;re sites content during testing. This Path needs to point to YOUR own installation of mailman.</p>
 </div>
-</blockquote>
+</div></blockquote>
 <p>MAILMAN_THEME = &#8220;default&#8221;</p>
 <blockquote>
-<div class="admonition note">
+<div><div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">We decided to allow simple Appearance Modifications, to use a custom CSS you could simply add a Directory within the media directory of the app and Link it&#8217;s name here. All HTML Pages will use the Styles from the Directory mentioned in here</p>
 </div>
-</blockquote>
+</div></blockquote>
 <p>PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 MEDIA_ROOT =  os.path.join(os.path.split(PROJECT_PATH)[0], &#8220;mailman_django/media/mailman_django/&#8221;)</p>
 <blockquote>
-<div class="admonition note">
+<div><div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Absolute path to the directory that holds media.
 Example: &#8220;/home/media/media.lawrence.com/&#8221;</p>
 </div>
-</blockquote>
+</div></blockquote>
 <p>MEDIA_URL = &#8216;/mailman_media/&#8217;</p>
 <blockquote>
-<div class="admonition note">
+<div><div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">URL that handles the media served from MEDIA_ROOT. Make sure to use a trailing slash if there is a path component (optional in other cases).Examples: &#8220;<a class="reference external" href="http://media.lawrence.com">http://media.lawrence.com</a>&#8220;, &#8220;<a class="reference external" href="http://example.com/media/">http://example.com/media/</a>&#8220;</p>
+<p class="last">URL that handles the media served from MEDIA_ROOT. Make sure to use a trailing slash if there is a path component (optional in other cases).Examples: &#8220;<a class="reference external" href="http://media.lawrence.com">http://media.lawrence.com</a>&#8221;, &#8220;<a class="reference external" href="http://example.com/media/">http://example.com/media/</a>&#8220;</p>
 </div>
-</blockquote>
+</div></blockquote>
 <dl class="docutils">
 <dt>AUTHENTICATION_BACKENDS = (</dt>
 <dd><p class="first">&#8216;mailman_django.auth.restbackend.RESTBackend&#8217;,
@@ -220,11 +235,11 @@ You need to keep the Django one for testing fallback.</p>
 </dl>
 <p>ROOT_URLCONF = &#8216;mailman_django.urls&#8217;</p>
 <blockquote>
-<div class="admonition note">
+<div><div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This is where our URL Config is - if you run your own site with other Apps as well you might want to adjust this to your urls.py which includes our file.</p>
 </div>
-</blockquote>
+</div></blockquote>
 <dl class="docutils">
 <dt>TEMPLATE_DIRS = (</dt>
 <dd><p class="first">os.path.join(PROJECT_PATH, &#8220;mailman_django/templates&#8221;),</p>
@@ -251,10 +266,10 @@ You need to keep the Django one for testing fallback.</p>
 </dl>
 <p>Now that you know about all these you might start the development server. As usual in Django this is done by running</p>
 <blockquote>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py runserver
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py runserver
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 <p>within the Django Site Directory - as usual the default address is localhost:8000
 Of course it will only be able to start once our app is in place as well.</p>
 </div>
@@ -262,10 +277,10 @@ Of course it will only be able to start once our app is in place as well.</p>
 <h2>Django Application<a class="headerlink" href="#django-application" title="Permalink to this headline">¶</a></h2>
 <p>First get the files, and make sure you paste them into your Project directory and adjust it&#8217;s name to the appropriate configuration you&#8217;ve made earlier in the Django Site. Remeber our default is mailman_django</p>
 <blockquote>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bzr branch lp:mailmanwebgsoc2011
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>bzr branch lp:mailmanwebgsoc2011
 </pre></div>
 </div>
-</blockquote>
+</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">We&#8217;ve tested Revision 172</p>
@@ -296,8 +311,8 @@ Of course it will only be able to start once our app is in place as well.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to mailman_django&#8217;s documentation!</a></p>
+  <p class="topless"><a href="news.html"
+                        title="previous chapter">News</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="using.html"
                         title="next chapter">Using the Django App - Developers Resource</a></p>
@@ -336,14 +351,14 @@ Of course it will only be able to start once our app is in place as well.</p>
           <a href="using.html" title="Using the Django App - Developers Resource"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to mailman_django’s documentation!"
+          <a href="news.html" title="News"
              >previous</a> |</li>
-        <li><a href="index.html">mailman_django v0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mailmanweb v0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Benedict Stein.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>
