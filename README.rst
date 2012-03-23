@@ -33,3 +33,10 @@ Acknowledgements
 Many thanks go out to Anna Senarclens de Grancy and Benedict Stein for developing the
 initial versions of this Django app during the Google Summer of Code
 2010 and 2011. 
+
+
+Icons
+=====
+
+postorius uses the WPZOOM Developer Icon Set (http://www.wpzoom.com).
+
