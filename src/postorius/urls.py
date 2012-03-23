@@ -29,7 +29,7 @@ urlpatterns = patterns('postorius.views',
     url(r'^accounts/profile/$', 'user_profile', name='user_profile'),
     url(r'^accounts/todos/$', 'user_todos', name='user_todos'),
     url(r'^accounts/membership/(?:(?P<fqdn_listname>[^/]+)/)?$',
-        'user_settings', kwargs={"tab": "membership"},
+        'membership_settings', kwargs={"tab": "membership"},
         name='membership_settings'),
     url(r'^accounts/mailmansettings/$', 'user_mailmansettings', name='user_mailmansettings'),
     # /settings/

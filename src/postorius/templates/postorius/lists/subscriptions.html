@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block main %}
-    {{list.list_name}} <span>{{list.real_name}}</span>
+    {{list.list_name}} <span>{{list.display_name}}</span>
     {% if form_subscribe %}
     <form action="{%url list_subscriptions list.fqdn_listname %}" method="post" class="subscribe mm_clear" name="subscribe">
         {{ form_subscribe.as_div }}

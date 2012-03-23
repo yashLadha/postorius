@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2010 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
 #
 # This file is part of GNU Mailman.
 #
@@ -46,13 +46,13 @@ logger = logging.getLogger(__name__)
 
 
 @login_required
-@permission_required('server_admin')
+@user_passes_test(lambda u: u.is_superuser)
 def site_settings(request):
     return render_to_response('postorius/site_settings.html',
 					          context_instance=RequestContext(request))
 
 @login_required
-@permission_required('server_admin')
+@user_passes_test(lambda u: u.is_superuser)
 def domain_index(request):
     try:
         existing_domains = Domain.objects.all()
@@ -62,7 +62,7 @@ def domain_index(request):
 					          context_instance=RequestContext(request))
 
 @login_required
-@permission_required('server_admin')
+@user_passes_test(lambda u: u.is_superuser)
 def domain_new(request):
     message = None
     if request.method == 'POST':
@@ -87,6 +87,7 @@ def domain_new(request):
                               context_instance=RequestContext(request))
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def list_new(request, template = 'postorius/lists/new.html'):
     """
     Add a new mailing list. 
@@ -137,7 +138,7 @@ def list_new(request, template = 'postorius/lists/new.html'):
         choosable_domains = [("",_("Choose a Domain"))]
         for domain in domains:
             choosable_domains.append((domain.mail_host,domain.mail_host))
-        form = ListNew(choosable_domains,initial={'list_owner': request.user.username})
+        form = ListNew(choosable_domains,initial={'list_owner': request.user.email})
     return render_to_response(template, {'form': form},
                               context_instance=RequestContext(request))
 
@@ -148,7 +149,7 @@ def list_index(request, template = 'postorius/lists/index.html'):
     error = None
     domain = None
     only_public = True
-    if request.user.is_authenticated():
+    if request.user.is_superuser:
         only_public = False
     try:
         lists = List.objects.all(only_public=only_public)
@@ -162,6 +163,7 @@ def list_index(request, template = 'postorius/lists/index.html'):
                                    'lists': lists,},
                                   context_instance=RequestContext(request))
 
+@user_passes_test(lambda u: u.is_superuser)
 def list_metrics(request,fqdn_listname=None,option=None,template='postorius/lists/metrics.html'):
     """
     PUBLIC
@@ -190,20 +192,23 @@ def list_metrics(request,fqdn_listname=None,option=None,template='postorius/list
                               },
                               context_instance=RequestContext(request)
                               )
-def list_summary(request, fqdn_listname, option=None ,template='postorius/lists/summary.html'):
+
+def list_summary(request, fqdn_listname, option=None):
     """
     an entry page for each lists which allows some simple tasks per LIST
     """
+    user_email = getattr(request.user, 'email', None)
     try:
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response(template, 
+    return render_to_response('postorius/lists/summary.html', 
         {'list': the_list,
          'subscribe_form': ListSubscribe(
-            initial={'email':request.user.email}),},
+            initial={'email':user_email}),},
         context_instance=RequestContext(request))
 
+@login_required
 def list_subscribe(request, fqdn_listname):
     """Subscribe to a list.
     """
@@ -230,6 +235,7 @@ def list_subscribe(request, fqdn_listname):
                               {'form': form, 'list': the_list,},
                               context_instance=RequestContext(request))
 
+@login_required
 def list_unsubscribe(request, fqdn_listname, email):
     """Unsubscribe from a list.
     """
@@ -245,6 +251,7 @@ def list_unsubscribe(request, fqdn_listname, email):
         messages.error(request, e)
     return redirect('list_summary', the_list.fqdn_listname)
 
+@login_required
 def list_subscriptions(request, option=None, fqdn_listname=None, user_email = None,
                        template = 'postorius/lists/subscriptions.html', *args, **kwargs):#TODO **only kwargs ?
     """
@@ -325,6 +332,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None, user_email = No
                                          ,context_instance=RequestContext(request))
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def list_delete(request, fqdn_listname):
     """Deletes a list but asks for confirmation first.
     """
@@ -419,6 +427,7 @@ def reject_held_message(request, fqdn_listname, msg_id):
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def list_settings(request, fqdn_listname=None, visible_section=None, visible_option=None,
                   template='postorius/lists/settings.html'):
     """
@@ -469,6 +478,8 @@ def list_settings(request, fqdn_listname=None, visible_section=None, visible_opt
         for section in form.layout:
             for option in section[1:]:
                 used_settings[option] = the_list.settings[option]
+                if option == u'acceptable_aliases':
+                    used_settings[option] = '\n'.join(used_settings[option])
         #recreate the form using the settings
         form = ListSettings(visible_section,visible_option,data=used_settings)
         form.truncate()
@@ -482,6 +493,7 @@ def list_settings(request, fqdn_listname=None, visible_section=None, visible_opt
                                          ,context_instance=RequestContext(request))
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def mass_subscribe(request, fqdn_listname=None, 
                    template='postorius/lists/mass_subscribe.html'):
     """
@@ -540,6 +552,12 @@ def user_mailmansettings(request):
                               {'mm_user': the_user, 
                                'settingsform': settingsform},
                               context_instance=RequestContext(request))
+
+@login_required
+def membership_settings(request):
+    """Display a list of all memberships.
+    """
+
 @login_required
 def user_settings(request, tab = "membership",
                   template = 'postorius/user_settings.html',
@@ -670,6 +688,7 @@ def user_login(request,template = 'postorius/login.html'):
     return render_to_response(template, {'form': form,},
                               context_instance=RequestContext(request))
 
+@login_required
 def user_profile(request, user_email = None):
     if not request.user.is_authenticated():
         return redirect('user_login')
@@ -681,6 +700,7 @@ def user_profile(request, user_email = None):
     #                          {'mm_user': the_user},
                               context_instance=RequestContext(request))
     
+@login_required
 def user_todos(request):
     return render_to_response('postorius/user_todos.html',
                               context_instance=RequestContext(request))

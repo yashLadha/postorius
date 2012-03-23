@@ -3,10 +3,8 @@
 
 {% block main %}
     <h1>{% trans "Create a new List" %} {{ block.super }}</h1> 
-        <form action="{% url list_new %}" method="post" class="well">
-            {{ form.as_p }}
-            <div class="field">
-                <button type="submit">{% trans "Create List" %}</button>
-            </div>
-        </form>
+    <form action="{% url list_new %}" method="post" class="well">
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">{% trans "Create List" %}</button>
+    </form>
 {% endblock %}

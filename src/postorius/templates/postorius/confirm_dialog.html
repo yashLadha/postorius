@@ -1,16 +1,11 @@
 {% extends extend_template %}
 {% load i18n %}
 
-{% block header %}
-    <div class="mm_box mm_clear">
-        <div class="mm_boxHeader">{% trans "Please confirm this action" %}</div>
-        <form action="{{submit_url}}" method="post">
-            <div class="field">
-                <button type="submit">{% trans "OK" %}</button>
-            </div>
-            <div class="field">
-                <a href="{{cancel_url}}"><button type="button">{% trans "Cancel" %}</button></a>
-            </div>
-        </form>
-    </div>
-{% endblock %}
+{% block main %}
+    <h1>{% trans 'Confirm' %}</h1>
+    <p>{% trans "Are you sure?" %}</p>
+    <form action="{{submit_url}}" method="post">
+        <button class="btn btn-danger" type="submit">{% trans "OK" %}</button>
+        <a class="btn" href="{{cancel_url}}">{% trans "Cancel" %}</a>
+    </form>
+{% endblock main %}

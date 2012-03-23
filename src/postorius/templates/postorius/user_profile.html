@@ -3,7 +3,38 @@
 
 {% block main %}
     {% include 'postorius/menu/user_nav.html' %}
-    <h1>{{ user }}'s Profile</h1>
+    <h1>User Profile <span>- {{ user }}</span></h1>
 
-    <p><strong>Mailman display name:</strong> {{ mm_user.display_name}}</p>
+    <table class="table table-bordered table-striped mm_userData">
+    	<tbody>
+    		<tr>
+    			<th>{% trans 'Mailman display name' %}</th>
+    			<td>{{ mm_user.display_name}}</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'User name' %}</th>
+    			<td>{{ user.username}}</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'Firstname' %}</th>
+    			<td>&nbsp;</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'Lastname' %}</th>
+    			<td>&nbsp;</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'IRC handle' %}</th>
+    			<td>&nbsp;</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'Website' %}</th>
+    			<td>&nbsp;</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'Twitter' %}</th>
+    			<td>&nbsp;</td>
+    		</tr>
+    	</tbody>
+    </table>
 {% endblock main %}
