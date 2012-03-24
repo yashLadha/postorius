@@ -31,12 +31,6 @@ setup(
     url = "https://launchpad.net/postorius",
     classifiers = [
         "Programming Language :: Python",
-        "Development Status :: 1 - Alpha",
-        "Environment :: Linux",
-        "License :: GNU Lesser General Public License v3",
-        "Topic :: Mailing Lists",
-        "Topic :: Web User Interface",
-        "Topic :: Email",
         ],
     packages = find_packages('src'),
     package_dir = {'': 'src'},
