@@ -20,6 +20,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.0 alpha 2
+===========
+(2012-XX-XX)
+
+* dev setup fix for Django 1.4 contributed by Rohan Jain
+
+
 1.0 alpha 1 -- "Space Farm"
 ===========================
 (2012-03-23)
