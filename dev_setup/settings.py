@@ -49,7 +49,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mmtest.db'
+        'NAME': 'mutest.db'
     }
 }
 
