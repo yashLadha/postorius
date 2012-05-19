@@ -25,6 +25,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 (2012-XX-XX)
 
 * dev setup fix for Django 1.4 contributed by Rohan Jain
+* missing csrf tokens in templates contributed by Richard Wackerbarth (LP: 996658)
 
 
 1.0 alpha 1 -- "Space Farm"

@@ -12,7 +12,7 @@
     </ul>
 
     {% if visible_section %}
-        <form class="well" action="{% url list_settings fqdn_listname=list.fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings">
+        <form class="well" action="{% url list_settings fqdn_listname=list.fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings"> {% csrf_token %}
             {{ form.as_p }}
 	        <button class="btn btn-primary" type="submit">{%trans "Save changes" %}</button>
         </form>

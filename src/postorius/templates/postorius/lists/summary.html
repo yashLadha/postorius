@@ -15,7 +15,7 @@
   
     <h2>{% trans 'Membership' %}</h2>
     {% if user.is_authenticated %}
-    <form action="{% url list_subscribe list.fqdn_listname %}" method="post" class="list_subscribe">
+    <form action="{% url list_subscribe list.fqdn_listname %}" method="post" class="list_subscribe"> {% csrf_token %}
         {{subscribe_form.as_p}}
         <input class="btn btn-success" type="submit" value="{% trans 'Subscribe' %}" />
         <a href="{% url list_unsubscribe list.fqdn_listname user.email %}" class="btn btn-danger">Unsubscribe</a>
