@@ -26,6 +26,7 @@ along with postorius. If not, see <http://www.gnu.org/licenses/>.
 
 * dev setup fix for Django 1.4 contributed by Rohan Jain
 * missing csrf tokens in templates contributed by Richard Wackerbarth (LP: 996658)
+* moderation: fixed typo in success message call
 
 
 1.0 alpha 1 -- "Space Farm"

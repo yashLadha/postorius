@@ -402,7 +402,7 @@ def accept_held_message(request, fqdn_listname, msg_id):
     except HTTPError, e:
         messages.error(request,e.msg)
         return redirect('list_held_messages', the_list.fqdn_listname)
-    messages.successful(request, 'The message has been accepted.')
+    messages.success(request, 'The message has been accepted.')
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -417,7 +417,7 @@ def discard_held_message(request, fqdn_listname, msg_id):
     except HTTPError, e:
         messages.error(request,e.msg)
         return redirect('list_held_messages', the_list.fqdn_listname)
-    messages.successful(request, 'The message has been discarded.')
+    messages.success(request, 'The message has been discarded.')
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -432,7 +432,7 @@ def defer_held_message(request, fqdn_listname, msg_id):
     except HTTPError, e:
         messages.error(request,e.msg)
         return redirect('list_held_messages', the_list.fqdn_listname)
-    messages.successful(request, 'The message has been defered.')
+    messages.success(request, 'The message has been defered.')
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -447,7 +447,7 @@ def reject_held_message(request, fqdn_listname, msg_id):
     except HTTPError, e:
         messages.error(request,e.msg)
         return redirect('list_held_messages', the_list.fqdn_listname)
-    messages.successful(request, 'The message has been rejected.')
+    messages.success(request, 'The message has been rejected.')
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 @login_required
