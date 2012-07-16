@@ -1,5 +1,5 @@
-Welcome to Postorius' documentation!
-==========================================
+Postorius - The New Mailman Web UI
+==================================
 
 Contents:
 
