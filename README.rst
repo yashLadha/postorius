@@ -30,6 +30,14 @@ The minimum Django version is 1.3.
 Postorius needs a running version of GNU Mailman version 3.
 
 
+NEWS/Changelog
+==============
+
+News and the changelog can be found in the package documentation:
+
+src/postorius/doc/news.rst
+
+
 Installation
 ============
 

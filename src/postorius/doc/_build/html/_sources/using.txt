@@ -1,5 +1,5 @@
-Using the Django App - Developers Resource
-==========================================
+Using the Django App - Developers Resource (outdated)
+=====================================================
 
 .. warning::
     This user guide is outdated and needs to be updated.
