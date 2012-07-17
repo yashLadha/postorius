@@ -104,6 +104,14 @@ necessary db tables. You will also be prompted to create a superuser which
 will act as an admin account for Postorius.
 
 
+.. seealso::
+    Robert Niederreiter has provided a `buildout for GNU Mailman 3 and
+    Postorius`_.
+
+.. _buildout for GNU Mailman 3 and Postorius:
+    https://github.com/bluedynamics/mailman.buildout
+
+
 Running the development server
 ==============================
 

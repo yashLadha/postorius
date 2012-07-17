@@ -28,6 +28,7 @@ along with postorius. If not, see <http://www.gnu.org/licenses/>.
 * missing csrf tokens in templates contributed by Richard Wackerbarth (LP: 996658)
 * moderation: fixed typo in success message call
 * installation documentation for Apache/mod_wsgi
+* moved project files to separate branch
 
 
 1.0 alpha 1 -- "Space Farm"
