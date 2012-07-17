@@ -1,10 +1,8 @@
 {% extends "postorius/base.html" %}
 {% load i18n %}
 
-{% block header %}
-    <div class="mm_box mm_clear">
-        <div class="mm_boxHeader">{% trans "Error-Site" %}</div>
-        {% if error %}<p id="error">{{ error }}</p> {% endif %}
-        {% if message %}<p id="message">{{ message }}</p> {% endif %}
-    </div>
+{% block main %}
+    <h1>{% trans 'Something went wrong' %}</h1>
+
+    {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
 {% endblock %}
