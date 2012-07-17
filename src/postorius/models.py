@@ -21,7 +21,7 @@ import logging
 from django.conf import settings
 from django.db import models
 from django.http import Http404
-from mailman.client import Client
+from mailman.client import Client, MailmanConnectionError
 from urllib2 import HTTPError
 
 
@@ -54,6 +54,8 @@ class MailmanRestManager(object):
             return getattr(self.client, self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
+        except MailmanConnectionError, e:
+            raise MailmanApiError(e)
 
     def get(self, **kwargs):
         try:
@@ -66,6 +68,9 @@ class MailmanRestManager(object):
                 raise Mailman404Error
             else:
                 raise
+        except MailmanConnectionError, e:
+            raise MailmanApiError(e)
+
 
     def get_or_404(self, **kwargs):
         """Similar to `self.get` but raises standard Django 404 error.
@@ -74,6 +79,8 @@ class MailmanRestManager(object):
             return self.get(**kwargs)
         except Mailman404Error:
             raise Http404
+        except MailmanConnectionError:
+            raise MailmanApiError
 
     def create(self, **kwargs):
         try:
@@ -86,6 +93,8 @@ class MailmanRestManager(object):
                 raise MailmanApiError
             else:
                 raise
+        except MailmanConnectionError:
+            raise MailmanApiError
 
     def delete(self):
         """Not implemented since the objects returned from the API
@@ -104,6 +113,8 @@ class MailmanListManager(MailmanRestManager):
             objects = getattr(self.client, self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
+        except MailmanConnectionError, e:
+            raise MailmanApiError(e)
         if only_public:
             public = []
             for obj in objects:
