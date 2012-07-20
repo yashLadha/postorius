@@ -30,6 +30,9 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * installation documentation for Apache/mod_wsgi
 * moved project files to separate branch
 * show error message if connection to Mailman API fails
+* added list members view
+* added developer documentation
+* added test helper utils
 
 
 1.0 alpha 1 -- "Space Farm"
