@@ -50,7 +50,7 @@ or:
 Latest dev version
 ------------------
 
-If you want to keep up to date with the latest development version, you
+If you want to always be up to date with the latest development version, you
 should install Postorius using bazaar:
 
 ::
@@ -66,6 +66,14 @@ You can always pull in the latest changes from the development branch:
 
     $ cd postorius
     $ bzr pull
+    $ cd ..
+
+Make sure to keep mailman.client up to date as well:
+
+::
+
+    $ cd mailman.client
+    $ bzr pull lp:mailman.client
     $ cd ..
 
 
@@ -86,7 +94,7 @@ your preferred database. If you're OK with using sqlite, just change the path
 in line 48 to the correct location.
 
 .. note::
-    Detailed information on how to use different databse engines can be found
+    Detailed information on how to use different database engines can be found
     in the `Django documentation`_.
 
 .. _Django documentation: https://docs.djangoproject.com/en/1.4/ref/settings/#databases
@@ -115,7 +123,7 @@ will act as an admin account for Postorius.
 Running the development server
 ==============================
 
-The quickest way to run postorius is to just start the development server:
+The quickest way to run Postorius is to just start the development server:
 
 ::
 

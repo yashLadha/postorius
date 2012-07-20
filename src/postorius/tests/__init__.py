@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
+# Copyright (C) 2012 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,7 +15,11 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-import tests
+from postorius.tests import test_utils
+from postorius.tests.test_list_members import *
+
 __test__ = {
+    "Test Utils": test_utils,
+    "List members": ListMembersViewTest,
     #"Doctest": tests,
 }

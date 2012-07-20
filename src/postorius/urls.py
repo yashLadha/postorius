@@ -20,6 +20,8 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 from django.conf.urls.static import static
 
+from postorius.views import ListMembersView
+
 
 urlpatterns = patterns('postorius.views',
     (r'^$', 'list_index'),
@@ -41,6 +43,8 @@ urlpatterns = patterns('postorius.views',
     # /lists/
     url(r'^lists/$', 'list_index', name='list_index'),
     url(r'^lists/new/$', 'list_new', name='list_new'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/members$', ListMembersView.as_view(),
+        name='list_members'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/metrics$', 'list_metrics',
         name='list_metrics'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary',

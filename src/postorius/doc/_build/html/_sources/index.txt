@@ -8,5 +8,5 @@ Contents:
    
    news.rst
    setup.rst
-   using.rst
+   development.rst
 

@@ -79,8 +79,8 @@ class MailmanRestManager(object):
             return self.get(**kwargs)
         except Mailman404Error:
             raise Http404
-        except MailmanConnectionError:
-            raise MailmanApiError
+        except MailmanConnectionError, e:
+            raise MailmanApiError(e)
 
     def create(self, **kwargs):
         try:

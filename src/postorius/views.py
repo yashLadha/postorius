@@ -35,7 +35,10 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.views.generic import TemplateView
+
 from mailman.client import Client
 from models import (Domain, List, Member, MailmanUser, MailmanApiError,
                     Mailman404Error)
@@ -87,6 +90,21 @@ def domain_new(request):
     return render_to_response('postorius/domain_new.html',
                               {'form': form,'message': message},
                               context_instance=RequestContext(request))
+
+
+class ListMembersView(TemplateView):
+    """Display all members of a given list."""
+
+    def get_list(self, fqdn_listname):
+        return List.objects.get_or_404(fqdn_listname=fqdn_listname)
+
+    @method_decorator(login_required(login_url='/accounts/login/'))
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def get(self, request, fqdn_listname):
+        return render_to_response('postorius/lists/members.html',
+                                  {'list': self.get_list(fqdn_listname)},
+                                  context_instance=RequestContext(request))
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)

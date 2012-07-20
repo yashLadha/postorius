@@ -1,0 +1,22 @@
+{% extends "postorius/base.html" %}
+{% load i18n %}
+
+{% block main %}
+    {% if user.is_superuser %}
+        {% include 'postorius/menu/list_nav.html' %}
+    {% endif %}
+
+    <h1>{% trans "List members" %}: {{list.fqdn_listname}} </h1>
+
+    <table class="table table-bordered table-striped mm_userData">
+        <thead>
+    		<tr>
+    			<th>{% trans 'address' %}</th>
+    			<th>{% trans 'user' %}</th>
+    		</tr>
+        </thead>
+    	<tbody>
+    	</tbody>
+    </table>
+
+{% endblock main %}
