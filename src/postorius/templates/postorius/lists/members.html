@@ -11,11 +11,21 @@
     <table class="table table-bordered table-striped mm_userData">
         <thead>
     		<tr>
-    			<th>{% trans 'address' %}</th>
-    			<th>{% trans 'user' %}</th>
+    			<th>{% trans 'Address' %}</th>
+    			<th>{% trans 'Role' %}</th>
+                <!-- th>Actions</th -->
     		</tr>
         </thead>
     	<tbody>
+            {% for member in list.members %}
+                <tr>
+                    <td>{{ member.address }}</td>
+                    <td>{% trans member.role %}</td>
+                    <!-- td>
+                        <a href="#" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
+                    </td -->
+                </tr>
+            {% endfor %}
     	</tbody>
     </table>
 

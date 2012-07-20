@@ -93,7 +93,8 @@ def domain_new(request):
 
 
 class ListMembersView(TemplateView):
-    """Display all members of a given list."""
+    """Display all members of a given list.
+    """
 
     def get_list(self, fqdn_listname):
         return List.objects.get_or_404(fqdn_listname=fqdn_listname)
