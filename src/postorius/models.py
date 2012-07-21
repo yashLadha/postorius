@@ -33,6 +33,7 @@ class MailmanApiError(Exception):
     """
     pass
 
+
 class Mailman404Error(Exception):
     """Proxy exception. Raised if the API returns 404."""
     pass
@@ -42,7 +43,7 @@ class MailmanRestManager(object):
     """Manager class to give a model class CRUD access to the API.
     Returns objects (or lists of objects) retrived from the API.
     """
-    
+
     def __init__(self, resource_name, resource_name_plural, cls_name=None):
         self.client = Client('%s/3.0' % settings.REST_SERVER,
                              settings.API_USER, settings.API_PASS)
@@ -70,7 +71,6 @@ class MailmanRestManager(object):
                 raise
         except MailmanConnectionError, e:
             raise MailmanApiError(e)
-
 
     def get_or_404(self, **kwargs):
         """Similar to `self.get` but raises standard Django 404 error.
@@ -143,7 +143,7 @@ class MailmanRestModel(object):
         self.kwargs = kwargs
 
     def save(self):
-        """Proxy function for `objects.create`. 
+        """Proxy function for `objects.create`.
         (REST API uses `create`, while Django uses `save`.)
         """
         self.objects.create(**self.kwargs)

@@ -53,7 +53,8 @@ logger = logging.getLogger(__name__)
 @user_passes_test(lambda u: u.is_superuser)
 def site_settings(request):
     return render_to_response('postorius/site_settings.html',
-					          context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -63,8 +64,9 @@ def domain_index(request):
     except MailmanApiError:
         return utils.render_api_error(request)
     return render_to_response('postorius/domain_index.html',
-                              {'domains':existing_domains,},
-					          context_instance=RequestContext(request))
+                              {'domains': existing_domains},
+                              context_instance=RequestContext(request))
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -81,14 +83,14 @@ def domain_new(request):
             except MailmanApiError:
                 return utils.render_api_error(request)
             except HTTPError, e:
-                messages.error(request,e)
+                messages.error(request, e)
             else:
-                messages.success(request,_("New Domain registered"))
+                messages.success(request, _("New Domain registered"))
             return redirect("domain_index")
     else:
         form = DomainNew()
     return render_to_response('postorius/domain_new.html',
-                              {'form': form,'message': message},
+                              {'form': form, 'message': message},
                               context_instance=RequestContext(request))
 
 
@@ -109,11 +111,11 @@ class ListMembersView(TemplateView):
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
-def list_new(request, template = 'postorius/lists/new.html'):
+def list_new(request, template='postorius/lists/new.html'):
     """
-    Add a new mailing list. 
-    If the request to the function is a GET request an empty form for 
-    creating a new list will be displayed. If the request method is 
+    Add a new mailing list.
+    If the request to the function is a GET request an empty form for
+    creating a new list will be displayed. If the request method is
     POST the form will be evaluated. If the form is considered
     correct the list gets created and otherwise the form with the data
     filled in before the last POST request is returned. The user must
@@ -125,7 +127,7 @@ def list_new(request, template = 'postorius/lists/new.html'):
             domains = Domain.objects.all()
         except MailmanApiError:
             return utils.render_api_error(request)
-        choosable_domains = [("",_("Choose a Domain"))]
+        choosable_domains = [("", _("Choose a Domain"))]
         for domain in domains:
             choosable_domains.append((domain.mail_host,
                                       domain.mail_host))
@@ -149,10 +151,10 @@ def list_new(request, template = 'postorius/lists/new.html'):
                                 fqdn_listname=mailing_list.fqdn_listname)
             #TODO catch correct Error class:
             except HTTPError, e:
-                messages.error(request,e)
-                return render_to_response('postorius/errors/generic.html', 
-                                      {'error':e},
-                                      context_instance=RequestContext(request))
+                messages.error(request, e)
+                return render_to_response(
+                    'postorius/errors/generic.html',
+                    {'error': e}, context_instance=RequestContext(request))
             else:
                 messages.success(_("New List created"))
     else:
@@ -160,15 +162,16 @@ def list_new(request, template = 'postorius/lists/new.html'):
             domains = Domain.objects.all()
         except MailmanApiError:
             return utils.render_api_error(request)
-        choosable_domains = [("",_("Choose a Domain"))]
+        choosable_domains = [("", _("Choose a Domain"))]
         for domain in domains:
-            choosable_domains.append((domain.mail_host,domain.mail_host))
+            choosable_domains.append((domain.mail_host, domain.mail_host))
         form = ListNew(choosable_domains,
                        initial={'list_owner': request.user.email})
     return render_to_response(template, {'form': form},
                               context_instance=RequestContext(request))
 
-def list_index(request, template = 'postorius/lists/index.html'):
+
+def list_index(request, template='postorius/lists/index.html'):
     """Show a table of all public mailing lists.
     """
     lists = []
@@ -186,11 +189,12 @@ def list_index(request, template = 'postorius/lists/index.html'):
     else:
         return render_to_response(template,
                                   {'error': error,
-                                   'lists': lists,},
+                                   'lists': lists},
                                   context_instance=RequestContext(request))
 
+
 @user_passes_test(lambda u: u.is_superuser)
-def list_metrics(request,fqdn_listname=None,option=None,
+def list_metrics(request, fqdn_listname=None, option=None,
                  template='postorius/lists/metrics.html'):
     """
     PUBLIC
@@ -198,7 +202,7 @@ def list_metrics(request,fqdn_listname=None,option=None,
     information about the list such as the date of the last post and the
     time the last digest is sent.
     """
-    error=None
+    error = None
     user_is_subscribed = False
     if request.method == 'POST':
         return redirect("list_summary", fqdn_listname=request.POST["list"])
@@ -209,16 +213,15 @@ def list_metrics(request,fqdn_listname=None,option=None,
                 the_list.get_member(request.user.username)
                 user_is_subscribed = True
             except:
-                pass #init
+                pass  # init
         except MailmanApiError:
             return utils.render_api_error(request)
     return render_to_response(template,
-                              {'list':the_list,
-                               'message':  None,
-                               'user_is_subscribed':user_is_subscribed,
-                              },
-                              context_instance=RequestContext(request)
-                              )
+                              {'list': the_list,
+                               'message': None,
+                               'user_is_subscribed': user_is_subscribed},
+                              context_instance=RequestContext(request))
+
 
 def list_summary(request, fqdn_listname, option=None):
     """
@@ -229,11 +232,12 @@ def list_summary(request, fqdn_listname, option=None):
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response('postorius/lists/summary.html', 
+    return render_to_response(
+        'postorius/lists/summary.html',
         {'list': the_list,
-         'subscribe_form': ListSubscribe(
-            initial={'email':user_email}),},
+         'subscribe_form': ListSubscribe(initial={'email': user_email})},
         context_instance=RequestContext(request))
+
 
 @login_required
 def list_subscribe(request, fqdn_listname):
@@ -247,7 +251,8 @@ def list_subscribe(request, fqdn_listname):
                 email = request.POST.get('email')
                 display_name = request.POST.get('display_name')
                 the_list.subscribe(email, display_name)
-                messages.success(request,
+                messages.success(
+                    request,
                     _('You are subscribed to %s.' % the_list.fqdn_listname))
                 return redirect('list_summary', the_list.fqdn_listname)
             else:
@@ -257,11 +262,12 @@ def list_subscribe(request, fqdn_listname):
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
-        messages.error(request,e.msg)
+        messages.error(request, e.msg)
         return redirect('list_summary', the_list.fqdn_listname)
-    return render_to_response('postorius/lists/subscribe.html', 
-                              {'form': form, 'list': the_list,},
+    return render_to_response('postorius/lists/subscribe.html',
+                              {'form': form, 'list': the_list},
                               context_instance=RequestContext(request))
+
 
 @login_required
 def list_unsubscribe(request, fqdn_listname, email):
@@ -279,17 +285,19 @@ def list_unsubscribe(request, fqdn_listname, email):
         messages.error(request, e)
     return redirect('list_summary', the_list.fqdn_listname)
 
+
 @login_required
 def list_subscriptions(request, option=None, fqdn_listname=None,
-        user_email=None,
-        template='postorius/lists/subscriptions.html', *args, **kwargs):
+                       user_email=None,
+                       template='postorius/lists/subscriptions.html',
+                       *args, **kwargs):
     """
-    Display the information there is available for a list. This 
-    function also enables subscribing or unsubscribing a user to a 
-    list. For the latter two different forms are available for the 
+    Display the information there is available for a list. This
+    function also enables subscribing or unsubscribing a user to a
+    list. For the latter two different forms are available for the
     user to fill in which are evaluated in this function.
     """
-    #create Values for Template usage   
+    # create Values for Template usage
     message = None
     error = None
     form_subscribe = None
@@ -300,10 +308,10 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
     try:
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except AttributeError, e:
-        return render_to_response('postorius/errors/generic.html', 
+        return render_to_response('postorius/errors/generic.html',
                                   {'error': "REST API not found / Offline"},
                                   context_instance=RequestContext(request))
-    #process submitted form    
+    # process submitted form
     if request.method == 'POST':
         form = False
         # The form enables both subscribe and unsubscribe. As a result
@@ -314,18 +322,20 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
                 # the form was valid so try to subscribe the user
                 try:
                     email = form.cleaned_data['email']
-                    response = the_list.subscribe(address=email,
+                    response = the_list.subscribe(
+                        address=email,
                         display_name=form.cleaned_data.get('display_name', ''))
-                    return render_to_response('postorius/lists/summary.html', 
-                          {'list': the_list,
-                           'option':option,
-                           'message':_("Subscribed ") + email },
-                          context_instance=RequestContext(request))
+                    return render_to_response(
+                        'postorius/lists/summary.html',
+                        {'list': the_list, 'option': option,
+                         'message': _("Subscribed ") + email},
+                        context_instance=RequestContext(request))
                 except HTTPError, e:
-                    return render_to_response('postorius/errors/generic.html', 
-                          {'error':e},
-                          context_instance=RequestContext(request))
-            else: #invalid subscribe form
+                    return render_to_response(
+                        'postorius/errors/generic.html',
+                        {'error': e},
+                        context_instance=RequestContext(request))
+            else:  # invalid subscribe form
                 form_subscribe = form
                 form_unsubscribe = ListUnsubscribe(
                     initial={'fqdn_listname': fqdn_listname,
@@ -333,45 +343,48 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
         elif request.POST.get('name', '') == "unsubscribe":
             form = ListUnsubscribe(request.POST)
             if form.is_valid():
-                #the form was valid so try to unsubscribe the user
+                # the form was valid so try to unsubscribe the user
                 try:
                     email = form.cleaned_data["email"]
                     response = the_list.unsubscribe(address=email)
-                    return render_to_response('postorius/lists/summary.html', 
-                          {'list': the_list,
-                           'message':_("Unsubscribed ") + email },
-                          context_instance=RequestContext(request))
+                    return render_to_response(
+                        'postorius/lists/summary.html',
+                        {'list': the_list,
+                         'message': _("Unsubscribed ") + email},
+                        context_instance=RequestContext(request))
                 except ValueError, e:
-                    return render_to_response('postorius/errors/generic.html',
-                          {'error': e},
-                          context_instance=RequestContext(request))
-            else:#invalid unsubscribe form
+                    return render_to_response(
+                        'postorius/errors/generic.html',
+                        {'error': e},
+                        context_instance=RequestContext(request))
+            else:  # invalid unsubscribe form
                 form_subscribe = ListSubscribe(
                     initial={'fqdn_listname': fqdn_listname,
-                             'option':option,
-                             'name' : 'subscribe'})
+                             'option': option,
+                             'name': 'subscribe'})
                 form_unsubscribe = ListUnsubscribe(request.POST)
     else:
         # the request was a GET request so set the two forms to empty
         # forms
-        if option=="subscribe" or not option:
+        if option == "subscribe" or not option:
             form_subscribe = ListSubscribe(
                 initial={'fqdn_listname': fqdn_listname,
-                         'email': request.user.username, 
-                         'name' : 'subscribe'})
-        if option=="unsubscribe" or not option:                                             
+                         'email': request.user.username,
+                         'name': 'subscribe'})
+        if option == "unsubscribe" or not option:
             form_unsubscribe = ListUnsubscribe(
                 initial={'fqdn_listname': fqdn_listname,
-                         'email':request.user.username,
-                         'name' : 'unsubscribe'})
+                         'email': request.user.username,
+                         'name': 'unsubscribe'})
     the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     return render_to_response(template,
                               {'form_subscribe': form_subscribe,
                                'form_unsubscribe': form_unsubscribe,
-                               'message':message,
-                               'error':error,
-                               'list': the_list,},
+                               'message': message,
+                               'error': error,
+                               'list': the_list},
                               context_instance=RequestContext(request))
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -391,11 +404,12 @@ def list_delete(request, fqdn_listname):
         submit_url = reverse('list_delete',
                              kwargs={'fqdn_listname': fqdn_listname})
         cancel_url = reverse('list_index',)
-        return render_to_response('postorius/confirm_dialog.html',
-                    {'submit_url': submit_url,
-                     'cancel_url': cancel_url,
-                    'list':the_list,},
-                    context_instance=RequestContext(request))
+        return render_to_response(
+            'postorius/confirm_dialog.html',
+            {'submit_url': submit_url, 'cancel_url': cancel_url,
+             'list': the_list},
+            context_instance=RequestContext(request))
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def list_held_messages(request, fqdn_listname):
@@ -406,8 +420,9 @@ def list_held_messages(request, fqdn_listname):
     except MailmanApiError:
         return utils.render_api_error(request)
     return render_to_response('postorius/lists/held_messages.html',
-                {'list':the_list,},
-                context_instance=RequestContext(request))
+                              {'list': the_list},
+                              context_instance=RequestContext(request))
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def accept_held_message(request, fqdn_listname, msg_id):
@@ -419,10 +434,11 @@ def accept_held_message(request, fqdn_listname, msg_id):
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
-        messages.error(request,e.msg)
+        messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.fqdn_listname)
     messages.success(request, 'The message has been accepted.')
     return redirect('list_held_messages', the_list.fqdn_listname)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def discard_held_message(request, fqdn_listname, msg_id):
@@ -434,10 +450,11 @@ def discard_held_message(request, fqdn_listname, msg_id):
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
-        messages.error(request,e.msg)
+        messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.fqdn_listname)
     messages.success(request, 'The message has been discarded.')
     return redirect('list_held_messages', the_list.fqdn_listname)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def defer_held_message(request, fqdn_listname, msg_id):
@@ -449,10 +466,11 @@ def defer_held_message(request, fqdn_listname, msg_id):
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
-        messages.error(request,e.msg)
+        messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.fqdn_listname)
     messages.success(request, 'The message has been defered.')
     return redirect('list_held_messages', the_list.fqdn_listname)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def reject_held_message(request, fqdn_listname, msg_id):
@@ -464,10 +482,11 @@ def reject_held_message(request, fqdn_listname, msg_id):
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
-        messages.error(request,e.msg)
+        messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.fqdn_listname)
     messages.success(request, 'The message has been rejected.')
     return redirect('list_held_messages', the_list.fqdn_listname)
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -476,9 +495,9 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
                   template='postorius/lists/settings.html'):
     """
     View and edit the settings of a list.
-    The function requires the user to be logged in and have the 
+    The function requires the user to be logged in and have the
     permissions necessary to perform the action.
-    
+
     Use /<NAMEOFTHESECTION>/<NAMEOFTHEOPTION>
     to show only parts of the settings
     <param> is optional / is used to differ in between section and option might
@@ -486,7 +505,7 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
     """
     message = ""
     logger.debug(visible_section)
-    if visible_section == None:
+    if visible_section is None:
         visible_section = 'List Identity'
     form_sections = []
     try:
@@ -494,53 +513,54 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
     except MailmanApiError:
         return utils.render_api_error(request)
     #collect all Form sections for the links:
-    temp = ListSettings('','')
+    temp = ListSettings('', '')
     for section in temp.layout:
         try:
             form_sections.append((section[0],
                                   temp.section_descriptions[section[0]]))
         except KeyError, e:
-            error=e
+            error = e
     del temp
-    #Save a Form Processed by POST  
+    # Save a Form Processed by POST
     if request.method == 'POST':
-        form = ListSettings(visible_section,visible_option,data=request.POST)
+        form = ListSettings(visible_section, visible_option, data=request.POST)
         form.truncate()
         if form.is_valid():
             list_settings = the_list.settings
             for key in form.fields.keys():
                 list_settings[key] = form.cleaned_data[key]
-                list_settings.save()    
+                list_settings.save()
             message = _("The list has been updated.")
         else:
             message = _("Validation Error - The list has not been updated.")
-    
     else:
         #Provide a form with existing values
         #create form and process layout into form.layout
-        form = ListSettings(visible_section,visible_option,data=None)
+        form = ListSettings(visible_section, visible_option, data=None)
         #create a Dict of all settings which are used in the form
-        used_settings={}
+        used_settings = {}
         for section in form.layout:
             for option in section[1:]:
                 used_settings[option] = the_list.settings[option]
                 if option == u'acceptable_aliases':
                     used_settings[option] = '\n'.join(used_settings[option])
-        #recreate the form using the settings
-        form = ListSettings(visible_section,visible_option,data=used_settings)
+        # recreate the form using the settings
+        form = ListSettings(visible_section, visible_option,
+                            data=used_settings)
         form.truncate()
     return render_to_response(template,
                               {'form': form,
                                'form_sections': form_sections,
                                'message': message,
                                'list': the_list,
-                               'visible_option':visible_option,
-                               'visible_section':visible_section,},
+                               'visible_option': visible_option,
+                               'visible_section': visible_section},
                               context_instance=RequestContext(request))
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
-def mass_subscribe(request, fqdn_listname=None, 
+def mass_subscribe(request, fqdn_listname=None,
                    template='postorius/lists/mass_subscribe.html'):
     """
     Mass subscribe users to a list.
@@ -565,7 +585,8 @@ def mass_subscribe(request, fqdn_listname=None,
                         message = "The mass subscription was successful."
                     except HTTPError, e:
                         messages.error(request, e)
-                        return redirect('mass_subscribe', the_list.fqdn_listname)
+                        return redirect('mass_subscribe',
+                                        the_list.fqdn_listname)
                 else:
                     message = "Please enter valid email addresses."
             return redirect('mass_subscribe', the_list.fqdn_listname)
@@ -577,6 +598,7 @@ def mass_subscribe(request, fqdn_listname=None,
                                'list': the_list},
                               context_instance=RequestContext(request))
 
+
 @login_required
 def user_mailmansettings(request):
     try:
@@ -586,30 +608,32 @@ def user_mailmansettings(request):
 
     settingsform = MembershipSettings()
     return render_to_response('postorius/user_mailmansettings.html',
-                              {'mm_user': the_user, 
+                              {'mm_user': the_user,
                                'settingsform': settingsform},
                               context_instance=RequestContext(request))
+
 
 @login_required
 def membership_settings(request):
     """Display a list of all memberships.
     """
 
+
 @login_required
-def user_settings(request, tab = "membership",
-                  template = 'postorius/user_settings.html',
-                  fqdn_listname = None,):
+def user_settings(request, tab="membership",
+                  template='postorius/user_settings.html',
+                  fqdn_listname=None):
     """
     Change the user or the membership settings.
     The user must be logged in to be allowed to change any settings.
     TODO: * add CSS to display tabs ??
-          * add missing functionality in REST server and client and 
+          * add missing functionality in REST server and client and
             change to the correct calls here
     """
     member = request.user.username
     message = ''
     form = None
-    the_list=None
+    the_list = None
     membership_lists = []
 
     try:
@@ -621,28 +645,30 @@ def user_settings(request, tab = "membership",
                 user_object = the_list.get_member(member)
             else:
                 message = ("")
-                for mlist in List.objects.all(): 
-                    try: 
+                for mlist in List.objects.all():
+                    try:
                         mlist.get_member(member)
                         membership_lists.append(mlist)
                     except:
                         pass
         else:
-           # address_choices for the 'address' field must be a list of 
-           # tuples of length 2
-           raise Exception("")
-           address_choices = [[addr, addr] for addr in user_object.address]
+            # address_choices for the 'address' field must be a list of
+            # tuples of length 2
+            raise Exception("")
+            address_choices = [[addr, addr] for addr in user_object.address]
     except AttributeError, e:
-        return render_to_response('postorius/errors/generic.html', 
-                              {'error': str(e)+"REST API not found / Offline"},
-                              context_instance=RequestContext(request))
+        return render_to_response(
+            'postorius/errors/generic.html',
+            {'error': str(e) + "REST API not found / Offline"},
+            context_instance=RequestContext(request))
     except ValueError, e:
-        return render_to_response('postorius/errors/generic.html', 
+        return render_to_response('postorius/errors/generic.html',
                                   {'error': e},
                                   context_instance=RequestContext(request))
-    except HTTPError,e :
-        return render_to_response('postorius/errors/generic.html', 
-            {'error': _("List ")+fqdn_listname+_(" does not exist")},
+    except HTTPError, e:
+        return render_to_response(
+            'postorius/errors/generic.html',
+            {'error': _("List ") + fqdn_listname + _(" does not exist")},
             context_instance=RequestContext(request))
     #-----------------------------------------------------------------
     if request.method == 'POST':
@@ -660,23 +686,23 @@ def user_settings(request, tab = "membership",
             # the 'address' field need choices as a tuple of length 2
             addr_choices = [[request.POST["address"], request.POST["address"]]]
             form = UserSettings(addr_choices, request.POST)
-            if form.is_valid(): 
+            if form.is_valid():
                 user_object.update(request.POST)
-                # to get the full list of addresses we need to 
+                # to get the full list of addresses we need to
                 # reinstantiate the form with all the addresses
                 # TODO: should return the correct settings from the DB,
-                # not just the address_choices (add mock data to _User 
+                # not just the address_choices (add mock data to _User
                 # class and make the call with 'user_object.info')
                 form = UserSettings(address_choices)
                 message = "The user settings have been updated."
 
     else:
-        if tab == "membership" and fqdn_listname :
+        if tab == "membership" and fqdn_listname:
             if fqdn_listname:
-                #TODO : fix LP:821069 in mailman.client
+                # TODO : fix LP:821069 in mailman.client
                 the_list = List.objects.get(fqdn_listname=fqdn_listname)
                 member_object = the_list.get_member(member)
-                # TODO: add delivery_mode and deliver_status from a 
+                # TODO: add delivery_mode and deliver_status from a
                 # list of tuples at one point, currently we hard code
                 # them in forms.py
                 # instantiate the form with the correct member info
@@ -688,15 +714,15 @@ def user_settings(request, tab = "membership",
                 delivery_mode
                 delivery_status
                 """
-                data = {} #Todo https://bugs.launchpad.net/mailman/+bug/821438
+                data = {}
                 form = MembershipSettings(data)
         elif tab == "user":
             # TODO: should return the correct settings from the DB,
-            # not just the address_choices (add mock data to _User 
+            # not just the address_choices (add mock data to _User
             # class and make the call with 'user_object._info') The 'language'
             # field must also be added as a list of tuples with correct
             # values (is currently hard coded in forms.py).
-            data ={}#Todo https://bugs.launchpad.net/mailman/+bug/821438
+            data = {}  # Todo https://bugs.launchpad.net/mailman/+bug/821438
             form = UserSettings(data)
 
     return render_to_response(template,
@@ -708,11 +734,13 @@ def user_settings(request, tab = "membership",
                                'member': member},
                               context_instance=RequestContext(request))
 
+
 def user_logout(request):
     logout(request)
     return redirect('user_login')
 
-def user_login(request,template = 'postorius/login.html'):
+
+def user_login(request, template='postorius/login.html'):
     if request.method == 'POST':
         form = AuthenticationForm(request.POST)
         user = authenticate(username=request.POST.get('username'),
@@ -720,15 +748,16 @@ def user_login(request,template = 'postorius/login.html'):
         if user is not None:
             logger.debug(user)
             if user.is_active:
-                login(request,user)
+                login(request, user)
                 return redirect(request.GET.get('next', 'list_index'))
     else:
         form = AuthenticationForm()
-    return render_to_response(template, {'form': form,},
+    return render_to_response(template, {'form': form},
                               context_instance=RequestContext(request))
 
+
 @login_required
-def user_profile(request, user_email = None):
+def user_profile(request, user_email=None):
     if not request.user.is_authenticated():
         return redirect('user_login')
     #try:
@@ -736,11 +765,11 @@ def user_profile(request, user_email = None):
     #except MailmanApiError:
     #    return utils.render_api_error(request)
     return render_to_response('postorius/user_profile.html',
-    #                          {'mm_user': the_user},
+                              # {'mm_user': the_user},
                               context_instance=RequestContext(request))
-    
+
+
 @login_required
 def user_todos(request):
     return render_to_response('postorius/user_todos.html',
                               context_instance=RequestContext(request))
-    
