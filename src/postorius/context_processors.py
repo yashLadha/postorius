@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
+# Copyright (C) 2012 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -32,11 +32,9 @@ def postorius(request):
     """
     # extend_template (no page header/footer when requested via AJAX)
     if request.is_ajax():
-        extend_template = "postorius/base_ajax.html"        
-    else:        
+        extend_template = "postorius/base_ajax.html"
+    else:
         extend_template = "postorius/base.html"
 
-    return {
-        'MAILMAN_THEME': settings.MAILMAN_THEME,
-        'extend_template': extend_template,
-        }
+    return {'MAILMAN_THEME': settings.MAILMAN_THEME,
+            'extend_template': extend_template}

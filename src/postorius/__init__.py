@@ -17,4 +17,3 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '1.0.0a1'
-

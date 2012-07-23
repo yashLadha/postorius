@@ -23,7 +23,8 @@ from django.conf.urls.static import static
 from postorius.views import ListMembersView
 
 
-urlpatterns = patterns('postorius.views',
+urlpatterns = patterns(
+    'postorius.views',
     (r'^$', 'list_index'),
     # /account/
     url(r'^accounts/login/$', 'user_login', name='user_login'),
@@ -43,8 +44,8 @@ urlpatterns = patterns('postorius.views',
     # /lists/
     url(r'^lists/$', 'list_index', name='list_index'),
     url(r'^lists/new/$', 'list_new', name='list_new'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/members/$', ListMembersView.as_view(),
-        name='list_members'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/members/$',
+        ListMembersView.as_view(), name='list_members'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/metrics$', 'list_metrics',
         name='list_metrics'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary',
@@ -57,27 +58,21 @@ urlpatterns = patterns('postorius.views',
         'list_subscriptions', name='list_subscriptions'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/mass_subscribe/$',
         'mass_subscribe', name='mass_subscribe'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/delete$', 'list_delete',
-        name='list_delete'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/accept$',
-        'accept_held_message',
-        name='accept_held_message'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/discard$',
-        'discard_held_message',
-        name='discard_held_message'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/defer$',
-        'defer_held_message',
-        name='defer_held_message'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/reject$',
-        'reject_held_message',
-        name='reject_held_message'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/delete$',
+        'list_delete', name='list_delete'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/'
+        'accept$', 'accept_held_message', name='accept_held_message'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/'
+        'discard$', 'discard_held_message', name='discard_held_message'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/'
+        'defer$', 'defer_held_message', name='defer_held_message'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/'
+        'reject$', 'reject_held_message', name='reject_held_message'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages$',
-        'list_held_messages',
-        name='list_held_messages'),
+        'list_held_messages', name='list_held_messages'),
     url(r'^user_settings/$', 'user_settings', kwargs={"tab": "user"},
         name='user_settings'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/settings/(?P<visible_section>[^/]+)?(?:/(?P<visible_option>.*))?$',
-        'list_settings', name='list_settings'),
-    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/settings/(?P<visible_section>[^/]+)?'
+        '(?:/(?P<visible_option>.*))?$', 'list_settings',
+        name='list_settings'),
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
