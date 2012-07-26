@@ -21,8 +21,10 @@ from django.utils import safestring
 from django.forms.forms import BoundField
 from django.forms.util import ErrorList
 
+
 class FieldsetError(Exception):
     pass
+
 
 class FieldsetForm(Form):
     """
@@ -41,14 +43,16 @@ class FieldsetForm(Form):
             self.layout = self.Meta.layout
         else:
             self.layout = [["All"]]
-            self.layout[0][1:]=(self.fields.keys())
-            
+            self.layout[0][1:] = (self.fields.keys())
+
     def as_div(self):
         """Render the form as a set of <div>s."""
         output = ""
         #Adding Errors
-        try: output += str(self.errors["NON_FIELD_ERRORS"])
-        except: pass
+        try:
+            output += str(self.errors["NON_FIELD_ERRORS"])
+        except:
+            pass
         #create the fieldsets
         for index in range(len(self.layout)):
             output += self.create_fieldset(self.layout[index])
@@ -61,9 +65,10 @@ class FieldsetForm(Form):
         it should include.
         """
         # Create the divs in each fieldset by calling create_divs.
-        return u'<fieldset><legend>%s</legend>%s</fieldset>' % (field[0], 
+        return u'<fieldset><legend>%s</legend>%s</fieldset>' % (
+            field[0],
             self.create_divs(field[1:]))
-    
+
     def create_divs(self, fields):
         """Create a <div> for each field."""
         output = ""
@@ -73,17 +78,18 @@ class FieldsetForm(Form):
                 field_instance = self.fields[field]
             except KeyError:
                 # could not create the instance so throw an exception
-                # msg on a separate line since the line got too long 
+                # msg on a separate line since the line got too long
                 # otherwise
                 msg = "Could not resolve form field '%s'." % field
                 raise FieldsetError(msg)
-            # create a bound field containing all the necessary fields 
+            # create a bound field containing all the necessary fields
             # from the form
             bound_field = BoundField(self, field_instance, field)
-            output += '<div class="field %(class)s">%(label)s%(help_text)s%(errors)s%(field)s</div>\n' % \
-                     {'class': bound_field.name, 
-                      'label': bound_field.label, 
-                      'help_text': bound_field.help_text, 
-                      'errors': bound_field.errors, 
-                      'field': unicode(bound_field)}
+            output += '<div class="field %(class)s">%(label)s%(help_text)s%' \
+                      '(errors)s%(field)s</div>\n' % \
+                      {'class': bound_field.name,
+                       'label': bound_field.label,
+                       'help_text': bound_field.help_text,
+                       'errors': bound_field.errors,
+                       'field': unicode(bound_field)}
         return output

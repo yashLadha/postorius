@@ -23,10 +23,12 @@ import tempfile
 import subprocess
 from django.conf import settings
 
+
 class Testobject:
     bindir = None
     vardir = None
     cfgfile = None
+
 
 def setup_mm(testobject):
     os.environ['MAILMAN_TEST_BINDIR'] = settings.MAILMAN_TEST_BINDIR
@@ -37,7 +39,7 @@ def setup_mm(testobject):
     cfgfile = testobject.cfgfile = os.path.join(vardir, 'client_test.cfg')
     with open(cfgfile, 'w') as fp:
         print >> fp, """\
-[mailman] 
+[mailman]
 layout: tmpdir
 [paths.tmpdir]
 var_dir: {vardir}
@@ -69,6 +71,7 @@ start: no
     subprocess.call([mailman, '-C', cfgfile, 'start', '-q'])
     time.sleep(3)
     return testobject
+
 
 def teardown_mm(testobject):
     bindir = testobject.bindir

@@ -33,6 +33,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * added list members view
 * added developer documentation
 * added test helper utils
+* all code now conform to PEP8
 
 
 1.0 alpha 1 -- "Space Farm"
