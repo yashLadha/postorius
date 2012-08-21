@@ -48,6 +48,7 @@ def create_mock_list(properties=None):
     :rtype: MagicMock
     """
     mock_object = MagicMock(name='List')
+    # like in mock_domain, some defaults need to be added...
     if properties is not None:
         for key in properties:
             setattr(mock_object, key, properties[key])
@@ -63,6 +64,7 @@ def create_mock_member(properties=None):
     :rtype: MagicMock
     """
     mock_object = MagicMock(name='Member')
+    # like in mock_domain, some defaults need to be added...
     if properties is not None:
         for key in properties:
             setattr(mock_object, key, properties[key])

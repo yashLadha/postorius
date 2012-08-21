@@ -13,6 +13,9 @@
 
 import sys, os
 
+# add dummy settings environment variable so sphinx can import from Postorius.
+os.environ['DJANGO_SETTINGS_MODULE'] = 'postorius.doc.settings'
+
 #import the source code directory into Python Path for use with Auto Module
 APP_ROOT = os.path.dirname(__file__)
 sys.path.insert(0, os.path.split(APP_ROOT)[0])

@@ -26,7 +26,7 @@
 Domains
 =======
 
-``postorius.tests.utils.create_mock_list`` creates a mock domain object:
+``postorius.tests.utils.create_mock_domain`` creates a mock domain object:
 
     >>> properties = dict(contact_address='postmaster@example.org',
     ...                   description='Example dot Org',

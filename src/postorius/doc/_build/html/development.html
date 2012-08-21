@@ -70,41 +70,9 @@ runner find your tests, make sure to add them to the folder&#8217;s <tt class="d
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="section" id="postorius-imports-in-test-modules">
-<h3><tt class="docutils literal"><span class="pre">postorius.*</span></tt> imports in test modules<a class="headerlink" href="#postorius-imports-in-test-modules" title="Permalink to this headline">¶</a></h3>
-<p>When writing unittests make sure that any <tt class="docutils literal"><span class="pre">postorius.*</span></tt> imports are made
-at the test method level and not at the module level. Here&#8217;s why:</p>
-<p>The Postorius documentation (the one you are reading right now) imports some
-doctest modules from the test package using Sphinx&#8217;s autodoc extension. This is
-a very nice feature, but in this scenario it has the nasty side effect of
-breaking the build process if application code is imported as well (it will
-fail to find an environment variable that Django needs to run). This can be
-easily prevented by avoiding module level imports of postorius code in the test
-modules.</p>
-<p>Good:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">unittest</span>
-<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">patch</span>
-
-
-<span class="k">class</span> <span class="nc">SomeTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">test_some_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">postorius.views</span> <span class="kn">import</span> <span class="n">SomeViewClass</span>
-        <span class="n">foo</span> <span class="o">=</span> <span class="s">&#39;bar&#39;</span>
-</pre></div>
-</div>
-<p>Bad:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">unittest</span>
-<span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">patch</span>
-<span class="kn">from</span> <span class="nn">postorius.views</span> <span class="kn">import</span> <span class="n">SomeViewClass</span>
-
-
-<span class="k">class</span> <span class="nc">SomeTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">test_some_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">foo</span> <span class="o">=</span> <span class="s">&#39;bar&#39;</span>
-</pre></div>
-</div>
+<div class="section" id="running-the-tests">
+<h3>Running the tests<a class="headerlink" href="#running-the-tests" title="Permalink to this headline">¶</a></h3>
+<p>To run the tests go to your project folder and run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">test</span> <span class="pre">postorius</span></tt> from there.</p>
 </div>
 <div class="section" id="mocking">
 <h3>Mocking<a class="headerlink" href="#mocking" title="Permalink to this headline">¶</a></h3>
@@ -122,7 +90,7 @@ objects retreived from mailman.client, like:</p>
 <span id="mocking-mailman-client-objects"></span><h4>Mocking mailman.client objects<a class="headerlink" href="#module-postorius.tests.test_utils" title="Permalink to this headline">¶</a></h4>
 <div class="section" id="domains">
 <h5>Domains<a class="headerlink" href="#domains" title="Permalink to this headline">¶</a></h5>
-<p><tt class="docutils literal"><span class="pre">postorius.tests.utils.create_mock_list</span></tt> creates a mock domain object:</p>
+<p><tt class="docutils literal"><span class="pre">postorius.tests.utils.create_mock_domain</span></tt> creates a mock domain object:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">contact_address</span><span class="o">=</span><span class="s">&#39;postmaster@example.org&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                  <span class="n">description</span><span class="o">=</span><span class="s">&#39;Example dot Org&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                  <span class="n">mail_host</span><span class="o">=</span><span class="s">&#39;example.org&#39;</span><span class="p">,</span>
@@ -192,7 +160,7 @@ objects retreived from mailman.client, like:</p>
   <ul>
 <li><a class="reference internal" href="#">Development</a><ul>
 <li><a class="reference internal" href="#testing">Testing</a><ul>
-<li><a class="reference internal" href="#postorius-imports-in-test-modules"><tt class="docutils literal"><span class="pre">postorius.*</span></tt> imports in test modules</a></li>
+<li><a class="reference internal" href="#running-the-tests">Running the tests</a></li>
 <li><a class="reference internal" href="#mocking">Mocking</a><ul>
 <li><a class="reference internal" href="#module-postorius.tests.test_utils">Mocking mailman.client objects</a><ul>
 <li><a class="reference internal" href="#domains">Domains</a></li>
@@ -250,7 +218,7 @@ objects retreived from mailman.client, like:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, The Free Software Foundation.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>
