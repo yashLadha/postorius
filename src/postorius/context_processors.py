@@ -17,13 +17,6 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 
-
-from django.conf import settings
-from django.utils.translation import gettext as _
-from mailman.client import Client
-from urllib2 import HTTPError
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -36,5 +29,4 @@ def postorius(request):
     else:
         extend_template = "postorius/base.html"
 
-    return {'MAILMAN_THEME': settings.MAILMAN_THEME,
-            'extend_template': extend_template}
+    return {'extend_template': extend_template}
