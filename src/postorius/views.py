@@ -40,9 +40,10 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
 from mailman.client import Client
-from models import (Domain, List, Member, MailmanUser, MailmanApiError,
-                    Mailman404Error)
-from forms import *
+from postorius.models import (Domain, List, Member, MailmanUser,
+                              MailmanApiError, Mailman404Error)
+from postorius.forms import *
+from postorius.auth.decorators import list_owner_required
 from urllib2 import HTTPError
 
 
@@ -101,8 +102,7 @@ class ListMembersView(TemplateView):
     def get_list(self, fqdn_listname):
         return List.objects.get_or_404(fqdn_listname=fqdn_listname)
 
-    @method_decorator(login_required(login_url='/accounts/login/'))
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    @method_decorator(list_owner_required)
     def get(self, request, fqdn_listname):
         return render_to_response('postorius/lists/members.html',
                                   {'list': self.get_list(fqdn_listname)},
@@ -193,7 +193,7 @@ def list_index(request, template='postorius/lists/index.html'):
                                   context_instance=RequestContext(request))
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def list_metrics(request, fqdn_listname=None, option=None,
                  template='postorius/lists/metrics.html'):
     """
@@ -386,8 +386,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
                               context_instance=RequestContext(request))
 
 
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def list_delete(request, fqdn_listname):
     """Deletes a list but asks for confirmation first.
     """
@@ -411,7 +410,7 @@ def list_delete(request, fqdn_listname):
             context_instance=RequestContext(request))
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def list_held_messages(request, fqdn_listname):
     """Shows a list of held messages.
     """
@@ -424,7 +423,7 @@ def list_held_messages(request, fqdn_listname):
                               context_instance=RequestContext(request))
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def accept_held_message(request, fqdn_listname, msg_id):
     """Accepts a held message.
     """
@@ -440,7 +439,7 @@ def accept_held_message(request, fqdn_listname, msg_id):
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def discard_held_message(request, fqdn_listname, msg_id):
     """Accepts a held message.
     """
@@ -456,7 +455,7 @@ def discard_held_message(request, fqdn_listname, msg_id):
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def defer_held_message(request, fqdn_listname, msg_id):
     """Accepts a held message.
     """
@@ -472,7 +471,7 @@ def defer_held_message(request, fqdn_listname, msg_id):
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def reject_held_message(request, fqdn_listname, msg_id):
     """Accepts a held message.
     """
@@ -488,8 +487,7 @@ def reject_held_message(request, fqdn_listname, msg_id):
     return redirect('list_held_messages', the_list.fqdn_listname)
 
 
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def list_settings(request, fqdn_listname=None, visible_section=None,
                   visible_option=None,
                   template='postorius/lists/settings.html'):
@@ -558,8 +556,7 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
                               context_instance=RequestContext(request))
 
 
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
+@list_owner_required
 def mass_subscribe(request, fqdn_listname=None,
                    template='postorius/lists/mass_subscribe.html'):
     """

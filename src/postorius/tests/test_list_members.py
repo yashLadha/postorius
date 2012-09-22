@@ -16,6 +16,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.models import AnonymousUser, User
+from django.core.exceptions import PermissionDenied
 from django.utils import unittest
 from mock import patch
 
@@ -61,20 +62,19 @@ class ListMembersViewTest(unittest.TestCase):
                 '/lists/foolist@example.org/members/')
             # anonymous users should be redirected
             request.user = AnonymousUser()
-            response = ListMembersView.as_view()(request,
-                                                 'foolist@example.org')
-            self.assertEqual(response.status_code, 302)
+            self.assertRaises(PermissionDenied, ListMembersView.as_view(),
+                              request, fqdn_listname='foolist@example.org')
             # logged in users should be redirected
             request.user = User.objects.create_user('les', 'les@primus.org',
                                                     'pwd')
-            response = ListMembersView.as_view()(request,
-                                                 'foolist@example.org')
-            self.assertEqual(response.status_code, 302)
+            self.assertRaises(PermissionDenied, ListMembersView.as_view(),
+                              request, fqdn_listname='foolist@example.org')
             # superusers should get the page
             request.user = User.objects.create_superuser('su', 'su@sodo.org',
                                                          'pwd')
-            response = ListMembersView.as_view()(request,
-                                                 'foolist@example.org')
+            response = ListMembersView.as_view()(
+                request,
+                fqdn_listname='foolist@example.org')
             self.assertEqual(response.status_code, 200)
 
     def tearDown(self):

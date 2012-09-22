@@ -17,9 +17,11 @@
 
 from postorius.tests import test_utils
 from postorius.tests.test_list_members import *
+from postorius.tests.test_auth_decorators import *
 
 __test__ = {
     "Test Utils": test_utils,
     "List members": ListMembersViewTest,
+    "List Owner Required": ListOwnerRequiredTest,
     #"Doctest": tests,
 }

@@ -86,65 +86,8 @@ objects retreived from mailman.client, like:</p>
 <li>Memberships</li>
 <li>Addresses</li>
 </ul>
-<div class="section" id="module-postorius.tests.test_utils">
-<span id="mocking-mailman-client-objects"></span><h4>Mocking mailman.client objects<a class="headerlink" href="#module-postorius.tests.test_utils" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="domains">
-<h5>Domains<a class="headerlink" href="#domains" title="Permalink to this headline">¶</a></h5>
-<p><tt class="docutils literal"><span class="pre">postorius.tests.utils.create_mock_domain</span></tt> creates a mock domain object:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">contact_address</span><span class="o">=</span><span class="s">&#39;postmaster@example.org&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="n">description</span><span class="o">=</span><span class="s">&#39;Example dot Org&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="n">mail_host</span><span class="o">=</span><span class="s">&#39;example.org&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="n">url_host</span><span class="o">=</span><span class="s">&#39;www.example.org&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mock_domain</span> <span class="o">=</span> <span class="n">create_mock_domain</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span>
-<span class="go">&lt;MagicMock name=&#39;Domain&#39; id=&#39;...&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span><span class="o">.</span><span class="n">contact_address</span>
-<span class="go">postmaster@example.org</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span><span class="o">.</span><span class="n">description</span>
-<span class="go">Example dot Org</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span><span class="o">.</span><span class="n">mail_host</span>
-<span class="go">example.org</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span><span class="o">.</span><span class="n">url_host</span>
-<span class="go">www.example.org</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="mailing-lists">
-<h5>Mailing Lists<a class="headerlink" href="#mailing-lists" title="Permalink to this headline">¶</a></h5>
-<p><tt class="docutils literal"><span class="pre">postorius.tests.utils.create_mock_list</span></tt> creates a mock list object:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fqdn_listname</span><span class="o">=</span><span class="s">&#39;testlist@example.org&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="n">mail_host</span><span class="o">=</span><span class="s">&#39;example.org&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="n">list_name</span><span class="o">=</span><span class="s">&#39;testlist&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="n">display_name</span><span class="o">=</span><span class="s">&#39;Test List&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mock_list</span> <span class="o">=</span> <span class="n">create_mock_list</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span>
-<span class="go">&lt;MagicMock name=&#39;List&#39; id=&#39;...&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span><span class="o">.</span><span class="n">fqdn_listname</span>
-<span class="go">testlist@example.org</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span><span class="o">.</span><span class="n">mail_host</span>
-<span class="go">example.org</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span><span class="o">.</span><span class="n">list_name</span>
-<span class="go">testlist</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span><span class="o">.</span><span class="n">display_name</span>
-<span class="go">Test List</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="memberships">
-<h5>Memberships<a class="headerlink" href="#memberships" title="Permalink to this headline">¶</a></h5>
-<p><tt class="docutils literal"><span class="pre">postorius.tests.utils.create_mock_list</span></tt> creates a mock list object:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fqdn_listname</span><span class="o">=</span><span class="s">&#39;testlist@example.org&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                  <span class="n">address</span><span class="o">=</span><span class="s">&#39;les@example.org&#39;</span><span class="p">,)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mock_member</span> <span class="o">=</span> <span class="n">create_mock_member</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_member</span>
-<span class="go">&lt;MagicMock name=&#39;Member&#39; id=&#39;...&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_member</span><span class="o">.</span><span class="n">fqdn_listname</span>
-<span class="go">testlist@example.org</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_member</span><span class="o">.</span><span class="n">address</span>
-<span class="go">les@example.org</span>
-</pre></div>
-</div>
-</div>
+<div class="section" id="mocking-mailman-client-objects">
+<h4>Mocking mailman.client objects<a class="headerlink" href="#mocking-mailman-client-objects" title="Permalink to this headline">¶</a></h4>
 </div>
 </div>
 </div>
@@ -162,12 +105,7 @@ objects retreived from mailman.client, like:</p>
 <li><a class="reference internal" href="#testing">Testing</a><ul>
 <li><a class="reference internal" href="#running-the-tests">Running the tests</a></li>
 <li><a class="reference internal" href="#mocking">Mocking</a><ul>
-<li><a class="reference internal" href="#module-postorius.tests.test_utils">Mocking mailman.client objects</a><ul>
-<li><a class="reference internal" href="#domains">Domains</a></li>
-<li><a class="reference internal" href="#mailing-lists">Mailing Lists</a></li>
-<li><a class="reference internal" href="#memberships">Memberships</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#mocking-mailman-client-objects">Mocking mailman.client objects</a></li>
 </ul>
 </li>
 </ul>
