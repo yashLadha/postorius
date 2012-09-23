@@ -35,7 +35,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * added test helper utils
 * all code now conform to PEP8
 * themes: removed obsolete MAILMAN_THEME settings from templates, contexts, file structure; contributed by Richard Wackerbarth (LP: 1043258)
-* added access control for list owners
+* added access control for list owners and moderators
 
 
 1.0 alpha 1 -- "Space Farm"
