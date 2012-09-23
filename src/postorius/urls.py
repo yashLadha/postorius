@@ -20,7 +20,8 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 from django.conf.urls.static import static
 
-from postorius.views import ListMembersView
+from postorius.views import *
+from postorius.views.generic import *
 
 
 urlpatterns = patterns(
@@ -46,18 +47,18 @@ urlpatterns = patterns(
     url(r'^lists/new/$', 'list_new', name='list_new'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/members/$',
         ListMembersView.as_view(), name='list_members'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/metrics$', 'list_metrics',
-        name='list_metrics'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/$', 'list_summary',
-        name='list_summary'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/metrics$',
+        ListMetricsView.as_view(), name='list_metrics'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/$',
+        ListSummaryView.as_view(), name='list_summary'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/subscribe$',
-        'list_subscribe', name='list_subscribe'),
+        ListSubsribeView.as_view(), name='list_subscribe'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/unsubscribe/(?P<email>[^/]+)$',
-        'list_unsubscribe', name='list_unsubscribe'),
+        ListUnsubscribeView.as_view(), name='list_unsubscribe'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/subscriptions$',
         'list_subscriptions', name='list_subscriptions'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/mass_subscribe/$',
-        'mass_subscribe', name='mass_subscribe'),
+        ListMassSubsribeView.as_view(), name='mass_subscribe'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/delete$',
         'list_delete', name='list_delete'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/held_messages/(?P<msg_id>[^/]+)/'

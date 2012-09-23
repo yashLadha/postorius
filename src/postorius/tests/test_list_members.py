@@ -48,9 +48,24 @@ class ListMembersViewTest(unittest.TestCase):
         view = ListMembersView()
         with patch('mailman.client.Client.get_list') as mock:
             mock.return_value = self.mock_list
-            the_list = view.get_list('foolist@example.org')
+            the_list = view._get_list('foolist@example.org')
             self.assertEqual(the_list.members[0].address, 'les@example.org')
             self.assertEqual(the_list.members[1].address, 'ler@example.com')
+
+    def test_dispatch(self):
+        """Test if list members are retreived correctly."""
+        from postorius.views import ListMembersView
+        # test get_list
+        view = ListMembersView()
+        with patch('mailman.client.Client.get_list') as mock:
+            mock.return_value = self.mock_list
+            the_list = view._get_list('foolist@example.org')
+            request = self.request_factory.get(
+                '/lists/foolist@example.org/members/')
+            request.user = User.objects.create_superuser('sux', 'su@sodo.org',
+                                                         'pwd')
+            view.dispatch(request, fqdn_listname='foolist@example.org')
+            self.assertEqual(self.mock_list, view.mailing_list)
 
     def test_return_code_by_user(self):
         """Test response status code by user status.

@@ -19,7 +19,6 @@
 
 import re
 import sys
-import utils
 import logging
 
 
@@ -37,14 +36,15 @@ from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.views.generic import TemplateView
+from urllib2 import HTTPError
 
 from mailman.client import Client
+from postorius import utils
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
 from postorius.forms import *
 from postorius.auth.decorators import list_owner_required
-from urllib2 import HTTPError
+from postorius.views.generic import MailingListView
 
 
 logger = logging.getLogger(__name__)
@@ -95,18 +95,116 @@ def domain_new(request):
                               context_instance=RequestContext(request))
 
 
-class ListMembersView(TemplateView):
+class ListMembersView(MailingListView):
     """Display all members of a given list.
     """
-
-    def get_list(self, fqdn_listname):
-        return List.objects.get_or_404(fqdn_listname=fqdn_listname)
 
     @method_decorator(list_owner_required)
     def get(self, request, fqdn_listname):
         return render_to_response('postorius/lists/members.html',
-                                  {'list': self.get_list(fqdn_listname)},
+                                  {'list': self.mailing_list},
                                   context_instance=RequestContext(request))
+
+
+class ListMetricsView(MailingListView):
+    """Shows common list metrics.
+    """
+
+    @method_decorator(list_owner_required)
+    def get(self, request, fqdn_listname):
+        return render_to_response('postorius/lists/metrics.html',
+                                  {'list': self.mailing_list},
+                                  context_instance=RequestContext(request))
+        
+
+class ListSummaryView(MailingListView):
+    """Shows common list metrics.
+    """
+
+    def get(self, request, fqdn_listname):
+        user_email = getattr(request.user, 'email', None)
+        return render_to_response(
+            'postorius/lists/summary.html',
+            {'list': self.mailing_list,
+             'subscribe_form': ListSubscribe(initial={'email': user_email})},
+            context_instance=RequestContext(request))
+
+
+class ListSubsribeView(MailingListView):
+    """Subscribe a mailing list."""
+
+    @method_decorator(login_required)
+    def post(self, request, fqdn_listname):
+        try:
+            form = ListSubscribe(request.POST)
+            if form.is_valid():
+                email = request.POST.get('email')
+                self.mailing_list.subscribe(email)
+                messages.success(
+                    request, 'You are subscribed to %s.' %
+                    self.mailing_list.fqdn_listname)
+            else:
+                messages.error(request, 'Something went wrong. '
+                               'Please try again.')
+        except MailmanApiError:
+            return utils.render_api_error(request)
+        except HTTPError, e:
+            messages.error(request, e.msg)
+        return redirect('list_summary', self.mailing_list.fqdn_listname)
+
+
+class ListUnsubscribeView(MailingListView):
+    """Unsubscribe from a mailing list."""
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        email = kwargs['email']
+        try:
+            self.mailing_list.unsubscribe(email)
+            messages.success(request,
+                             '%s has been unsubscribed from this list.' %
+                             email)
+        except MailmanApiError:
+            return utils.render_api_error(request)
+        except ValueError, e:
+            messages.error(request, e)
+        return redirect('list_summary', self.mailing_list.fqdn_listname)
+
+
+class ListMassSubsribeView(MailingListView):
+    """Mass subscription."""
+
+    @method_decorator(list_owner_required)
+    def get(self, request, *args, **kwargs):
+        form = ListMassSubscription()
+        return render_to_response('postorius/lists/mass_subscribe.html',
+                                  {'form': form, 'list': self.mailing_list},
+                                  context_instance=RequestContext(request))
+
+    def post(self, request, *args, **kwargs):
+        form = ListMassSubscription(request.POST)
+        if not form.is_valid():
+            messages.error(request, 'Please fill out the form correctly.')
+        else:
+            emails = request.POST["emails"].splitlines()
+            for email in emails:
+                parts = email.split('@')
+                if len(parts) != 2 or '.' not in parts[1]:
+                    messages.error(request,
+                                   'The email address %s is not valid.' %
+                                   email)
+                else:
+                    try:
+                        self.mailing_list.subscribe(address=email)
+                        messages.success(
+                            request,
+                            'The address %s has been subscribed to %s.' %
+                            (email, self.mailing_list.fqdn_listname))
+                    except MailmanApiError:
+                        return utils.render_api_error(request)
+                    except HTTPError, e:
+                        messages.error(request, e)
+        return redirect('mass_subscribe', self.mailing_list.fqdn_listname)
 
 
 @login_required
@@ -191,99 +289,6 @@ def list_index(request, template='postorius/lists/index.html'):
                                   {'error': error,
                                    'lists': lists},
                                   context_instance=RequestContext(request))
-
-
-@list_owner_required
-def list_metrics(request, fqdn_listname=None, option=None,
-                 template='postorius/lists/metrics.html'):
-    """
-    PUBLIC
-    an entry page for each list which displays additional (non-editable)
-    information about the list such as the date of the last post and the
-    time the last digest is sent.
-    """
-    error = None
-    user_is_subscribed = False
-    if request.method == 'POST':
-        return redirect("list_summary", fqdn_listname=request.POST["list"])
-    else:
-        try:
-            the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
-            try:
-                the_list.get_member(request.user.username)
-                user_is_subscribed = True
-            except:
-                pass  # init
-        except MailmanApiError:
-            return utils.render_api_error(request)
-    return render_to_response(template,
-                              {'list': the_list,
-                               'message': None,
-                               'user_is_subscribed': user_is_subscribed},
-                              context_instance=RequestContext(request))
-
-
-def list_summary(request, fqdn_listname, option=None):
-    """
-    an entry page for each lists which allows some simple tasks per LIST
-    """
-    user_email = getattr(request.user, 'email', None)
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    return render_to_response(
-        'postorius/lists/summary.html',
-        {'list': the_list,
-         'subscribe_form': ListSubscribe(initial={'email': user_email})},
-        context_instance=RequestContext(request))
-
-
-@login_required
-def list_subscribe(request, fqdn_listname):
-    """Subscribe to a list.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
-        if request.method == 'POST':
-            form = ListSubscribe(request.POST)
-            if form.is_valid():
-                email = request.POST.get('email')
-                display_name = request.POST.get('display_name')
-                the_list.subscribe(email, display_name)
-                messages.success(
-                    request,
-                    _('You are subscribed to %s.' % the_list.fqdn_listname))
-                return redirect('list_summary', the_list.fqdn_listname)
-            else:
-                logger.debug(form)
-        else:
-            form = ListSubscribe()
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError, e:
-        messages.error(request, e.msg)
-        return redirect('list_summary', the_list.fqdn_listname)
-    return render_to_response('postorius/lists/subscribe.html',
-                              {'form': form, 'list': the_list},
-                              context_instance=RequestContext(request))
-
-
-@login_required
-def list_unsubscribe(request, fqdn_listname, email):
-    """Unsubscribe from a list.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    try:
-        the_list.unsubscribe(email)
-        messages.success(request, '%s has been unsubscribed from this list.' %
-                         email)
-    except ValueError, e:
-        messages.error(request, e)
-    return redirect('list_summary', the_list.fqdn_listname)
 
 
 @login_required
@@ -553,46 +558,6 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
                                'list': the_list,
                                'visible_option': visible_option,
                                'visible_section': visible_section},
-                              context_instance=RequestContext(request))
-
-
-@list_owner_required
-def mass_subscribe(request, fqdn_listname=None,
-                   template='postorius/lists/mass_subscribe.html'):
-    """
-    Mass subscribe users to a list.
-    This functions is part of the settings for a list and requires the
-    user to be logged in to perform the action.
-    """
-    message = ""
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    if request.method == 'POST':
-        form = ListMassSubscription(request.POST)
-        if form.is_valid():
-            emails = request.POST["emails"].splitlines()
-            for email in emails:
-                # very simple test if email address is valid
-                parts = email.split('@')
-                if len(parts) == 2 and '.' in parts[1]:
-                    try:
-                        the_list.subscribe(address=email, display_name="")
-                        message = "The mass subscription was successful."
-                    except HTTPError, e:
-                        messages.error(request, e)
-                        return redirect('mass_subscribe',
-                                        the_list.fqdn_listname)
-                else:
-                    message = "Please enter valid email addresses."
-            return redirect('mass_subscribe', the_list.fqdn_listname)
-    else:
-        form = ListMassSubscription()
-    return render_to_response(template,
-                              {'form': form,
-                               'message': message,
-                               'list': the_list},
                               context_instance=RequestContext(request))
 
 
