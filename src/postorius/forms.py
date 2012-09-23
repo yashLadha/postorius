@@ -220,7 +220,8 @@ class ListSettings(FieldsetForm):
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
-        label=_('Advertise the existance of this list?'))
+        label=_('Advertise the existance of this list?'),
+        help_text=('Choose whether to include this list on the list of all lists'))
     filter_content = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
