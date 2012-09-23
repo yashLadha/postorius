@@ -37,7 +37,28 @@ def list_owner_required(fn):
         if user.is_superuser:
             return fn(*args, **kwargs)
         mlist = List.objects.get_or_404(fqdn_listname=fqdn_listname)
-        if user.email not in mlist.members:
+        if user.email not in mlist.owners:
+            raise PermissionDenied
+        else:
+            return fn(*args, **kwargs)
+    return wrapper
+
+
+def list_moderator_required(fn):
+    """Check if the logged in user is a moderator of the given list.
+    Assumes that the request object is the first arg and that fqdn_listname
+    is present in kwargs.
+    """
+    def wrapper(*args, **kwargs):
+        user = args[0].user
+        fqdn_listname = kwargs['fqdn_listname']
+        if not user.is_authenticated():
+            raise PermissionDenied
+        if user.is_superuser:
+            return fn(*args, **kwargs)
+        mlist = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        if user.email not in mlist.moderators and \
+                user.email not in mlist.owners:
             raise PermissionDenied
         else:
             return fn(*args, **kwargs)
