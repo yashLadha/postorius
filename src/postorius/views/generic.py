@@ -23,6 +23,7 @@ from django.views.generic import TemplateView
 
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
+from postorius import utils
 
 
 class MailingListView(TemplateView):
