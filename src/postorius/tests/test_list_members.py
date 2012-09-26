@@ -46,7 +46,7 @@ class ListMembersViewTest(unittest.TestCase):
         from postorius.views import ListMembersView
         # test get_list
         view = ListMembersView()
-        with patch('mailman.client.Client.get_list') as mock:
+        with patch('mailmanclient.Client.get_list') as mock:
             mock.return_value = self.mock_list
             the_list = view._get_list('foolist@example.org')
             self.assertEqual(the_list.members[0].address, 'les@example.org')
@@ -57,7 +57,7 @@ class ListMembersViewTest(unittest.TestCase):
         from postorius.views import ListMembersView
         # test get_list
         view = ListMembersView()
-        with patch('mailman.client.Client.get_list') as mock:
+        with patch('mailmanclient.Client.get_list') as mock:
             mock.return_value = self.mock_list
             the_list = view._get_list('foolist@example.org')
             request = self.request_factory.get(
@@ -71,7 +71,7 @@ class ListMembersViewTest(unittest.TestCase):
         """Test response status code by user status.
         """
         from postorius.views import ListMembersView
-        with patch('mailman.client.Client.get_list') as mock:
+        with patch('mailmanclient.Client.get_list') as mock:
             mock.return_value = self.mock_list
             request = self.request_factory.get(
                 '/lists/foolist@example.org/members/')

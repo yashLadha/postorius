@@ -21,7 +21,7 @@ import logging
 from django.conf import settings
 from django.db import models
 from django.http import Http404
-from mailman.client import Client, MailmanConnectionError
+from mailmanclient import Client, MailmanConnectionError
 from urllib2 import HTTPError
 
 

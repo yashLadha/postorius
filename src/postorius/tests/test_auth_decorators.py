@@ -24,7 +24,7 @@ from postorius.auth.decorators import (list_owner_required,
                                        list_moderator_required)
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
-from mailman.client import Client
+from mailmanclient import Client
 
 
 @list_owner_required
