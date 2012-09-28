@@ -1,3 +1,4 @@
+{% load url from future %}
 {% load i18n %}
 
 {% block menu_general %}
@@ -5,7 +6,7 @@
     <div id="menu_general"><ul>
     
         <li {% if selected == "notifications" %}id="selected"{% endif %}>
-            <a href="{% url domains %}">
+            <a href="{% url 'domains' %}">
                 {% trans "Notifications" %} Link:TODO
             </a>
             <div><ul>
@@ -22,7 +23,7 @@
             </ul></div>
         </li>
         <li {% if selected == "formatting" %}id="selected"{% endif %}>
-            <a href="{% url list_new %}">
+            <a href="{% url 'list_new' %}">
                 {% trans "Formatting" %} Link:TODO
             </a>
             <div><ul>
@@ -44,17 +45,17 @@
             </ul></div>            
         </li>
         <li {% if selected == "gateways" %}id="selected"{% endif %}>
-            <a href="{% comment %}{% url list_delete list.fqdn_listname %}TODO add List{% endcomment %}">
+            <a href="{% comment %}{% url 'list_delete' list.fqdn_listname %}TODO add List{% endcomment %}">
                 {% trans "Gateways" %} Link:TODO
             </a>
         </li>
         <li{% if selected == "language" %}id="selected"{% endif %}>
-            <a href="{% comment %}{% url list_settings list.fqdn_listname %}TODO add List{% endcomment %}">
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
                 {% trans "Language" %} Link:TODO
             </a>
         </li>
         <li{% if selected == "subscription_rules" %}id="selected"{% endif %}>
-            <a href="{% comment %}{% url list_settings list.fqdn_listname %}TODO add List{% endcomment %}">
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
                 {% trans "Subscription rules" %} Link:TODO
             </a>
             <div><ul>
@@ -76,12 +77,12 @@
             </ul></div>     
         </li>
         <li{% if selected == "bounces" %}id="selected"{% endif %}>
-            <a href="{% comment %}{% url list_settings list.fqdn_listname %}TODO add List{% endcomment %}">
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
                 {% trans "Bounces" %} Link:TODO
             </a>
         </li>
         <li{% if selected == "digest" %}id="selected"{% endif %}>
-            <a href="{% comment %}{% url list_settings list.fqdn_listname %}TODO add List{% endcomment %}">
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
                 {% trans "Digest" %} Link:TODO
             </a>
             <div><ul>
@@ -103,7 +104,7 @@
             </ul> </div>               
         </li>  
         <li{% if selected == "description" %}id="selected"{% endif %}>
-            <a href="{% comment %}{% url list_settings list.fqdn_listname %}TODO add List{% endcomment %}">
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
                 {% trans "List Description" %} Link:TODO
             </a>
         </li>              

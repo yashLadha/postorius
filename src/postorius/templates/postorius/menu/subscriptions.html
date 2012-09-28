@@ -1,8 +1,9 @@
+{% load url from future %}
 {% load i18n %}
 
 {% block menu_subscriptions %}
     {% if fqdn_listname %}
-    <a href="{% url list_subscriptions fqdn_listname  %}">{% trans "Subscriptions" %}</a>
+    <a href="{% url 'list_subscriptions' fqdn_listname  %}">{% trans "Subscriptions" %}</a>
     <div><ul class="menu">
          <li{% if selected == "description" %}id="selected"{% endif %}>
             <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
@@ -10,7 +11,7 @@
             </a>
          </li>
          <li{% if selected == "subscribe" %}id="selected"{% endif %}>
-            <a href="{% url list_subscriptions fqdn_listname  %}">
+            <a href="{% url 'list_subscriptions' fqdn_listname  %}">
                 {% trans "Subscribe" %}
             </a>
             <div><ul class="menu">
@@ -25,14 +26,14 @@
                     </a>
                 </li>   
                 <li{% if selected == "mass_subscribe" %}id="selected"{% endif %}>
-                    <a href="{% comment %}{% url mass_subscribe fqdn_listname=fqdn_listname %}TODO add List{% endcomment %}">
+                    <a href="{% comment %}{% url 'mass_subscribe' fqdn_listname=fqdn_listname %}TODO add List{% endcomment %}">
                         {% trans "Mass subscribe" %} 
                     </a>
                 </li>                   
             </ul></div>
         </li>  
         <li{% if selected == "remove" %}id="selected"{% endif %}>
-            <a href="{% url list_subscriptions fqdn_listname %}">
+            <a href="{% url 'list_subscriptions' fqdn_listname %}">
                 {% trans "Unsubscribe" %}
             </a>
             <div><ul class="menu">

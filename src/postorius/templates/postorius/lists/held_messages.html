@@ -1,4 +1,5 @@
 {% extends "postorius/base.html" %}
+{% load url from future %}
 {% load i18n %}
 
 {% block body_class %}list_summary{% endblock %}
@@ -25,10 +26,10 @@
     			<td>{{ msg.reason }}</td>
     			<td>{{ msg.hold_date }}</td>
                 <td class="mm_action">
-                    <a href="{% url accept_held_message list.fqdn_listname msg.id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
-                    <a href="{% url defer_held_message list.fqdn_listname msg.id %}" class="btn btn-mini btn-warning">{% trans 'Defer' %}</a>
-                    <a href="{% url reject_held_message list.fqdn_listname msg.id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
-                    <a href="{% url discard_held_message list.fqdn_listname msg.id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
+                    <a href="{% url 'accept_held_message' list.fqdn_listname msg.id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
+                    <a href="{% url 'defer_held_message' list.fqdn_listname msg.id %}" class="btn btn-mini btn-warning">{% trans 'Defer' %}</a>
+                    <a href="{% url 'reject_held_message' list.fqdn_listname msg.id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
+                    <a href="{% url 'discard_held_message' list.fqdn_listname msg.id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
                 </td>
                 </td>
     		</tr>

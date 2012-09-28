@@ -1,10 +1,11 @@
 {% extends "postorius/base.html" %}
+{% load url from future %}
 {% load i18n %}
 
 {% block main %}
     {% if user.is_superuser %}
         <ul class="mm_nav">
-            <li class="mm_new_list"><a class="btn btn-mini btn-success" href="{% url list_new %}">{% trans "New List" %}</a></li>
+            <li class="mm_new_list"><a class="btn btn-mini btn-success" href="{% url 'list_new' %}">{% trans "New List" %}</a></li>
         </ul>    
     {% endif %}
     <h1>{% trans 'Lists' %}</h1>
@@ -21,7 +22,7 @@
             {% for list in lists %}
     		<tr>
     			<td>
-                    <a href="{% url list_summary fqdn_listname=list.fqdn_listname %}">{{ list.display_name }}</a>
+                    <a href="{% url 'list_summary' fqdn_listname=list.fqdn_listname %}">{{ list.display_name }}</a>
                 </td>
     			<td>{{ list.fqdn_listname }}</td>
     			<td>{{ list.settings.description }}</td>
