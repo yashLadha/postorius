@@ -78,14 +78,45 @@ views/
     views.py            # View classes and functions for all views connected
                         # in urls.py
     generic.py          # Generic class-based views; Currently holds a
-                        # class for view based on a single mailing list</pre>
+                        # class for views based on a single mailing list</pre>
 </div>
+</div>
+<div class="section" id="writing-view-code">
+<h2>Writing View Code<a class="headerlink" href="#writing-view-code" title="Permalink to this headline">¶</a></h2>
+<p>When the work on Postorius was started, the standard way to write view code in
+Django was to write a single function for each different view. Since then
+Django has introduced so-called &#8216;class-based views&#8217; which make it much easier
+to reuse view functionality. While using simple functions is not discuraged, it
+makes sense to check if using a class-based approach could make sense.</p>
+<p>Check Postorius&#8217; <tt class="docutils literal"><span class="pre">views/views.py</span></tt> and <tt class="docutils literal"><span class="pre">views/generic.py</span></tt> for examples!</p>
 </div>
 <div class="section" id="authentication-authorization">
 <h2>Authentication/Authorization<a class="headerlink" href="#authentication-authorization" title="Permalink to this headline">¶</a></h2>
+<p>Three of Django&#8217;s default User roles are relvant for Postorius:</p>
+<ul class="simple">
+<li>Superuser: Can do everything.</li>
+<li>AnonymousUser: Can view list index and info pages.</li>
+<li>Authenticated users: Can view list index and info pages. Can (un)subscribe
+from lists.</li>
+</ul>
+<p>Apart from these default roles, there are two others relevant in Postorius:</p>
+<ul class="simple">
+<li>List owners: Can change list settings, moderate messages and delete their
+lists.</li>
+<li>List moderators: Can moderate messages.</li>
+</ul>
+<p>There are a number of decorators to protect views from unauthorized users.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&#64;user_passes_test(lambda</span> <span class="pre">u:</span> <span class="pre">u.is_superuser)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">&#64;login_required</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">&#64;list_owner_required</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">&#64;list_moderator_required</span></tt></li>
+</ul>
+<p>Check out views/views.py for examples!</p>
 </div>
 <div class="section" id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>Currently only some of the Postorius code is covered by a test. We should change that!</p>
 <p>All test modules reside in the <tt class="docutils literal"><span class="pre">postorius/src/postorius/tests</span></tt> directory
 and this is where you should put your own tests, too. To make the django test
 runner find your tests, make sure to add them to the folder&#8217;s <tt class="docutils literal"><span class="pre">__init__.py</span></tt>:</p>
@@ -104,22 +135,90 @@ runner find your tests, make sure to add them to the folder&#8217;s <tt class="d
 </div>
 <div class="section" id="running-the-tests">
 <h3>Running the tests<a class="headerlink" href="#running-the-tests" title="Permalink to this headline">¶</a></h3>
-<p>To run the tests go to your project folder and run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">test</span> <span class="pre">postorius</span></tt> from there.</p>
+<p>To run the tests go to your project folder and run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">test</span>
+<span class="pre">postorius</span></tt> from there.</p>
 </div>
-<div class="section" id="mocking">
-<h3>Mocking<a class="headerlink" href="#mocking" title="Permalink to this headline">¶</a></h3>
-<p>Postorius uses Michael Foord&#8217;s <tt class="docutils literal"><span class="pre">mock</span></tt> library for mocking. There are some
-shortcuts you can use to quickly create mock objects that behave a little bit like
-objects retreived from mailman.client, like:</p>
-<ul class="simple">
-<li>Domains</li>
-<li>Mailing Lists</li>
-<li>Users</li>
-<li>Memberships</li>
-<li>Addresses</li>
-</ul>
+<div class="section" id="testing-mailman-client-results">
+<h3>Testing mailman.client results<a class="headerlink" href="#testing-mailman-client-results" title="Permalink to this headline">¶</a></h3>
+<p>Most of Postorius&#8217; code involves some results from calls to the mailman.client
+library. mailman.client is itself covered by tests, so Postorius&#8217; own tests
+don&#8217;t need to check if mailman.client returns correct results. Instead we can
+just mock them! This has the big advantage that you can run the test suite
+without having to worry about the state of the local Mailman database. It also
+makes the tests run faster, because we spare ourselves the HTTP calls to the
+local Mailman REST API.</p>
+<p>This approach has the obvious downside that the Postorius tests will not
+recognize any changes to the Mailman API. So at some point there should be some
+separate integration tests to test the whole chain. But let&#8217;s not worry about
+that for now.</p>
+</div>
 <div class="section" id="mocking-mailman-client-objects">
-<h4>Mocking mailman.client objects<a class="headerlink" href="#mocking-mailman-client-objects" title="Permalink to this headline">¶</a></h4>
+<h3>Mocking mailman.client objects<a class="headerlink" href="#mocking-mailman-client-objects" title="Permalink to this headline">¶</a></h3>
+<p>Postorius uses Michael Foord&#8217;s <tt class="docutils literal"><span class="pre">mock</span></tt> library for mocking. There are some
+shortcuts you can use to quickly create mock objects that behave a little bit
+like objects retreived from mailman.client, like:</p>
+<ul class="simple">
+<li>create_mock_domain</li>
+<li>create_mock_list</li>
+<li>create_mock_member</li>
+</ul>
+<p>These <tt class="docutils literal"><span class="pre">create_mock_*</span></tt> functions are very simple tools that return MagigMock objects with the properties passed to them in a dictionary. They also set some defaults for properties that you didn&#8217;t pass to its <tt class="docutils literal"><span class="pre">create_mock_*</span></tt> function. For instance, a mock list created with <tt class="docutils literal"><span class="pre">create_mock_list()</span></tt> will always have <tt class="docutils literal"><span class="pre">members</span></tt>, <tt class="docutils literal"><span class="pre">moderators</span></tt> and <tt class="docutils literal"><span class="pre">owners</span></tt> properties.</p>
+<span class="target" id="module-postorius.tests.test_utils"></span><div class="section" id="domains">
+<h4>Domains<a class="headerlink" href="#domains" title="Permalink to this headline">¶</a></h4>
+<p><tt class="docutils literal"><span class="pre">postorius.tests.utils.create_mock_domain</span></tt> creates a mock domain object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">contact_address</span><span class="o">=</span><span class="s">&#39;postmaster@example.org&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">description</span><span class="o">=</span><span class="s">&#39;Example dot Org&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">mail_host</span><span class="o">=</span><span class="s">&#39;example.org&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">url_host</span><span class="o">=</span><span class="s">&#39;www.example.org&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mock_domain</span> <span class="o">=</span> <span class="n">create_mock_domain</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span>
+<span class="go">&lt;MagicMock name=&#39;Domain&#39; id=&#39;...&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span><span class="o">.</span><span class="n">contact_address</span>
+<span class="go">postmaster@example.org</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span><span class="o">.</span><span class="n">description</span>
+<span class="go">Example dot Org</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span><span class="o">.</span><span class="n">mail_host</span>
+<span class="go">example.org</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_domain</span><span class="o">.</span><span class="n">url_host</span>
+<span class="go">www.example.org</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mailing-lists">
+<h4>Mailing Lists<a class="headerlink" href="#mailing-lists" title="Permalink to this headline">¶</a></h4>
+<p><tt class="docutils literal"><span class="pre">postorius.tests.utils.create_mock_list</span></tt> creates a mock list object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fqdn_listname</span><span class="o">=</span><span class="s">&#39;testlist@example.org&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">mail_host</span><span class="o">=</span><span class="s">&#39;example.org&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">list_name</span><span class="o">=</span><span class="s">&#39;testlist&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">display_name</span><span class="o">=</span><span class="s">&#39;Test List&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mock_list</span> <span class="o">=</span> <span class="n">create_mock_list</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span>
+<span class="go">&lt;MagicMock name=&#39;List&#39; id=&#39;...&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span><span class="o">.</span><span class="n">fqdn_listname</span>
+<span class="go">testlist@example.org</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span><span class="o">.</span><span class="n">mail_host</span>
+<span class="go">example.org</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span><span class="o">.</span><span class="n">list_name</span>
+<span class="go">testlist</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_list</span><span class="o">.</span><span class="n">display_name</span>
+<span class="go">Test List</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="memberships">
+<h4>Memberships<a class="headerlink" href="#memberships" title="Permalink to this headline">¶</a></h4>
+<p><tt class="docutils literal"><span class="pre">postorius.tests.utils.create_mock_list</span></tt> creates a mock list object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fqdn_listname</span><span class="o">=</span><span class="s">&#39;testlist@example.org&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">address</span><span class="o">=</span><span class="s">&#39;les@example.org&#39;</span><span class="p">,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mock_member</span> <span class="o">=</span> <span class="n">create_mock_member</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_member</span>
+<span class="go">&lt;MagicMock name=&#39;Member&#39; id=&#39;...&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_member</span><span class="o">.</span><span class="n">fqdn_listname</span>
+<span class="go">testlist@example.org</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mock_member</span><span class="o">.</span><span class="n">address</span>
+<span class="go">les@example.org</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -135,11 +234,15 @@ objects retreived from mailman.client, like:</p>
   <ul>
 <li><a class="reference internal" href="#">Development</a><ul>
 <li><a class="reference internal" href="#directory-layout">Directory layout</a></li>
+<li><a class="reference internal" href="#writing-view-code">Writing View Code</a></li>
 <li><a class="reference internal" href="#authentication-authorization">Authentication/Authorization</a></li>
 <li><a class="reference internal" href="#testing">Testing</a><ul>
 <li><a class="reference internal" href="#running-the-tests">Running the tests</a></li>
-<li><a class="reference internal" href="#mocking">Mocking</a><ul>
-<li><a class="reference internal" href="#mocking-mailman-client-objects">Mocking mailman.client objects</a></li>
+<li><a class="reference internal" href="#testing-mailman-client-results">Testing mailman.client results</a></li>
+<li><a class="reference internal" href="#mocking-mailman-client-objects">Mocking mailman.client objects</a><ul>
+<li><a class="reference internal" href="#domains">Domains</a></li>
+<li><a class="reference internal" href="#mailing-lists">Mailing Lists</a></li>
+<li><a class="reference internal" href="#memberships">Memberships</a></li>
 </ul>
 </li>
 </ul>

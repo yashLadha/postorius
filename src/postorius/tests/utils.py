@@ -48,6 +48,9 @@ def create_mock_list(properties=None):
     :rtype: MagicMock
     """
     mock_object = MagicMock(name='List')
+    mock_object.members = []
+    mock_object.moderators = []
+    mock_object.owners = []
     # like in mock_domain, some defaults need to be added...
     if properties is not None:
         for key in properties:
