@@ -3,6 +3,45 @@ Development
 ===========
 
 
+This is a short guide to help you get started with Postorius development.
+
+
+Directory layout
+================
+
+Postorius is a Django application, so if you have developed with Django before,
+the file structure probably looks familiar. These are the basics:
+
+::
+
+    __init__.py
+    auth/                   # Custom authorization code (List owners and
+                            # moderators)
+    context_processors.py   # Some variables available in all templates
+    doc/                    # Sphinx documentation
+    fieldset_forms.py       # A custom form class to build html forms with
+                            # fieldsets
+    forms.py                # All kinds of classes to build and validate forms
+    management/             # Commands to use with Django's manage.py script
+    models.py               # Code to connect to mailman.client and provide
+                            # a Django-style model API for lists, mm-users and 
+                            # domains
+    static/                 # Static files (CSS, JS, images)
+    templates/              # HTML Templates
+    tests/                  # Postorius test files
+    urls.py                 # URL routes
+    utils.py                # Some handy utilities
+    views/                  
+        views.py            # View classes and functions for all views connected
+                            # in urls.py
+        generic.py          # Generic class-based views; Currently holds a 
+                            # class for view based on a single mailing list
+
+
+Authentication/Authorization
+============================
+
+
 Testing
 =======
 

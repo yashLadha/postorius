@@ -52,6 +52,38 @@
             
   <div class="section" id="development">
 <h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
+<p>This is a short guide to help you get started with Postorius development.</p>
+<div class="section" id="directory-layout">
+<h2>Directory layout<a class="headerlink" href="#directory-layout" title="Permalink to this headline">¶</a></h2>
+<p>Postorius is a Django application, so if you have developed with Django before,
+the file structure probably looks familiar. These are the basics:</p>
+<div class="highlight-python"><pre>__init__.py
+auth/                   # Custom authorization code (List owners and
+                        # moderators)
+context_processors.py   # Some variables available in all templates
+doc/                    # Sphinx documentation
+fieldset_forms.py       # A custom form class to build html forms with
+                        # fieldsets
+forms.py                # All kinds of classes to build and validate forms
+management/             # Commands to use with Django's manage.py script
+models.py               # Code to connect to mailman.client and provide
+                        # a Django-style model API for lists, mm-users and
+                        # domains
+static/                 # Static files (CSS, JS, images)
+templates/              # HTML Templates
+tests/                  # Postorius test files
+urls.py                 # URL routes
+utils.py                # Some handy utilities
+views/
+    views.py            # View classes and functions for all views connected
+                        # in urls.py
+    generic.py          # Generic class-based views; Currently holds a
+                        # class for view based on a single mailing list</pre>
+</div>
+</div>
+<div class="section" id="authentication-authorization">
+<h2>Authentication/Authorization<a class="headerlink" href="#authentication-authorization" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
 <p>All test modules reside in the <tt class="docutils literal"><span class="pre">postorius/src/postorius/tests</span></tt> directory
@@ -102,6 +134,8 @@ objects retreived from mailman.client, like:</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Development</a><ul>
+<li><a class="reference internal" href="#directory-layout">Directory layout</a></li>
+<li><a class="reference internal" href="#authentication-authorization">Authentication/Authorization</a></li>
 <li><a class="reference internal" href="#testing">Testing</a><ul>
 <li><a class="reference internal" href="#running-the-tests">Running the tests</a></li>
 <li><a class="reference internal" href="#mocking">Mocking</a><ul>
