@@ -114,6 +114,29 @@ lists.</li>
 </ul>
 <p>Check out views/views.py for examples!</p>
 </div>
+<div class="section" id="accessing-the-mailman-api">
+<h2>Accessing the Mailman API<a class="headerlink" href="#accessing-the-mailman-api" title="Permalink to this headline">¶</a></h2>
+<p>Postorius uses mailman.client to connect to Mailman&#8217;s REST API. In order to
+directly use the client, <tt class="docutils literal"><span class="pre">cd</span></tt> to your project folder and execute
+<tt class="docutils literal"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">mmclient</span></tt>. This will open a python shell (IPython, if
+that&#8217;s available) and provide you with a client object connected to to your
+local Mailman API server (it uses the credentials from your settings.py).</p>
+<p>A quick example:</p>
+<div class="highlight-python"><pre>$ python manage.py mmclient
+
+&gt;&gt;&gt; client
+&lt;Client (user:pwd) http://localhost:8001/3.0/&gt;
+
+&gt;&gt;&gt; print client.system['mailman_version']
+GNU Mailman 3.0.0b2+ (Here Again)
+
+&gt;&gt;&gt; mailman_dev = client.get_list('mailman-developers@python.org')
+&gt;&gt;&gt; print mailman_dev settings
+{u'owner_address': u'mailman-developers@python.org',
+ u'default_nonmember_action': u'hold', ...}</pre>
+</div>
+<p>For detailed information how to use mailman.client, check out its <a class="reference external" href="http://bazaar.launchpad.net/~mailman-coders/mailman.client/trunk/view/head:/src/mailmanclient/docs/using.txt">documentation</a>.</p>
+</div>
 <div class="section" id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
 <p>Currently only some of the Postorius code is covered by a test. We should change that!</p>
@@ -236,6 +259,7 @@ like objects retreived from mailman.client, like:</p>
 <li><a class="reference internal" href="#directory-layout">Directory layout</a></li>
 <li><a class="reference internal" href="#writing-view-code">Writing View Code</a></li>
 <li><a class="reference internal" href="#authentication-authorization">Authentication/Authorization</a></li>
+<li><a class="reference internal" href="#accessing-the-mailman-api">Accessing the Mailman API</a></li>
 <li><a class="reference internal" href="#testing">Testing</a><ul>
 <li><a class="reference internal" href="#running-the-tests">Running the tests</a></li>
 <li><a class="reference internal" href="#testing-mailman-client-results">Testing mailman.client results</a></li>

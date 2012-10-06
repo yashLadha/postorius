@@ -75,6 +75,37 @@ There are a number of decorators to protect views from unauthorized users.
 Check out views/views.py for examples!
 
 
+Accessing the Mailman API
+=========================
+
+Postorius uses mailman.client to connect to Mailman's REST API. In order to 
+directly use the client, ``cd`` to your project folder and execute 
+``python manage.py mmclient``. This will open a python shell (IPython, if
+that's available) and provide you with a client object connected to to your
+local Mailman API server (it uses the credentials from your settings.py).
+
+A quick example:
+
+::
+
+    $ python manage.py mmclient
+
+    >>> client
+    <Client (user:pwd) http://localhost:8001/3.0/>
+
+    >>> print client.system['mailman_version']
+    GNU Mailman 3.0.0b2+ (Here Again)
+
+    >>> mailman_dev = client.get_list('mailman-developers@python.org')
+    >>> print mailman_dev settings
+    {u'owner_address': u'mailman-developers@python.org', 
+     u'default_nonmember_action': u'hold', ...}
+
+For detailed information how to use mailman.client, check out its documentation_.
+
+.. _documentation: http://bazaar.launchpad.net/~mailman-coders/mailman.client/trunk/view/head:/src/mailmanclient/docs/using.txt
+
+
 Testing
 =======
 
