@@ -37,6 +37,31 @@ the file structure probably looks familiar. These are the basics:
                             # class for views based on a single mailing list
 
 
+Development Workflow
+====================
+
+The source code is hosted on Launchpad_, which also means that we are using
+Bazaar for version control.
+
+.. _Launchpad: https://launchpad.net
+
+Changes are usually not made directly in the project's trunk branch, but in 
+feature-related personal branches, which get reviewed and then merged into
+the trunk. 
+
+The ideal workflow would be like this:
+
+1. File a bug to suggest a new feature or report a bug (or just pick one of 
+   the existing bugs).
+2. Create a new branch with your code changes.
+3. Make a "merge proposal" to get your code reviewed and merged. 
+
+Launchpad has a nice tour_ which describes all this in detail. 
+
+.. _tour: https://launchpad.net/+tour/index
+
+
+
 Writing View Code
 =================
 
