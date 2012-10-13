@@ -26,7 +26,7 @@ from postorius.views.generic import *
 
 urlpatterns = patterns(
     'postorius.views',
-    (r'^$', 'list_index'),
+    (r'^$', 'list_index'), 
     # /account/
     url(r'^accounts/login/$', 'user_login', name='user_login'),
     url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
@@ -76,4 +76,9 @@ urlpatterns = patterns(
     url(r'^lists/(?P<fqdn_listname>[^/]+)/settings/(?P<visible_section>[^/]+)?'
         '(?:/(?P<visible_option>.*))?$', 'list_settings',
         name='list_settings'),
+    # /users/
+    url(r'^users/$', 'user_index', name='user_index'), 
+    url(r'^users/new/$', 'user_new', name='user_new'),
+    url(r'^users/(?P<user_id>[^/]+)/$',
+        UserSummaryView.as_view(), name='user_summary'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
