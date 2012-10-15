@@ -14,7 +14,7 @@
     {% if visible_section %}
 
         <table class="well">
-        <form class="well" action="{% url list_settings fqdn_listname=list.fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings"> {% csrf_token %}
+        <form class="well list_settings" action="{% url list_settings fqdn_listname=list.fqdn_listname visible_section=visible_section visible_option=visible_option %}" method="post"> {% csrf_token %}
         {% for field in form %}
             <tr><td>
                 {{ field.errors }}

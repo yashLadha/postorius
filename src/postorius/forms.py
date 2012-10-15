@@ -184,9 +184,9 @@ class ListSettings(FieldsetForm):
         required=False,
         label= _('Include RFC2369 headers'))
     autorespond_choices = (
-        ("none", _("No automatic response")),
+        ("respond_and_continue", _("Respond and continue processing")),
         ("respond_and_discard", _("Respond and discard message")),
-        ("respond_and_continue", _("Respond and continue processing")))
+        ("none", _("No automatic response")))
     autorespond_owner = forms.ChoiceField(
         choices=autorespond_choices,
         widget=forms.RadioSelect,
@@ -263,6 +263,7 @@ class ListSettings(FieldsetForm):
         choices=action_choices)
     description = forms.CharField(
         label=_('Description'),
+        help_text=('This description is used when the mailing list is listed with other mailing lists, or in headers, and so forth. It should be as succinct as you can get it, while still identifying what the list is.'),
         widget=forms.Textarea())
     digest_size_threshold = forms.DecimalField(
         label=_('Digest size threshold'),
@@ -282,7 +283,8 @@ class ListSettings(FieldsetForm):
         label=_('Mail Host'),
         error_messages={'required': _('Please a domain name'),
                         'invalid': _('Please enter a valid domain name.')},
-        required=True)
+        required=True,
+        help_text="The \"host_name\" is the preferred name for email to mailman-related addresses on this host, and generally should be the mail host's exchanger address, if any. This setting can be useful for selecting among alternative names of a host that has multiple addresses.")
     next_digest_number = forms.IntegerField(
         label=_('Next digest number'),
         error_messages={
@@ -306,6 +308,7 @@ class ListSettings(FieldsetForm):
     )
     display_name = forms.CharField(
         label=_('Display name'),
+        help_text= ('Display name is the name shown in the web interface.')
     )
     reply_goes_to_list = forms.ChoiceField(
         label=_('Reply goes to list'),
@@ -339,7 +342,7 @@ class ListSettings(FieldsetForm):
     admin_notify_mchanges = forms.BooleanField(
         widget=forms.RadioSelect(choices=choices),
         required=False,
-        label=_('Admin notify mchanges'))
+        label=_('Admin notify changes'))
     administrivia = forms.BooleanField(
         widget=forms.RadioSelect(choices=choices),
         required=False,
@@ -476,6 +479,8 @@ class ListMassSubscription(FieldsetForm):
         label=_('Emails to mass subscribe'),
         widget=forms.Textarea,
     )
+
+    verify_with_email = forms.BooleanField(required=False)
 
     class Meta:
         """
