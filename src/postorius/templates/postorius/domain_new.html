@@ -1,10 +1,11 @@
 {% extends extend_template %}
+{% load url from future %}
 {% load i18n %}    
 
 {% block main %}
     {% include 'postorius/menu/settings_nav.html' %}
     <h1>{% trans "Add a new Domain" %}</h1>
-    <form action="{% url domain_new %}" method="post" class="well"> {% csrf_token %}
+    <form action="{% url 'domain_new' %}" method="post" class="well"> {% csrf_token %}
         {{ form.as_p }}
         <div class="field">
             <button class="btn btn-success" type="submit">{% trans "Create Domain" %}</button>

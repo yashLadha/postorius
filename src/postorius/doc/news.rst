@@ -37,6 +37,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * themes: removed obsolete MAILMAN_THEME settings from templates, contexts, file structure; contributed by Richard Wackerbarth (LP: 1043258)
 * added access control for list owners and moderators
 * added a mailmanclient shell to use as a `manage.py` command (`python manage.py mmclient`)
+* use "url from future" template tag in all templates. Contributed by Richard Wackerbarth.
 
 
 1.0 alpha 1 -- "Space Farm"

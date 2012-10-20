@@ -1,31 +1,32 @@
+{% load url from future %}
 {% load i18n %}
 
 {% block menu_administration %}
-    <a href="{% url administration %}"> {% trans "Administration" %}</a>
+    <a href="{% url 'administration' %}"> {% trans "Administration" %}</a>
     <div id="menu_administration"><ul>    
         <li {% if selected == "domains" %}id="selected"{% endif %}>
-            <a href="{% url domains %}">
+            <a href="{% url 'domains' %}">
                 {% trans "Domains" %}
             </a>
         </li>
         <li {% if selected == "all_lists" %}id="selected"{% endif %}>
-            <a href="{% url list_index %}">
+            <a href="{% url 'list_index' %}">
                 {% trans "All Lists" %}
             </a>
         </li>
         <li {% if selected == "new_list" %}id="selected"{% endif %}>
-            <a href="{% url list_new %}">
+            <a href="{% url 'list_new' %}">
                 {% trans "New List" %}
             </a>
         </li>
         {% if fqdn_listname %}
         <li {% if selected == "delete_list" %}id="selected"{% endif %}>
-            <a href="{% url list_delete fqdn_listname=fqdn_listname %}">
+            <a href="{% url 'list_delete' fqdn_listname=fqdn_listname %}">
                 {% trans "Delete List #TODO:really delete dialog" %}
             </a>
         </li>
         <li {% if selected == "administrivia" %}id="selected"{% endif %}>
-            <a href="{% url list_settings fqdn_listname=fqdn_listname visible_option='administrivia' visible_section=None%}"> 
+            <a href="{% url 'list_settings' fqdn_listname=fqdn_listname visible_option='administrivia' visible_section=None%}"> 
                 {% trans "Administrivia" %}
             </a>
         </li>
