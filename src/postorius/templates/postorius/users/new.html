@@ -1,9 +1,10 @@
 {% extends extend_template %}
+{% load url from future %}
 {% load i18n %}    
 
 {% block main %}
     <h1>{% trans "Add a new User" %}</h1>
-    <form action="{% url user_new %}" method="post" class="well"> {% csrf_token %}
+    <form action="{% url 'user_new' %}" method="post" class="well"> {% csrf_token %}
         {{ form.as_p }}
         <div class="field">
             <button class="btn btn-success" type="submit">{% trans "Create User" %}</button>
