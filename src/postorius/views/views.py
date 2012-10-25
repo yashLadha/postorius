@@ -409,7 +409,7 @@ def list_delete(request, fqdn_listname):
                              kwargs={'fqdn_listname': fqdn_listname})
         cancel_url = reverse('list_index',)
         return render_to_response(
-            'postorius/confirm_dialog.html',
+            'postorius/lists/confirm_delete.html',
             {'submit_url': submit_url, 'cancel_url': cancel_url,
              'list': the_list},
             context_instance=RequestContext(request))

@@ -4,34 +4,36 @@
 
 {% block main %}
     
-    <h2>Login with username and password</h2>
-
-    <form action="" method="post" class="login mm_clear"> {% csrf_token %}
-        {{ form.as_p }}
-        <div class="field">
-            <button class="btn btn-primary" type="submit">{% trans "Login" %}</button>
-        </div>
-    </form>
-
-    <hr />
-
-    <!--
-    <h2>Login using OpenID</h2>
-
-    <form method="post" action="{% url 'socialauth_begin' 'openid' %}"> {% csrf_token %}
-        OpenID URL: <input type="text" name="openid_identifier" /> 
-        <input type="submit" value="Login using OpenID" />
-    </form>
-
-    <hr />
-    -->
-
-    <h2>Login using BrowserID</h2>
-
-    <form method="post" action="{% url 'socialauth_complete' "browserid" %}"> {% csrf_token %}
-        <input type="hidden" name="assertion" value="" />
-        <a rel="nofollow" id="browserid" href="#"><img src="{{ STATIC_URL }}postorius/img/sign_in_blue.png" alt="Login using BrowserID" /></a>
-    </form>
+    <div class="mm_login">
+        <h2>Login with username and password</h2>
+    
+        <form action="" method="post" class="login mm_clear well"> {% csrf_token %}
+            {{ form.as_p }}
+            <div class="field">
+                <button class="btn btn-primary" type="submit">{% trans "Login" %}</button>
+            </div>
+        </form>
+    
+        <hr />
+    
+        <!--
+        <h2>Login using OpenID</h2>
+    
+        <form method="post" action="{% url 'socialauth_begin' 'openid' %}"> {% csrf_token %}
+            OpenID URL: <input type="text" name="openid_identifier" /> 
+            <input type="submit" value="Login using OpenID" />
+        </form>
+    
+        <hr />
+        -->
+    
+        <h2>Login using BrowserID</h2>
+    
+        <form method="post" action="{% url 'socialauth_complete' "browserid" %}"> {% csrf_token %}
+            <input type="hidden" name="assertion" value="" />
+            <a rel="nofollow" id="browserid" href="#"><img src="{{ STATIC_URL }}postorius/img/sign_in_blue.png" alt="Login using BrowserID" /></a>
+        </form>
+    </div>
 {% endblock %}
 
 {% block additionaljs %}
