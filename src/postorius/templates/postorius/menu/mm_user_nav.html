@@ -1,0 +1,9 @@
+{% load url from future %}
+{% load i18n %}
+<div class="mm_subHeader">
+    <span class="mm_context">{{ mm_user.address }}</span>
+    <ul class="mm_nav">
+        <li class="mm_user_summary"><a href="{% url 'user_summary' mm_user.user_id %}">{% trans "Info" %}</a></li>
+        <li class="mm_new_user"><a class="btn btn-mini btn-success" href="{% url 'user_new' %}">{% trans "New User" %}</a></li>
+    </ul>
+</div>

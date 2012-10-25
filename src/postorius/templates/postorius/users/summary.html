@@ -1,0 +1,17 @@
+{% extends extend_template %}
+{% load i18n %}
+
+{% block main %}
+    {% include 'postorius/menu/mm_user_nav.html' %}
+    <h1>{% trans 'Mailman User' %}</h1>
+
+    <p><strong>Display name:</strong> {{ mm_user.display_name}}</p>
+
+    <h2>Valid email addresses for this account:</h2>
+    <ul>
+    {% for address in mm_user.addresses %}
+        <li>{{ address }}</li>
+    {% endfor %}
+    </ul>
+
+{% endblock main %}

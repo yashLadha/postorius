@@ -47,3 +47,26 @@ class MailingListView(TemplateView):
         if 'template' in kwargs:
             self.template = kwargs['template']
         return super(MailingListView, self).dispatch(request, *args, **kwargs)
+
+
+class MailmanUserView(TemplateView):
+    """A generic view for everything based on a mailman.client
+    user object.
+
+    Sets self.mm_user to list object if user_id in **kwargs.
+    """
+
+    def _get_user(self, user_id):
+        return MailmanUser.objects.get_or_404(address=user_id)
+
+    def dispatch(self, request, *args, **kwargs):
+        # get the user object.
+        if 'user_id' in kwargs:
+            try:
+                self.mm_user = self._get_user(kwargs['user_id'])
+            except MailmanApiError:
+                return utils.render_api_error(request)
+        # set the template
+        if 'template' in kwargs:
+            self.template = kwargs['template']
+        return super(MailmanUserView, self).dispatch(request, *args, **kwargs)

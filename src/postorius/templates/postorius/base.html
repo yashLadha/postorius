@@ -24,9 +24,10 @@
                 <ul class="mm_metaNav">
                     <li><a class="mm_lists" href="{% url 'list_index' %}">Lists</a></li>
                     {% if user.is_authenticated %}
-                    <li><a class="mm_todos" href="{% url 'user_todos' %}">Todos</a></li>
+                        <li><a class="mm_todos" href="{% url 'user_todos' %}">Todos</a></li>
                     {% endif %}
                     {% if user.is_superuser %}
+                        <li><a class="mm_users" href="{% url 'user_index' %}">Users</a></li>
                         <li><a class="mm_settings" href="{% url 'site_settings' %}">Settings</a></li>
                     {% endif %}
                 	<li>{% if user.is_authenticated %}<a class="mm_logout" href="{% url 'user_logout' %}">Logout</a>{% else %}<a class="mm_user" href="{% url 'user_login' %}">Login</a>{% endif %}</li>

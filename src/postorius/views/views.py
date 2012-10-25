@@ -44,7 +44,7 @@ from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
 from postorius.forms import *
 from postorius.auth.decorators import list_owner_required
-from postorius.views.generic import MailingListView
+from postorius.views.generic import MailingListView, MailmanUserView
 
 
 logger = logging.getLogger(__name__)
@@ -115,7 +115,7 @@ class ListMetricsView(MailingListView):
         return render_to_response('postorius/lists/metrics.html',
                                   {'list': self.mailing_list},
                                   context_instance=RequestContext(request))
-        
+
 
 class ListSummaryView(MailingListView):
     """Shows common list metrics.
@@ -694,6 +694,59 @@ def user_settings(request, tab="membership",
                                'membership_lists': membership_lists,
                                'message': message,
                                'member': member},
+                              context_instance=RequestContext(request))
+
+
+class UserSummaryView(MailmanUserView):
+    """Shows a summary of a user.
+    """
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def get(self, request, user_id):
+        settingsform = MembershipSettings()
+        return render_to_response('postorius/users/summary.html',
+                                  {'mm_user': self.mm_user,
+                                   'settingsform': settingsform},
+                                  context_instance=RequestContext(request))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def user_index(request, template='postorius/users/index.html'):
+    """Show a table of all users.
+    """
+    error = None
+    try:
+        mm_users = MailmanUser.objects.all()
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    return render_to_response(template,
+                              {'error': error,
+                               'mm_users': mm_users},
+                              context_instance=RequestContext(request))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def user_new(request):
+    message = None
+    if request.method == 'POST':
+        form = UserNew(request.POST)
+        if form.is_valid():
+            user = MailmanUser(display_name=form.cleaned_data['display_name'],
+                               email=form.cleaned_data['email'],
+                               password=form.cleaned_data['password'])
+            try:
+                user.save()
+            except MailmanApiError:
+                return utils.render_api_error(request)
+            except HTTPError, e:
+                messages.error(request, e)
+            else:
+                messages.success(request, _("New User registered"))
+            return redirect("user_index")
+    else:
+        form = UserNew()
+    return render_to_response('postorius/users/new.html',
+                              {'form': form, 'message': message},
                               context_instance=RequestContext(request))
 
 
