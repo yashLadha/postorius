@@ -7,14 +7,14 @@
         {% include 'postorius/menu/list_nav.html' %}
     {% endif %}
 
-    <h1>{% trans "List members" %}: {{list.fqdn_listname}} </h1>
+    <h1>{% trans "List members" %}</h1>
 
-    <table class="table table-bordered table-striped mm_userData">
+    <table class="table table-bordered table-striped">
         <thead>
     		<tr>
     			<th>{% trans 'Address' %}</th>
     			<th>{% trans 'Role' %}</th>
-                <!-- th>Actions</th -->
+                <th>&nbsp;</th>
     		</tr>
         </thead>
     	<tbody>
@@ -22,9 +22,9 @@
                 <tr>
                     <td>{{ member.address }}</td>
                     <td>{% trans member.role %}</td>
-                    <!-- td>
-                        <a href="#" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
-                    </td -->
+                    <td>
+                        <a href="{% url 'list_unsubscribe' list.fqdn_listname member.address %}" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
+                    </td>
                 </tr>
             {% endfor %}
     	</tbody>

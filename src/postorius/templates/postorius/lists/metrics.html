@@ -3,11 +3,11 @@
 {% load i18n %}
 
 {% block main %}
-    {% if user.is_superuser %}
+    {% if user.is_superuser or user.is_list_owner %}
         {% include 'postorius/menu/list_nav.html' %}
     {% endif %}
 
-    <h1>{% trans "List metrics" %}: {{list.fqdn_listname}} </h1>
+    <h1>{% trans "List metrics" %}</h1>
 
     <table class="table table-bordered table-striped mm_userData">
     	<tbody>

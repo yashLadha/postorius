@@ -56,8 +56,17 @@ class MailmanUserView(TemplateView):
     Sets self.mm_user to list object if user_id in **kwargs.
     """
 
+    def _get_first_address(self, user_obj):
+        for address in user_obj.addresses:
+            return address
+
     def _get_user(self, user_id):
-        return MailmanUser.objects.get_or_404(address=user_id)
+        user_obj = MailmanUser.objects.get_or_404(address=user_id)
+        # replace display_name with first address if display_name is not set
+        if user_obj.display_name == 'None' or user_obj.display_name is None:
+            user_obj.display_name = ''
+        user_obj.first_address = self._get_first_address(user_obj)
+        return user_obj
 
     def dispatch(self, request, *args, **kwargs):
         # get the user object.

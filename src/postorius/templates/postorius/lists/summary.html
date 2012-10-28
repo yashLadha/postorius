@@ -5,13 +5,16 @@
 {% block body_class %}list_summary{% endblock %}
 
 {% block main %}
-    {% if user.is_superuser %}
+    {% if user.is_superuser or user.is_list_owner %}
         {% include 'postorius/menu/list_nav.html' %}
     {% endif %}
-    <h1>{{list.display_name}}</h1>
+    <h1>{% trans 'List Info' %}</h1>
+
+    <h2>{% trans 'List Name' %}</h2>
+    <p>{{ list.display_name }} &lt;{{ list.fqdn_listname }}&gt;</p>
 
     <h2>{% trans 'Description' %}</h2>
-    <p>{{list.settings.description }}</h1>
+    <p>{{list.settings.description }}</p>
   
     <h2>{% trans 'Membership' %}</h2>
     {% if user.is_authenticated %}

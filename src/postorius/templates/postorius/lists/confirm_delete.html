@@ -3,7 +3,8 @@
 {% load i18n %}
 
 {% block main %}
-    <h1>{% trans 'Confirm' %}</h1>
+    {% include 'postorius/menu/list_nav.html' %}
+    <h1>{% trans 'Confirm Delete' %}</h1>
     <p>{% trans "Are you sure you want to permanently delete this list?" %}</p>
     <p>{% trans "All settings and membership data will be lost!" %}</p>
     <form action="{{submit_url}}" method="post"> {% csrf_token %}
