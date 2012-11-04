@@ -19,7 +19,7 @@
 
 from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
@@ -61,20 +61,30 @@ class MailmanUserView(TemplateView):
             return address
 
     def _get_user(self, user_id):
-        user_obj = MailmanUser.objects.get_or_404(address=user_id)
+        try:
+            user_obj = MailmanUser.objects.get(address=user_id)
+        except Mailman404Error:
+            user_obj = None
         # replace display_name with first address if display_name is not set
-        if user_obj.display_name == 'None' or user_obj.display_name is None:
-            user_obj.display_name = ''
-        user_obj.first_address = self._get_first_address(user_obj)
+        if user_obj is not None:
+            if user_obj.display_name == 'None' or user_obj.display_name is None:
+                user_obj.display_name = ''
+            user_obj.first_address = self._get_first_address(user_obj)
         return user_obj
 
     def dispatch(self, request, *args, **kwargs):
         # get the user object.
+        user_id = None
         if 'user_id' in kwargs:
+            user_id = kwargs['user_id']
+        elif request.user.is_authenticated():
+            user_id = request.user.email
+        if user_id is not None:
             try:
-                self.mm_user = self._get_user(kwargs['user_id'])
+                self.mm_user = self._get_user(user_id)
             except MailmanApiError:
                 return utils.render_api_error(request)
+            
         # set the template
         if 'template' in kwargs:
             self.template = kwargs['template']

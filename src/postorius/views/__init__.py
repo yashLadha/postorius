@@ -17,3 +17,4 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from postorius.views.views import *
+from postorius.views.api import *

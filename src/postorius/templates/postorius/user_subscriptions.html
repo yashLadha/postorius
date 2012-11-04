@@ -1,0 +1,31 @@
+{% extends extend_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block main %}
+    {% include 'postorius/menu/user_nav.html' %}
+    <h1>List Subscriptions <span></span></h1>
+
+    <p>You are subscribed to the following mailing lists:</p>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+    		<tr>
+    			<th>{% trans 'List Name' %}</th>
+    			<th>{% trans 'Subscription Address' %}</th>
+    			<th>{% trans 'Role' %}</th>
+    			<th>{% trans 'Delivery Mode' %}</th>
+    		</tr>
+        </thead>
+    	<tbody>
+            {% for subscription in memberships %}
+    		<tr>
+    			<td>{{ subscription.fqdn_listname }}</td>
+    			<td>{{ subscription.address }}</td>
+    			<td>{{ subscription.role }}</td>
+    			<td>{{ subscription.delivery_mode }}</td>
+    		</tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+{% endblock main %}

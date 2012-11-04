@@ -17,11 +17,13 @@
 
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import PermissionDenied
+from django.test.client import RequestFactory
 from django.utils import unittest
 from mock import patch
 
 from postorius.auth.decorators import (list_owner_required,
-                                       list_moderator_required)
+                                       list_moderator_required,
+                                       basic_auth_login)
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
 from mailmanclient import Client

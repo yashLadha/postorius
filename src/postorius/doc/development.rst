@@ -92,12 +92,40 @@ Apart from these default roles, there are two others relevant in Postorius:
 
 There are a number of decorators to protect views from unauthorized users.
 
-- ``@user_passes_test(lambda u: u.is_superuser)``
-- ``@login_required``
-- ``@list_owner_required``
-- ``@list_moderator_required``
+- ``@user_passes_test(lambda u: u.is_superuser)`` (redirects to login form)
+- ``@login_required`` (redirects to login form)
+- ``@list_owner_required`` (returns 403)
+- ``@list_moderator_required`` (returns 403)
+- ``@superuser_or_403`` (returns 403)
+- ``@loggedin_or_403`` (returns 403)
+- ``@basic_auth_login``
 
-Check out views/views.py for examples!
+Check out ``views/views.py`` or ``views/api.py`` for examples!
+
+The last one (basic_auth_login) checks the request header for HTTP Basic Auth
+credentials and uses those to authenticate against Django's session-based
+mechanism. It can be used in cases where a view is accessed from other clients
+than the web browser.
+
+Please make sure to put it outside the other auth decorators.
+
+Good:
+
+::
+
+    @basic_auth_login
+    @list_owner_required
+    def my_view_func(request):
+        ...
+
+Won't work, because list_owner_required will not recognize the user:
+
+::
+
+    @list_owner_required
+    @basic_auth_login
+    def my_view_func(request):
+        ...
 
 
 Accessing the Mailman API

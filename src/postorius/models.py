@@ -20,7 +20,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_delete, pre_save
 from django.db import models
 from django.dispatch import receiver
 from django.http import Http404
@@ -88,6 +88,7 @@ class MailmanRestManager(object):
     def create(self, **kwargs):
         try:
             method = getattr(self.client, 'create_' + self.resource_name)
+            print kwargs
             return method(**kwargs)
         except AttributeError, e:
             raise MailmanApiError(e)
@@ -174,9 +175,3 @@ class Member(MailmanRestModel):
     """Member model class.
     """
     objects = MailmanRestManager('member', 'members')
-
-
-@receiver(pre_save, sender=User)
-def user_create_callback(sender, **kwargs):
-    # inst = kwargs['instance']
-    pass

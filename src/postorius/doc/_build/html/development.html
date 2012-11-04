@@ -123,12 +123,34 @@ lists.</li>
 </ul>
 <p>There are a number of decorators to protect views from unauthorized users.</p>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">&#64;user_passes_test(lambda</span> <span class="pre">u:</span> <span class="pre">u.is_superuser)</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">&#64;login_required</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">&#64;list_owner_required</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">&#64;list_moderator_required</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">&#64;user_passes_test(lambda</span> <span class="pre">u:</span> <span class="pre">u.is_superuser)</span></tt> (redirects to login form)</li>
+<li><tt class="docutils literal"><span class="pre">&#64;login_required</span></tt> (redirects to login form)</li>
+<li><tt class="docutils literal"><span class="pre">&#64;list_owner_required</span></tt> (returns 403)</li>
+<li><tt class="docutils literal"><span class="pre">&#64;list_moderator_required</span></tt> (returns 403)</li>
+<li><tt class="docutils literal"><span class="pre">&#64;superuser_or_403</span></tt> (returns 403)</li>
+<li><tt class="docutils literal"><span class="pre">&#64;loggedin_or_403</span></tt> (returns 403)</li>
+<li><tt class="docutils literal"><span class="pre">&#64;basic_auth_login</span></tt></li>
 </ul>
-<p>Check out views/views.py for examples!</p>
+<p>Check out <tt class="docutils literal"><span class="pre">views/views.py</span></tt> or <tt class="docutils literal"><span class="pre">views/api.py</span></tt> for examples!</p>
+<p>The last one (basic_auth_login) checks the request header for HTTP Basic Auth
+credentials and uses those to authenticate against Django&#8217;s session-based
+mechanism. It can be used in cases where a view is accessed from other clients
+than the web browser.</p>
+<p>Please make sure to put it outside the other auth decorators.</p>
+<p>Good:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@basic_auth_login</span>
+<span class="nd">@list_owner_required</span>
+<span class="k">def</span> <span class="nf">my_view_func</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Won&#8217;t work, because list_owner_required will not recognize the user:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@list_owner_required</span>
+<span class="nd">@basic_auth_login</span>
+<span class="k">def</span> <span class="nf">my_view_func</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="accessing-the-mailman-api">
 <h2>Accessing the Mailman API<a class="headerlink" href="#accessing-the-mailman-api" title="Permalink to this headline">¶</a></h2>

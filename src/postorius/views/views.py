@@ -19,7 +19,9 @@
 
 import re
 import sys
+import json
 import logging
+import requests
 
 
 from django.conf import settings
@@ -28,7 +30,8 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import (login_required,
                                             permission_required,
                                             user_passes_test)
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
+                                       SetPasswordForm, PasswordChangeForm)
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -43,7 +46,7 @@ from postorius import utils
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
 from postorius.forms import *
-from postorius.auth.decorators import list_owner_required
+from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView, MailmanUserView
 
 
@@ -710,6 +713,39 @@ class UserSummaryView(MailmanUserView):
                                   context_instance=RequestContext(request))
 
 
+class UserSubscriptionsView(MailmanUserView):
+    """Shows a summary of a user.
+    """
+
+    def _get_list(self, list_id):
+        if getattr(self, 'lists', None) is None:
+            self.lists = {}
+        if self.lists.get(list_id) is None:
+            self.lists[list_id] = List.objects.get(fqdn_listname=list_id)
+        return self.lists[list_id]
+        
+    def _get_memberships(self):
+        client = Client('%s/3.0' % settings.REST_SERVER,
+                         settings.API_USER, settings.API_PASS)
+        memberships = []
+        for a in self.mm_user.addresses:
+            members = client._connection.call('members/find',
+                                              {'subscriber': a})
+            for m in members[1]['entries']:
+                mlist = self._get_list(m['list_id'])
+                memberships.append(dict(fqdn_listname=mlist.fqdn_listname,
+                                        role=m['role'],
+                                        delivery_mode=m['delivery_mode'],
+                                        address=a))
+        return memberships
+
+    def get(self, request):
+        memberships = self._get_memberships()
+        return render_to_response('postorius/user_subscriptions.html',
+                                  {'memberships': memberships},
+                                  context_instance=RequestContext(request))
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def user_index(request, template='postorius/users/index.html'):
     """Show a table of all users.
@@ -771,7 +807,7 @@ def user_login(request, template='postorius/login.html'):
                               context_instance=RequestContext(request))
 
 
-@login_required
+@login_required()
 def user_profile(request, user_email=None):
     if not request.user.is_authenticated():
         return redirect('user_login')

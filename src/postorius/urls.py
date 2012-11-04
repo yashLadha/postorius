@@ -32,9 +32,8 @@ urlpatterns = patterns(
     url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
     url(r'^accounts/profile/$', 'user_profile', name='user_profile'),
     url(r'^accounts/todos/$', 'user_todos', name='user_todos'),
-    url(r'^accounts/membership/(?:(?P<fqdn_listname>[^/]+)/)?$',
-        'membership_settings', kwargs={"tab": "membership"},
-        name='membership_settings'),
+    url(r'^accounts/subscriptions/$', UserSubscriptionsView.as_view(),
+        name='user_subscriptions'),
     url(r'^accounts/mailmansettings/$',
         'user_mailmansettings',
         name='user_mailmansettings'),
@@ -81,4 +80,5 @@ urlpatterns = patterns(
     url(r'^users/new/$', 'user_new', name='user_new'),
     url(r'^users/(?P<user_id>[^/]+)/$',
         UserSummaryView.as_view(), name='user_summary'),
+    url(r'^api/lists/$', 'api_list_index', name='api_list_index'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

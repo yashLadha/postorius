@@ -18,11 +18,29 @@
 """Postorius view decorators."""
 
 
+from django.contrib.auth import logout, authenticate, login
 from django.core.exceptions import PermissionDenied
 
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
 
+def basic_auth_login(fn):
+    def wrapper(*args, **kwargs):
+        request = args[0]
+        if request.user.is_authenticated():
+            print 'already logged in'
+        if not request.user.is_authenticated():
+            if request.META.has_key('HTTP_AUTHORIZATION'):
+                authmeth, auth = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
+                if authmeth.lower() == 'basic':
+                    auth = auth.strip().decode('base64')
+                    username, password = auth.split(':', 1)
+                    user = authenticate(username=username, password=password)
+                    if user:
+                        login(request, user)
+        return fn(request, **kwargs)
+    return wrapper
+    
 
 def list_owner_required(fn):
     """Check if the logged in user is the list owner of the given list.
@@ -64,4 +82,28 @@ def list_moderator_required(fn):
         else:
             user.is_list_moderator = True
             return fn(*args, **kwargs)
+    return wrapper
+
+
+def superuser_or_403(fn):
+    """Make sure that the logged in user is a superuser or otherwise raise
+    PermissionDenied.
+    Assumes the request object to be the first arg."""
+    def wrapper(*args, **kwargs):
+        user = args[0].user
+        if not user.is_superuser:
+            raise PermissionDenied
+        return fn(*args, **kwargs)
+    return wrapper
+
+
+def loggedin_or_403(fn):
+    """Make sure that the logged in user is not anonymous or otherwise raise
+    PermissionDenied.
+    Assumes the request object to be the first arg."""
+    def wrapper(*args, **kwargs):
+        user = args[0].user
+        if not user.is_authenticated():
+            raise PermissionDenied
+        return fn(*args, **kwargs)
     return wrapper

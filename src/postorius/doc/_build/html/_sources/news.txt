@@ -39,6 +39,10 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * added a mailmanclient shell to use as a `manage.py` command (`python manage.py mmclient`)
 * use "url from future" template tag in all templates. Contributed by Richard Wackerbarth.
 * added "new user" form. Contributed by George Chatzisofroniou.
+* added user subscription page
+* added decorator to allow login via http basic auth (to allow non-browser clients to use API views)
+* added api view for list index
+* several changes regarding style and navigation structure
 
 
 1.0 alpha 1 -- "Space Farm"
