@@ -21,7 +21,6 @@ import re
 import sys
 import json
 import logging
-import requests
 
 
 from django.conf import settings
