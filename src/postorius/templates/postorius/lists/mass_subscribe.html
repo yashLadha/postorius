@@ -1,12 +1,11 @@
 {% extends "postorius/base.html" %}
 {% load url from future %}
 {% load i18n %}
+{% load nav_helpers %}
 
 {% block main %}
-    {% if user.is_superuser or user.is_list_owner %}
-        {% include 'postorius/menu/list_nav.html' %}
-    {% endif %}
-    <h1>{% trans "Mass Subscribe" %}</h1>
+    {% list_nav 'mass_subscribe' 'Mass Subscription' %}
+
     <form action="{% url 'mass_subscribe' list.fqdn_listname %}" method="post" class="well"> {% csrf_token %}
         {{ form.as_p }}
         <button class="btn btn-primary" type="submit">{% trans "Subscribe users" %}</button>

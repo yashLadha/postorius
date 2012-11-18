@@ -1,12 +1,12 @@
 {% extends "postorius/base.html" %}
 {% load url from future %}
 {% load i18n %}
+{% load nav_helpers %}
 
 {% block body_class %}list_summary{% endblock %}
 
 {% block main %}
-    {% include 'postorius/menu/list_nav.html' %}
-    <h1>{% trans 'Held messages' %}</h1>
+    {% list_nav 'list_held_messages' 'Held Messages' %}
 
     <table class="table table-bordered table-striped">
     	<thead>

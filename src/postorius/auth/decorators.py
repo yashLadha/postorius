@@ -40,7 +40,7 @@ def basic_auth_login(fn):
                         login(request, user)
         return fn(request, **kwargs)
     return wrapper
-    
+
 
 def list_owner_required(fn):
     """Check if the logged in user is the list owner of the given list.
@@ -53,6 +53,8 @@ def list_owner_required(fn):
         if not user.is_authenticated():
             raise PermissionDenied
         if user.is_superuser:
+            return fn(*args, **kwargs)
+        if getattr(user, 'is_list_owner', None):
             return fn(*args, **kwargs)
         mlist = List.objects.get_or_404(fqdn_listname=fqdn_listname)
         if user.email not in mlist.owners:
@@ -74,6 +76,10 @@ def list_moderator_required(fn):
         if not user.is_authenticated():
             raise PermissionDenied
         if user.is_superuser:
+            return fn(*args, **kwargs)
+        if getattr(user, 'is_list_owner', None):
+            return fn(*args, **kwargs)
+        if getattr(user, 'is_list_moderator', None):
             return fn(*args, **kwargs)
         mlist = List.objects.get_or_404(fqdn_listname=fqdn_listname)
         if user.email not in mlist.moderators and \

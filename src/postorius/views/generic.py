@@ -17,9 +17,11 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from django.conf import settings
 from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
 from django.views.generic import TemplateView, View
+from mailmanclient import Client
 
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
@@ -36,6 +38,20 @@ class MailingListView(TemplateView):
     def _get_list(self, fqdn_listname):
         return List.objects.get_or_404(fqdn_listname=fqdn_listname)
 
+    def _is_list_owner(self, user, mailing_list):
+        if not user.is_authenticated():
+            return False
+        if user.email in mailing_list.owners:
+            return True
+        return False
+
+    def _is_list_moderator(self, user, mailing_list):
+        if not user.is_authenticated():
+            return False
+        if user.email in mailing_list.moderators:
+            return True
+        return False
+
     def dispatch(self, request, *args, **kwargs):
         # get the list object.
         if 'fqdn_listname' in kwargs:
@@ -43,6 +59,10 @@ class MailingListView(TemplateView):
                 self.mailing_list = self._get_list(kwargs['fqdn_listname'])
             except MailmanApiError:
                 return utils.render_api_error(request)
+            request.user.is_list_owner = self._is_list_owner(
+                request.user, self.mailing_list)
+            request.user.is_list_moderator = self._is_list_moderator(
+                request.user, self.mailing_list)
         # set the template
         if 'template' in kwargs:
             self.template = kwargs['template']
@@ -71,6 +91,28 @@ class MailmanUserView(TemplateView):
                 user_obj.display_name = ''
             user_obj.first_address = self._get_first_address(user_obj)
         return user_obj
+        
+    def _get_list(self, list_id):
+        if getattr(self, 'lists', None) is None:
+            self.lists = {}
+        if self.lists.get(list_id) is None:
+            self.lists[list_id] = List.objects.get(fqdn_listname=list_id)
+        return self.lists[list_id]
+
+    def _get_memberships(self):
+        client = Client('%s/3.0' % settings.REST_SERVER,
+                         settings.API_USER, settings.API_PASS)
+        memberships = []
+        for a in self.mm_user.addresses:
+            members = client._connection.call('members/find',
+                                              {'subscriber': a})
+            for m in members[1]['entries']:
+                mlist = self._get_list(m['list_id'])
+                memberships.append(dict(fqdn_listname=mlist.fqdn_listname,
+                                        role=m['role'],
+                                        delivery_mode=m['delivery_mode'],
+                                        address=a))
+        return memberships
 
     def dispatch(self, request, *args, **kwargs):
         # get the user object.

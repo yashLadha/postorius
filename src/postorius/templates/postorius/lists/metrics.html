@@ -1,13 +1,10 @@
 {% extends "postorius/base.html" %}
 {% load url from future %}
 {% load i18n %}
+{% load nav_helpers %}
 
 {% block main %}
-    {% if user.is_superuser or user.is_list_owner %}
-        {% include 'postorius/menu/list_nav.html' %}
-    {% endif %}
-
-    <h1>{% trans "List metrics" %}</h1>
+    {% list_nav 'list_metrics' 'Metrics' %}
 
     <table class="table table-bordered table-striped mm_userData">
     	<tbody>

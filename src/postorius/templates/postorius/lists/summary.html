@@ -1,22 +1,17 @@
 {% extends "postorius/base.html" %}
 {% load url from future %}
 {% load i18n %}
+{% load nav_helpers %}
 
 {% block body_class %}list_summary{% endblock %}
 
 {% block main %}
-    {% if user.is_superuser or user.is_list_owner %}
-        {% include 'postorius/menu/list_nav.html' %}
-    {% endif %}
-    <h1>{% trans 'List Info' %}</h1>
+    {% list_nav 'list_summary' 'List Info' %}
 
-    <h2>{% trans 'List Name' %}</h2>
-    <p>{{ list.display_name }} &lt;{{ list.fqdn_listname }}&gt;</p>
-
-    <h2>{% trans 'Description' %}</h2>
+    <h2>{% trans 'About this list' %}</h2>
     <p>{{list.settings.description }}</p>
   
-    <h2>{% trans 'Membership' %}</h2>
+    <h2>{% trans 'Subscribe to this list' %}</h2>
     {% if user.is_authenticated %}
     <form action="{% url 'list_subscribe' list.fqdn_listname %}" method="post" class="list_subscribe"> {% csrf_token %}
         {{subscribe_form.as_p}}

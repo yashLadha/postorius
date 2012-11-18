@@ -1,18 +1,13 @@
 {% extends extend_template %}
 {% load url from future %}
 {% load i18n %}    
+{% load nav_helpers %}
 
 {% block main %}
-    <div class="mm_subHeader">
-        <span class="mm_context">{% trans 'Users' %}</span>
-        {% if user.is_superuser %}
-            <ul class="mm_nav">
-                <li><a href="{% url 'user_index' %}">{% trans "User Index" %}</a></li>
-                <li class="mm_new_user mm_action"><a class="btn btn-mini btn-success" href="{% url 'user_new' %}">{% trans "Create User" %}</a></li>
-            </ul>
-        {% endif %}
-    </div>
-    <h1>{% trans "Create a new User" %}</h1>
+    {% if user.is_superuser %}
+        {% users_nav 'user_new' 'Create User' %}
+    {% endif %}
+
     <form action="{% url 'user_new' %}" method="post" class="well"> {% csrf_token %}
         {{ form.as_p }}
         <div class="field">

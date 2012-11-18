@@ -1,13 +1,64 @@
 {% extends "postorius/base.html" %}
 {% load url from future %}
 {% load i18n %}
+{% load nav_helpers %}
 
 {% block main %}
-    {% if user.is_superuser %}
-        {% include 'postorius/menu/list_nav.html' %}
-    {% endif %}
+    {% list_nav 'list_members' 'List Members' %}
 
-    <h1>{% trans "List members" %}</h1>
+    <h2>{% trans "Owners" %}</h2>
+
+    {{ owner_form.email.errors }}
+    <form action="{% url 'list_members' list.fqdn_listname %}" method="POST" class="form-inline">{% csrf_token %}
+        <label for="id_email">{% trans 'Email Address' %}</label>
+        {{ owner_form.owner_email }}
+        <button type="submit" class="btn">Add Owner</button>
+    </form>
+    <table class="table table-bordered table-striped">
+        <thead>
+    		<tr>
+    			<th>{% trans 'Address' %}</th>
+                <th>&nbsp;</th>
+    		</tr>
+        </thead>
+    	<tbody>
+            {% for member in list.owners %}
+                <tr>
+                    <td>{{ member }}</td>
+                    <td>
+                    </td>
+                </tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+
+    <h2>{% trans "Moderators" %}</h2>
+    {{ moderator_form.email.errors }}
+    <form action="{% url 'list_members' list.fqdn_listname %}" method="POST" class="form-inline">{% csrf_token %}
+        <label for="bla">{% trans 'Email Address' %}</label>
+        {{ moderator_form.moderator_email }}
+        <button type="submit" class="btn">Add Moderator</button>
+    </form>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+    		<tr>
+    			<th>{% trans 'Address' %}</th>
+                <th>&nbsp;</th>
+    		</tr>
+        </thead>
+    	<tbody>
+            {% for member in list.moderators %}
+                <tr>
+                    <td>{{ member }}</td>
+                    <td>
+                    </td>
+                </tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+
+    <h2>{% trans "Members" %}</h2>
 
     <table class="table table-bordered table-striped">
         <thead>

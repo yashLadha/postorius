@@ -73,6 +73,24 @@ class DomainNew(FieldsetForm):
                    "description"]]
 
 
+class NewOwnerForm(forms.Form):
+    """Add a list owner."""
+    owner_email = forms.EmailField(
+        label=_('Email Address'),
+        error_messages={
+            'required': _('Please enter an email adddress.'),
+            'invalid': _('Please enter a valid email adddress.')})
+
+
+class NewModeratorForm(forms.Form):
+    """Add a list moderator."""
+    moderator_email = forms.EmailField(
+        label=_('Email Address'),
+        error_messages={
+            'required': _('Please enter an email adddress.'),
+            'invalid': _('Please enter a valid email adddress.')})
+
+
 class ListNew(FieldsetForm):
     """
     Form fields to add a new list. Languages are hard coded which should

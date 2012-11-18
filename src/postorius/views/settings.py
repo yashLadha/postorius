@@ -50,3 +50,48 @@ from postorius.views.generic import MailingListView, MailmanUserView
 
 
 logger = logging.getLogger(__name__)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def site_settings(request):
+    return render_to_response('postorius/site_settings.html',
+                              context_instance=RequestContext(request))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def domain_index(request):
+    try:
+        existing_domains = Domain.objects.all()
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    return render_to_response('postorius/domain_index.html',
+                              {'domains': existing_domains},
+                              context_instance=RequestContext(request))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def domain_new(request):
+    message = None
+    if request.method == 'POST':
+        form = DomainNew(request.POST)
+        if form.is_valid():
+            domain = Domain(mail_host=form.cleaned_data['mail_host'],
+                            base_url=form.cleaned_data['web_host'],
+                            description=form.cleaned_data['description'])
+            try:
+                domain.save()
+            except MailmanApiError:
+                return utils.render_api_error(request)
+            except HTTPError, e:
+                messages.error(request, e)
+            else:
+                messages.success(request, _("New Domain registered"))
+            return redirect("domain_index")
+    else:
+        form = DomainNew()
+    return render_to_response('postorius/domain_new.html',
+                              {'form': form, 'message': message},
+                              context_instance=RequestContext(request))

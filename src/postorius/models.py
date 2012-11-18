@@ -25,6 +25,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.http import Http404
 from mailmanclient import Client, MailmanConnectionError
+from social_auth.signals import socialauth_registered
 from urllib2 import HTTPError
 
 
@@ -175,3 +176,9 @@ class Member(MailmanRestModel):
     """Member model class.
     """
     objects = MailmanRestManager('member', 'members')
+
+
+@receiver(socialauth_registered, sender=None)
+def social_auth_update_handler(sender, **kwargs):
+    print 'user was registered by social auth'
+

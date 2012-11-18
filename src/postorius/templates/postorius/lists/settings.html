@@ -1,10 +1,10 @@
 {% extends extend_template %}
 {% load url from future %}
 {% load i18n %}
+{% load nav_helpers %}
 
 {% block main %}
-    {% include 'postorius/menu/list_nav.html' %}
-    <h1>{% trans 'List Settings' %}</h1>
+    {% list_nav 'list_settings' 'Settings' %}
 
     <ul class="nav nav-tabs">
         {% for section in form_sections %}

@@ -1,17 +1,39 @@
 {% extends extend_template %}
 {% load i18n %}
+{% load url from future %}
+{% load nav_helpers %}
 
 {% block main %}
-    {% include 'postorius/menu/mm_user_nav.html' %}
-    <h1>{% trans 'User Info' %}</h1>
+    {% user_nav 'user_summary' 'User Info' %}
 
-    <p><strong>Display name:</strong> {{ mm_user.display_name}}</p>
-
-    <h2>Valid email addresses for this account:</h2>
+    <h2>Email addresses for this account</h2>
     <ul>
     {% for address in mm_user.addresses %}
         <li>{{ address }}</li>
     {% endfor %}
     </ul>
+
+    <h2>Memberships</h2>
+    <table class="table table-bordered table-striped">
+        <thead>
+    		<tr>
+    			<th>{% trans 'List Name' %}</th>
+    			<th>{% trans 'Subscription Address' %}</th>
+    			<th>{% trans 'Role' %}</th>
+    			<th>{% trans 'Delivery Mode' %}</th>
+    		</tr>
+        </thead>
+    	<tbody>
+            {% for subscription in memberships %}
+    		<tr>
+    			<td><a href="{% url 'list_summary' subscription.fqdn_listname %}">{{ subscription.fqdn_listname }}</a></td>
+    			<td>{{ subscription.address }}</td>
+    			<td>{{ subscription.role }}</td>
+    			<td>{{ subscription.delivery_mode }}</td>
+    		</tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+
 
 {% endblock main %}

@@ -29,4 +29,7 @@ def postorius(request):
     else:
         extend_template = "postorius/base.html"
 
-    return {'extend_template': extend_template}
+    return {
+        'extend_template': extend_template,
+        'request': request,
+    }
