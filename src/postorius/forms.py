@@ -333,6 +333,9 @@ class ListSettings(FieldsetForm):
     display_name = forms.CharField(
         label=_('Display name'),
     )
+    subject_prefix = forms.CharField(
+        label=_('Subject prefix'),
+    )
     reply_goes_to_list = forms.ChoiceField(
         label=_('Reply goes to list'),
         widget=forms.Select(),
@@ -456,7 +459,7 @@ class ListSettings(FieldsetForm):
         # just a really temporary layout to see that it works. -- Anna
         layout = [
             ["List Identity", "display_name", "mail_host", "description",
-             "advertised"],
+             "advertised"], # tko - need to add subject_prefix here
             ["Automatic Responses", "autorespond_owner",
              "autoresponse_owner_text", "autorespond_postings",
              "autoresponse_postings_text", "autorespond_requests",
