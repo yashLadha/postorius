@@ -31,7 +31,7 @@ urlpatterns = patterns(
     url(r'^accounts/login/$', 'user_login', name='user_login'),
     url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
     url(r'^accounts/profile/$', 'user_profile', name='user_profile'),
-    url(r'^accounts/todos/$', 'user_todos', name='user_todos'),
+    url(r'^accounts/tasks/$', 'user_tasks', name='user_tasks'),
     url(r'^accounts/subscriptions/$', UserSubscriptionsView.as_view(),
         name='user_subscriptions'),
     url(r'^accounts/mailmansettings/$',
