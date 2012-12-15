@@ -6,9 +6,13 @@
 {% block body_class %}list_summary{% endblock %}
 
 {% block main %}
-    {% list_nav 'list_summary' 'List Info' %}
+    {% if user.is_superuser %}
+        {% include 'postorius/menu/list_nav.html' %}
+    {% endif %}
+    <h1>{{list.display_name}}</h1>
 
-    <h2>{% trans 'About this list' %}</h2>
+
+    <h2>{% trans 'Description' %}</h2>
     <p>{{list.settings.description }}</p>
   
     <h2>{% trans 'Subscribe to this list' %}</h2>
@@ -20,6 +24,10 @@
     </form>
     {% else %}
         <p>To subscribe or unsubscribe this list you have to be logged in.</p>
+<<<<<<< TREE
         <p><a href="{% url 'user_login' %}"class="btn btn-primary">Log In</a></p>
+=======
+        <p><a href="{% url user_login %}" class="btn btn-small btn-primary">Login</a></p>
+>>>>>>> MERGE-SOURCE
     {% endif %}
 {% endblock %}
