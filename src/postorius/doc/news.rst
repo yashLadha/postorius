@@ -5,7 +5,7 @@ News / Changelog
 Copyright (C) 2012 by the Free Software Foundation, Inc.
 
 The Postorius Django app provides a web user interface to
-access GNU Mailman. 
+access GNU Mailman.
 
 Postorius is free software: you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License as
@@ -43,6 +43,11 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * added decorator to allow login via http basic auth (to allow non-browser clients to use API views)
 * added api view for list index
 * several changes regarding style and navigation structure
+* updated to jQuery 1.8. Contributed by Richard Wackerbarth.
+* added a favicon. Contributed by Richard Wackerbarth.
+* renamed some menu items. Contributed by Richard Wackerbarth.
+* changed static file inclusion. Contributed by Richard Wackerbarth.
+
 
 
 1.0 alpha 1 -- "Space Farm"
@@ -51,7 +56,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 Many thanks go out to Anna Senarclens de Grancy and Benedict Stein for
 developing the initial versions of this Django app during the Google Summer of
-Code 2010 and 2011. 
+Code 2010 and 2011.
 
 * add/remove/edit mailing lists
 * edit list settings

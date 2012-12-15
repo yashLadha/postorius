@@ -269,6 +269,6 @@ def user_profile(request, user_email=None):
 
 
 @login_required
-def user_todos(request):
-    return render_to_response('postorius/user_todos.html',
+def user_tasks(request):
+    return render_to_response('postorius/user_tasks.html',
                               context_instance=RequestContext(request))
