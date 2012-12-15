@@ -371,7 +371,7 @@ class ListSettings(FieldsetForm):
     admin_notify_mchanges = forms.BooleanField(
         widget=forms.RadioSelect(choices=choices),
         required=False,
-        label=_('Admin notify changes'))
+        label=_('Notify admin of membership changes'))
     administrivia = forms.BooleanField(
         widget=forms.RadioSelect(choices=choices),
         required=False,
