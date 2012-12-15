@@ -47,6 +47,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * added a favicon. Contributed by Richard Wackerbarth.
 * renamed some menu items. Contributed by Richard Wackerbarth.
 * changed static file inclusion. Contributed by Richard Wackerbarth.
+* added delete domain feature.
 
 
 

@@ -17,10 +17,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import re
-import sys
 import json
-import logging
 
 
 from django.conf import settings
@@ -47,9 +44,6 @@ from postorius.models import (Domain, List, Member, MailmanUser,
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView, MailmanUserView
-
-
-logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -94,4 +88,26 @@ def domain_new(request):
         form = DomainNew()
     return render_to_response('postorius/domain_new.html',
                               {'form': form, 'message': message},
+                              context_instance=RequestContext(request))
+
+def domain_delete(request, domain):
+    """Deletes a domain but asks for confirmation first.
+    """
+    if request.method == 'POST':
+        try:
+            client = Client(settings.REST_SERVER + '/3.0', settings.API_USER,
+                            settings.API_PASS)
+            client.delete_domain(domain)
+            messages.success(request,
+                             _('The domain %s has been deleted.' % domain))
+            return redirect("domain_index")
+        except HTTPError as e:
+            print e.__dict__
+            messages.error(request, _('The domain could not be deleted:'
+                                      ' %s' % e.msg))
+            return redirect("domain_index")
+    submit_url = reverse('domain_delete',
+                         kwargs={'domain': domain})
+    return render_to_response('postorius/domain_confirm_delete.html',
+                              {'domain': domain, 'submit_url': submit_url},
                               context_instance=RequestContext(request))

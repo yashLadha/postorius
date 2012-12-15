@@ -26,7 +26,7 @@ from postorius.views.generic import *
 
 urlpatterns = patterns(
     'postorius.views',
-    (r'^$', 'list_index'), 
+    (r'^$', 'list_index'),
     # /account/
     url(r'^accounts/login/$', 'user_login', name='user_login'),
     url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
@@ -41,6 +41,8 @@ urlpatterns = patterns(
     url(r'^settings/$', 'site_settings', name="site_settings"),
     url(r'^settings/domains/$', 'domain_index', name='domain_index'),
     url(r'^settings/domains/new/$', 'domain_new', name='domain_new'),
+    url(r'^settings/domains/(?P<domain>[^/]+)/delete$',
+        'domain_delete', name='domain_delete'),
     # /lists/
     url(r'^lists/$', 'list_index', name='list_index'),
     url(r'^lists/new/$', 'list_new', name='list_new'),
@@ -76,7 +78,7 @@ urlpatterns = patterns(
         '(?:/(?P<visible_option>.*))?$', 'list_settings',
         name='list_settings'),
     # /users/
-    url(r'^users/$', 'user_index', name='user_index'), 
+    url(r'^users/$', 'user_index', name='user_index'),
     url(r'^users/new/$', 'user_new', name='user_new'),
     url(r'^users/(?P<user_id>[^/]+)/$',
         UserSummaryView.as_view(), name='user_summary'),
