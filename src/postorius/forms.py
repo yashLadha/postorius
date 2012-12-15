@@ -129,6 +129,14 @@ class ListNew(FieldsetForm):
             choices=domain_choices,
             error_messages={'required': _("Choose an existing Domain."),
                             'invalid': "ERROR-todo_forms.py"})
+        if len(domain_choices) < 2:
+            self.fields["mail_host"].help_text=_(
+                "Site admin has not created any domains")
+            #if len(choices) < 2:
+            #    help_text=_("No domains available: " +
+            #                "The site admin must create new domains " +
+            #                "before you will be able to create a list")
+                            
 
     def clean_listname(self):
         try:
