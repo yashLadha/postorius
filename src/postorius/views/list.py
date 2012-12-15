@@ -17,39 +17,22 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import re
-import sys
-import json
-import logging
-
-
-from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import (login_required,
-                                            permission_required,
                                             user_passes_test)
-from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
-                                       SetPasswordForm, PasswordChangeForm)
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
-from django.template import Context, loader, RequestContext
+from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from urllib2 import HTTPError
 
-from mailmanclient import Client
 from postorius import utils
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
+from postorius.models import (Domain, List, MailmanUser,
+                              MailmanApiError)
 from postorius.forms import *
 from postorius.auth.decorators import *
-from postorius.views.generic import MailingListView, MailmanUserView
-
-
-logger = logging.getLogger(__name__)
+from postorius.views.generic import MailingListView
 
 
 class ListMembersView(MailingListView):
@@ -61,15 +44,27 @@ class ListMembersView(MailingListView):
         if 'owner_email' in request.POST:
             owner_form = NewOwnerForm(request.POST)
             if owner_form.is_valid():
-                self.mailing_list.add_owner(
-                    owner_form.cleaned_data['owner_email'])
+                try:
+                    self.mailing_list.add_owner(
+                        owner_form.cleaned_data['owner_email'])
+                    messages.success(
+                        request, _('%s has been added as list owner.'
+                                   % request.POST['owner_email']))
+                except HTTPError as e:
+                    messages.error(request, _(e.msg))
         else:
             owner_form = NewOwnerForm()
         if 'moderator_email' in request.POST:
             moderator_form = NewModeratorForm(request.POST)
             if moderator_form.is_valid():
-                self.mailing_list.add_moderator(
-                    moderator_form.cleaned_data['moderator_email'])
+                try:
+                    self.mailing_list.add_moderator(
+                        moderator_form.cleaned_data['moderator_email'])
+                    messages.success(
+                        request, _('%s has been added as list moderator.'
+                                   % request.POST['moderator_email']))
+                except HTTPError as e:
+                    messages.error(request, _(e.msg))
         else:
             moderator_form = NewModeratorForm()
         return render_to_response('postorius/lists/members.html',
@@ -257,7 +252,6 @@ def list_index(request, template='postorius/lists/index.html'):
     """
     lists = []
     error = None
-    domain = None
     only_public = True
     if request.user.is_superuser:
         only_public = False
@@ -310,7 +304,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
                 # the form was valid so try to subscribe the user
                 try:
                     email = form.cleaned_data['email']
-                    response = the_list.subscribe(
+                    the_list.subscribe(
                         address=email,
                         display_name=form.cleaned_data.get('display_name', ''))
                     return render_to_response(
@@ -334,7 +328,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
                 # the form was valid so try to unsubscribe the user
                 try:
                     email = form.cleaned_data["email"]
-                    response = the_list.unsubscribe(address=email)
+                    the_list.unsubscribe(address=email)
                     return render_to_response(
                         'postorius/lists/summary.html',
                         {'list': the_list,
@@ -384,8 +378,6 @@ def list_delete(request, fqdn_listname):
         return utils.render_api_error(request)
     if request.method == 'POST':
         the_list.delete()
-        # let the user return to the list index page
-        lists = List.objects.all()
         return redirect("list_index")
     else:
         submit_url = reverse('list_delete',
@@ -490,7 +482,6 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
     result in using //option
     """
     message = ""
-    logger.debug(visible_section)
     if visible_section is None:
         visible_section = 'List Identity'
     form_sections = []
@@ -504,8 +495,8 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
         try:
             form_sections.append((section[0],
                                   temp.section_descriptions[section[0]]))
-        except KeyError, e:
-            error = e
+        except KeyError:
+            pass
     del temp
     # Save a Form Processed by POST
     if request.method == 'POST':
