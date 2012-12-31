@@ -462,7 +462,7 @@ class ListSettings(FieldsetForm):
         # just a really temporary layout to see that it works. -- Anna
         layout = [
             ["List Identity", "display_name", "mail_host", "description",
-             "advertised"], # tko - need to add subject_prefix here
+             "advertised", "subject_prefix"], 
             ["Automatic Responses", "autorespond_owner",
              "autoresponse_owner_text", "autorespond_postings",
              "autoresponse_postings_text", "autorespond_requests",
