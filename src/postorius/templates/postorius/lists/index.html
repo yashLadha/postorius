@@ -5,13 +5,12 @@
 {% block main %}
     <div class="mm_subHeader">
         <span class="mm_context">{% trans "Mailing Lists" %}</span>
-    {% if user.is_superuser %}
-        <ul class="mm_nav">
-            <li class="mm_nav_item"><a href="{% url 'list_index' %}">{% trans "List Index" %}</a></li>
-            <li class="mm_new_list mm_action"><a class="btn btn-mini btn-success" href="{% url 'list_new' %}">{% trans "Create List" %}</a></li>
-        </ul>    
-    {% endif %}
     </div>
+    {% if user.is_superuser %}
+        <p>
+            <a class="btn btn-success" href="{% url 'list_new' %}">{% trans "Create New List" %}</a>
+        </p>
+    {% endif %}
 
     <table class="table table-bordered table-striped">
     	<thead>

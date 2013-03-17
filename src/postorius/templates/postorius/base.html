@@ -20,21 +20,24 @@
     <header>
         <div class="mm_header">
             <div class="mm_canvas">
+                <a href="{% url 'list_index' %}" class="mm_logo"><img src="{% static 'postorius/img/mailman_logo_small_trans.png' %}" alt="{% trans 'Home' %}" /></a>
                 <ul class="mm_metaNav">
-                    <li><a class="mm_lists" href="{% url 'list_index' %}">Lists</a></li>
+                    <li><i class="icon-envelope"></i> <a href="{% url 'list_index' %}">Lists</a></li>
                     {% if user.is_authenticated %}
-                        <li><a class="mm_tasks" href="{% url 'user_tasks' %}">{% trans "To Do" %}</a></li>
+                        <li><i class="icon-tasks"></i><a href="{% url 'user_tasks' %}">{% trans "To Do" %}</a></li>
                     {% endif %}
                     {% if user.is_superuser %}
-                        <li><a class="mm_users" href="{% url 'user_index' %}">Users</a></li>
-                        <li><a class="mm_settings" href="{% url 'site_settings' %}">Settings</a></li>
+                        <li><i class="icon-user"></i> <a href="{% url 'user_index' %}">Users</a></li>
+                        <li><i class="icon-cog"></i> <a href="{% url 'site_settings' %}">Settings</a></li>
                     {% endif %}
-                	<li>{% if user.is_authenticated %}<a class="mm_logout" href="{% url 'user_logout' %}">Logout</a>{% else %}<a class="mm_user" href="{% url 'user_login' %}">Login</a>{% endif %}</li>
                 </ul>
-                <a href="{% url 'list_index' %}" class="mm_logo"><img src="{% static 'postorius/img/mailman_logo_trans.png' %}" alt="{% trans 'Home' %}" /></a>
+                <div class="mm_loginName">
                 {% if user.is_authenticated %}
-                    <div class="mm_loginName">Logged in as: <a href="{% url 'user_profile' %}">{{ user.username }}</a></div>
+                        Logged in as: <a href="{% url 'user_profile' %}">{{ user.username }}</a> <a href="{% url 'user_logout' %}" title="{% trans 'Logout' %}" class="mm_logout"><i class="icon-off"></i></a>
+                {% else %}
+                    <a href="{% url 'user_login' %}">Login</a>
                 {% endif %}
+                </div>
             </div>
         </div>
     </header>

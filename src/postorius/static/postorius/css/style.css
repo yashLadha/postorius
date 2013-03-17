@@ -1,3 +1,7 @@
+html {
+    overflow-y: scroll;
+}
+
 body {
     color: #444;
     font-size: 13px;
@@ -56,18 +60,30 @@ footer {
     background: -o-linear-gradient(top, #fff 0%,#efefef 100%);
     background: -ms-linear-gradient(top, #fff 0%,#efefef 100%);
     background: linear-gradient(to bottom, #fff 0%,#efefef 100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0 2px 5px #d8d8d8;
+}
+.mm_header .mm_logo {
+    float: left;
 }
 .mm_metaNav {
-    float: right;
+    float: left;
     list-style: none;
-    margin: 0;
+    margin: 0 0 0 20px;
     padding: 5px 0 0 0;
 }
 .mm_loginName {
-    position: absolute;
-    right: 0;
-    bottom: 0;
+    float: right;
+    padding-top: 5px;
 }
+.mm_logout {
+    margin-left: 10px;
+}
+
 .mm_metaNav li {
     float: left;
     margin-left: 20px;
@@ -78,26 +94,6 @@ footer {
     padding: 5px 0 5px 5px;
     text-shadow: #fff 0px 1px 1px;
 }
-.mm_metaNav .mm_tasks,
-.mm_metaNav .mm_settings,
-.mm_metaNav .mm_logout,
-.mm_metaNav .mm_lists,
-.mm_metaNav .mm_users {
-    background-color: transparent;
-    background-image: url(../img/icons.png);
-    background-repeat: no-repeat;
-    padding-left: 20px;
-}
-.mm_tasks { background-position: 0px 5px; }
-.mm_settings { background-position: 0px -30px; }
-.mm_users { background-position: 0px -65px; }
-.mm_logout { background-position: 0px -240px; }
-.mm_lists { background-position: 0px -311px; }
-.mm_tasks:hover { background-position: 0px -100px; }
-.mm_settings:hover { background-position: 0px -135px; }
-.mm_users:hover { background-position: 0px -170px; }
-.mm_logout:hover { background-position: 0px -205px; }
-.mm_lists:hover { background-position: 0px -276px; }
 
 .mm_main {
     background-color: #fff;
@@ -107,7 +103,7 @@ footer {
     border-radius: 5px;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
-    padding: 20px 40px;
+    padding: 60px 40px 20px 40px;
 }
 
 .mm_subHeader {
