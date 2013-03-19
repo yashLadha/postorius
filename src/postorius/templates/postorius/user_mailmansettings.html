@@ -5,11 +5,15 @@
 {% block main %}
     {% include 'postorius/menu/user_nav.html' %}
     {% if nolists %}
-        <h1>No Preferences Available</h1>
+        <div class="mm_subHeader">
+            <h1>{% trans "No Preferences Available" %}</h1>
+        </div>
         <p> {% trans 'You are not yet subscribed to any lists, so have no Mailman preferences.' %} </p>
     {% else %}
 
-  <h1>{% trans 'Mailman Settings' %} <span>- {{ user }}</span></h1>
+    <div class="mm_subHeader">
+        <h1>{% trans "Subscription Settings" %} <span>- {{ user }}</span></h1>
+    </div>
 
     <p><strong>Mailman display name:</strong> {{ mm_user.display_name}}</p>
     <p><strong>Django email:</strong> {{ user.email }}</p>
