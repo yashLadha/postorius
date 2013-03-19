@@ -103,18 +103,20 @@ class MailmanUserView(TemplateView):
         client = Client('%s/3.0' % settings.REST_SERVER,
                          settings.API_USER, settings.API_PASS)
         memberships = []
-        for a in self.mm_user.addresses:
-            members = client._connection.call('members/find',
+        if (self.mm_user):
+            for a in self.mm_user.addresses:
+                members = client._connection.call('members/find',
                                               {'subscriber': a})
-            try:
-                for m in members[1]['entries']:
-                    mlist = self._get_list(m['list_id'])
-                    memberships.append(dict(fqdn_listname=mlist.fqdn_listname,
-                                            role=m['role'],
-                                            delivery_mode=m['delivery_mode'],
-                                            address=a))
-            except KeyError:
-                pass
+                try:
+                    for m in members[1]['entries']:
+                        mlist = self._get_list(m['list_id'])
+                        memberships.append(
+                            dict(fqdn_listname=mlist.fqdn_listname,
+                            role=m['role'],
+                            delivery_mode=m['delivery_mode'],
+                            address=a))
+                except KeyError:
+                    pass
         return memberships
 
     def dispatch(self, request, *args, **kwargs):
