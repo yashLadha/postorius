@@ -4,26 +4,38 @@
 
 {% block main %}
     {% include 'postorius/menu/user_nav.html' %}
-    <h1>{% trans 'Mailman Settings' %} <span>- {{ user }}</span></h1>
+    {% if nolists %}
+        <h1>No Preferences Available</h1>
+        <p> {% trans 'You are not yet subscribed to any lists, so have no Mailman preferences.' %} </p>
+    {% else %}
+
+  <h1>{% trans 'Mailman Settings' %} <span>- {{ user }}</span></h1>
 
     <p><strong>Mailman display name:</strong> {{ mm_user.display_name}}</p>
     <p><strong>Django email:</strong> {{ user.email }}</p>
     <p><strong>Mailman primary email:</strong> {{ mm_user.email }}</p>
     <h2>Valid email addresses for this account:</h2>
     <ul>
+<!-- ADDRESSES/EMAIL@/MEMBERSHIPS -->
     {% for address in mm_user.addresses %}
         <li>{{ address }}</li>
     {% endfor %}
     </ul>
 
+    
     <h2>Preferences:</h2>
-    {{ mm_user.preferences }}
-    {{ mm_user }}
+    <p>preferences: {{ mm_user.preferences }}
+    <p>user: {{ mm_user }}
+    <p>tko
+    <p>memberships: {{ membership_lists }}
     {% for pref in mm_user.preferences %}
         <li>{{ pref }}</li>
     {% endfor %}
     
     <h2>List memberships:</h2>
+    {% for list in mm_user.lists %}
+       <li>{{ list.name }}</li>
+    {% endfor %}
     <p><em class="errorlist">Sample output: not real</em></p>
     <ul>
         <li>list1@example.com [<a href="#">listinfo</a>] 
@@ -93,5 +105,7 @@ messages posted
         </tr>
     </table>
     </form>
+    {% endif %}
+
 {% endblock main %}
 ~                      

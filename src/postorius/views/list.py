@@ -541,6 +541,15 @@ def user_mailmansettings(request):
         the_user = MailmanUser.objects.get(address=request.user.email)
     except MailmanApiError:
         return utils.render_api_error(request)
+    except Mailman404Error:
+	     # If we have no settings, return a "blank" settings page telling the
+		  # user that they have no settings because they are not subscribed
+		  # to any lists (see mailmansettings template)
+        return render_to_response(
+            'postorius/user_mailmansettings.html',
+				{'nolists': 'true'},
+            context_instance=RequestContext(request),
+            )
 
     settingsform = MembershipSettings()
     return render_to_response('postorius/user_mailmansettings.html',
