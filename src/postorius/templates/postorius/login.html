@@ -5,9 +5,9 @@
 {% block main %}
 
 <div id="container">
+    <p><strong>Login with username and password or with Mozilla Persona</strong></p>
+
   <div class="mm_login">
-    <h2>Login with username and password</h2>
-    
     <form action="" method="post" class="login mm_clear well"> {% csrf_token %}
       {{ form.as_p }}
       <div class="field">
@@ -17,14 +17,11 @@
   </div>  
   
   <div class="mm_login_b">  
-    <h2>Login using BrowserID</h2>
-    
     <form method="post" action="{% url 'socialauth_complete' "browserid" %}"> {% csrf_token %}
       <input type="hidden" name="assertion" value="" />
       <a rel="nofollow" id="browserid" href="#"><img src="{% static 'postorius/img/sign_in_blue.png' %}" alt="Login using BrowserID" /></a>
     </form>
-    
-    <h2>New user? Click on 'sign in' button to get started.</h2>
+    <p>Mozilla Persona is an easy way to sign into multiple websites, while still controlling your personal data. For more information <a href="http://www.mozilla.org/en-US/persona">see the mozilla website</a><</p>
   </div>
 <div style="clear:both">
 </div>
