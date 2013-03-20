@@ -31,7 +31,7 @@ urlpatterns = patterns(
     url(r'^accounts/login/$', 'user_login', name='user_login'),
     url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
     url(r'^accounts/profile/$', 'user_profile', name='user_profile'),
-    url(r'^accounts/tasks/$', 'user_tasks', name='user_tasks'),
+    url(r'^tasks/$', 'user_tasks', name='user_tasks'),
     url(r'^accounts/subscriptions/$', UserSubscriptionsView.as_view(),
         name='user_subscriptions'),
     url(r'^accounts/mailmansettings/$',
@@ -39,9 +39,9 @@ urlpatterns = patterns(
         name='user_mailmansettings'),
     # /settings/
     url(r'^settings/$', 'site_settings', name="site_settings"),
-    url(r'^settings/domains/$', 'domain_index', name='domain_index'),
-    url(r'^settings/domains/new/$', 'domain_new', name='domain_new'),
-    url(r'^settings/domains/(?P<domain>[^/]+)/delete$',
+    url(r'^domains/$', 'domain_index', name='domain_index'),
+    url(r'^domains/new/$', 'domain_new', name='domain_new'),
+    url(r'^domains/(?P<domain>[^/]+)/delete$',
         'domain_delete', name='domain_delete'),
     # /lists/
     url(r'^lists/$', 'list_index', name='list_index'),
