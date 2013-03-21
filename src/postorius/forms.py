@@ -209,7 +209,7 @@ class ListSettings(FieldsetForm):
         widget=forms.RadioSelect,
         required=False,
         label= _('Include RFC2369 headers'),
-	help_text=('Yes is highly recommended.RFC 2369 defines a set of List-* headers that are normally added to every message sent to the list membership. These greatly aid end-users who are using standards compliant mail readers. They should normally always be enabled.However, not all mail readers are standards compliant yet, and if you have a large number of members who are using non-compliant mail readers, they may be annoyed at these headers. You should first try to educate your members as to why these headers exist, and how to hide them in their mail clients. As a last resort you can disable these headers, but this is not recommended (and in fact, your ability to disable these headers may eventually go away).'))
+	     help_text=_('Yes is highly recommended. RFC 2369 defines a set of List-* headers that are normally added to every message sent to the list membership. These greatly aid end-users who are using standards compliant mail readers. They should normally always be enabled.However, not all mail readers are standards compliant yet, and if you have a large number of members who are using non-compliant mail readers, they may be annoyed at these headers. You should first try to educate your members as to why these headers exist, and how to hide them in their mail clients. As a last resort you can disable these headers, but this is not recommended (and in fact, your ability to disable these headers may eventually go away).'))
     archive_policy_choices = (
 		  ("public", _("Public Archives")),
         ("private", _("Private Archives")),
@@ -328,7 +328,7 @@ class ListSettings(FieldsetForm):
         coerce=lambda x: x == 'False',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
-        required=True,
+        required=False,
         help_text=_('Should any existing Reply-To: header found in the original message be stripped? If so, this will be done regardless of whether an explict Reply-To: header is added by Mailman or not.')
     )
     generic_nonmember_action = forms.IntegerField(
@@ -375,6 +375,7 @@ class ListSettings(FieldsetForm):
     reply_goes_to_list = forms.ChoiceField(
         label=_('Reply goes to list'),
         widget=forms.Select(),
+        required=False,
         error_messages={
             'required': _("Please choose a reply-to action.")},
         choices=(
@@ -384,6 +385,7 @@ class ListSettings(FieldsetForm):
 	     help_text=('Where are replies to list messages directed? No Munging is strongly recommended for most mailing lists. \nThis option controls what Mailman does to the Reply-To: header in messages flowing through this mailing list. When set to No Munging, no Reply-To: header is added by Mailman, although if one is present in the original message, it is not stripped. Setting this value to either Reply to List or Explicit Reply causes Mailman to insert a specific Reply-To: header in all messages, overriding the header in the original message if necessary (Explicit Reply inserts the value of reply_to_address).There are many reasons not to introduce or override the Reply-To: header. One is that some posters depend on their own Reply-To: settings to convey their valid return address. Another is that modifying Reply-To: makes it much more difficult to send private replies. See `Reply-To\' Munging Considered Harmful for a general discussion of this issue. See Reply-To Munging Considered Useful for a dissenting opinion.Some mailing lists have restricted posting privileges, with a parallel list devoted to discussions. Examples are `patches\' or `checkin\' lists, where software changes are posted by a revision control system, but discussion about the changes occurs on a developers mailing list. To support these types of mailing lists, select Explicit Reply and set the Reply-To: address option to point to the parallel list.  '))
     reply_to_address = forms.CharField( 
         label= _('Explicit reply-to address'),
+        required=False,
         help_text=_('This option allows admins to set an explicit Reply-to address.  It is only used if the reply-to is set to use an explicitly set header'),
     )
     request_address = forms.EmailField(
@@ -418,14 +420,14 @@ class ListSettings(FieldsetForm):
         widget=forms.RadioSelect(choices=choices),
         required=False,
         label=_('Administrivia'),
-	help_text=('Administrivia tests will check postings to see whether it\'s really meant as an administrative request (like subscribe, unsubscribe, etc), and will add it to the the administrative requests queue, notifying the administrator of the new request, in the process.'))
+	     help_text=('Administrivia tests will check postings to see whether it\'s really meant as an administrative request (like subscribe, unsubscribe, etc), and will add it to the the administrative requests queue, notifying the administrator of the new request, in the process.'))
     anonymous_list = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
         label=_('Anonymous list'),
-	help_text=('Hide the sender of a message, replacing it with the list address (Removes From, Sender and Reply-To fields)'))
+	     help_text=('Hide the sender of a message, replacing it with the list address (Removes From, Sender and Reply-To fields)'))
     created_at = forms.IntegerField(
         label=_('Created at'),
         widget=forms.HiddenInput(),
@@ -516,9 +518,10 @@ class ListSettings(FieldsetForm):
              "admin_notify_mchanges"],
             ["Alter Messages", "filter_content", "collapse_alternatives",
              "convert_html_to_plaintext", "anonymous_list",
-             "include_rfc2369_headers", "reply_goes_to_list",
-             # "reply_to_address", #
-             # "first_strip_reply_to", # tko 
+             "include_rfc2369_headers", 
+             "reply_goes_to_list",
+             "reply_to_address", 
+             "first_strip_reply_to", 
              "posting_pipeline"],  
             ["Digest", "digest_size_threshold"],
             ["Message Acceptance", "acceptable_aliases", "administrivia",
