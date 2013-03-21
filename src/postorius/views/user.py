@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-# Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
+﻿# -*- coding: utf-8 -*-
+# Copyright (C) 1998-2013 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -272,3 +272,21 @@ def user_profile(request, user_email=None):
 def user_tasks(request):
     return render_to_response('postorius/user_tasks.html',
                               context_instance=RequestContext(request))
+
+@login_required
+def more_info_tab(request, formid=None, helpid=None, template='postorius/more_info_display.html'):
+    """Displays more_info in new tab.
+    """
+    
+    if(formid == 'list_settings'):
+        form = ListSettings(visible_section='List Identity', visible_option='None', data=request.POST)
+    
+    for field in form:
+        if field.name == helpid:
+            help_text = field.help_text
+    
+    return render_to_response(template,
+                              {'help_text':help_text,
+                               'helpid':helpid},
+                              context_instance=RequestContext(request))
+    

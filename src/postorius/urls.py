@@ -77,6 +77,8 @@ urlpatterns = patterns(
     url(r'^lists/(?P<fqdn_listname>[^/]+)/settings/(?P<visible_section>[^/]+)?'
         '(?:/(?P<visible_option>.*))?$', 'list_settings',
         name='list_settings'),
+    url(r'^more_info/(?P<formid>[^/]+)/(?P<helpid>[^/]+)$', 'more_info_tab', name='more_info_tab'),
+   
     # /users/
     url(r'^users/$', 'user_index', name='user_index'),
     url(r'^users/new/$', 'user_new', name='user_new'),
