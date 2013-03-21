@@ -39,8 +39,8 @@ class DomainNew(FieldsetForm):
     description = forms.CharField(
         label=_('Description'),
         required=False)
-    info = forms.CharField(
-        label=_('Information'),
+    contact_address = forms.EmailField(
+        label=_('Contact Address'),
         required=False)
 
     def clean_mail_host(self):
