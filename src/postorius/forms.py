@@ -188,21 +188,16 @@ class ListSettings(FieldsetForm):
     """Form fields dealing with the list settings.
     """
     choices = ((True, _('Yes')), (False, _('No')))
-    list_name = forms.CharField(
-        label=_('List Name'),
-        required=False)
+    #list_name = forms.CharField(
+    #    label=_('List Name'),
+    #    required=False)
     host_name = forms.CharField(
         label=_('Domain host name'),
         required=False)
-    fqdn_listname = forms.CharField(
-        label=_('Fqdn listname'),
-        required=False)
-    include_list_post_header = forms.TypedChoiceField(
-        coerce=lambda x: x == 'True',
-        choices=((True, _('Yes')), (False, _('No'))),
-        widget=forms.RadioSelect,
-        required=False,
-        label= _('Include list post header'))
+    # informational, not configurable
+    #fqdn_listname = forms.CharField(
+    #    label=_('Fqdn listname'),
+    #    required=False)
     include_rfc2369_headers = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -210,6 +205,12 @@ class ListSettings(FieldsetForm):
         required=False,
         label= _('Include RFC2369 headers'),
 	     help_text=_('Yes is highly recommended. RFC 2369 defines a set of List-* headers that are normally added to every message sent to the list membership. These greatly aid end-users who are using standards compliant mail readers. They should normally always be enabled.However, not all mail readers are standards compliant yet, and if you have a large number of members who are using non-compliant mail readers, they may be annoyed at these headers. You should first try to educate your members as to why these headers exist, and how to hide them in their mail clients. As a last resort you can disable these headers, but this is not recommended (and in fact, your ability to disable these headers may eventually go away).'))
+    allow_list_posts = forms.TypedChoiceField(
+        choices=choices,
+        widget=forms.RadioSelect,
+        label=_("Include the list post header"),
+        help_text=_("This can be set to no for announce lists that do not wish to include the List-Post header because posting to the list is discouraged."),
+    )
     archive_policy_choices = (
 		  ("public", _("Public Archives")),
         ("private", _("Private Archives")),
@@ -258,9 +259,10 @@ class ListSettings(FieldsetForm):
     autoresponse_grace_period = forms.CharField(
         label=_('Autoresponse grace period'),
         help_text=('Number of days between auto-responses to either the mailing list or -request/-owner address from the same poster. Set to zero (or negative) for no grace period (i.e. auto-respond to every message).'))
-    bounces_address = forms.EmailField(
-        label=_('Bounces Address'),
-        required=False)
+    # This doesn't make sense as a configurable, so we're leaving it out
+    #bounces_address = forms.EmailField(
+    #    label=_('Bounces Address'),
+    #    required=False)
     advertised = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -319,11 +321,12 @@ class ListSettings(FieldsetForm):
         label=_('Digest size threshold'),
         help_text=('How big in Kb should a digest be before it gets sent out?')
     )
-    digest_last_sent_at = forms.IntegerField(
-        label=_('Digest last sent at'),
-        error_messages={
-            'invalid': _('Please provide an integer.')},
-        required=False)
+    # Informational
+    #digest_last_sent_at = forms.IntegerField(
+    #    label=_('Digest last sent at'),
+    #    error_messages={
+    #        'invalid': _('Please provide an integer.')},
+    #    required=False)
     first_strip_reply_to = forms.TypedChoiceField( 
         coerce=lambda x: x == 'False',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -343,28 +346,29 @@ class ListSettings(FieldsetForm):
                         'invalid': _('Please enter a valid domain name.')},
         required=True,
         help_text="The \"host_name\" is the preferred name for email to mailman-related addresses on this host, and generally should be the mail host's exchanger address, if any. This setting can be useful for selecting among alternative names of a host that has multiple addresses.")
-    next_digest_number = forms.IntegerField(
-        label=_('Next digest number'),
-        error_messages={
-            'invalid': _('Please provide an integer.'),
-        },
-        required=False,
-    )
-    no_reply_address = forms.EmailField(
-        label=_('No reply address'),
-        required=False,
-    )
+    # informational, not editable
+    #next_digest_number = forms.IntegerField(
+    #    label=_('Next digest number'),
+    #    error_messages={
+    #        'invalid': _('Please provide an integer.'),
+    #    },
+    #    required=False,
+    #)
+    #no_reply_address = forms.EmailField(
+    #    label=_('No reply address'),
+    #    required=False,
+    #)
     posting_pipeline = forms.CharField(
         label=_('Pipeline'),
-	help_text=('Type of pipeline you want to use for this mailing list')
+	     help_text=('Type of pipeline you want to use for this mailing list')
     )
-    post_id = forms.IntegerField(
-        label=_('Post ID'),
-        error_messages={
-            'invalid': _('Please provide an integer.'),
-        },
-        required=False,
-    )
+    #post_id = forms.IntegerField(
+    #    label=_('Post ID'),
+    #    error_messages={
+    #        'invalid': _('Please provide an integer.'),
+    #    },
+    #    required=False,
+    #)
     display_name = forms.CharField(
         label=_('Display name'),
         help_text= ('Display name is the name shown in the web interface.')
@@ -388,9 +392,10 @@ class ListSettings(FieldsetForm):
         required=False,
         help_text=_('This option allows admins to set an explicit Reply-to address.  It is only used if the reply-to is set to use an explicitly set header'),
     )
-    request_address = forms.EmailField(
-        label=_('Request address'),
-        required=False)
+    # informational, not editable
+    #request_address = forms.EmailField(
+    #    label=_('Request address'),
+    #    required=False)
     send_welcome_message = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -398,9 +403,14 @@ class ListSettings(FieldsetForm):
         required=False,
         label=_('Send welcome message'),
         help_text=('Send welcome message to newly subscribed members?Turn this off only if you plan on subscribing people manually and don\'t want them to know that you did so. This option is most useful for transparently migrating lists from some other mailing list manager to Mailman.'))
-    scheme = forms.CharField(
-        label=_('Scheme'),
-        required=False)
+    welcome_message_uri = forms.CharField(
+        label = _('URI for the welcome message'),
+        help_text = _('If a welcome message is to be sent to subscribers, you can specify a URI that gives the text of this message.'),
+    )
+    # tko - look this up
+    # scheme = forms.CharField(
+    #    label=_('Scheme'),
+    #    required=False)
     acceptable_aliases = forms.CharField(
         widget=forms.Textarea(),
         label=_("Acceptable aliases"),
@@ -428,25 +438,28 @@ class ListSettings(FieldsetForm):
         required=False,
         label=_('Anonymous list'),
 	     help_text=('Hide the sender of a message, replacing it with the list address (Removes From, Sender and Reply-To fields)'))
-    created_at = forms.IntegerField(
-        label=_('Created at'),
-        widget=forms.HiddenInput(),
-        required=False)
-    join_address = forms.EmailField(
-        label=_('Join address'),
-        required=False)
-    last_post_at = forms.IntegerField(
-        label=_('Last post at'),
-        required=False)
-    leave_address = forms.EmailField(
-        label=_('Leave address'),
-        required=False)
-    owner_address = forms.EmailField(
-        label=_('Owner Address'),
-        required=False)
-    posting_address = forms.EmailField(
-        label=_('Posting Address'),
-        required=False)
+    # Informational field, not needed.
+    #created_at = forms.IntegerField(
+    #    label=_('Created at'),
+    #    widget=forms.HiddenInput(),
+    #    required=False)
+    #join_address = forms.EmailField(
+    #    label=_('Join address'),
+    #    required=False)
+    #last_post_at = forms.IntegerField(
+    #    label=_('Last post at'),
+    #    required=False)
+    #leave_address = forms.EmailField(
+    #    label=_('Leave address'),
+    #    required=False)
+    #owner_address = forms.EmailField(
+    #    label=_('Owner Address'),
+    #    required=False)
+    #posting_address = forms.EmailField(
+    #    label=_('Posting Address'),
+    #    required=False)
+
+
     #Descriptions used in the Settings Overview Page
     section_descriptions = {
         "List Identity": _("Basic identity settings for the list"),
@@ -514,11 +527,14 @@ class ListSettings(FieldsetForm):
              "autoresponse_owner_text", "autorespond_postings",
              "autoresponse_postings_text", "autorespond_requests",
              "autoresponse_request_text", "autoresponse_grace_period",
-             "send_welcome_message", "admin_immed_notify",
+             "send_welcome_message", 
+             "welcome_message_uri",
+             "admin_immed_notify",
              "admin_notify_mchanges"],
             ["Alter Messages", "filter_content", "collapse_alternatives",
              "convert_html_to_plaintext", "anonymous_list",
              "include_rfc2369_headers", 
+             "allow_list_posts",
              "reply_goes_to_list",
              "reply_to_address", 
              "first_strip_reply_to", 
