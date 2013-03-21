@@ -184,6 +184,16 @@ class ListMassSubsribeView(MailingListView):
                         messages.error(request, e)
         return redirect('mass_subscribe', self.mailing_list.fqdn_listname)
 
+def _get_choosable_domains():
+    try:
+        domains = Domain.objects.all()
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    choosable_domains = [("", _("Choose a Domain"))]
+    for domain in domains:
+        choosable_domains.append((domain.mail_host,
+                                  domain.mail_host))
+    return choosable_domains
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -199,14 +209,7 @@ def list_new(request, template='postorius/lists/new.html'):
     """
     mailing_list = None
     if request.method == 'POST':
-        try:
-            domains = Domain.objects.all()
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        choosable_domains = [("", _("Choose a Domain"))]
-        for domain in domains:
-            choosable_domains.append((domain.mail_host,
-                                      domain.mail_host))
+        choosable_domains = _get_choosable_domains()
         form = ListNew(choosable_domains, request.POST)
         if form.is_valid():
             #grab domain
@@ -234,13 +237,7 @@ def list_new(request, template='postorius/lists/new.html'):
             else:
                 messages.success(_("New List created"))
     else:
-        try:
-            domains = Domain.objects.all()
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        choosable_domains = [("", _("Choose a Domain"))]
-        for domain in domains:
-            choosable_domains.append((domain.mail_host, domain.mail_host))
+        choosable_domains = _get_choosable_domains()
         form = ListNew(choosable_domains,
                        initial={'list_owner': request.user.email})
     return render_to_response(template, {'form': form},
@@ -259,12 +256,14 @@ def list_index(request, template='postorius/lists/index.html'):
         lists = List.objects.all(only_public=only_public)
     except MailmanApiError:
         return utils.render_api_error(request)
+    choosable_domains = _get_choosable_domains()
     if request.method == 'POST':
         return redirect("list_summary", fqdn_listname=request.POST["list"])
     else:
         return render_to_response(template,
                                   {'error': error,
-                                   'lists': lists},
+                                   'lists': lists,
+                                   'domain_count': len(choosable_domains)},
                                   context_instance=RequestContext(request))
 
 
