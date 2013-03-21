@@ -24,6 +24,7 @@ mailman.client:
     $ bzr branch lp:mailman.client
     $ cd mailman.client
     $ sudo python setup.py install
+    $ cd ..
 
 
 Install Postorius
