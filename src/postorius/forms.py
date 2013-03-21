@@ -210,6 +210,17 @@ class ListSettings(FieldsetForm):
         required=False,
         label= _('Include RFC2369 headers'),
 	help_text=('Yes is highly recommended.RFC 2369 defines a set of List-* headers that are normally added to every message sent to the list membership. These greatly aid end-users who are using standards compliant mail readers. They should normally always be enabled.However, not all mail readers are standards compliant yet, and if you have a large number of members who are using non-compliant mail readers, they may be annoyed at these headers. You should first try to educate your members as to why these headers exist, and how to hide them in their mail clients. As a last resort you can disable these headers, but this is not recommended (and in fact, your ability to disable these headers may eventually go away).'))
+    archive_policy_choices = (
+		  ("public", _("Public Archives")),
+        ("private", _("Private Archives")),
+        ("never", _("Do not archive this list")),
+    )
+    archive_policy = forms.ChoiceField(
+        choices=archive_policy_choices,
+        widget=forms.RadioSelect,
+        label=_('Archive Policy'),
+        help_text=_('Policy for archiving messages for this list'),
+    )
     autorespond_choices = (
         ("respond_and_continue", _("Respond and continue processing")),
         ("respond_and_discard", _("Respond and discard message")),
@@ -313,6 +324,13 @@ class ListSettings(FieldsetForm):
         error_messages={
             'invalid': _('Please provide an integer.')},
         required=False)
+    first_strip_reply_to = forms.TypedChoiceField( 
+        coerce=lambda x: x == 'False',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=True,
+        help_text=_('Should any existing Reply-To: header found in the original message be stripped? If so, this will be done regardless of whether an explict Reply-To: header is added by Mailman or not.')
+    )
     generic_nonmember_action = forms.IntegerField(
         label=_('Generic nonmember action'),
         error_messages={
@@ -363,7 +381,11 @@ class ListSettings(FieldsetForm):
             ("no_munging", _("No Munging")),
             ("point_to_list", _("Reply goes to list")),
             ("explicit_header", _("Explicit Reply-to header set"))),
-	help_text=('Where are replies to list messages directed? No Munging  is strongly recommended for most mailing lists.This option controls what Mailman does to the Reply-To: header in messages flowing through this mailing list. When set to No Munging, no Reply-To: header is added by Mailman, although if one is present in the original message, it is not stripped. Setting this value to either Reply to List or Explicit Reply causes Mailman to insert a specific Reply-To: header in all messages, overriding the header in the original message if necessary (Explicit Reply inserts the value of reply_to_address).There are many reasons not to introduce or override the Reply-To: header. One is that some posters depend on their own Reply-To: settings to convey their valid return address. Another is that modifying Reply-To: makes it much more difficult to send private replies. See `Reply-To\' Munging Considered Harmful for a general discussion of this issue. See Reply-To Munging Considered Useful for a dissenting opinion.Some mailing lists have restricted posting privileges, with a parallel list devoted to discussions. Examples are `patches\' or `checkin\' lists, where software changes are posted by a revision control system, but discussion about the changes occurs on a developers mailing list. To support these types of mailing lists, select Explicit Reply and set the Reply-To: address option to point to the parallel list.  '))
+	     help_text=('Where are replies to list messages directed? No Munging is strongly recommended for most mailing lists. \nThis option controls what Mailman does to the Reply-To: header in messages flowing through this mailing list. When set to No Munging, no Reply-To: header is added by Mailman, although if one is present in the original message, it is not stripped. Setting this value to either Reply to List or Explicit Reply causes Mailman to insert a specific Reply-To: header in all messages, overriding the header in the original message if necessary (Explicit Reply inserts the value of reply_to_address).There are many reasons not to introduce or override the Reply-To: header. One is that some posters depend on their own Reply-To: settings to convey their valid return address. Another is that modifying Reply-To: makes it much more difficult to send private replies. See `Reply-To\' Munging Considered Harmful for a general discussion of this issue. See Reply-To Munging Considered Useful for a dissenting opinion.Some mailing lists have restricted posting privileges, with a parallel list devoted to discussions. Examples are `patches\' or `checkin\' lists, where software changes are posted by a revision control system, but discussion about the changes occurs on a developers mailing list. To support these types of mailing lists, select Explicit Reply and set the Reply-To: address option to point to the parallel list.  '))
+    reply_to_address = forms.CharField( 
+        label= _('Explicit reply-to address'),
+        help_text=_('This option allows admins to set an explicit Reply-to address.  It is only used if the reply-to is set to use an explicitly set header'),
+    )
     request_address = forms.EmailField(
         label=_('Request address'),
         required=False)
@@ -429,7 +451,8 @@ class ListSettings(FieldsetForm):
         "Automatic Responses": _("All options for Autoreply"),
         "Alter Messages": _("Settings that modify member messages"),
         "Digest": _("Digest-related options"),
-        "Message Acceptance": _("Options related to accepting messages")}
+        "Message Acceptance": _("Options related to accepting messages"),
+        "Archives": _("Options related to archiving messages")}
 
     def clean_acceptable_aliases(self):
         data = self.cleaned_data['acceptable_aliases']
@@ -494,10 +517,14 @@ class ListSettings(FieldsetForm):
             ["Alter Messages", "filter_content", "collapse_alternatives",
              "convert_html_to_plaintext", "anonymous_list",
              "include_rfc2369_headers", "reply_goes_to_list",
-             "posting_pipeline"], #tko - removed include_list_post_header
+             # "reply_to_address", #
+             # "first_strip_reply_to", # tko 
+             "posting_pipeline"],  
             ["Digest", "digest_size_threshold"],
             ["Message Acceptance", "acceptable_aliases", "administrivia",
-             "default_nonmember_action", "default_member_action"]]
+             "default_nonmember_action", "default_member_action"],
+            ["Archives", "archive_policy"],
+            ]
 
 
 class Login(FieldsetForm):
