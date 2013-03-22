@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -46,6 +46,8 @@ urlpatterns = patterns(
     # /lists/
     url(r'^lists/$', 'list_index', name='list_index'),
     url(r'^lists/new/$', 'list_new', name='list_new'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/members/(?P<page>\d+)/$',
+        ListMembersView.as_view(), name='list_members_paged'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/members/$',
         ListMembersView.as_view(), name='list_members'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/metrics$',

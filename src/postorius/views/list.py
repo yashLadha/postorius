@@ -39,8 +39,17 @@ class ListMembersView(MailingListView):
     """Display all members of a given list.
     """
 
+    def _get_list(self, fqdn_listname, page):
+        m_list = super(ListMembersView, self)._get_list(fqdn_listname, page)
+        m_list.member_page = m_list.get_member_page(25, page)
+        m_list.member_page_nr = page
+        m_list.member_page_previous_nr = page - 1
+        m_list.member_page_next_nr = page + 1
+        m_list.member_page_show_next = len(m_list.member_page) >= 25
+        return m_list
+        
     @method_decorator(list_owner_required)
-    def post(self, request, fqdn_listname):
+    def post(self, request, fqdn_listname, page=1):
         if 'owner_email' in request.POST:
             owner_form = NewOwnerForm(request.POST)
             if owner_form.is_valid():
@@ -74,7 +83,7 @@ class ListMembersView(MailingListView):
                                   context_instance=RequestContext(request))
 
     @method_decorator(list_owner_required)
-    def get(self, request, fqdn_listname):
+    def get(self, request, fqdn_listname, page=1):
         owner_form = NewOwnerForm()
         moderator_form = NewModeratorForm()
         return render_to_response('postorius/lists/members.html',
@@ -184,7 +193,7 @@ class ListMassSubsribeView(MailingListView):
                         messages.error(request, e)
         return redirect('mass_subscribe', self.mailing_list.fqdn_listname)
 
-def _get_choosable_domains():
+def _get_choosable_domains(request):
     try:
         domains = Domain.objects.all()
     except MailmanApiError:
@@ -209,7 +218,7 @@ def list_new(request, template='postorius/lists/new.html'):
     """
     mailing_list = None
     if request.method == 'POST':
-        choosable_domains = _get_choosable_domains()
+        choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains, request.POST)
         if form.is_valid():
             #grab domain
@@ -237,7 +246,7 @@ def list_new(request, template='postorius/lists/new.html'):
             else:
                 messages.success(_("New List created"))
     else:
-        choosable_domains = _get_choosable_domains()
+        choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains,
                        initial={'list_owner': request.user.email})
     return render_to_response(template, {'form': form},
@@ -256,7 +265,7 @@ def list_index(request, template='postorius/lists/index.html'):
         lists = List.objects.all(only_public=only_public)
     except MailmanApiError:
         return utils.render_api_error(request)
-    choosable_domains = _get_choosable_domains()
+    choosable_domains = _get_choosable_domains(request)
     if request.method == 'POST':
         return redirect("list_summary", fqdn_listname=request.POST["list"])
     else:

@@ -32,9 +32,7 @@
     <p>user: {{ mm_user }}
     <p>tko
     <p>memberships: {{ membership_lists }}
-    {% for pref in mm_user.preferences %}
-        <li>{{ pref }}</li>
-    {% endfor %}
+    <p>{{ mm_user.preferences }}</p>
     
     <h2>List memberships:</h2>
     {% for list in mm_user.lists %}
@@ -94,8 +92,6 @@ messages posted
             <td><input type="checkbox" /></td>
             <td><input type="checkbox" /></td>
         </tr>
-    {% for preference in mm_user.preferences %}
-    {% endfor %}
         <tr>
             <th colspan="6">{% trans "Per-Email subscriptions" %}</th>
         </tr>

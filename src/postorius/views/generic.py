@@ -35,7 +35,7 @@ class MailingListView(TemplateView):
     Sets self.mailing_list to list object if fqdn_listname in **kwargs.
     """
 
-    def _get_list(self, fqdn_listname):
+    def _get_list(self, fqdn_listname, page):
         return List.objects.get_or_404(fqdn_listname=fqdn_listname)
 
     def _is_list_owner(self, user, mailing_list):
@@ -56,7 +56,8 @@ class MailingListView(TemplateView):
         # get the list object.
         if 'fqdn_listname' in kwargs:
             try:
-                self.mailing_list = self._get_list(kwargs['fqdn_listname'])
+                self.mailing_list = self._get_list(kwargs['fqdn_listname'],
+                                                   int(kwargs.get('page', 1)))
             except MailmanApiError:
                 return utils.render_api_error(request)
             request.user.is_list_owner = self._is_list_owner(

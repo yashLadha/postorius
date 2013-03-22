@@ -69,7 +69,7 @@
     		</tr>
         </thead>
     	<tbody>
-            {% for member in list.members %}
+            {% for member in list.member_page %}
                 <tr>
                     <td>{{ member.address }}</td>
                     <td>{% trans member.role %}</td>
@@ -80,5 +80,23 @@
             {% endfor %}
     	</tbody>
     </table>
+
+    <div class="pagination pagination-centered">
+        <ul>
+            {% if list.member_page_nr > 1 %}
+                <li class="active"><a href="{% url 'list_members_paged' list.fqdn_listname list.member_page_previous_nr %}">&laquo;</a></li> 
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li> 
+            {% endif %}
+
+        	<li><span>{{ list.member_page_nr }}</span></li>
+
+            {% if list.member_page_show_next %}
+                <li class="active"><a href="{% url 'list_members_paged' list.fqdn_listname list.member_page_next_nr %}">&raquo;</a></li> 
+            {% else %}
+                <li class="disabled"><a href="#">&raquo;</a></li> 
+            {% endif %}
+        </ul>
+    </div>
 
 {% endblock main %}
