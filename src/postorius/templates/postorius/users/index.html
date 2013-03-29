@@ -21,7 +21,7 @@
     		</tr>
     	</thead>
     	<tbody>
-            {% for mm_user in mm_users %}
+            {% for mm_user in mm_user_page %}
     		<tr>
     			<td>
                     <a href="{% url 'user_summary' user_id=mm_user.user_id %}">{% for address in mm_user.addresses|slice:":1" %}{{ address }}{% endfor %}</a>
@@ -35,4 +35,23 @@
             {% endfor %}
     	</tbody>
     </table>
+
+    <div class="pagination pagination-centered">
+        <ul>
+            {% if mm_user_page_nr > 1 %}
+                <li><a href="{% url 'user_index_paged' mm_user_page_previous_nr %}">&laquo;</a></li> 
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li> 
+            {% endif %}
+
+        	<li><span>{{ mm_user_page_nr }}</span></li>
+
+            {% if mm_user_page_show_next %}
+                <li><a href="{% url 'user_index_paged' mm_user_page_next_nr %}">&raquo;</a></li> 
+            {% else %}
+                <li class="disabled"><a href="#">&raquo;</a></li> 
+            {% endif %}
+        </ul>
+    </div>
+
 {% endblock main %}

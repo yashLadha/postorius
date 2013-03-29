@@ -40,16 +40,12 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from urllib2 import HTTPError
 
-from mailmanclient import Client
 from postorius import utils
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView, MailmanUserView
-
-
-logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -70,8 +66,7 @@ def user_settings(request, tab="membership",
     membership_lists = []
 
     try:
-        c = Client('%s/3.0' % settings.REST_SERVER, settings.API_USER,
-                   settings.API_PASS)
+        c = utils.get_client()
         if tab == "membership":
             if fqdn_listname:
                 the_list = List.objects.get(fqdn_listname=fqdn_listname)
@@ -195,18 +190,24 @@ class UserSubscriptionsView(MailmanUserView):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def user_index(request, template='postorius/users/index.html'):
+def user_index(request, page=1, template='postorius/users/index.html'):
     """Show a table of all users.
     """
+    page = int(page)
     error = None
     try:
-        mm_users = MailmanUser.objects.all()
+        mm_user_page = utils.get_client().get_user_page(25, page)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response(template,
-                              {'error': error,
-                               'mm_users': mm_users},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        template,
+        {'error': error,
+         'mm_user_page': mm_user_page,
+         'mm_user_page_nr': page,
+         'mm_user_page_previous_nr': page - 1,
+         'mm_user_page_next_nr': page + 1,
+         'mm_user_page_show_next': len(mm_user_page) >= 25},
+        context_instance=RequestContext(request))
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -245,7 +246,6 @@ def user_login(request, template='postorius/login.html'):
         user = authenticate(username=request.POST.get('username'),
                             password=request.POST.get('password'))
         if user is not None:
-            logger.debug(user)
             if user.is_active:
                 login(request, user)
                 return redirect(request.GET.get('next', 'list_index'))

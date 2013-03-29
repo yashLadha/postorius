@@ -28,7 +28,17 @@ from postorius.models import (Domain, List, Member, MailmanUser,
 from postorius import utils
 
 
-class MailingListView(TemplateView):
+class MailmanClientMixin(object):
+    """Adds a mailmanclient.Client instance."""
+    
+    def client(self):
+        if getattr(self._client, '_client', None) is None:
+            self._client = Client('%s/3.0' % settings.REST_SERVER,
+                                  settings.API_USER, settings.API_PASS)
+        return self._client
+
+
+class MailingListView(TemplateView, MailmanClientMixin):
     """A generic view for everything based on a mailman.client
     list object.
 
@@ -70,7 +80,7 @@ class MailingListView(TemplateView):
         return super(MailingListView, self).dispatch(request, *args, **kwargs)
 
 
-class MailmanUserView(TemplateView):
+class MailmanUserView(TemplateView, MailmanClientMixin):
     """A generic view for everything based on a mailman.client
     user object.
 
@@ -101,13 +111,11 @@ class MailmanUserView(TemplateView):
         return self.lists[list_id]
 
     def _get_memberships(self):
-        client = Client('%s/3.0' % settings.REST_SERVER,
-                         settings.API_USER, settings.API_PASS)
         memberships = []
         if (self.mm_user):
             for a in self.mm_user.addresses:
-                members = client._connection.call('members/find',
-                                              {'subscriber': a})
+                members = self._client._connection.call('members/find',
+                                                        {'subscriber': a})
                 try:
                     for m in members[1]['entries']:
                         mlist = self._get_list(m['list_id'])

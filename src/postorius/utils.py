@@ -16,8 +16,12 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+
+from django.conf import settings
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
+
+from mailmanclient import Client
 
 
 def get_domain_name(request):
@@ -26,6 +30,12 @@ def get_domain_name(request):
     if "HTTP_HOST" in request.META.keys():
         return request.META["HTTP_HOST"].split(":")[0]
     return None
+
+
+def get_client():
+    return Client('{0}/3.0'.format(settings.REST_SERVER),
+                  settings.API_USER,
+                  settings.API_PASS)
 
 
 def render_api_error(request):

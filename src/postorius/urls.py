@@ -82,6 +82,7 @@ urlpatterns = patterns(
     url(r'^more_info/(?P<formid>[^/]+)/(?P<helpid>[^/]+)$', 'more_info_tab', name='more_info_tab'),
    
     # /users/
+    url(r'^users/(?P<page>\d+)/$', 'user_index', name='user_index_paged'),
     url(r'^users/$', 'user_index', name='user_index'),
     url(r'^users/new/$', 'user_new', name='user_new'),
     url(r'^users/(?P<user_id>[^/]+)/$',
