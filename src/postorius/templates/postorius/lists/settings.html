@@ -4,8 +4,8 @@
 {% load nav_helpers %}
 
 {% block main %}
+    {% if message %}<p class="alert">{{ message }}</p>{% endif %}
     {% list_nav 'list_settings' 'Settings' %}
-
     <ul class="nav nav-tabs">
         {% for section in form_sections %}
         <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' fqdn_listname=list.fqdn_listname visible_section=section.0 visible_option=None %}">{{section.0}}</a></li>
