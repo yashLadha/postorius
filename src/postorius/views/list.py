@@ -47,7 +47,7 @@ class ListMembersView(MailingListView):
         m_list.member_page_next_nr = page + 1
         m_list.member_page_show_next = len(m_list.member_page) >= 25
         return m_list
-        
+
     @method_decorator(list_owner_required)
     def post(self, request, fqdn_listname, page=1):
         if 'owner_email' in request.POST:
@@ -515,9 +515,9 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
             for key in form.fields.keys():
                 list_settings[key] = form.cleaned_data[key]
                 list_settings.save()
-            message = _("The list has been updated.")
+            message = _("The list settings have been updated.")
         else:
-            message = _("Validation Error - The list has not been updated.")
+            message = _("Validation Error - The list settings have not been updated.")
     else:
         #Provide a form with existing values
         #create form and process layout into form.layout
