@@ -299,7 +299,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except AttributeError, e:
         return render_to_response('postorius/errors/generic.html',
-                                  {'error': "REST API not found / Offline"},
+                                  {'error': "Mailman REST API not available.  Please start Mailman core."},
                                   context_instance=RequestContext(request))
     # process submitted form
     if request.method == 'POST':

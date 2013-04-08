@@ -87,7 +87,7 @@ def user_settings(request, tab="membership",
     except AttributeError, e:
         return render_to_response(
             'postorius/errors/generic.html',
-            {'error': str(e) + "REST API not found / Offline"},
+            {'error': str(e) + "Mailman REST API not available.  Please start Mailman core."},
             context_instance=RequestContext(request))
     except ValueError, e:
         return render_to_response('postorius/errors/generic.html',
