@@ -26,13 +26,17 @@
     {% endfor %}
     </ul>
 
-    
+    <h2 style="color: red">WARNING: This page is currently a mockup and
+anything below this line may not work</h2>
+
     <h2>Preferences:</h2>
     <p>preferences: {{ mm_user.preferences }}
     <p>user: {{ mm_user }}
     <p>tko
     <p>memberships: {{ membership_lists }}
-    <p>{{ mm_user.preferences }}</p>
+    {% for pref in mm_user.preferences %}
+        <li>{{ pref }}</li>
+    {% endfor %}
     
     <h2>List memberships:</h2>
     {% for list in mm_user.lists %}
@@ -92,6 +96,8 @@ messages posted
             <td><input type="checkbox" /></td>
             <td><input type="checkbox" /></td>
         </tr>
+    {% for preference in mm_user.preferences %}
+    {% endfor %}
         <tr>
             <th colspan="6">{% trans "Per-Email subscriptions" %}</th>
         </tr>
@@ -106,6 +112,5 @@ messages posted
     </table>
     </form>
     {% endif %}
-
 {% endblock main %}
 ~                      
