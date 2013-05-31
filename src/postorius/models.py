@@ -25,6 +25,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.http import Http404
 from mailmanclient import Client, MailmanConnectionError
+from postorius import utils
 from urllib2 import HTTPError
 
 
@@ -48,8 +49,7 @@ class MailmanRestManager(object):
     """
 
     def __init__(self, resource_name, resource_name_plural, cls_name=None):
-        self.client = Client('%s/3.0' % settings.REST_SERVER,
-                             settings.API_USER, settings.API_PASS)
+        self.client = utils.get_client()
         self.resource_name = resource_name
         self.resource_name_plural = resource_name_plural
 

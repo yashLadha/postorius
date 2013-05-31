@@ -19,6 +19,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from mailmanclient import Client, MailmanConnectionError
+from postorius import utils
 from urllib2 import HTTPError
 
 class Command(BaseCommand):
@@ -44,7 +45,6 @@ A complete list of commands can be found in the mailman.client documentation."""
             shell = code.InteractiveConsole(globals())
             console_fn = shell.interact
         # connect to mailmanclient
-        client = Client('%s/3.0' % settings.REST_SERVER,
-                        settings.API_USER, settings.API_PASS)
+        client = utils.get_client()
         # run the interpreter
         console_fn()

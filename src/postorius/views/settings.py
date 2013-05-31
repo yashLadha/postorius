@@ -95,8 +95,7 @@ def domain_delete(request, domain):
     """
     if request.method == 'POST':
         try:
-            client = Client(settings.REST_SERVER + '/3.0', settings.API_USER,
-                            settings.API_PASS)
+            client = utils.get_client()
             client.delete_domain(domain)
             messages.success(request,
                              _('The domain %s has been deleted.' % domain))
