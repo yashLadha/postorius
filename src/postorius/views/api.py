@@ -54,8 +54,7 @@ logger = logging.getLogger(__name__)
 @basic_auth_login
 @loggedin_or_403
 def api_list_index(request):
-    client = Client('%s/3.0' % settings.REST_SERVER,
-                    settings.API_USER, settings.API_PASS)
+    client = utils.get_client()
     res, content = client._connection.call('lists')
     return HttpResponse(json.dumps(content['entries']),
                         content_type="application/json")

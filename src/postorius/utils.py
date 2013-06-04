@@ -33,9 +33,9 @@ def get_domain_name(request):
 
 
 def get_client():
-    return Client('{0}/3.0'.format(settings.REST_SERVER),
-                  settings.API_USER,
-                  settings.API_PASS)
+    return Client('{0}/3.0'.format(settings.MAILMAN_API_URL),
+                  settings.MAILMAN_USER,
+                  settings.MAILMAN_PASS)
 
 
 def render_api_error(request):

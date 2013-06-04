@@ -33,8 +33,7 @@ class MailmanClientMixin(object):
     
     def client(self):
         if getattr(self._client, '_client', None) is None:
-            self._client = Client('%s/3.0' % settings.REST_SERVER,
-                                  settings.API_USER, settings.API_PASS)
+            self._client = utils.get_client()
         return self._client
 
 
@@ -114,7 +113,7 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
         memberships = []
         if (self.mm_user):
             for a in self.mm_user.addresses:
-                members = self._client._connection.call('members/find',
+                members = self.client()._connection.call('members/find',
                                                         {'subscriber': a})
                 try:
                     for m in members[1]['entries']:
