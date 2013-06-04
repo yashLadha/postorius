@@ -48,6 +48,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * renamed some menu items. Contributed by Richard Wackerbarth.
 * changed static file inclusion. Contributed by Richard Wackerbarth.
 * added delete domain feature.
+* url conf refactoring. Contributed by Richard Wackerbarth.
 
 
 
