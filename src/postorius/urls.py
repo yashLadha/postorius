@@ -88,4 +88,4 @@ urlpatterns = patterns(
     url(r'^users/(?P<user_id>[^/]+)/$',
         UserSummaryView.as_view(), name='user_summary'),
     url(r'^api/lists/$', 'api_list_index', name='api_list_index'),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+)
