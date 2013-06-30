@@ -62,8 +62,9 @@ class UserMailmanSettingsView(MailmanUserView):
         except MailmanApiError:
             return utils.render_api_error(request)
         except Mailman404Error:
-            # If the user cannot be found no memberships yet for logged-in
-            # user), return a "blank" settings page.
+            # If the user cannot be found (because there are no
+            # memberships yet for the logged-in # user), return a
+            # settings page with a short message only.
             return render_to_response(
                 'postorius/user_mailmansettings.html',
                 {'nolists': 'true'},
