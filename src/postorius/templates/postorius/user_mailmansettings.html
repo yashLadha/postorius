@@ -38,10 +38,6 @@ anything below this line may not work</h2>
         <li>{{ pref }}</li>
     {% endfor %}
     
-    <h2>List memberships:</h2>
-    {% for list in mm_user.lists %}
-       <li>{{ list.name }}</li>
-    {% endfor %}
     <p><em class="errorlist">Sample output: not real</em></p>
     <ul>
         <li>list1@example.com [<a href="#">listinfo</a>] 
@@ -51,23 +47,12 @@ anything below this line may not work</h2>
         <li>starfruit@example.com [<a href="#">listinfo</a>] 
             [<a href="#">settings</a>]</li>
     </ul>
-<!--
-    <script type="text/javascript"
-src="http://code.jquery.com/jquery-latest.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#btnHide').click(function() {
-                //if (('#description').is(":visible")) {
-                    $('td:nth-child(2),th:nth-child(2)').hide('slow');
-                //}
-                //else {
-                //    $('td:nth-child(2),th:nth-child(2)').show('slow');
-                //}
-            });
-        });
-    </script> -->
+
     <h2>Prefs form</h2>
-    {{ settingsform.asp }}
+    <form action="{% url 'user_mailmansettings' %}" method="post" class="well"> {% csrf_token %}
+        {{ settingsform.as_p }}
+        <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
+    </form>
 
     <h2>List Preferences Overview</h2>
     <p><em class="errorlist">Sample output: not real</em></p>

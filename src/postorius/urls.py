@@ -69,7 +69,7 @@ urlpatterns = patterns(
     url(r'^accounts/subscriptions/$', UserSubscriptionsView.as_view(),
         name='user_subscriptions'),
     url(r'^accounts/mailmansettings/$',
-        'user_mailmansettings',
+        UserMailmanSettingsView.as_view(),
         name='user_mailmansettings'),
     # /settings/
     url(r'^settings/$', 'site_settings', name="site_settings"),
@@ -80,8 +80,6 @@ urlpatterns = patterns(
     # /lists/
     url(r'^lists/$', 'list_index', name='list_index'),
     url(r'^lists/new/$', 'list_new', name='list_new'),
-    url(r'^user_settings/$', 'user_settings', kwargs={"tab": "user"},
-        name='user_settings'),
     url(r'^more_info/(?P<formid>[^/]+)/(?P<helpid>[^/]+)$', 'more_info_tab', name='more_info_tab'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/', include(per_list_urlpatterns)),   
     # /users/

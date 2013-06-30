@@ -48,119 +48,31 @@ from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView, MailmanUserView
 
 
-@login_required
-def user_settings(request, tab="membership",
-                  template='postorius/user_settings.html',
-                  fqdn_listname=None):
-    """
-    Change the user or the membership settings.
-    The user must be logged in to be allowed to change any settings.
-    TODO: * add CSS to display tabs ??
-          * add missing functionality in REST server and client and
-            change to the correct calls here
-    """
-    member = request.user.username
-    message = ''
-    form = None
-    the_list = None
-    membership_lists = []
+class UserMailmanSettingsView(MailmanUserView):
+    """The logged-in user's Mailman Preferences."""
 
-    try:
-        c = utils.get_client()
-        if tab == "membership":
-            if fqdn_listname:
-                the_list = List.objects.get(fqdn_listname=fqdn_listname)
-                user_object = the_list.get_member(member)
-            else:
-                message = ("")
-                for mlist in List.objects.all():
-                    try:
-                        mlist.get_member(member)
-                        membership_lists.append(mlist)
-                    except:
-                        pass
-        else:
-            # address_choices for the 'address' field must be a list of
-            # tuples of length 2
-            raise Exception("")
-            address_choices = [[addr, addr] for addr in user_object.address]
-    except AttributeError, e:
-        return render_to_response(
-            'postorius/errors/generic.html',
-            {'error': str(e) + "Mailman REST API not available.  Please start Mailman core."},
-            context_instance=RequestContext(request))
-    except ValueError, e:
-        return render_to_response('postorius/errors/generic.html',
-                                  {'error': e},
+    @method_decorator(login_required)
+    def post(self, request):
+        raise NotImplementedError
+
+    @method_decorator(login_required)
+    def get(self, request):
+        try:
+            mm_user = MailmanUser.objects.get(address=request.user.email)
+        except MailmanApiError:
+            return utils.render_api_error(request)
+        except Mailman404Error:
+            # If the user cannot be found no memberships yet for logged-in
+            # user), return a "blank" settings page.
+            return render_to_response(
+                'postorius/user_mailmansettings.html',
+                {'nolists': 'true'},
+                context_instance=RequestContext(request))
+        settingsform = MembershipSettings()
+        return render_to_response('postorius/user_mailmansettings.html',
+                                  {'mm_user': mm_user,
+                                   'settingsform': settingsform},
                                   context_instance=RequestContext(request))
-    except HTTPError, e:
-        return render_to_response(
-            'postorius/errors/generic.html',
-            {'error': _("List ") + fqdn_listname + _(" does not exist")},
-            context_instance=RequestContext(request))
-    #-----------------------------------------------------------------
-    if request.method == 'POST':
-        # The form enables both user and member settings. As a result
-        # we must find out which was the case.
-        raise Exception("Please fix bug prior submitting the form")
-        if tab == "membership":
-            form = MembershipSettings(request.POST)
-            if form.is_valid():
-                member_object = c.get_member(member, request.GET["list"])
-                member_object.update(request.POST)
-                message = "The membership settings have been updated."
-        else:
-            # the post request came from the user tab
-            # the 'address' field need choices as a tuple of length 2
-            addr_choices = [[request.POST["address"], request.POST["address"]]]
-            form = UserSettings(addr_choices, request.POST)
-            if form.is_valid():
-                user_object.update(request.POST)
-                # to get the full list of addresses we need to
-                # reinstantiate the form with all the addresses
-                # TODO: should return the correct settings from the DB,
-                # not just the address_choices (add mock data to _User
-                # class and make the call with 'user_object.info')
-                form = UserSettings(address_choices)
-                message = "The user settings have been updated."
-
-    else:
-        if tab == "membership" and fqdn_listname:
-            if fqdn_listname:
-                # TODO : fix LP:821069 in mailman.client
-                the_list = List.objects.get(fqdn_listname=fqdn_listname)
-                member_object = the_list.get_member(member)
-                # TODO: add delivery_mode and deliver_status from a
-                # list of tuples at one point, currently we hard code
-                # them in forms.py
-                # instantiate the form with the correct member info
-                """
-                acknowledge_posts
-                hide_address
-                receive_list_copy
-                receive_own_postings
-                delivery_mode
-                delivery_status
-                """
-                data = {}
-                form = MembershipSettings(data)
-        elif tab == "user":
-            # TODO: should return the correct settings from the DB,
-            # not just the address_choices (add mock data to _User
-            # class and make the call with 'user_object._info') The 'language'
-            # field must also be added as a list of tuples with correct
-            # values (is currently hard coded in forms.py).
-            data = {}  # Todo https://bugs.launchpad.net/mailman/+bug/821438
-            form = UserSettings(data)
-
-    return render_to_response(template,
-                              {'form': form,
-                               'tab': tab,
-                               'list': the_list,
-                               'membership_lists': membership_lists,
-                               'message': message,
-                               'member': member},
-                              context_instance=RequestContext(request))
 
 
 class UserSummaryView(MailmanUserView):
