@@ -202,4 +202,37 @@ def more_info_tab(request, formid=None, helpid=None, template='postorius/more_in
                               {'help_text':help_text,
                                'helpid':helpid},
                               context_instance=RequestContext(request))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def user_delete(request,template='postorius/users/user_confirm_delete.html',**kwargs):
+    """ Deletes a user after asking for confirmation.
+    """
+    user_id = kwargs["user_id"]
+    try:
+        mm_user = MailmanUser.objects.get_or_404(address=user_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+
+    try:
+        email_id = mm_user.addresses[0]
+    except IndexError:
+        email_id = ''
+    if request.method == 'POST':
+        try:
+            mm_user.delete()
+        except MailmanApiError:
+            return utils.render_api_error(request)
+        except HTTPError as e:
+            messages.error(request, _('The user could not be deleted:'
+                                      ' %s' % e.msg))
+        messages.success(request,
+                         _('The user %s has been deleted.' % email_id))
+        return redirect("user_index")
+
+    submit_url = reverse('user_delete',
+                     kwargs={'user_id': user_id})
+    return render_to_response(template,
+                              {'user': request.user, 'submit_url': submit_url,'email_id':email_id},
+                              context_instance=RequestContext(request))
     

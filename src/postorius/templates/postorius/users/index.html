@@ -16,6 +16,7 @@
     		<tr>
     			<th>{% trans 'Email' %}</th>
     			<th>{% trans 'Display name' %}</th>
+                <th></th> <!-- header for delete user button -->
     			<!-- th>{% trans 'Web User' %}</th -->
     			<!--th>{% trans 'Mailman User' %}</th -->
     		</tr>
@@ -28,6 +29,9 @@
                 </td>
     			<td>
                     {{ mm_user.display_name }}
+                </td>
+                <td>
+                    <a href="{{mm_user.user_id}}/delete" class="btn btn-mini btn-danger">Delete</a>
                 </td>
     			<!--td><i class="icon-ok"></i></td -->
     			<!--td><i class="icon-remove"></i></td -->
