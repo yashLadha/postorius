@@ -25,5 +25,6 @@ __test__ = {
     "List members": ListMembersViewTest,
     "List Owner Required": ListOwnerRequiredTest,
     "Sync Postorius users and Mailman users": UserCreationSyncTest,
+    # "Page Tests": test_pages,
     #"Doctest": tests,
 }

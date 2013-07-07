@@ -15,13 +15,15 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-
+import logging
 
 from django.conf import settings
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-
 from mailmanclient import Client
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_domain_name(request):

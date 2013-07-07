@@ -15,13 +15,23 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-
 import os
 import time
 import shutil
+import logging
 import tempfile
 import subprocess
+
 from django.conf import settings
+from mailmanclient import Client
+
+
+logger = logging.getLogger(__name__)
+
+
+mm_client = Client('%s/3.0' % settings.MAILMAN_TEST_API_URL,
+                     settings.MAILMAN_TEST_USER,
+                     settings.MAILMAN_TEST_PASS)
 
 
 class Testobject:
@@ -31,8 +41,7 @@ class Testobject:
 
 
 def setup_mm(testobject):
-    os.environ['MAILMAN_TEST_BINDIR'] = settings.MAILMAN_TEST_BINDIR
-    bindir = testobject.bindir = os.environ.get('MAILMAN_TEST_BINDIR')
+    bindir = testobject.bindir = settings.MAILMAN_TEST_BINDIR
     if bindir is None:
         raise RuntimeError("something's not quite right")
     vardir = testobject.vardir = tempfile.mkdtemp()
@@ -66,6 +75,8 @@ start: no
 start: no
 [runner.digest]
 start: no
+[webservice]
+port: 9001
 """.format(vardir=vardir)
     mailman = os.path.join(bindir, 'mailman')
     subprocess.call([mailman, '-C', cfgfile, 'start', '-q'])
@@ -80,4 +91,3 @@ def teardown_mm(testobject):
     mailman = os.path.join(bindir, 'mailman')
     subprocess.call([mailman, '-C', cfgfile, 'stop', '-q'])
     shutil.rmtree(vardir)
-    time.sleep(3)

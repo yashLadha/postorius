@@ -15,8 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+import logging
 
-
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
@@ -33,6 +34,9 @@ from postorius.models import (Domain, List, MailmanUser,
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView
+
+
+logger = logging.getLogger(__name__)
 
 
 class ListMembersView(MailingListView):
@@ -193,6 +197,7 @@ class ListMassSubsribeView(MailingListView):
                         messages.error(request, e)
         return redirect('mass_subscribe', self.mailing_list.fqdn_listname)
 
+
 def _get_choosable_domains(request):
     try:
         domains = Domain.objects.all()
@@ -203,6 +208,7 @@ def _get_choosable_domains(request):
         choosable_domains.append((domain.mail_host,
                                   domain.mail_host))
     return choosable_domains
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -263,6 +269,7 @@ def list_index(request, template='postorius/lists/index.html'):
         only_public = False
     try:
         lists = List.objects.all(only_public=only_public)
+        logger.debug(lists)
     except MailmanApiError:
         return utils.render_api_error(request)
     choosable_domains = _get_choosable_domains(request)

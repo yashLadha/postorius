@@ -15,7 +15,6 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-
 import logging
 
 from django.conf import settings
@@ -25,7 +24,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.http import Http404
 from mailmanclient import Client, MailmanConnectionError
-from postorius import utils
+from postorius.utils import get_client
 from urllib2 import HTTPError
 
 
@@ -49,13 +48,12 @@ class MailmanRestManager(object):
     """
 
     def __init__(self, resource_name, resource_name_plural, cls_name=None):
-        self.client = utils.get_client()
         self.resource_name = resource_name
         self.resource_name_plural = resource_name_plural
 
     def all(self):
         try:
-            return getattr(self.client, self.resource_name_plural)
+            return getattr(get_client(), self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
         except MailmanConnectionError, e:
@@ -63,7 +61,7 @@ class MailmanRestManager(object):
 
     def get(self, **kwargs):
         try:
-            method = getattr(self.client, 'get_' + self.resource_name)
+            method = getattr(get_client(), 'get_' + self.resource_name)
             return method(**kwargs)
         except AttributeError, e:
             raise MailmanApiError(e)
@@ -87,7 +85,7 @@ class MailmanRestManager(object):
 
     def create(self, **kwargs):
         try:
-            method = getattr(self.client, 'create_' + self.resource_name)
+            method = getattr(utils.get_client(), 'create_' + self.resource_name)
             print kwargs
             return method(**kwargs)
         except AttributeError, e:
@@ -114,7 +112,7 @@ class MailmanListManager(MailmanRestManager):
 
     def all(self, only_public=False):
         try:
-            objects = getattr(self.client, self.resource_name_plural)
+            objects = getattr(get_client(), self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
         except MailmanConnectionError, e:
