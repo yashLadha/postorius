@@ -88,5 +88,6 @@ urlpatterns = patterns(
     url(r'^users/new/$', 'user_new', name='user_new'),
     url(r'^users/(?P<user_id>[^/]+)/$',
         UserSummaryView.as_view(), name='user_summary'),
+    url(r'^users/(?P<user_id>\d+)/delete$', 'user_delete', name='user_delete'),
     url(r'^api/lists/$', 'api_list_index', name='api_list_index'),
 )

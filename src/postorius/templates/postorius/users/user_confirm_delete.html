@@ -1,0 +1,13 @@
+{% extends "postorius/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load nav_helpers %}
+
+{% block main %}
+    <h1>{% trans 'Confirm Deletion' %}</h1>
+    <p>{% trans "Are you sure you want to permanently delete this user ?" %}</p>
+    <form action="/postorius/users/{{user_id}}/delete" method="post"> {% csrf_token %}
+        <button class="btn btn-danger" type="submit">{% trans "Delete" %} {{ email_id }}</button>
+        <a class="btn" href="{% url 'user_index' %}">{% trans "Cancel" %}</a>
+    </form>
+{% endblock main %}
