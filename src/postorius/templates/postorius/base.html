@@ -44,15 +44,12 @@
     </header>
 
     <div class="mm_main mm_canvas">
-	{% if error %}
-	{% else %}
         {% if messages %}
             <ul class="mm_messages">
             {% for message in messages %}
                 <li class="alert {% if message.tags %} class="{{ message.tags }}"{% endif %}">{{ message }}</li>
             {% endfor %}
             </ul>
-        {% endif %}
 	{% endif %}
         {% block main %}{% endblock main %}
     </div>
