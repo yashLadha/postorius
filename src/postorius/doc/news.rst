@@ -49,6 +49,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * changed static file inclusion. Contributed by Richard Wackerbarth.
 * added delete domain feature.
 * url conf refactoring. Contributed by Richard Wackerbarth.
+* added user deletion feature. Contributed by Varun Sharma.
 
 
 
