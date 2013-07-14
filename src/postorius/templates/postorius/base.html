@@ -44,6 +44,8 @@
     </header>
 
     <div class="mm_main mm_canvas">
+	{% if error %}
+	{% else %}
         {% if messages %}
             <ul class="mm_messages">
             {% for message in messages %}
@@ -51,6 +53,7 @@
             {% endfor %}
             </ul>
         {% endif %}
+	{% endif %}
         {% block main %}{% endblock main %}
     </div>
 

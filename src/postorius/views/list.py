@@ -239,7 +239,6 @@ def list_new(request, template='postorius/lists/new.html'):
                                 fqdn_listname=mailing_list.fqdn_listname)
             #TODO catch correct Error class:
             except HTTPError, e:
-                messages.error(request, e)
                 return render_to_response(
                     'postorius/errors/generic.html',
                     {'error': e}, context_instance=RequestContext(request))
