@@ -587,10 +587,13 @@ class ListMassSubscription(FieldsetForm):
         layout = [["Mass subscription", "emails"]]
 
 
-class MembershipSettings(FieldsetForm):
-    """Form handling the membership settings.
+class UserPreferences(FieldsetForm):
+    """Form handling the user's global preferences.
     """
     choices = ((True, _('Yes')), (False, _('No')))
+    
+    delivery_mode_choices = (("regular", _('Regular')), ("plaintext_digests",_('Plain Text Digests')),("mime_digests",_('Mime Digests')),("summary_digests", _('Summary Digests'))) 
+    delivery_status_choices = (("enabled", _('Enabled')),("by_user",_('Disabled')))
     acknowledge_posts = forms.BooleanField(
         widget=forms.RadioSelect(choices=choices),
         required=False,
@@ -608,22 +611,14 @@ class MembershipSettings(FieldsetForm):
         required=False,
         label=_('Receive own postings'))
     delivery_mode = forms.ChoiceField(
-        widget=forms.Select(),
-        error_messages={
-            'required': _("Please choose a mode.")},
-        required=False,
-        choices=(
-            ("", _("Please choose")),
-            ("delivery_mode", "some mode...")),
-        label=_('Delivery mode'))
+	widget =  forms.Select(),
+	choices = delivery_mode_choices,
+	required = False,
+	label = _('Delivery mode'))
     delivery_status = forms.ChoiceField(
-        widget=forms.Select(),
-        error_messages={
-            'required': _("Please choose a status.")},
+	widget = forms.Select(),
         required=False,
-        choices=(
-            ("", _("Please choose")),
-            ("delivery_status", "some status...")),
+        choices= delivery_status_choices,
         label=_('Delivery status'))
 
     class Meta:
@@ -634,7 +629,6 @@ class MembershipSettings(FieldsetForm):
         layout = [["Membership Settings", "acknowledge_posts", "hide_address",
                    "receive_list_copy", "receive_own_postings",
                    "delivery_mode", "delivery_status"]]
-
 
 class UserNew(FieldsetForm):
     """
