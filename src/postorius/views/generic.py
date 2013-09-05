@@ -32,7 +32,7 @@ class MailmanClientMixin(object):
     """Adds a mailmanclient.Client instance."""
     
     def client(self):
-        if getattr(self._client, '_client', None) is None:
+        if getattr(self, '_client', None) is None:
             self._client = utils.get_client()
         return self._client
 
