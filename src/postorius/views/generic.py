@@ -29,15 +29,17 @@ from postorius import utils
 
 
 class MailmanClientMixin(object):
+
     """Adds a mailmanclient.Client instance."""
-    
+
     def client(self):
-        if getattr(self._client, '_client', None) is None:
-            self._client = utils.get_client()
-        return self._client
+        if getattr(self.client, 'client', None) is None:
+            self.client = utils.get_client()
+        return self.client
 
 
 class MailingListView(TemplateView, MailmanClientMixin):
+
     """A generic view for everything based on a mailman.client
     list object.
 
@@ -80,6 +82,7 @@ class MailingListView(TemplateView, MailmanClientMixin):
 
 
 class MailmanUserView(TemplateView, MailmanClientMixin):
+
     """A generic view for everything based on a mailman.client
     user object.
 
@@ -101,7 +104,7 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
                 user_obj.display_name = ''
             user_obj.first_address = self._get_first_address(user_obj)
         return user_obj
-        
+
     def _get_list(self, list_id):
         if getattr(self, 'lists', None) is None:
             self.lists = {}
@@ -112,19 +115,22 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
     def _get_memberships(self):
         memberships = []
         if (self.mm_user):
-            for a in self.mm_user.addresses:
-                members = self.client()._connection.call('members/find',
-                                                        {'subscriber': a})
-                try:
-                    for m in members[1]['entries']:
-                        mlist = self._get_list(m['list_id'])
-                        memberships.append(
-                            dict(fqdn_listname=mlist.fqdn_listname,
-                            role=m['role'],
-                            delivery_mode=m['delivery_mode'],
-                            address=a))
-                except KeyError:
-                    pass
+
+            # remove the following, because there's a
+            # simpler method in mailman.client now:
+            # for a in self.mm_user.addresses:
+            #    members = self.client()._connection.call('members/find',
+            #                                            {'subscriber': a})
+            # the same can be achieved doing this:
+
+            for m in self.mm_user.subscriptions:
+                mlist = m.list_id
+                memberships.append(
+                    dict(
+                        mlist=mlist,
+                        role=m.role,
+                        preferences=m.preferences,
+                        address=m.address))
         return memberships
 
     def dispatch(self, request, *args, **kwargs):
@@ -139,7 +145,7 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
                 self.mm_user = self._get_user(user_id)
             except MailmanApiError:
                 return utils.render_api_error(request)
-            
+
         # set the template
         if 'template' in kwargs:
             self.template = kwargs['template']

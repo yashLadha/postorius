@@ -4,23 +4,21 @@
 
 {% block main %}
     {% include 'postorius/menu/user_nav.html' %}
-    {% if nolists %}
-        <div class="mm_subHeader">
-            <h1>{% trans "No Preferences Available" %}</h1>
-        </div>
-        <p> {% trans 'You are not yet subscribed to any lists, so have no Mailman preferences.' %} </p>
-    {% else %}
 
-    <div class="mm_subHeader">
-        <h2>{% trans "Subscription Settings" %} <span>- {{ user }}</span></h2>
-    </div>
-
-  
-
+    <ul class="nav nav-tabs">
+        <li class="active"><a>{% trans "Global Mailman Preferences" %}</a></li>
+	<li><a href="{% url 'user_address_preferences' %}">{% trans "Address Based Preferences" %}</a></li>
+	<li><a href="{% url 'user_subscription_preferences' %}">{% trans "Subscription Based Preferences" %}</a></li>
+    </ul>
+<br>
 <h2> Global Preferences Overview </h2>
-<!-- Table displaying the user's global Mailman preferencesc, may be removed-->
+<!-- Table displaying the user's global Mailman preferencesc,only for testing/viewing purposes, may be removed-->
 <table class="table table-bordered table-striped mm_userData">
         <tbody>
+            <tr>
+                <th> {% trans 'Preference' %}</th>
+                <th> {% trans 'Value' %}</th>
+            </tr>
             <tr>
                 <td>{% trans 'Receive List Copy' %}</td>
                 <td>{{ mm_user.preferences.receive_list_copy }}</td>
@@ -52,7 +50,7 @@
    
         </tbody>
  </table>
-
+ <br>
 
     <h2>Global Preferences Form</h2>
     <!-- Form to modify the user's global Mailman preferences -->
@@ -61,7 +59,6 @@
         <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
     </form>
 
-     
-    {% endif %}
+
 {% endblock main %}
 ~   

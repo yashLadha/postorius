@@ -1,0 +1,96 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block main %}
+    {% include 'postorius/menu/user_nav.html' %}
+    <ul class="nav nav-tabs">
+        <li><a href="{% url 'user_mailmansettings' %}">{% trans "Global Mailman Preferences" %}</a></li>
+	<li class="active"><a href="#">{% trans "Address Based Preferences" %}</a></li>
+	<li><a href="{% url 'user_subscription_preferences' %}">{% trans "Subscription Based Preferences" %}</a></li>
+    </ul>
+  
+<br>
+<h2> Per-Email-Address Based Preferences Overview </h2>
+<!-- Table displaying the user's address-based Mailman preferences, for testing/viewing purposes only, may be removed-->
+<table class="table table-bordered table-striped mm_userData">
+<tbody>
+
+        <tbody>
+            <tr>
+                <th>{% trans 'Email Address' %}</th>
+                <th>{% trans 'Acknowledge Posts' %}</th>
+                <th>{% trans 'Hide Address' %}</th>
+                <th>{% trans 'Receive List Copy' %}</th>
+                <th>{% trans 'Receive Own Postings' %}</th>
+                <th>{% trans 'Delivery Mode' %}</th>
+                <th>{% trans 'Delivery Status' %}</th>
+            </tr>
+{%for a in addresses%}
+            <tr>
+                <th>{{ a }}</th>
+                <td>{{ a.preferences.acknowledge_posts }}</td>
+                <td>{{ a.preferences.hide_address }}</td>
+                <td>{{ a.preferences.receive_list_copy }}</td>
+                <td>{{ a.preferences.receive_own_postings }}</td>
+                <td>{{ a.preferences.delivery_mode }}</td>
+                <td>{{ a.preferences.delivery_status }}</td>
+            </tr>  
+        
+{%endfor%}
+</tbody>
+ </table>
+
+<br>
+<h2>Address Based Preferences Form </h2>
+ <!-- Form to modify the user's address based preferences. The form is displayed as a table showing initial values 
+previously set by the user, if any -->
+<form action = "{% url 'user_address_preferences' %}" method = "post" class = "well"> {% csrf_token %}
+    {{formset.management_form}}
+    {{formset.non_form_errors.as_ul}}
+<table class="table table-bordered table-hover" border = "2" id ="formset" >
+          <thead> <tr>
+             <th> Preferences </th>
+    {% for form,address in zipped_data %}
+             <th> {{address}} </th>
+    {% endfor %}
+          </tr > </thead >
+
+<tr> <td> Acknowledge Posts </td> 
+    {% for form,address in zipped_data %}
+<td> {{form.acknowledge_posts }} </td>
+    {% endfor %} </tr>
+
+<tr> <td> Hide Address </td> 
+    {% for form,address in zipped_data %}
+<td> {{form.hide_address }} </td>
+    {% endfor %} </tr>
+
+<tr> <td> Receive List Copy </td> 
+    {% for form,address in zipped_data %}
+<td> {{form.receive_list_copy }} </td>
+    {% endfor %} </tr>
+
+<tr> <td> Receive Own Postings </td> 
+    {% for form,address in zipped_data %}
+<td> {{form.receive_own_postings }} </td>
+    {% endfor %} </tr>
+
+<tr> <td> Delivery_Mode </td> 
+    {% for form,address in zipped_data %}
+<td> {{form.delivery_mode }} </td>
+    {% endfor %} </tr>
+
+<tr> <td> Delivery_Status </td> 
+    {% for form,address in zipped_data %}
+<td> {{form.delivery_status }} </td>
+    {% endfor %} </tr>
+
+   
+</table>
+<br><center><button class="btn btn-success" type="submit">{% trans "Save" %}</button></center>
+</form>
+
+
+{% endblock main %}
+~   
