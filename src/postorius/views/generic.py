@@ -115,14 +115,6 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
     def _get_memberships(self):
         memberships = []
         if (self.mm_user):
-
-            # remove the following, because there's a
-            # simpler method in mailman.client now:
-            # for a in self.mm_user.addresses:
-            #    members = self.client()._connection.call('members/find',
-            #                                            {'subscriber': a})
-            # the same can be achieved doing this:
-
             for m in self.mm_user.subscriptions:
                 mlist = m.list_id
                 memberships.append(

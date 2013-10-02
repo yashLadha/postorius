@@ -78,14 +78,9 @@ class UserMailmanSettingsView(MailmanUserView):
     def get(self, request):
         try:
             mm_user = MailmanUser.objects.get(address=request.user.email)
+            settingsform = UserPreferences(initial=mm_user.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
-        except Mailman404Error:
-            return render_to_response(
-                'postorius/user_mailmansettings.html',
-                {'nolists': 'true'},
-                context_instance=RequestContext(request))
-        settingsform = UserPreferences(initial=mm_user.preferences)
         return render_to_response('postorius/user_mailmansettings.html',
                                   {'mm_user': mm_user,
                                    'settingsform': settingsform},
@@ -123,6 +118,7 @@ class UserAddressPreferencesView(MailmanUserView):
     @method_decorator(login_required)
     def get(self, request):
         try:
+            helperform=UserPreferences()
             mm_user = MailmanUser.objects.get(address=request.user.email)
             addresses = mm_user.addresses
             i = 0
@@ -135,14 +131,10 @@ class UserAddressPreferencesView(MailmanUserView):
                 form.initial = address.preferences
         except MailmanApiError:
             return utils.render_api_error(request)
-        except Mailman404Error:
-            return render_to_response(
-                'postorius/user_mailmansettings.html',
-                {'nolists': 'true'},
-                context_instance=RequestContext(request))
         return render_to_response('postorius/user_address_preferences.html',
                                   {'mm_user': mm_user,
                                    'addresses': addresses,
+                                   'helperform':helperform,
                                    'formset': formset,
                                    'zipped_data': zipped_data},
                                   context_instance=RequestContext(request))

@@ -609,7 +609,7 @@ class ListMassSubscription(FieldsetForm):
 class UserPreferences(FieldsetForm):
 
     """
-    Form handling the user's global preferences.
+    Form handling the user's global, address and subscription based preferences.
     """
     choices = ((True, _('Yes')), (False, _('No')))
 
@@ -619,32 +619,38 @@ class UserPreferences(FieldsetForm):
                             ("summary_digests", _('Summary Digests')))
     delivery_status_choices = (
         ("enabled", _('Enabled')), ("by_user", _('Disabled')))
-    acknowledge_posts = forms.BooleanField(
-        widget=forms.RadioSelect(choices=choices),
+    delivery_status = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=delivery_status_choices,
         required=False,
-        label=_('Acknowledge posts'))
-    hide_address = forms.BooleanField(
-        widget=forms.RadioSelect(choices=choices),
-        required=False,
-        label=_('Hide address'))
-    receive_list_copy = forms.BooleanField(
-        widget=forms.RadioSelect(choices=choices),
-        required=False,
-        label=_('Receive list copy'))
-    receive_own_postings = forms.BooleanField(
-        widget=forms.RadioSelect(choices=choices),
-        required=False,
-        label=_('Receive own postings'))
+        label=_('Delivery status'),
+        help_text=_('Set this option to Enabled to receive messages posted to this mailing list. Set it to Disabled if you want to stay subscribed, but don\'t want mail delivered to you for a while (e.g. you\'re going on vacation). If you disable mail delivery, don\'t forget to re-enable it when you come back; it will not be automatically re-enabled.'))
     delivery_mode = forms.ChoiceField(
         widget=forms.Select(),
         choices=delivery_mode_choices,
         required=False,
-        label=_('Delivery mode'))
-    delivery_status = forms.ChoiceField(
-        widget=forms.Select(),
+        label=_('Delivery mode'),
+        help_text=_('If you select summary digests , you\'ll get posts bundled together (usually one per day but possibly more on busy lists), instead of singly when they\'re sent. Your mail reader may or may not support MIME digests. In general MIME digests are preferred, but if you have a problem reading them, select plain text digests.'))
+    receive_own_postings = forms.BooleanField(
+        widget=forms.RadioSelect(choices=choices),
         required=False,
-        choices=delivery_status_choices,
-        label=_('Delivery status'))
+        label=_('Receive own postings'),
+        help_text=_('Ordinarily, you will get a copy of every message you post to the list. If you don\'t want to receive this copy, set this option to No'))
+    acknowledge_posts = forms.BooleanField(
+        widget=forms.RadioSelect(choices=choices),
+        required=False,
+        label=_('Acknowledge posts'),
+        help_text=_('Receive acknowledgement mail when you send mail to the list?'))
+    hide_address = forms.BooleanField(
+        widget=forms.RadioSelect(choices=choices),
+        required=False,
+        label=_('Hide address'),
+        help_text=_('When someone views the list membership, your email address is normally shown (in an obscured fashion to thwart spam harvesters). If you do not want your email address to show up on this membership roster at all, select Yes for this option.'))
+    receive_list_copy = forms.BooleanField(
+        widget=forms.RadioSelect(choices=choices),
+        required=False,
+        label=_('Receive list copy'),
+        help_text=_('When you are listed explicitly in the To: or Cc: headers of a list message, you can opt to not receive another copy from the mailing list. Select Yes to avoid receiving copies from the mailing list; select No to receive copies. '))
 
     class Meta:
 
@@ -652,7 +658,7 @@ class UserPreferences(FieldsetForm):
         Class to define the name of the fieldsets and what should be
         included in each.
         """
-        layout = [["Membership Settings", "acknowledge_posts", "hide_address",
+        layout = [["User Preferences", "acknowledge_posts", "hide_address",
                    "receive_list_copy", "receive_own_postings",
                    "delivery_mode", "delivery_status"]]
 
