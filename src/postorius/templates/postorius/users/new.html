@@ -7,11 +7,44 @@
     {% if user.is_superuser %}
         {% users_nav 'user_new' 'Create User' %}
     {% endif %}
+ 
+    <form action="{% url 'user_new' %}" method="post" class="well form-horizontal"> {% csrf_token %}
+    {{ form.non_field_errors }}
+    <fieldset>
+	<legend>Create a New User</legend>
+	
+	<div class="control-group">
+	    {{ form.display_name.errors }}
+	    <label for="id_display_name" class="control-label">Username:</label> 
+	    <div class="controls">{{ form.display_name}}</div>
+	</div>
 
-    <form action="{% url 'user_new' %}" method="post" class="well"> {% csrf_token %}
-        <div class="field">
-	    {{ form.as_p }}
-            <button class="btn btn-success" type="submit">{% trans "Create User" %}</button>
-        </div>
-    </form>
+	<div class="control-group">
+	    {{ form.email.errors }}
+	    <label for="id_email" class="control-label">Email address:</label>
+	    <div class="controls">{{ form.email }}</div>
+	</div>
+	    
+	<div class="control-group">
+	    {{ form.password.errors }}
+	    <label for="id_password" class="control-label">Password:</label>
+	    <div class="controls">{{ form.password }}</div>
+	</div>
+	
+	<div class="control-group">
+	    {{ form.password_repeat.errors }}
+	    <label for="id_password_repeat" class="control-label">Repeat password:</label>
+	    <div class="controls">
+		{{ form.password_repeat }}
+		<p class="help-block">This must match the password typed above so we can be sure we've got the right password.</p>  
+	    </div>
+	</div>
+	
+	<div class="form-actions">
+	    <button class="btn btn-success btn-primary" type="submit">Create User</button>
+	</div>
+	
+    </fieldset>
+</form>
+    
 {% endblock main %}
