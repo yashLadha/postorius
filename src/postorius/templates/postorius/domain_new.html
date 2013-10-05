@@ -4,11 +4,53 @@
 
 {% block main %}
     {% include 'postorius/menu/settings_nav.html' %}
-    <h1>{% trans "Add a new Domain" %}</h1>
-    <form action="{% url 'domain_new' %}" method="post" class="well"> {% csrf_token %}
-        {{ form.as_p }}
-        <div class="field">
-            <button class="btn btn-success" type="submit">{% trans "Create Domain" %}</button>
-        </div>
-    </form>
+    
+    <form action="{% url 'domain_new' %}" method="post" class="well form-horizontal"> {% csrf_token %}
+    {{ form.non_field_errors }}
+    <fieldset>
+	<legend>Add a new Domain</legend>
+	
+	<div class="control-group">
+	    {{ form.mail_host.errors }}
+	    <label for="id_mail_host" class="control-label">Mail Host:</label> 
+	    <div class="controls">
+		{{ form.mail_host}}
+		<p class="help-block"><strong>Example:</strong> domain.org</p>  
+	    </div>
+	</div>
+	
+	<div class="control-group">
+	    {{ form.web_host.errors }}
+	    <label for="id_web_host" class="control-label">Web Host:</label> 
+	    <div class="controls">
+		{{ form.web_host}}
+		<p class="help-block"><strong>Example:</strong> www.domain.org</p>  
+	    </div>
+	</div>
+	
+	<div class="control-group">
+	    {{ form.description.errors }}
+	    <label for="id_description" class="control-label">Description:</label> 
+	    <div class="controls">
+		{{ form.description}}
+		<p class="help-block"><strong>Example:</strong> Test lists will live on this domain.</p>  
+	    </div>
+	</div>
+	
+	<div class="control-group">
+	    {{ form.contact_address.errors }}
+	    <label for="id_contact_address" class="control-label">Contact Address:</label> 
+	    <div class="controls">
+		{{ form.contact_address}}
+		<p class="help-block"><strong>Example:</strong> postmaster@domain.org</p>  
+	    </div>
+	</div>
+	
+	<div class="form-actions">
+	    <button class="btn btn-success btn-primary" type="submit">Create Domain</button>
+	</div>
+	
+    </fieldset>
+</form>
+    
 {% endblock main %}
