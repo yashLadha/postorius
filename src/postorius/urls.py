@@ -44,24 +44,31 @@ per_list_urlpatterns = patterns('postorius.views',
                                     ListUnsubscribeView.as_view(
                                     ), name='list_unsubscribe'),
                                 url(r'^subscriptions$',
-                                    'list_subscriptions', name='list_subscriptions'),
+                                    'list_subscriptions',
+                                    name='list_subscriptions'),
                                 url(r'^mass_subscribe/$',
                                     ListMassSubsribeView.as_view(
                                     ), name='mass_subscribe'),
                                 url(r'^delete$',
                                     'list_delete', name='list_delete'),
                                 url(r'^held_messages/(?P<msg_id>[^/]+)/'
-                                    'accept$', 'accept_held_message', name='accept_held_message'),
+                                    'accept$', 'accept_held_message',
+                                    name='accept_held_message'),
                                 url(r'^held_messages/(?P<msg_id>[^/]+)/'
-                                    'discard$', 'discard_held_message', name='discard_held_message'),
+                                    'discard$', 'discard_held_message',
+                                    name='discard_held_message'),
                                 url(r'^held_messages/(?P<msg_id>[^/]+)/'
-                                    'defer$', 'defer_held_message', name='defer_held_message'),
+                                    'defer$', 'defer_held_message',
+                                    name='defer_held_message'),
                                 url(r'^held_messages/(?P<msg_id>[^/]+)/'
-                                    'reject$', 'reject_held_message', name='reject_held_message'),
+                                    'reject$', 'reject_held_message',
+                                    name='reject_held_message'),
                                 url(r'^held_messages$',
-                                    'list_held_messages', name='list_held_messages'),
+                                    'list_held_messages',
+                                    name='list_held_messages'),
                                 url(r'^settings/(?P<visible_section>[^/]+)?'
-                                    '(?:/(?P<visible_option>.*))?$', 'list_settings',
+                                    '(?:/(?P<visible_option>.*))?$',
+                                    'list_settings',
                                     name='list_settings'),
                                 )
 

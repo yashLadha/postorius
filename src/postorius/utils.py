@@ -44,5 +44,6 @@ def render_api_error(request):
     """
     return render_to_response(
         'postorius/errors/generic.html',
-        {'error': "Mailman REST API not available.  Please start Mailman core."},
+        {'error': "Mailman REST API not available.  "
+                  "Please start Mailman core."},
         context_instance=RequestContext(request))

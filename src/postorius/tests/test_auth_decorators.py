@@ -138,7 +138,8 @@ class ListModeratorRequiredTest(unittest.TestCase):
         request.user = User.objects.create_superuser('su2', 'su@sodo.org',
                                                      'pwd')
         return_value = dummy_function_mod_req(request,
-                                      fqdn_listname='foolist@example.org')
+                                              fqdn_listname=
+                                              'foolist@example.org')
         self.assertEqual(return_value, True)
 
     @patch.object(Client, 'get_list')
@@ -167,7 +168,8 @@ class ListModeratorRequiredTest(unittest.TestCase):
         request.user = User.objects.create_user('les cl3', 'les@primus.org',
                                                 'pwd')
         return_value = dummy_function_mod_req(request,
-                                      fqdn_listname='foolist@example.org')
+                                              fqdn_listname=
+                                              'foolist@example.org')
         self.assertEqual(return_value, True)
 
     @patch.object(Client, 'get_list')
@@ -182,5 +184,6 @@ class ListModeratorRequiredTest(unittest.TestCase):
         request.user = User.objects.create_user('les cl4', 'les@primus.org',
                                                 'pwd')
         return_value = dummy_function_mod_req(request,
-                                      fqdn_listname='foolist@example.org')
+                                              fqdn_listname=
+                                              'foolist@example.org')
         self.assertEqual(return_value, True)

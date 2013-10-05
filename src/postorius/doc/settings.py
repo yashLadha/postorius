@@ -16,5 +16,5 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This is just an empty settings file to make Sphinx able to export 
+"""This is just an empty settings file to make Sphinx able to export
 the DJANGO_SETTINGS_MODULE env variable before building the docs."""
