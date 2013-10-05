@@ -9,8 +9,8 @@
     {% endif %}
 
     <form action="{% url 'user_new' %}" method="post" class="well"> {% csrf_token %}
-        {{ form.as_p }}
         <div class="field">
+	    {{ form.as_p }}
             <button class="btn btn-success" type="submit">{% trans "Create User" %}</button>
         </div>
     </form>
