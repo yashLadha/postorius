@@ -53,23 +53,7 @@ class UserMailmanSettingsView(MailmanUserView):
 
     @method_decorator(login_required)
     def post(self, request):
-        try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-	    userprefs_form = UserPreferences(request.POST)
-	    if userprefs_form.is_valid():
-		user_preferences = mm_user.preferences
-		for key in userprefs_form.fields.keys():
-                    user_preferences[key] = userprefs_form.cleaned_data[key]
-                    user_preferences.save()
-		messages.success(request, 'Your preferences have been updated.')
-            else:
-                messages.error(request, 'Something went wrong.')
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError, e:
-            messages.error(request, e.msg)
-        return redirect("user_mailmansettings")
-
+        raise NotImplementedError
 
     @method_decorator(login_required)
     def get(self, request):
@@ -85,11 +69,12 @@ class UserMailmanSettingsView(MailmanUserView):
                 'postorius/user_mailmansettings.html',
                 {'nolists': 'true'},
                 context_instance=RequestContext(request))
-        settingsform = UserPreferences(initial = mm_user.preferences)
+        settingsform = MembershipSettings()
         return render_to_response('postorius/user_mailmansettings.html',
                                   {'mm_user': mm_user,
                                    'settingsform': settingsform},
                                   context_instance=RequestContext(request))
+
 
 class UserSummaryView(MailmanUserView):
     """Shows a summary of a user.
