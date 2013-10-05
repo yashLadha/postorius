@@ -25,38 +25,45 @@ from postorius.views.generic import *
 
 
 per_list_urlpatterns = patterns('postorius.views',
-    url(r'^members/(?P<page>\d+)/$',
-        ListMembersView.as_view(), name='list_members_paged'),
-    url(r'^members/$',
-        ListMembersView.as_view(), name='list_members'),
-    url(r'^metrics$',
-        ListMetricsView.as_view(), name='list_metrics'),
-    url(r'^$',
-        ListSummaryView.as_view(), name='list_summary'),
-    url(r'^subscribe$',
-        ListSubsribeView.as_view(), name='list_subscribe'),
-    url(r'^unsubscribe/(?P<email>[^/]+)$',
-        ListUnsubscribeView.as_view(), name='list_unsubscribe'),
-    url(r'^subscriptions$',
-        'list_subscriptions', name='list_subscriptions'),
-    url(r'^mass_subscribe/$',
-        ListMassSubsribeView.as_view(), name='mass_subscribe'),
-    url(r'^delete$',
-        'list_delete', name='list_delete'),
-    url(r'^held_messages/(?P<msg_id>[^/]+)/'
-        'accept$', 'accept_held_message', name='accept_held_message'),
-    url(r'^held_messages/(?P<msg_id>[^/]+)/'
-        'discard$', 'discard_held_message', name='discard_held_message'),
-    url(r'^held_messages/(?P<msg_id>[^/]+)/'
-        'defer$', 'defer_held_message', name='defer_held_message'),
-    url(r'^held_messages/(?P<msg_id>[^/]+)/'
-        'reject$', 'reject_held_message', name='reject_held_message'),
-    url(r'^held_messages$',
-        'list_held_messages', name='list_held_messages'),
-    url(r'^settings/(?P<visible_section>[^/]+)?'
-        '(?:/(?P<visible_option>.*))?$', 'list_settings',
-        name='list_settings'),
-)
+                                url(r'^members/(?P<page>\d+)/$',
+                                    ListMembersView.as_view(
+                                    ), name='list_members_paged'),
+                                url(r'^members/$',
+                                    ListMembersView.as_view(
+                                    ), name='list_members'),
+                                url(r'^metrics$',
+                                    ListMetricsView.as_view(
+                                    ), name='list_metrics'),
+                                url(r'^$',
+                                    ListSummaryView.as_view(
+                                    ), name='list_summary'),
+                                url(r'^subscribe$',
+                                    ListSubsribeView.as_view(
+                                    ), name='list_subscribe'),
+                                url(r'^unsubscribe/(?P<email>[^/]+)$',
+                                    ListUnsubscribeView.as_view(
+                                    ), name='list_unsubscribe'),
+                                url(r'^subscriptions$',
+                                    'list_subscriptions', name='list_subscriptions'),
+                                url(r'^mass_subscribe/$',
+                                    ListMassSubsribeView.as_view(
+                                    ), name='mass_subscribe'),
+                                url(r'^delete$',
+                                    'list_delete', name='list_delete'),
+                                url(r'^held_messages/(?P<msg_id>[^/]+)/'
+                                    'accept$', 'accept_held_message', name='accept_held_message'),
+                                url(r'^held_messages/(?P<msg_id>[^/]+)/'
+                                    'discard$', 'discard_held_message', name='discard_held_message'),
+                                url(r'^held_messages/(?P<msg_id>[^/]+)/'
+                                    'defer$', 'defer_held_message', name='defer_held_message'),
+                                url(r'^held_messages/(?P<msg_id>[^/]+)/'
+                                    'reject$', 'reject_held_message', name='reject_held_message'),
+                                url(r'^held_messages$',
+                                    'list_held_messages', name='list_held_messages'),
+                                url(r'^settings/(?P<visible_section>[^/]+)?'
+                                    '(?:/(?P<visible_option>.*))?$', 'list_settings',
+                                    name='list_settings'),
+                                )
 
 urlpatterns = patterns(
     'postorius.views',
@@ -68,6 +75,11 @@ urlpatterns = patterns(
     url(r'^tasks/$', 'user_tasks', name='user_tasks'),
     url(r'^accounts/subscriptions/$', UserSubscriptionsView.as_view(),
         name='user_subscriptions'),
+    url(r'^accounts/per-address-preferences/$',
+        UserAddressPreferencesView.as_view(), name='user_address_preferences'),
+    url(r'^accounts/per-subscription-preferences/$',
+        UserSubscriptionPreferencesView.as_view(
+        ), name='user_subscription_preferences'),
     url(r'^accounts/mailmansettings/$',
         UserMailmanSettingsView.as_view(),
         name='user_mailmansettings'),
@@ -80,8 +92,9 @@ urlpatterns = patterns(
     # /lists/
     url(r'^lists/$', 'list_index', name='list_index'),
     url(r'^lists/new/$', 'list_new', name='list_new'),
-    url(r'^more_info/(?P<formid>[^/]+)/(?P<helpid>[^/]+)$', 'more_info_tab', name='more_info_tab'),
-    url(r'^lists/(?P<fqdn_listname>[^/]+)/', include(per_list_urlpatterns)),   
+    url(r'^more_info/(?P<formid>[^/]+)/(?P<helpid>[^/]+)$',
+        'more_info_tab', name='more_info_tab'),
+    url(r'^lists/(?P<fqdn_listname>[^/]+)/', include(per_list_urlpatterns)),
     # /users/
     url(r'^users/(?P<page>\d+)/$', 'user_index', name='user_index_paged'),
     url(r'^users/$', 'user_index', name='user_index'),
