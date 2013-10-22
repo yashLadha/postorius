@@ -90,6 +90,7 @@ def domain_new(request):
                               {'form': form, 'message': message},
                               context_instance=RequestContext(request))
 
+
 def domain_delete(request, domain):
     """Deletes a domain but asks for confirmation first.
     """

@@ -24,6 +24,7 @@ from django.core.exceptions import PermissionDenied
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
 
+
 def basic_auth_login(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
@@ -31,7 +32,8 @@ def basic_auth_login(fn):
             print 'already logged in'
         if not request.user.is_authenticated():
             if request.META.has_key('HTTP_AUTHORIZATION'):
-                authmeth, auth = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
+                authmeth, auth = request.META['HTTP_AUTHORIZATION'].split(' ',
+                                                                          1)
                 if authmeth.lower() == 'basic':
                     auth = auth.strip().decode('base64')
                     username, password = auth.split(':', 1)

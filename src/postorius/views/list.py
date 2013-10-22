@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 class ListMembersView(MailingListView):
+
     """Display all members of a given list.
     """
 
@@ -98,6 +99,7 @@ class ListMembersView(MailingListView):
 
 
 class ListMetricsView(MailingListView):
+
     """Shows common list metrics.
     """
 
@@ -109,6 +111,7 @@ class ListMetricsView(MailingListView):
 
 
 class ListSummaryView(MailingListView):
+
     """Shows common list metrics.
     """
 
@@ -122,6 +125,7 @@ class ListSummaryView(MailingListView):
 
 
 class ListSubsribeView(MailingListView):
+
     """Subscribe a mailing list."""
 
     @method_decorator(login_required)
@@ -145,6 +149,7 @@ class ListSubsribeView(MailingListView):
 
 
 class ListUnsubscribeView(MailingListView):
+
     """Unsubscribe from a mailing list."""
 
     @method_decorator(login_required)
@@ -163,6 +168,7 @@ class ListUnsubscribeView(MailingListView):
 
 
 class ListMassSubsribeView(MailingListView):
+
     """Mass subscription."""
 
     @method_decorator(list_owner_required)
@@ -227,10 +233,10 @@ def list_new(request, template='postorius/lists/new.html'):
         choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains, request.POST)
         if form.is_valid():
-            #grab domain
+            # grab domain
             domain = Domain.objects.get_or_404(
                 mail_host=form.cleaned_data['mail_host'])
-            #creating the list
+            # creating the list
             try:
                 mailing_list = domain.create_list(
                     form.cleaned_data['listname'])
@@ -243,9 +249,8 @@ def list_new(request, template='postorius/lists/new.html'):
                 messages.success(request, _("List created"))
                 return redirect("list_summary",
                                 fqdn_listname=mailing_list.fqdn_listname)
-            #TODO catch correct Error class:
+            # TODO catch correct Error class:
             except HTTPError, e:
-                messages.error(request, e)
                 return render_to_response(
                     'postorius/errors/generic.html',
                     {'error': e}, context_instance=RequestContext(request))
@@ -504,7 +509,7 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except MailmanApiError:
         return utils.render_api_error(request)
-    #collect all Form sections for the links:
+    # collect all Form sections for the links:
     temp = ListSettings('', '')
     for section in temp.layout:
         try:
@@ -524,12 +529,13 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
                 list_settings.save()
             message = _("The list settings have been updated.")
         else:
-            message = _("Validation Error - The list settings have not been updated.")
+            message = _(
+                "Validation Error - The list settings have not been updated.")
     else:
-        #Provide a form with existing values
-        #create form and process layout into form.layout
+        # Provide a form with existing values
+        # create form and process layout into form.layout
         form = ListSettings(visible_section, visible_option, data=None)
-        #create a Dict of all settings which are used in the form
+        # create a Dict of all settings which are used in the form
         used_settings = {}
         for section in form.layout:
             for option in section[1:]:
@@ -547,29 +553,6 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
                                'list': the_list,
                                'visible_option': visible_option,
                                'visible_section': visible_section},
-                              context_instance=RequestContext(request))
-
-
-@login_required
-def user_mailmansettings(request):
-    try:
-        the_user = MailmanUser.objects.get(address=request.user.email)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except Mailman404Error:
-	     # If we have no settings, return a "blank" settings page telling the
-		  # user that they have no settings because they are not subscribed
-		  # to any lists (see mailmansettings template)
-        return render_to_response(
-            'postorius/user_mailmansettings.html',
-				{'nolists': 'true'},
-            context_instance=RequestContext(request),
-            )
-
-    settingsform = MembershipSettings()
-    return render_to_response('postorius/user_mailmansettings.html',
-                              {'mm_user': the_user,
-                               'settingsform': settingsform},
                               context_instance=RequestContext(request))
 
 
