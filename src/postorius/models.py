@@ -69,7 +69,7 @@ class MailmanRestManager(object):
             raise MailmanApiError(e)
         except HTTPError, e:
             if e.code == 404:
-                raise Mailman404Error
+                raise Mailman404Error('Mailman resource could not be found.')
             else:
                 raise
         except MailmanConnectionError, e:

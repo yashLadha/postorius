@@ -3,82 +3,48 @@
 {% load i18n %}
 {% block main %}
 {% include 'postorius/menu/user_nav.html' %}
-{% if nolists %}
-<div class = "mm_subHeader" >
-   <h1> { % trans "No Preferences Available" % } </h1>
-</div>
-<p > { % trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' % } </p>
-{% else %}
-<ul class = "nav nav-tabs">
-   <li> <a href = "{% url 'user_mailmansettings' %}">{% trans "Global Mailman Preferences" %} </a> </li>
-   <li> <a href = "{% url 'user_address_preferences' %}">{% trans "Address Based Preferences" %}</a> </li>
-   <li class = "active"> <a href = "#">{% trans "Subscription Based Preferences" %}</a> </li>
+<ul class="nav nav-tabs">
+   <li> <a href="{% url 'user_mailmansettings' %}">{% trans "Global Mailman Preferences" %}</a></li>
+   <li> <a href="{% url 'user_address_preferences' %}">{% trans "Address Based Preferences" %}</a></li>
+   <li class="active"><a href="#">{% trans "Subscription Based Preferences" %}</a></li>
 </ul>
-<br>
-<h2> Per-Subscription Based Preferences Overview </h2>
-<p> Table to view the preferences(for testing only)</p>
-<!-- Table displaying the user's per-subscription-based Mailman preferences, for testing/viewing purposes only, may be removed-->
-<table class="table table-bordered table-striped mm_userData">
-   <tbody>
-      <tr>
-         <th>{% trans 'Subscription' %}</th>
-         <th>{% trans 'Acknowledge Posts' %}</th>
-         <th>{% trans 'Hide Address' %}</th>
-         <th>{% trans 'Receive List Copy' %}</th>
-         <th>{% trans 'Receive Own Postings' %}</th>
-         <th>{% trans 'Delivery Mode' %}</th>
-         <th>{% trans 'Delivery Status' %}</th>
-      </tr>
-      {%for s in subscriptions%}
-      <tr>
-         <th>{{ s }}</th>
-         <td>{{ s.preferences.acknowledge_posts }}</td>
-         <td>{{ s.preferences.hide_address }}</td>
-         <td>{{ s.preferences.receive_list_copy }}</td>
-         <td>{{ s.preferences.receive_own_postings }}</td>
-         <td>{{ s.preferences.delivery_mode }}</td>
-         <td>{{ s.preferences.delivery_status }}</td>
-      </tr>
-      {%endfor%}
-   </tbody>
-</table>
-<br>
-<h2> Subscription Based Preferences Form </h2>
-<br>
-<!-- Form to modify the user's preferences pertaining to individual subscriptions to specific lists.
-   This form displays the previously initialized data by the user, if any-->
-<form class="well" action = "{% url 'user_subscription_preferences' %}" method = "post" id = "subscriptions_formset" >
-   {% csrf_token %}
-   {{formset.management_form}}
-   {{formset.non_form_errors.as_ul}}
-   <table class="well" border="1" width="100%">
-      {% for form,subscription in zipped_data %}
-      {% if forloop.first %}
-      <thead>
-         <tr>
-            <th> Subscription </th>
-            {% for field in form.visible_fields %}
-            <th > {{field.label}} <p>[<span class="more_info"><a href="#" target="_blank">More info</a><span>{{ field.help_text }}
-                </span></span>]</p></th>
-            {% endfor %}
-         </tr >
-      </thead >
-      {% endif %}
-      {% endfor %}
-      <tr class = "{% cycle row1,row2 %}" >
-      {% for form,subscription in zipped_data %}
-         <td style="width:10%"> {{subscription.list_id}} </td>
-         <td style="width:14%"> {{form.delivery_status}} </td>
-         <td style="width:20%"> {{form.delivery_mode}} </td>
-         <td style="width:14%"> {{form.receive_own_postings}}</td>
-         <td style="width:14%"> {{form.acknowledge_posts}} </td>
-         <td style="width:14%"> {{form.hide_address}} </td>
-         <td style="width:14%"> {{form.receive_list_copy}} </td>
-      </tr>
-      {% endfor %}
-   </table>
-   <center><button class="btn btn-success" type="submit"> {% trans "Save" %}</button></center>
-</form>
-
+{% if nolists %}
+    <div class="mm_subHeader" >
+       <h1>{% trans "No Preferences Available" %}</h1>
+    </div>
+    <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
+{% else %}
+    <form class="well" action = "{% url 'user_subscription_preferences' %}" method = "post" id = "subscriptions_formset" >
+       {% csrf_token %}
+       {{formset.management_form}}
+       {{formset.non_form_errors.as_ul}}
+       <table class="well" border="1" width="100%">
+          {% for form,subscription in zipped_data %}
+          {% if forloop.first %}
+          <thead>
+             <tr>
+                <th> Subscription </th>
+                {% for field in form.visible_fields %}
+                <th>{{field.label}} <p><span class="more_info">[<a href="#" target="_blank">More info</a><span>{{ field.help_text }}
+                    </span>]</span></p></th>
+                {% endfor %}
+             </tr >
+          </thead >
+          {% endif %}
+          {% endfor %}
+          <tr class = "{% cycle row1,row2 %}" >
+          {% for form,subscription in zipped_data %}
+             <td style="width:10%">{{subscription.list_id}}</td>
+             <td style="width:14%">{{form.delivery_status}}</td>
+             <td style="width:20%">{{form.delivery_mode}}</td>
+             <td style="width:14%">{{form.receive_own_postings}}</td>
+             <td style="width:14%">{{form.acknowledge_posts}}</td>
+             <td style="width:14%">{{form.hide_address}}</td>
+             <td style="width:14%">{{form.receive_list_copy}}</td>
+          </tr>
+          {% endfor %}
+       </table>
+       <center><button class="btn btn-success" type="submit"> {% trans "Save" %}</button></center>
+    </form>
 {% endif %}
 {% endblock main %}

@@ -50,7 +50,6 @@ from postorius.views.generic import MailingListView, MailmanUserView
 
 
 class UserMailmanSettingsView(MailmanUserView):
-
     """The logged-in user's global Mailman Preferences."""
 
     @method_decorator(login_required)
@@ -70,7 +69,7 @@ class UserMailmanSettingsView(MailmanUserView):
                 messages.error(request, 'Something went wrong.')
         except MailmanApiError:
             return utils.render_api_error(request)
-        except HTTPError, e:
+        except Mailman404Error as e:
             messages.error(request, e.msg)
         return redirect("user_mailmansettings")
 
@@ -81,6 +80,9 @@ class UserMailmanSettingsView(MailmanUserView):
             settingsform = UserPreferences(initial=mm_user.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
+        except Mailman404Error:
+            mm_user = None
+            settingsform = None
         return render_to_response('postorius/user_mailmansettings.html',
                                   {'mm_user': mm_user,
                                    'settingsform': settingsform},
@@ -88,7 +90,6 @@ class UserMailmanSettingsView(MailmanUserView):
 
 
 class UserAddressPreferencesView(MailmanUserView):
-
     """The logged-in user's address-based Mailman Preferences."""
 
     @method_decorator(login_required)
@@ -131,6 +132,11 @@ class UserAddressPreferencesView(MailmanUserView):
                 form.initial = address.preferences
         except MailmanApiError:
             return utils.render_api_error(request)
+        except Mailman404Error:
+            return render_to_response(
+                'postorius/user_address_preferences.html',
+                {'nolists': 'true'},
+                context_instance=RequestContext(request))
         return render_to_response('postorius/user_address_preferences.html',
                                   {'mm_user': mm_user,
                                    'addresses': addresses,
@@ -141,7 +147,6 @@ class UserAddressPreferencesView(MailmanUserView):
 
 
 class UserSubscriptionPreferencesView(MailmanUserView):
-
     """The logged-in user's subscription-based Mailman Preferences."""
 
     @method_decorator(login_required)
@@ -185,7 +190,6 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                 'postorius/user_subscription_preferences.html',
                 {'nolists': 'true'},
                 context_instance=RequestContext(request))
-
         return render_to_response(
             'postorius/user_subscription_preferences.html',
             {'mm_user': mm_user,

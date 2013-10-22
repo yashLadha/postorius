@@ -136,6 +136,7 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
                 self.mm_user = self._get_user(user_id)
             except MailmanApiError:
                 return utils.render_api_error(request)
+                
 
         # set the template
         if 'template' in kwargs:
