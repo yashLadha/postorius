@@ -16,12 +16,12 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 from django.utils import unittest
 
-from postorius.forms import MembershipSettings
+from postorius.forms import UserPreferences
 
-class MembershipSettingsTest(unittest.TestCase):
+class UserPreferencesTest(unittest.TestCase):
 
     def test_form_fields_valid(self):
-        form = MembershipSettings({
+        form = UserPreferences({
             'acknowledge_posts': 'True',
             'hide_address': 'True',
             'receive_list_copy': 'False',
