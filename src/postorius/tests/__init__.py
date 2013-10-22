@@ -16,15 +16,9 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from postorius.tests import test_utils
-from postorius.tests.test_list_members import *
-from postorius.tests.test_auth_decorators import *
-from postorius.tests.test_user_creation_sync import *
 
 __test__ = {
     "Test Utils": test_utils,
-    "List members": ListMembersViewTest,
-    "List Owner Required": ListOwnerRequiredTest,
-    "Sync Postorius users and Mailman users": UserCreationSyncTest,
     # "Page Tests": test_pages,
     #"Doctest": tests,
 }
