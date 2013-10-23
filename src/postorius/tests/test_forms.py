@@ -14,22 +14,17 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-
-from django.contrib.auth.models import AnonymousUser, User
-from django.core.exceptions import PermissionDenied
-from django.test.client import RequestFactory
-from postorius.tests.utils import create_mock_list
 from django.utils import unittest
-from mock import patch
 
-from postorius.auth.decorators import (list_owner_required,
-                                       list_moderator_required)
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
-from mailmanclient import Client
+from postorius.forms import UserPreferences
 
+class UserPreferencesTest(unittest.TestCase):
 
-class UserCreationSyncTest(unittest.TestCase):
-    """Tests if a newly saved db user is synced to the mailman core.
-    """
-    pass
+    def test_form_fields_valid(self):
+        form = UserPreferences({
+            'acknowledge_posts': 'True',
+            'hide_address': 'True',
+            'receive_list_copy': 'False',
+            'receive_own_postings': 'False',
+        })
+        self.assertTrue(form.is_valid())
