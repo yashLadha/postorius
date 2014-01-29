@@ -85,7 +85,7 @@ class MailmanRestManager(object):
 
     def create(self, **kwargs):
         try:
-            method = getattr(utils.get_client(), 'create_' + self.resource_name)
+            method = getattr(get_client(), 'create_' + self.resource_name)
             print kwargs
             return method(**kwargs)
         except AttributeError, e:
