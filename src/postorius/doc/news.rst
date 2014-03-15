@@ -2,7 +2,7 @@
 News / Changelog
 ================
 
-Copyright (C) 2012 by the Free Software Foundation, Inc.
+Copyright (C) 2012-2014 by the Free Software Foundation, Inc.
 
 The Postorius Django app provides a web user interface to
 access GNU Mailman.
@@ -20,9 +20,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
-1.0 alpha 2
-===========
-(2012-XX-XX)
+1.0 alpha 2 -- "Is It Luck?"
+============================
+(2014-03-15)
 
 * dev setup fix for Django 1.4 contributed by Rohan Jain
 * missing csrf tokens in templates contributed by Richard Wackerbarth (LP: 996658)

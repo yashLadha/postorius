@@ -1,4 +1,4 @@
-# Copyright (C) 2012 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2014 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -22,7 +22,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "postorius",
-    version = '1.0.0a1',
+    version = '1.0.0a2',
     description = "A web user interface for GNU Mailman",
     long_description=open('README.rst').read(),
     maintainer = "The Mailman GSOC Coders",

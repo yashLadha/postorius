@@ -2,7 +2,7 @@
 Postorius - web ui for GNU Mailman
 ===================================
 
-Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
+Copyright (C) 1998-2014 by the Free Software Foundation, Inc.
 
 The Postorius Django app provides a web user interface to
 access GNU Mailman. 
