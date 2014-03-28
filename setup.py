@@ -35,6 +35,7 @@ setup(
     packages = find_packages('src'),
     package_dir = {'': 'src'},
     include_package_data = True,
-    install_requires = ['django-social-auth>=0.7.8',
+    install_requires = ['django>=1.4',
+                        'django-social-auth>=0.7.8',
                         'mailmanclient', ]
 )
