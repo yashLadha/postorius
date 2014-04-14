@@ -556,7 +556,39 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
                               context_instance=RequestContext(request))
 
 
-@login_required
-def membership_settings(request):
-    """Display a list of all memberships.
+@user_passes_test(lambda u: u.is_superuser)
+def remove_role(request, fqdn_listname=None, role=None, address=None,
+                template='postorius/lists/confirm_remove_role.html'):
+    """Removes a list moderator or owner.
     """
+    try:
+        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+
+    if role == 'owner':
+        if address not in the_list.owners:
+            messages.error(request, _('The user {} is not a owner'.format(address)))
+            return redirect("list_members", the_list.fqdn_listname)
+    elif role == 'moderator':
+        if address not in the_list.moderators:
+            messages.error(request, _('The user {} is not a moderator'.format(address)))
+            return redirect("list_members", the_list.fqdn_listname)
+
+    if request.method == 'POST':
+        try:
+            the_list.remove_role(role, address)
+        except MailmanApiError:
+            return utils.render_api_error(request)
+        except HTTPError as e:
+            messages.error(request, _('The {0} could not be removed:'
+                                      ' {1}'.format(role, e.msg)))
+            return redirect("list_members", the_list.fqdn_listname)
+        messages.success(request,
+                         _('The user {0} has been removed as {1}.'.format(address, role)))
+        return redirect("list_members", the_list.fqdn_listname)
+
+    return render_to_response(template,
+                              {'role': role, 'address': address, 
+                               'fqdn_listname': the_list.fqdn_listname},
+                              context_instance=RequestContext(request))

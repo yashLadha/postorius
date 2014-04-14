@@ -1,0 +1,14 @@
+{% extends "postorius/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load nav_helpers %}
+
+{% block main %}
+    <h1>{% trans 'Confirm Remove Role' %}</h1>
+    <p>{% trans "Are you sure you want to remove?" %}</p>
+    <form method="post" action="{% url 'remove_role' fqdn_listname role address %}">
+      {% csrf_token %}
+        <button class="btn btn-danger" type="submit">{% trans "Remove " %}{{ address }}</button>
+        <a class="btn" href="{% url 'user_index' %}">{% trans "Cancel" %}</a>
+    </form>
+{% endblock main %}
