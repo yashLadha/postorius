@@ -104,12 +104,4 @@ urlpatterns = patterns(
     url(r'^more_info/(?P<formid>[^/]+)/(?P<helpid>[^/]+)$',
         'more_info_tab', name='more_info_tab'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/', include(per_list_urlpatterns)),
-    # /users/
-    url(r'^users/(?P<page>\d+)/$', 'user_index', name='user_index_paged'),
-    url(r'^users/$', 'user_index', name='user_index'),
-    url(r'^users/new/$', 'user_new', name='user_new'),
-    url(r'^users/(?P<user_id>[^/]+)/$',
-        UserSummaryView.as_view(), name='user_summary'),
-    url(r'^users/(?P<user_id>\d+)/delete$', 'user_delete', name='user_delete'),
-    url(r'^api/lists/$', 'api_list_index', name='api_list_index'),
 )
