@@ -178,9 +178,13 @@ class UserSubscriptionPreferencesView(MailmanUserView):
             mm_user = MailmanUser.objects.get(address=request.user.email)
             subscriptions = mm_user.subscriptions
             i = len(subscriptions)
+            member_subscriptions = []
+            for subscription in subscriptions:
+                if subscription.role == "member":
+                    member_subscriptions.append(subscription)
             Mformset = formset_factory(UserPreferences, extra=i)
             formset = Mformset()
-            zipped_data = zip(formset.forms, subscriptions)
+            zipped_data = zip(formset.forms, member_subscriptions)
             for form, subscription in zipped_data:
                 form.initial = subscription.preferences
         except MailmanApiError:
