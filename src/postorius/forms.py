@@ -17,7 +17,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from django.core.validators import validate_email
+from django.core.validators import validate_email, URLValidator
 from django.utils.translation import gettext as _
 from fieldset_forms import FieldsetForm
 from django.forms.models import modelformset_factory
@@ -56,7 +56,7 @@ class DomainNew(FieldsetForm):
     def clean_web_host(self):
         web_host = self.cleaned_data['web_host']
         try:
-            validate_email('mail@' + web_host)
+            URLValidator()(web_host)
         except:
             raise forms.ValidationError(_("Please enter a valid Web Host"))
         return web_host
