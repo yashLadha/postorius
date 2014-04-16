@@ -202,7 +202,6 @@ class UserSubscriptionPreferencesView(MailmanUserView):
              'formset': formset},
             context_instance=RequestContext(request))
 
-
 class UserSummaryView(MailmanUserView):
 
     """Shows a summary of a user.

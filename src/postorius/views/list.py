@@ -97,6 +97,54 @@ class ListMembersView(MailingListView):
                                    'moderator_form': moderator_form},
                                   context_instance=RequestContext(request))
 
+class ListMemberOptionsView(MailingListView):
+    '''View the preferences for a single member of a mailing list'''
+
+    @method_decorator(list_owner_required)
+    def post(self, request, fqdn_listname, email):
+        try:
+            mm_user = MailmanUser.objects.get(address=request.user.email)
+
+            #formset_class = formset_factory(UserPreferences)
+            #formset = formset_class(request.POST)
+            #zipped_data = zip(formset.forms, mm_user.subscriptions)
+            #if formset.is_valid():
+            #    for form, subscription in zipped_data:
+            #        preferences = subscription.preferences
+            #        for key in form.fields.keys():
+            #            preferences[key] = form.cleaned_data[key]
+            #        preferences.save()
+            #    messages.success(
+            #        request, 'The member\'s preferences have been updated.')
+            #else:
+            #    messages.error(request, 'Something went wrong.')
+        except MailmanApiError:
+            return utils.render_api_error(request)
+        except HTTPError, e:
+            messages.error(request, e.msg)
+        return redirect("list_member_options")
+
+    @method_decorator(list_owner_required)
+    def get(self, request, fqdn_listname, email):
+        try:
+           mm_user = MailmanUser.objects.get(address=request.user.email)
+           #settingsform = UserPeferences(initial=mm_user.preferences)
+        except MailmanApiError:
+            return utils.render_api_error(request)
+        except Mailman404Error:
+            return render_to_response(
+                'postorius/lists/memberoptions.html',
+                {'nolists': 'true'},
+                context_instance=RequestContext(request))
+        return render_to_response(
+            'postorius/lists/memberoptions.html',
+            {'mm_user': mm_user,
+             #'settingsform': settingsform,
+             #'subscriptions': subscriptions,
+             #'zipped_data': zipped_data,
+             #'formset': formset},
+            },
+            context_instance=RequestContext(request))
 
 class ListMetricsView(MailingListView):
 
