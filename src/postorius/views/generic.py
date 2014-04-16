@@ -37,6 +37,7 @@ class MailmanClientMixin(object):
             self._client = utils.get_client()
         return self._client
 
+
 class MailingListView(TemplateView, MailmanClientMixin):
 
     """A generic view for everything based on a mailman.client
@@ -99,7 +100,8 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
             user_obj = None
         # replace display_name with first address if display_name is not set
         if user_obj is not None:
-            if user_obj.display_name == 'None' or user_obj.display_name is None:
+            if (user_obj.display_name == 'None' or
+               user_obj.display_name is None):
                 user_obj.display_name = ''
             user_obj.first_address = self._get_first_address(user_obj)
         return user_obj
@@ -136,7 +138,6 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
                 self.mm_user = self._get_user(user_id)
             except MailmanApiError:
                 return utils.render_api_error(request)
-                
 
         # set the template
         if 'template' in kwargs:

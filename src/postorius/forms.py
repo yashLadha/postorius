@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2014 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
@@ -421,11 +421,11 @@ class ListSettings(FieldsetForm):
     #        'invalid': _('Please provide an integer.'),
     #    },
     #    required=False,
-    #)
+    # )
     # no_reply_address = forms.EmailField(
     #    label=_('No reply address'),
     #    required=False,
-    #)
+    # )
     posting_pipeline = forms.CharField(
         label=_('Pipeline'),
         help_text=(
@@ -437,7 +437,7 @@ class ListSettings(FieldsetForm):
     #        'invalid': _('Please provide an integer.'),
     #    },
     #    required=False,
-    #)
+    # )
     display_name = forms.CharField(
         label=_('Display name'),
         help_text=('Display name is the name shown in the web interface.')
@@ -725,9 +725,9 @@ class UserPreferences(FieldsetForm):
     choices = ((True, _('Yes')), (False, _('No')))
 
     delivery_mode_choices = (("regular", _('Regular')),
-                            ("plaintext_digests", _('Plain Text Digests')),
-                            ("mime_digests", _('Mime Digests')),
-                            ("summary_digests", _('Summary Digests')))
+                             ("plaintext_digests", _('Plain Text Digests')),
+                             ("mime_digests", _('Mime Digests')),
+                             ("summary_digests", _('Summary Digests')))
     delivery_status_choices = (
         ("enabled", _('Enabled')), ("by_user", _('Disabled')))
     delivery_status = forms.ChoiceField(

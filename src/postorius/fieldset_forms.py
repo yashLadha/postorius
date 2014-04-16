@@ -48,12 +48,12 @@ class FieldsetForm(Form):
     def as_div(self):
         """Render the form as a set of <div>s."""
         output = ""
-        #Adding Errors
+        # Adding Errors
         try:
             output += str(self.errors["NON_FIELD_ERRORS"])
         except:
             pass
-        #create the fieldsets
+        # Create the fieldsets
         for index in range(len(self.layout)):
             output += self.create_fieldset(self.layout[index])
         return safestring.mark_safe(output)

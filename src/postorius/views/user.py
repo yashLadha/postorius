@@ -119,7 +119,7 @@ class UserAddressPreferencesView(MailmanUserView):
     @method_decorator(login_required)
     def get(self, request):
         try:
-            helperform=UserPreferences()
+            helperform = UserPreferences()
             mm_user = MailmanUser.objects.get(address=request.user.email)
             addresses = mm_user.addresses
             i = 0
@@ -140,7 +140,7 @@ class UserAddressPreferencesView(MailmanUserView):
         return render_to_response('postorius/user_address_preferences.html',
                                   {'mm_user': mm_user,
                                    'addresses': addresses,
-                                   'helperform':helperform,
+                                   'helperform': helperform,
                                    'formset': formset,
                                    'zipped_data': zipped_data},
                                   context_instance=RequestContext(request))
@@ -201,6 +201,7 @@ class UserSubscriptionPreferencesView(MailmanUserView):
              'zipped_data': zipped_data,
              'formset': formset},
             context_instance=RequestContext(request))
+
 
 class UserSummaryView(MailmanUserView):
 
@@ -316,13 +317,16 @@ def user_tasks(request):
 
 
 @login_required
-def more_info_tab(request, formid=None, helpid=None, template='postorius/more_info_display.html'):
+def more_info_tab(request, formid=None, helpid=None,
+                  template='postorius/more_info_display.html'):
     """Displays more_info in new tab.
     """
 
     if(formid == 'list_settings'):
         form = ListSettings(
-            visible_section='List Identity', visible_option='None', data=request.POST)
+            visible_section='List Identity',
+            visible_option='None',
+            data=request.POST)
 
     for field in form:
         if field.name == helpid:

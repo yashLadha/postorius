@@ -97,6 +97,7 @@ class ListMembersView(MailingListView):
                                    'moderator_form': moderator_form},
                                   context_instance=RequestContext(request))
 
+
 class ListMemberOptionsView(MailingListView):
     '''View the preferences for a single member of a mailing list'''
 
@@ -127,7 +128,7 @@ class ListMemberOptionsView(MailingListView):
             'postorius/lists/memberoptions.html',
             {'mm_member': mm_member,
              'settingsform': settingsform,
-            },
+             },
             context_instance=RequestContext(request))
 
     @method_decorator(list_owner_required)
@@ -146,8 +147,9 @@ class ListMemberOptionsView(MailingListView):
             'postorius/lists/memberoptions.html',
             {'mm_member': mm_member,
              'settingsform': settingsform,
-            },
+             },
             context_instance=RequestContext(request))
+
 
 class ListMetricsView(MailingListView):
 
@@ -362,7 +364,8 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
         the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
     except AttributeError, e:
         return render_to_response('postorius/errors/generic.html',
-                                  {'error': "Mailman REST API not available.  Please start Mailman core."},
+                                  {'error': 'Mailman REST API not available.'
+                                   ' Please start Mailman core.'},
                                   context_instance=RequestContext(request))
     # process submitted form
     if request.method == 'POST':
@@ -619,11 +622,13 @@ def remove_role(request, fqdn_listname=None, role=None, address=None,
 
     if role == 'owner':
         if address not in the_list.owners:
-            messages.error(request, _('The user {} is not an owner'.format(address)))
+            messages.error(request,
+                           _('The user {} is not an owner'.format(address)))
             return redirect("list_members", the_list.fqdn_listname)
     elif role == 'moderator':
         if address not in the_list.moderators:
-            messages.error(request, _('The user {} is not a moderator'.format(address)))
+            messages.error(request,
+                           _('The user {} is not a moderator'.format(address)))
             return redirect("list_members", the_list.fqdn_listname)
 
     if request.method == 'POST':
@@ -636,10 +641,11 @@ def remove_role(request, fqdn_listname=None, role=None, address=None,
                                       ' {1}'.format(role, e.msg)))
             return redirect("list_members", the_list.fqdn_listname)
         messages.success(request,
-                         _('The user {0} has been removed as {1}.'.format(address, role)))
+                         _('The user {0} has been removed as {1}.'
+                           .format(address, role)))
         return redirect("list_members", the_list.fqdn_listname)
 
     return render_to_response(template,
-                              {'role': role, 'address': address, 
+                              {'role': role, 'address': address,
                                'fqdn_listname': the_list.fqdn_listname},
                               context_instance=RequestContext(request))
