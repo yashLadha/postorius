@@ -116,6 +116,8 @@ class ListMemberOptionsView(MailingListView):
             else:
                 messages.error(request, 'Something went wrong.')
 
+            # this is a bit silly, since we already have the preferences,
+            # but I want to be sure we don't show stale data.
             settingsform = UserPreferences(initial=mm_member.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
@@ -127,7 +129,6 @@ class ListMemberOptionsView(MailingListView):
              'settingsform': settingsform,
             },
             context_instance=RequestContext(request))
-        #return redirect("list_member_options")
 
     @method_decorator(list_owner_required)
     def get(self, request, fqdn_listname, email):
