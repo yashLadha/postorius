@@ -26,7 +26,7 @@ Setup Testobject (starts Mailman3 with an empty Database).
     >>> from setup import setup_mm, Testobject, teardown_mm
     >>> testobject = setup_mm(Testobject())
 
-    .. note:: 
+    .. note::
         You need to stop all Mailman3 instances before running the tests
 
 Modules needed
@@ -36,7 +36,7 @@ Modules needed
 
     Import Translation Module to check success messages
         >>> from django.utils.translation import gettext as _
-    
+
     Import HTTPRedirectObject to check whether a response redirects
         >>> from django.http import HttpResponseRedirect
 
@@ -108,15 +108,15 @@ the List Index Page
     ...                    "mail_host": "mail.example.com",
     ...                    "list_owner": "james@example.com",
     ...                    "description": "doctest testing list",
-    ...                    "advertised": "True",    
-    ...                    "languages": "English (USA)"})    
+    ...                    "advertised": "True",
+    ...                    "languages": "English (USA)"})
     >>> print type(response) == HttpResponseRedirect
     True
-    
+
 As List index is an overview of all advertised Lists and we've choosen to
 do so we should now see our new List within the overview. HTTP_HOST is added
 as META Data for the request because we do only want to see Domains which
-belong to the example.com web_host 
+belong to the example.com web_host.
 
     >>> response = c.get('/lists/',HTTP_HOST='example.com')
     >>> response.status_code
@@ -132,7 +132,7 @@ useful functions which are only related to that Domain. These include the
 Values mentioned below. _(function) is used to Translate these to you local
 language.
 
-    >>> response = c.get('/lists/new_list1%40mail.example.com/',)    
+    >>> response = c.get('/lists/new_list1%40mail.example.com/',)
     >>> response.status_code
     200
     >>> _("Subscribe") in response.content
@@ -143,8 +143,8 @@ language.
     True
     >>> _("Unsubscribe") in response.content
     True
-    
-Subscriptions   
+
+Subscriptions
 =============
 
 The Subscriptions form is found on the below URL. Last part of the Url is one
@@ -154,14 +154,15 @@ of [None,'subscribe','unsubscribe']
     >>> response = c.get(url)
     >>> response.status_code
     200
-    
-Forms will be prefilled with the Users Email if so. is logged in.    
-    
+
+Forms will be prefilled with the Users Email if so. is logged in.
+
     >>> "james@example.com" in response.content
     True
-    
-Now we can subscribe James and Katie and check that we get redirected to List Summary.
-    
+
+Now we can subscribe James and Katie and check that we get redirected to List
+Summary.
+
     >>> response = c.post(url,
     ...                   {"email": "james@example.com",
     ...                   "real_name": "James Watt",
@@ -171,55 +172,55 @@ Now we can subscribe James and Katie and check that we get redirected to List Su
     ...                   {"email": "katie@example.com",
     ...                   "real_name": "Katie Doe",
     ...                   "name": "subscribe",
-    ...                   "fqdn_listname": "new_list1@mail.example.com"})   
+    ...                   "fqdn_listname": "new_list1@mail.example.com"})
     >>> print (_('Subscribed')+' katie@example.com') in response.content
     True
-    
+
 The logged in user (james@example.com) can now modify his own membership
-using a button which is displayed in list_summary.  
+using a button which is displayed in list_summary.
 
     >>> response = c.get('/lists/new_list1%40mail.example.com/')
     >>> "mm_membership" in response.content
     True
-    
-Using the same subscription page we can unsubscribe as well. 
-   
+
+Using the same subscription page we can unsubscribe as well.
+
     >>> response = c.post('/subscriptions/new_list1%40mail.example.com/unsubscribe',
     ...                   {"email": "katie@example.com",
     ...                   "name": "unsubscribe",
     ...                   "fqdn_listname": "new_list1@mail.example.com"})
     >>> print (_('Unsubscribed')+' katie@example.com') in response.content
     True
-    
+
 Mass Subscribe Users (within settings)
 ======================================
 
 Another page related to Mass Subscriptions will be available to List Owners
 as well. This page will allow adding a couple of users to one lists at the
-same time. 
+same time.
 
     >>> url = '/subscriptions/new_list1%40mail.example.com/mass_subscribe/'
     >>> response = c.get(url)
     >>> response.status_code
     200
 
-Try mass subscribing the users 'liza@example.com' and 
-'george@example.com'. Each address should be provided on a separate 
-line so add '\\n' between the names to indicate that this was done 
-(we're on a Linux machine which is why the letter 'n' was used and 
-the double '\\' instead of a single one is to escape the string 
+Try mass subscribing the users 'liza@example.com' and
+'george@example.com'. Each address should be provided on a separate
+line so add '\\n' between the names to indicate that this was done
+(we're on a Linux machine which is why the letter 'n' was used and
+the double '\\' instead of a single one is to escape the string
 parsing of Python).
 
     >>> url = '/subscriptions/new_list1%40mail.example.com/mass_subscribe/'
     >>> response = c.post(url,
     ...                   {"emails": "liza@example.com\\ngeorge@example.com"})
 
-If everything was successful, we shall get a positive response from 
+If everything was successful, we shall get a positive response from
 the page. We'll check that this was the case.
-    
+
     >>> print _("The mass subscription was successful.") in response.content
     True
-    
+
 Delete the List
 ===============
 
@@ -242,11 +243,11 @@ Confirmed by pressing the button which requests the same page using POST
     >>> response = c.get('/lists/',HTTP_HOST='example.com')
     >>> print "new_list1%40example.com" in response.content
     False
-    
+
 ==============
 Finishing Test
 ==============
 
 Don't forget to remove the test object after testing all functions
-    >>> teardown_mm(testobject)    
+    >>> teardown_mm(testobject)
 """

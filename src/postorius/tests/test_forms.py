@@ -18,6 +18,7 @@ from django.utils import unittest
 
 from postorius.forms import UserPreferences
 
+
 class UserPreferencesTest(unittest.TestCase):
 
     def test_form_fields_valid(self):

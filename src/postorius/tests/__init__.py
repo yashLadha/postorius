@@ -20,5 +20,5 @@ from postorius.tests import test_utils
 __test__ = {
     "Test Utils": test_utils,
     # "Page Tests": test_pages,
-    #"Doctest": tests,
+    # "Doctest": tests,
 }

@@ -30,8 +30,8 @@ logger = logging.getLogger(__name__)
 
 
 mm_client = Client('%s/3.0' % settings.MAILMAN_TEST_API_URL,
-                     settings.MAILMAN_TEST_USER,
-                     settings.MAILMAN_TEST_PASS)
+                   settings.MAILMAN_TEST_USER,
+                   settings.MAILMAN_TEST_PASS)
 
 
 class Testobject:
