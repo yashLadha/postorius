@@ -115,11 +115,19 @@ class ListMemberOptionsView(MailingListView):
                     request, 'The member\'s preferences have been updated.')
             else:
                 messages.error(request, 'Something went wrong.')
+
+            settingsform = UserPreferences(initial=mm_member.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError, e:
             messages.error(request, e.msg)
-        return redirect("list_member_options")
+        return render_to_response(
+            'postorius/lists/memberoptions.html',
+            {'mm_member': mm_member,
+             'settingsform': settingsform,
+            },
+            context_instance=RequestContext(request))
+        #return redirect("list_member_options")
 
     @method_decorator(list_owner_required)
     def get(self, request, fqdn_listname, email):
