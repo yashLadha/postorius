@@ -103,21 +103,18 @@ class ListMemberOptionsView(MailingListView):
     @method_decorator(list_owner_required)
     def post(self, request, fqdn_listname, email):
         try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
+            mm_member = utils.get_client().get_member(fqdn_listname, email)
 
-            #formset_class = formset_factory(UserPreferences)
-            #formset = formset_class(request.POST)
-            #zipped_data = zip(formset.forms, mm_user.subscriptions)
-            #if formset.is_valid():
-            #    for form, subscription in zipped_data:
-            #        preferences = subscription.preferences
-            #        for key in form.fields.keys():
-            #            preferences[key] = form.cleaned_data[key]
-            #        preferences.save()
-            #    messages.success(
-            #        request, 'The member\'s preferences have been updated.')
-            #else:
-            #    messages.error(request, 'Something went wrong.')
+            preferences_form = UserPreferences(request.POST)
+            if preferences_form.is_valid():
+                preferences = mm_member.preferences
+                for key in preferences_form.fields.keys():
+                    preferences[key] = preferences_form.cleaned_data[key]
+                preferences.save()
+                messages.success(
+                    request, 'The member\'s preferences have been updated.')
+            else:
+                messages.error(request, 'Something went wrong.')
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError, e:
@@ -127,8 +124,8 @@ class ListMemberOptionsView(MailingListView):
     @method_decorator(list_owner_required)
     def get(self, request, fqdn_listname, email):
         try:
-           mm_user = MailmanUser.objects.get(address=request.user.email)
-           #settingsform = UserPeferences(initial=mm_user.preferences)
+            mm_member = utils.get_client().get_member(fqdn_listname, email)
+            settingsform = UserPreferences(initial=mm_member.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
         except Mailman404Error:
@@ -138,11 +135,8 @@ class ListMemberOptionsView(MailingListView):
                 context_instance=RequestContext(request))
         return render_to_response(
             'postorius/lists/memberoptions.html',
-            {'mm_user': mm_user,
-             #'settingsform': settingsform,
-             #'subscriptions': subscriptions,
-             #'zipped_data': zipped_data,
-             #'formset': formset},
+            {'mm_member': mm_member,
+             'settingsform': settingsform,
             },
             context_instance=RequestContext(request))
 
