@@ -15,15 +15,24 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals)
+
+
+import random
+import hashlib
 import logging
 
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete, pre_save
+from django.core.urlresolvers import reverse
+from django.core.mail import send_mail
 from django.db import models
-from django.dispatch import receiver
 from django.http import Http404
-from mailmanclient import Client, MailmanConnectionError
+from django.template import Context
+from django.template.loader import get_template
+from mailmanclient import MailmanConnectionError
 from postorius.utils import get_client
 from urllib2 import HTTPError
 
@@ -86,7 +95,6 @@ class MailmanRestManager(object):
     def create(self, **kwargs):
         try:
             method = getattr(get_client(), 'create_' + self.resource_name)
-            print kwargs
             return method(**kwargs)
         except AttributeError, e:
             raise MailmanApiError(e)
@@ -173,3 +181,110 @@ class Member(MailmanRestModel):
     """Member model class.
     """
     objects = MailmanRestManager('member', 'members')
+
+
+class AddressConfirmationProfileManager(models.Manager):
+    """
+    Manager class for AddressConfirmationProfile.
+    """
+
+    def create_profile(self, email, user):
+        # Create or update a profile
+        # Guarantee an email bytestr type that can be fed to hashlib.
+        email_str = email
+        if isinstance(email_str, unicode):
+            email_str = email_str.encode('utf-8')
+        activation_key = hashlib.sha1(
+            str(random.random())+email_str).hexdigest()
+        # Either update an existing profile record for the given email address
+        try:
+            profile = self.get(email=email)
+            profile.activation_key = activation_key
+            profile.created = datetime.now()
+            profile.save()
+        # ... or create a new one.
+        except AddressConfirmationProfile.DoesNotExist:
+            profile = self.create(
+                email=email, activation_key=activation_key, user=user)
+        return profile
+
+
+class AddressConfirmationProfile(models.Model):
+    """
+    Profile model for temporarily storing an activation key to register
+    an email address.
+    """
+    email = models.EmailField()
+    activation_key = models.CharField(max_length=40)
+    created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User)
+
+    objects = AddressConfirmationProfileManager()
+
+    def __unicode__(self):
+        return u'Address Confirmation Profile for {0}'.format(self.email)
+    
+    @property
+    def is_expired(self):
+        """
+        a profile expires after 1 day by default.
+        This can be configured in the settings.
+
+            >>> EMAIL_CONFIRMATION_EXPIRATION_DELTA = timedelta(days=2)
+
+        """
+        expiration_delta = getattr(
+            settings, 'EMAIL_CONFIRMATION_EXPIRATION_DELTA', timedelta(days=1))
+        age = datetime.now() - self.created
+        return age > expiration_delta
+
+    def _create_host_url(self, request):
+        # Create the host url
+        protocol = 'https'
+        if not request.is_secure():
+            protocol = 'http'
+        server_name = request.META['SERVER_NAME']
+        if server_name[-1] == '/':
+            server_name = server_name[:len(server_name) - 1]
+        return '{0}://{1}'.format(protocol, server_name)
+
+    def send_confirmation_link(self, request, template_context=None,
+                               template_path=None):
+        """
+        Send out a message containing a link to activate the given address.
+
+        The following settings are recognized:
+
+            >>> EMAIL_CONFIRMATION_TEMPLATE = 'postorius/address_confirmation_message.txt'
+            >>> EMAIL_CONFIRMATION_FROM = 'Confirmation needed'
+            >>> EMAIL_CONFIRMATION_SUBJECT = 'postmaster@list.org'
+
+        :param request: The HTTP request object.
+        :type request: HTTPRequest 
+        :param template_context: The context used when rendering the template.
+            Falls back to host url and activation link. 
+        :type template_context: django.template.Context
+        """
+        # create the host url and the activation link need for the template
+        host_url = self._create_host_url(request)
+        # Get the url string from url conf.
+        url = reverse('address_activation_link',
+                      kwargs={'activation_key': self.activation_key})
+        activation_link = '{0}{1}'.format(host_url, url)
+        # Detect the right template path, either from the param, 
+        # the setting or the default
+        if not template_path:
+            template_path = getattr(settings,
+                                    'EMAIL_CONFIRMATION_TEMPLATE',
+                                    'postorius/address_confirmation_message.txt')
+        # Create a template context (if there is none) containing
+        # the activation_link and the host_url.
+        if not template_context:
+            template_context = Context(
+                {'activation_link': activation_link, 'host_url': host_url})
+        email_subject = getattr(
+            settings, 'EMAIL_CONFIRMATION_SUBJECT', u'Confirmation needed')
+        send_mail(email_subject,
+                  get_template(template_path).render(template_context),
+                  getattr(settings, 'EMAIL_CONFIRMATION_FROM'),
+                  [self.email])

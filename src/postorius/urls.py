@@ -111,4 +111,6 @@ urlpatterns = patterns(
     url(r'^users/address_activation/$',
         AddressActivationView.as_view(),
         name='address_activation'),
+    url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]{40})/$',
+        'address_activation_link', name='address_activation_link'),
 )
