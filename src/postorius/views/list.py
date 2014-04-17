@@ -170,10 +170,18 @@ class ListSummaryView(MailingListView):
 
     def get(self, request, fqdn_listname):
         user_email = getattr(request.user, 'email', None)
+        userSubscribed = False
+        try:
+            userMember = self.mailing_list.get_member(user_email)
+        except ValueError:
+            pass
+        else:
+            userSubscribed = True
         return render_to_response(
             'postorius/lists/summary.html',
             {'list': self.mailing_list,
-             'subscribe_form': ListSubscribe(initial={'email': user_email})},
+             'subscribe_form': ListSubscribe(initial={'email': user_email}),
+             'userSubscribed': userSubscribed},
             context_instance=RequestContext(request))
 
 
