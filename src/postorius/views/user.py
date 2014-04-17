@@ -233,20 +233,45 @@ class UserSubscriptionsView(MailmanUserView):
 
 
 class AddressActivationView(TemplateView):
+    """
+    Starts the process of adding additional email addresses to a mailman user 
+    record. Forms are processes and email notifications are sent accordingly.
+    """
 
-    def _handle_address(self, address):
+    @staticmethod
+    def _notify_existing_user(address):
         pass
 
+    @staticmethod
+    def _start_confirmation(address):
+        pass
+
+    @staticmethod
+    def _handle_address(user, address):
+        try:
+            # A user exists for that email address, so this user should be 
+            # that some tried to add this email address to their MM user record.
+            User.objects.get(email=address)
+            AddressActivationView._notify_existing_user(address)
+        except User.DoesNotExist:
+            # There's currently no user record for this email address.
+            # Start the confirmation process.
+            AddressActivationView._start_confirmation(address)
+
+    @method_decorator(login_required)
     def get(self, request):
-        form = AddressActivationForm()
+        form = AddressActivationForm(initial={'user_email': request.user.email})
         return render_to_response('postorius/user_address_activation.html',
                                   {'form': form},
                                   context_instance=RequestContext(request))
 
+    @method_decorator(login_required)
     def post(self, request):
+        print(request.POST)
         form = AddressActivationForm(request.POST)
         if form.is_valid():
-            self._handle_address(request.POST['email'])
+            print('IS_VALID')
+            self._handle_address(request.user, form.cleaned_data['email'])
             return render_to_response('postorius/user_address_activation_sent.html',
                                       context_instance=RequestContext(request))
         return render_to_response('postorius/user_address_activation.html',

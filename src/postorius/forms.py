@@ -906,3 +906,12 @@ class ListDeleteForm(forms.Form):
 
 class AddressActivationForm(forms.Form):
     email = forms.EmailField()
+    user_email = forms.EmailField(widget=forms.HiddenInput)
+
+    def clean(self):
+        cleaned_data = super(AddressActivationForm, self).clean()
+        email = cleaned_data.get('email')
+        user_email = cleaned_data.get('user_email')
+        if email == user_email:
+            raise forms.ValidationError(_('Please provide a different email address than your own.'))
+        return cleaned_data
