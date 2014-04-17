@@ -902,3 +902,7 @@ class UserSettings(FieldsetForm):
 
 class ListDeleteForm(forms.Form):
     list_name = forms.EmailField(widget=forms.HiddenInput())
+
+
+class AddressActivationForm(forms.Form):
+    email = forms.EmailField()

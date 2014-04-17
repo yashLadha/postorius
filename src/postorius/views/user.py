@@ -39,6 +39,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.views.generic import TemplateView
 from urllib2 import HTTPError
 
 from postorius import utils
@@ -228,6 +229,28 @@ class UserSubscriptionsView(MailmanUserView):
         memberships = self._get_memberships()
         return render_to_response('postorius/user_subscriptions.html',
                                   {'memberships': memberships},
+                                  context_instance=RequestContext(request))
+
+
+class AddressActivationView(TemplateView):
+
+    def _handle_address(self, address):
+        pass
+
+    def get(self, request):
+        form = AddressActivationForm()
+        return render_to_response('postorius/user_address_activation.html',
+                                  {'form': form},
+                                  context_instance=RequestContext(request))
+
+    def post(self, request):
+        form = AddressActivationForm(request.POST)
+        if form.is_valid():
+            self._handle_address(request.POST['email'])
+            return render_to_response('postorius/user_address_activation_sent.html',
+                                      context_instance=RequestContext(request))
+        return render_to_response('postorius/user_address_activation.html',
+                                  {'form': form},
                                   context_instance=RequestContext(request))
 
 
