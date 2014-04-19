@@ -249,7 +249,7 @@ class AddressActivationView(TemplateView):
                 profile.send_confirmation_link(request)
             except SMTPException:
                 messages.error(request, 'The email confirmation message could '
-                               'not be sent.')
+                               'not be sent. %s' % profile.activation_key)
             return render_to_response('postorius/user_address_activation_sent.html',
                                       context_instance=RequestContext(request))
         return render_to_response('postorius/user_address_activation.html',
@@ -393,12 +393,13 @@ def user_delete(request, user_id,
                               context_instance=RequestContext(request))
 
 
-def _add_address(user_email, address):
+def _add_address(request, user_email, address):
+    # Add an address to a user record in mailman.
     try:
         mailman_user = utils.get_client().get_user(user_email)
         mailman_user.add_address(address)
-    except (MailmanApiError, MailmanConnectionError):
-        pass
+    except (MailmanApiError, MailmanConnectionError) as e:
+        messages.error(request, 'The address could not be added.')
 
 
 def address_activation_link(request, activation_key):
@@ -411,7 +412,7 @@ def address_activation_link(request, activation_key):
         profile = AddressConfirmationProfile.objects.get(
             activation_key=activation_key)
         if not profile.is_expired:
-            _add_address(profile.user.email, profile.email)
+            _add_address(request, profile.user.email, profile.email)
     except profile.DoesNotExist:
         pass
     return render_to_response('postorius/user_address_activation_link.html',

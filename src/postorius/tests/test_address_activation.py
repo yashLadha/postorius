@@ -10,19 +10,19 @@ from django.test.client import Client, RequestFactory
 from django.test.utils import override_settings
 from django.utils import unittest
 from mailmanclient._client import _Connection
-from mock import patch
+from mock import patch, call
 
 from postorius.forms import AddressActivationForm
 from postorius.models import AddressConfirmationProfile
 from postorius import views
-from postorius.views.user import AddressActivationView
+from postorius.views.user import AddressActivationView, address_activation_link
 
 
 class TestAddressActivationForm(unittest.TestCase):
     """
     Test the activation form.
     """
-    
+
     def test_valid_email_is_valid(self):
         data = {
             'email': 'les@example.org',
@@ -30,7 +30,7 @@ class TestAddressActivationForm(unittest.TestCase):
         }
         form = AddressActivationForm(data)
         self.assertTrue(form.is_valid())
-    
+
     def test_identical_emails_are_invalid(self):
         data = {
             'email': 'les@example.org',
@@ -38,7 +38,7 @@ class TestAddressActivationForm(unittest.TestCase):
         }
         form = AddressActivationForm(data)
         self.assertFalse(form.is_valid())
-    
+
     def test_invalid_email_is_not_valid(self):
         data = {
             'email': 'les@example',
@@ -52,7 +52,7 @@ class TestAddressActivationView(unittest.TestCase):
     """
     Tests to make sure the view is properly connected, renders the form
     correctly and starts the actual address activation process if a valid
-    form is submitted. 
+    form is submitted.
     """
 
     def setUp(self):
@@ -60,7 +60,7 @@ class TestAddressActivationView(unittest.TestCase):
         # We don't use Client().login because it triggers the browserid dance.
         self.user = User.objects.create_user(
             username='les', email='les@example.org', password='secret')
-        self.client = Client() 
+        self.client = Client()
         self.client.post(reverse('user_login'),
                          {'username': 'les', 'password': 'secret'})
 
@@ -80,9 +80,9 @@ class TestAddressActivationView(unittest.TestCase):
         self.assertTrue('form' in response.context)
 
     def test_view_renders_correct_template(self):
-        # The view should render the user_address_activation template. 
+        # The view should render the user_address_activation template.
         response = self.client.get(reverse('address_activation'))
-        self.assertTrue('postorius/user_address_activation.html' 
+        self.assertTrue('postorius/user_address_activation.html'
                         in [t.name for t in response.templates])
 
     def test_post_invalid_form_shows_error_msg(self):
@@ -100,13 +100,13 @@ class TestAddressActivationView(unittest.TestCase):
                                     'email': 'new_address@example.org',
                                     'user_email': self.user.email})
         self.assertEqual(mock_send_confirmation_link.call_count, 1)
-        self.assertTrue('postorius/user_address_activation_sent.html' 
+        self.assertTrue('postorius/user_address_activation_sent.html'
                         in [t.name for t in response.templates])
 
 
 class TestAddressConfirmationProfile(unittest.TestCase):
     """
-    Test the confirmation of an email address activation (validating token, 
+    Test the confirmation of an email address activation (validating token,
     expiration, Mailman API calls etc.).
     """
 
@@ -131,7 +131,7 @@ class TestAddressConfirmationProfile(unittest.TestCase):
         self.assertTrue(type(self.profile.created), datetime)
 
     def test_no_duplicate_profiles(self):
-        # Creating a new profile returns an existing record 
+        # Creating a new profile returns an existing record
         # (if one exists), instead of creating a new one.
         new_profile = AddressConfirmationProfile.objects.create_profile(
             u'les@example.org',
@@ -144,14 +144,14 @@ class TestAddressConfirmationProfile(unittest.TestCase):
                          'Address Confirmation Profile for les@example.org')
 
     def test_profile_not_expired_default_setting(self):
-        # A profile created less then a day ago is not expired by default. 
+        # A profile created less then a day ago is not expired by default.
         delta = timedelta(hours=23)
         now = datetime.now()
         self.profile.created = now - delta
         self.assertFalse(self.profile.is_expired)
 
     def test_profile_is_expired_default_setting(self):
-        # A profile older than 1 day is expired by default. 
+        # A profile older than 1 day is expired by default.
         delta = timedelta(days=1, hours=1)
         now = datetime.now()
         self.profile.created = now - delta
@@ -173,24 +173,18 @@ class TestAddressConfirmationProfile(unittest.TestCase):
     def test_confirmation_link(self):
         # The profile obj can send out a confirmation email.
         # set the activation key to a fixed string for testing
-        self.profile.activation_key = '6323fba0097781fdb887cfc37a1122ee7c8bb0b0'
+        self.profile.activation_key = \
+            '6323fba0097781fdb887cfc37a1122ee7c8bb0b0'
         self.profile.send_confirmation_link(self.request)
         self.assertEqual(mail.outbox[0].to[0], u'les@example.org')
         self.assertEqual(mail.outbox[0].subject, u'Confirmation needed')
-        self.assertEqual(mail.outbox[0].body, """\
-Please click the link below to add your email address to your mailing list 
-profile at http://testserver:
+        self.assertTrue(self.profile.activation_key in mail.outbox[0].body)
 
-http://testserver/postorius/users/address_activation/\
-6323fba0097781fdb887cfc37a1122ee7c8bb0b0/
-
-Thanks!
-""")
 
 class TestAddressActivationLinkSuccess(unittest.TestCase):
     """
-    This tests the activation link view if the key is valid and the profile is 
-    not expired. 
+    This tests the activation link view if the key is valid and the profile is
+    not expired.
     """
 
     def setUp(self):
@@ -199,20 +193,24 @@ class TestAddressActivationLinkSuccess(unittest.TestCase):
             username='ler', email=u'ler@mailman.mostdesirable.org',
             password='pwd')
         self.profile = AddressConfirmationProfile.objects.create_profile(
-            'les@mailman.mostdesirable.org', self.user)
-        self.profile.activation_key = '6323fba0097781fdb887cfc37a1122ee7c8bb0b0'
+            u'les@mailman.mostdesirable.org', self.user)
+        self.profile.activation_key = \
+            u'6323fba0097781fdb887cfc37a1122ee7c8bb0b0'
         self.profile.save()
 
     def tearDown(self):
         self.profile.delete()
         self.user.delete()
-    
+
     @patch.object(views.user, '_add_address')
-    def test_mailman(self, mock_call):
-        # An activation key pointing to a valid profile adds the address to the user
-        self.response = Client().get(
-            reverse('address_activation_link', kwargs={
+    def test_mailman(self, _add_address_mock):
+        # An activation key pointing to a valid profile adds the address
+        # to the user.
+        request = RequestFactory().get(reverse(
+            'address_activation_link', kwargs={
             'activation_key': '6323fba0097781fdb887cfc37a1122ee7c8bb0b0'}))
-        self.assertEqual(mock_call.call_count, 1)
-    
-    
+        address_activation_link(
+            request, '6323fba0097781fdb887cfc37a1122ee7c8bb0b0')
+        expected_calls = [call(request, u'ler@mailman.mostdesirable.org',
+                         u'les@mailman.mostdesirable.org')]
+        self.assertEqual(_add_address_mock.mock_calls, expected_calls)

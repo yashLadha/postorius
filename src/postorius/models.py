@@ -196,16 +196,20 @@ class AddressConfirmationProfileManager(models.Manager):
             email_str = email_str.encode('utf-8')
         activation_key = hashlib.sha1(
             str(random.random())+email_str).hexdigest()
+        # Make now tz naive (we don't care about the timezone)
+        now = datetime.now().replace(tzinfo=None)
         # Either update an existing profile record for the given email address
         try:
             profile = self.get(email=email)
             profile.activation_key = activation_key
-            profile.created = datetime.now()
+            profile.created = now
             profile.save()
         # ... or create a new one.
         except AddressConfirmationProfile.DoesNotExist:
-            profile = self.create(
-                email=email, activation_key=activation_key, user=user)
+            profile = self.create(email=email,
+                                  activation_key=activation_key,
+                                  user=user,
+                                  created=now)
         return profile
 
 
@@ -216,7 +220,7 @@ class AddressConfirmationProfile(models.Model):
     """
     email = models.EmailField()
     activation_key = models.CharField(max_length=40)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField()
     user = models.ForeignKey(User)
 
     objects = AddressConfirmationProfileManager()
@@ -235,7 +239,8 @@ class AddressConfirmationProfile(models.Model):
         """
         expiration_delta = getattr(
             settings, 'EMAIL_CONFIRMATION_EXPIRATION_DELTA', timedelta(days=1))
-        age = datetime.now() - self.created
+        age = datetime.now().replace(tzinfo=None) - \
+            self.created.replace(tzinfo=None)
         return age > expiration_delta
 
     def _create_host_url(self, request):
