@@ -17,36 +17,31 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import re
-import sys
-import json
 import logging
 
 
-from django.conf import settings
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import (login_required,
-                                            permission_required,
                                             user_passes_test)
-from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
-                                       SetPasswordForm, PasswordChangeForm)
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
-from django.template import Context, loader, RequestContext
+from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.views.generic import TemplateView
 from urllib2 import HTTPError
 
 from postorius import utils
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
+from postorius.models import (
+    MailmanUser, MailmanConnectionError, MailmanApiError, Mailman404Error,
+    AddressConfirmationProfile)
 from postorius.forms import *
 from postorius.auth.decorators import *
-from postorius.views.generic import MailingListView, MailmanUserView
+from postorius.views.generic import MailmanUserView
+from smtplib import SMTPException
 
 
 class UserMailmanSettingsView(MailmanUserView):
@@ -231,6 +226,37 @@ class UserSubscriptionsView(MailmanUserView):
                                   context_instance=RequestContext(request))
 
 
+class AddressActivationView(TemplateView):
+    """
+    Starts the process of adding additional email addresses to a mailman user 
+    record. Forms are processes and email notifications are sent accordingly.
+    """
+
+    @method_decorator(login_required)
+    def get(self, request):
+        form = AddressActivationForm(initial={'user_email': request.user.email})
+        return render_to_response('postorius/user_address_activation.html',
+                                  {'form': form},
+                                  context_instance=RequestContext(request))
+
+    @method_decorator(login_required)
+    def post(self, request):
+        form = AddressActivationForm(request.POST)
+        if form.is_valid():
+            profile = AddressConfirmationProfile.objects.create_profile(
+                email=form.cleaned_data['email'], user=request.user)
+            try:
+                profile.send_confirmation_link(request)
+            except SMTPException:
+                messages.error(request, 'The email confirmation message could '
+                               'not be sent. %s' % profile.activation_key)
+            return render_to_response('postorius/user_address_activation_sent.html',
+                                      context_instance=RequestContext(request))
+        return render_to_response('postorius/user_address_activation.html',
+                                  {'form': form},
+                                  context_instance=RequestContext(request))
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def user_index(request, page=1, template='postorius/users/index.html'):
     """Show a table of all users.
@@ -365,3 +391,29 @@ def user_delete(request, user_id,
     return render_to_response(template,
                               {'user_id': user_id, 'email_id': email_id},
                               context_instance=RequestContext(request))
+
+
+def _add_address(request, user_email, address):
+    # Add an address to a user record in mailman.
+    try:
+        mailman_user = utils.get_client().get_user(user_email)
+        mailman_user.add_address(address)
+    except (MailmanApiError, MailmanConnectionError) as e:
+        messages.error(request, 'The address could not be added.')
+
+
+def address_activation_link(request, activation_key):
+    """
+    Checks the given activation_key. If it is valid, the saved address will be
+    added to mailman. Also, the corresponding profile record will be removed. 
+    If the key is not valid, it will be ignored. 
+    """
+    try:
+        profile = AddressConfirmationProfile.objects.get(
+            activation_key=activation_key)
+        if not profile.is_expired:
+            _add_address(request, profile.user.email, profile.email)
+    except profile.DoesNotExist:
+        pass
+    return render_to_response('postorius/user_address_activation_link.html',
+        {}, context_instance=RequestContext(request))

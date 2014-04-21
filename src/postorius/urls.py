@@ -108,4 +108,9 @@ urlpatterns = patterns(
     url(r'^more_info/(?P<formid>[^/]+)/(?P<helpid>[^/]+)$',
         'more_info_tab', name='more_info_tab'),
     url(r'^lists/(?P<fqdn_listname>[^/]+)/', include(per_list_urlpatterns)),
+    url(r'^users/address_activation/$',
+        AddressActivationView.as_view(),
+        name='address_activation'),
+    url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]{40})/$',
+        'address_activation_link', name='address_activation_link'),
 )
