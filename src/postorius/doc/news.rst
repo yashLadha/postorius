@@ -20,8 +20,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
-1.0 beta 1
-===========
+1.0 beta 1 -- "Year of the Parrot"
+==================================
 (2014-04-22)
 
 * fixed pip install (missing MANIFEST) (LP: 1307624). Contributed by Aurélien Bompard
