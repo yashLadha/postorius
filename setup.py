@@ -22,7 +22,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "postorius",
-    version = '1.0.0a2',
+    version = '1.0.0b1',
     description = "A web user interface for GNU Mailman",
     long_description=open('README.rst').read(),
     maintainer = "The Mailman GSOC Coders",
