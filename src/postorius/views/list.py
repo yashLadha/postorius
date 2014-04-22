@@ -104,8 +104,9 @@ class ListMemberOptionsView(MailingListView):
     @method_decorator(list_owner_required)
     def post(self, request, fqdn_listname, email):
         try:
-            mm_member = utils.get_client().get_member(fqdn_listname, email)
-
+            client = utils.get_client()
+            mm_member = client.get_member(fqdn_listname, email)
+            mm_list = client.get_list(fqdn_listname)
             preferences_form = UserPreferences(request.POST)
             if preferences_form.is_valid():
                 preferences = mm_member.preferences
@@ -127,6 +128,7 @@ class ListMemberOptionsView(MailingListView):
         return render_to_response(
             'postorius/lists/memberoptions.html',
             {'mm_member': mm_member,
+             'list': mm_list,
              'settingsform': settingsform,
              },
             context_instance=RequestContext(request))
@@ -134,7 +136,9 @@ class ListMemberOptionsView(MailingListView):
     @method_decorator(list_owner_required)
     def get(self, request, fqdn_listname, email):
         try:
-            mm_member = utils.get_client().get_member(fqdn_listname, email)
+            client = utils.get_client()
+            mm_member = client.get_member(fqdn_listname, email)
+            mm_list = client.get_list(fqdn_listname)
             settingsform = UserPreferences(initial=mm_member.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
@@ -146,6 +150,7 @@ class ListMemberOptionsView(MailingListView):
         return render_to_response(
             'postorius/lists/memberoptions.html',
             {'mm_member': mm_member,
+             'list': mm_list,
              'settingsform': settingsform,
              },
             context_instance=RequestContext(request))

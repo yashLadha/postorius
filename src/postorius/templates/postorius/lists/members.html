@@ -73,11 +73,11 @@
     	<tbody>
             {% for member in list.member_page %}
                 <tr>
-                    <td> <a href="{% url 'list_member_options' list.fqdn_listname member.address %}">
-                        {{ member.address }}</a></td>
+                    <td> <a href="{% url 'list_member_options' list.fqdn_listname member.email %}">
+                        {{ member.email }}</a></td>
                     <td>{% trans member.role %}</td>
                     <td>
-                        <a href="{% url 'list_unsubscribe' list.fqdn_listname member.address %}" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
+                        <a href="{% url 'list_unsubscribe' list.fqdn_listname member.email %}" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
                     </td>
                 </tr>
             {% endfor %}

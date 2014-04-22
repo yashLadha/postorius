@@ -1,14 +1,20 @@
 {% extends postorius_base_template %}
 {% load url from future %}
 {% load i18n %}
+{% load nav_helpers %}
+
 {% block main %}
+    {% list_nav '' '' %}
+
 {% if not user.is_superuser or not user.is_list_owner %}
     <div class="mm_subHeader" >
        <h1>{% trans "No Preferences Available" %}</h1>
     </div>
     <p>{% trans 'You are not the owner for this list' %}</p>
 {% else %}
+    <h1>{% trans 'Member preferences' %}</h1>
     <form  class="well" action="" method="post" >
+        <legend>{% trans 'Preferences for Member' %} {{ mm_member.email }}</legend>
        {% csrf_token %}
        <table class="table table-bordered table-striped" border="2">
           <thead>
