@@ -20,11 +20,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
-1.0 alpha 3
+1.0 beta 1
 ===========
-(2014-XX-XX)
+(2014-04-22)
 
 * fixed pip install (missing MANIFEST) (LP: 1307624). Contributed by Aurélien Bompard
+* list owners: edit member preferences
+* users: add multiple email addresses
+* list info: show only subscribe or unsubscribe button. Contributed by Bhargav Golla
+* remove members/owners/moderator. Contributed by Abhilash Raj
 
 
 1.0 alpha 2 -- "Is It Luck?"
