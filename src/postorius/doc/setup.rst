@@ -7,24 +7,11 @@ Installation
     GNU Mailman 3. To install GNU Mailman follow the instructions in the documentation:
     http://packages.python.org/mailman/
 
+    If you are looking for an easy way to set up the whole GNU Mailman 3
+    suite (GNU Mailman 3, Postorius, Hyperkitty and mailman.client), check
+    out the `mailman-bundler`_ project on launchpad.
 
-Install Dependencies
-====================
-
-Django:
-
-::
-
-    $ sudo pip install django
-
-mailman.client:
-
-::
-
-    $ bzr branch lp:mailman.client
-    $ cd mailman.client
-    $ sudo python setup.py install
-    $ cd ..
+.. _mailman-bundler: http://launchpad.net/mailman-bundler
 
 
 Install Postorius
@@ -59,23 +46,6 @@ should install Postorius using bazaar:
     $ bzr branch lp:postorius
     $ cd postorius
     $ sudo python setup.py develop
-    $ cd ..
-
-You can always pull in the latest changes from the development branch:
-
-::
-
-    $ cd postorius
-    $ bzr pull
-    $ cd ..
-
-Make sure to keep mailman.client up to date as well:
-
-::
-
-    $ cd mailman.client
-    $ bzr pull lp:mailman.client
-    $ cd ..
 
 
 Setup your django project
@@ -90,7 +60,7 @@ First, get the project directory from launchpad:
 
     $ bzr branch lp:~mailman-coders/postorius/postorius_standalone
 
-Second, change the database setting in ``postorius_standalone/settings.py`` to
+Change the database setting in ``postorius_standalone/settings.py`` to
 your preferred database. If you're OK with using sqlite, just change the path
 in line 48 to the correct location.
 
@@ -98,7 +68,7 @@ in line 48 to the correct location.
     Detailed information on how to use different database engines can be found
     in the `Django documentation`_.
 
-.. _Django documentation: https://docs.djangoproject.com/en/1.4/ref/settings/#databases
+.. _Django documentation: https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 Third, prepare the database:
 
@@ -111,14 +81,6 @@ Third, prepare the database:
 This will create the ``.db file`` (if you ar using SQLite) and will setup all the
 necessary db tables. You will also be prompted to create a superuser which
 will act as an admin account for Postorius.
-
-
-.. seealso::
-    Robert Niederreiter has provided a `buildout for GNU Mailman 3 and
-    Postorius`_.
-
-.. _buildout for GNU Mailman 3 and Postorius:
-    https://github.com/bluedynamics/mailman.buildout
 
 
 Running the development server
