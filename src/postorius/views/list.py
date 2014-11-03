@@ -333,7 +333,6 @@ def list_new(request, template='postorius/lists/new.html'):
 def list_index(request, template='postorius/lists/index.html'):
     """Show a table of all public mailing lists.
     """
-    print request.LANGUAGE_CODE
     lists = []
     error = None
     only_public = True
