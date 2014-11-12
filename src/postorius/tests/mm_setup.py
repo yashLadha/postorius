@@ -41,9 +41,15 @@ class Testobject:
 
 
 def setup_mm(testobject):
-    bindir = testobject.bindir = settings.MAILMAN_TEST_BINDIR
+    bindir = getattr(settings, "MAILMAN_TEST_BINDIR", None)
     if bindir is None:
-        raise RuntimeError("something's not quite right")
+        # Try to detect it
+        try:
+            mailman_path = subprocess.check_output(["which", "mailman"])
+            bindir = os.path.dirname(mailman_path)
+        except (OSError, subprocess.CalledProcessError):
+            raise RuntimeError("Can't find the mailman binary directory")
+    testobject.bindir = bindir
     vardir = testobject.vardir = tempfile.mkdtemp()
     cfgfile = testobject.cfgfile = os.path.join(vardir, 'client_test.cfg')
     with open(cfgfile, 'w') as fp:
@@ -53,6 +59,10 @@ layout: tmpdir
 [paths.tmpdir]
 var_dir: {vardir}
 log_dir: /tmp/mmclient/logs
+[mta]
+smtp_port: 9025
+lmtp_port: 9024
+incoming: mailman.testing.mta.FakeMTA
 [runner.archive]
 start: no
 [runner.bounces]
