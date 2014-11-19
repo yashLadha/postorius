@@ -14,42 +14,22 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
 
 from django.core.urlresolvers import reverse
-from django.test import TestCase
-from django.test.client import Client
-from django.test.utils import override_settings
 
-from postorius.tests.mm_setup import mm_client
+from postorius.tests.mailman_api_tests import MMTestCase
 
 
 logger = logging.getLogger(__name__)
 
 
-def setup_module():
-    # Create a domain for all tests in this module.
-    mm_client.create_domain(
-        'example.com',
-        contact_address='postmaster@example.com',
-        base_url='lists.example.com')
-
-
-def teardown_module():
-    # Clean up.
-    mm_client.delete_domain('example.com')
-
-
-@override_settings(
-    MAILMAN_API_URL='http://localhost:9001',
-    MAILMAN_USER='restadmin',
-    MAILMAN_PASS='restpass')
-class ListIndexPageTest(TestCase):
+class ListIndexPageTest(MMTestCase):
     """Tests for the list index page."""
 
     def setUp(self):
-        self.client = Client()
-        domain = mm_client.get_domain('example.com')
+        domain = self.mm_client.get_domain('example.com')
         self.foo_list = domain.create_list('foo')
 
     def tearDown(self):
