@@ -18,42 +18,21 @@ import logging
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase
-from django.test.client import Client
-from django.test.utils import override_settings
 
-from postorius.tests.mm_setup import mm_client
+from postorius.tests.mailman_api_tests import MMTestCase
 
 
 logger = logging.getLogger(__name__)
 
 
-def setup_module():
-    # Create a domain for all tests in this module.
-    mm_client.create_domain(
-        'example.com',
-        contact_address='postmaster@example.com',
-        base_url='lists.example.com')
-
-
-def teardown_module():
-    # Clean up.
-    mm_client.delete_domain('example.com')
-
-
-@override_settings(
-    MAILMAN_API_URL='http://localhost:9001',
-    MAILMAN_USER='restadmin',
-    MAILMAN_PASS='restpass')
-class ListMembersPageTest(TestCase):
+class ListMembersPageTest(MMTestCase):
     """Tests for the list members page.
 
     Tests permissions and creation of list owners and moderators.
     """
 
     def setUp(self):
-        self.client = Client()
-        domain = mm_client.get_domain('example.com')
+        domain = self.mm_client.get_domain('example.com')
         self.foo_list = domain.create_list('foo')
         self.user = User.objects.create_user('testuser', 'test@example.com',
                                              'testpass')

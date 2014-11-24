@@ -25,6 +25,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 (2014-xx-xx)
 
 * French translation. Provided by Guillaume Libersat
+* Addedd an improved test harness using WebTest. Contributed by Aurélien Abompard.
 
 
 1.0 beta 1 -- "Year of the Parrot"

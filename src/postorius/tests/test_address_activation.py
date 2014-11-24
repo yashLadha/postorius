@@ -9,7 +9,6 @@ from django.core import mail
 from django.test.client import Client, RequestFactory
 from django.test.utils import override_settings
 from django.utils import unittest
-from mailmanclient._client import _Connection
 from mock import patch, call
 
 from postorius.forms import AddressActivationForm

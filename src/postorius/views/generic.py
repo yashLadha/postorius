@@ -21,7 +21,6 @@ from django.conf import settings
 from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
 from django.views.generic import TemplateView, View
-from mailmanclient import Client
 
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)

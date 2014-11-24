@@ -18,7 +18,6 @@
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from mailmanclient import Client, MailmanConnectionError
 from postorius import utils
 from urllib2 import HTTPError
 
