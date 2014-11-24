@@ -306,10 +306,9 @@ def list_new(request, template='postorius/lists/new.html'):
             try:
                 mailing_list = domain.create_list(
                     form.cleaned_data['listname'])
+                mailing_list.add_owner(form.cleaned_data['list_owner'])
                 list_settings = mailing_list.settings
                 list_settings["description"] = form.cleaned_data['description']
-                list_settings["owner_address"] = \
-                    form.cleaned_data['list_owner']
                 list_settings["advertised"] = form.cleaned_data['advertised']
                 list_settings.save()
                 messages.success(request, _("List created"))
