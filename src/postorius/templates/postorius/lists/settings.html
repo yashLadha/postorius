@@ -5,7 +5,7 @@
 
 {% block main %}
     {% if message %}<p class="alert">{{ message }}</p>{% endif %}
-    {% list_nav 'list_settings' 'Settings' %}
+    {% list_nav 'list_settings' {% trans 'Settings' %} %}
     <ul class="nav nav-tabs">
         {% for section in form_sections %}
         <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' fqdn_listname=list.fqdn_listname visible_section=section.0 visible_option=None %}">{{section.0}}</a></li>
@@ -20,12 +20,12 @@
             <tr><td>
                 {{ field.errors }}
                 {{ field.label_tag }} <br />
-                [<span class="more_info"><a href="{% url 'more_info_tab'  formid='list_settings' helpid=field.name %}" target="_blank">More info</a><span>{{ field.help_text }}
+                [<span class="more_info"><a href="{% url 'more_info_tab'  formid='list_settings' helpid=field.name %}" target="_blank">{% trans "More info" %}</a><span>{{ field.help_text }}
                 </span></span>]
             </td><td>{{ field }}</td></tr>
         {% endfor %}
         <tr><td colspan="2">
-	         <button class="btn btn-primary" type="submit">{%trans "Save changes" %}</button>
+	         <button class="btn btn-primary" type="submit">{% trans "Save changes" %}</button>
         </td></tr>
         </form>
         </table>

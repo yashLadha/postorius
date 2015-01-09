@@ -17,7 +17,7 @@
   
     {% if user.is_authenticated %}
     {% if userSubscribed %}
-    <a href="{% url 'list_unsubscribe' list.fqdn_listname user.email %}" class="btn btn-danger">Unsubscribe</a>
+    <a href="{% url 'list_unsubscribe' list.fqdn_listname user.email %}" class="btn btn-danger">{% trans "Unsubscribe" %}</a>
     {% else %}
     <h2>{% trans 'Subscribe to this list' %}</h2>
     <form action="{% url 'list_subscribe' list.fqdn_listname %}" method="post" class="list_subscribe"> {% csrf_token %}
@@ -26,7 +26,7 @@
     </form>
     {% endif %}
     {% else %}
-        <p>To subscribe or unsubscribe this list you have to be logged in.</p>
-        <p><a href="{% url 'user_login' %}"class="btn btn-primary">Log In</a></p>
+        <p>{% trans "To subscribe to or unsubscribe from this list you have to be logged in." %}</p>
+        <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans "Log In" %}</a></p>
     {% endif %}
 {% endblock %}
