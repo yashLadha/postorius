@@ -5,7 +5,7 @@
 
 {% block main %}
     {% include 'postorius/menu/user_nav.html' %}
-    <h1>Membership</h1>
+    <h1>{% trans "Membership" %}</h1>
     {% ifequal tab "membership"%}
         {% trans "Membership Settings" %} 
         {% if list %}<span>{% trans "for"%}{% endif %} {{ list.fqdn_listname }}</span>
@@ -44,9 +44,9 @@
                 </a>
             </div>
             <ul>
-                <li><a href="{% url 'membership_settings' fqdn_listname=list.fqdn_listname%}"> My Membership</li>
+                <li><a href="{% url 'membership_settings' fqdn_listname=list.fqdn_listname%}"> {% trans "My Membership" %}</li>
                 <li><a href="{% url 'membership_settings' fqdn_listname=list.fqdn_listname %}"> 
-                My Subscription</a></li>
+                {% trans "My Subscription" %}</a></li>
             </ul>
         </div>
         {% endfor %}
