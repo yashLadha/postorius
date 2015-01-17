@@ -4,7 +4,7 @@
 {% load nav_helpers %}
 
 {% block main %}
-    {% list_nav 'mass_subscribe' 'Mass Subscription' %}
+    {% list_nav 'mass_subscribe' "Mass Subscription" %}
 
     <form action="{% url 'mass_subscribe' list.fqdn_listname %}" method="post" class="well"> {% csrf_token %}
         {{ form.as_p }}

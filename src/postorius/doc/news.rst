@@ -28,6 +28,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * Addedd an improved test harness using WebTest. Contributed by Aurélien Bompard.
 * Show error message in login view. Contributed by Aurélien Bompard (LP: 1094829).
 * Fix adding the a list owner on list creation. Contributed by Aurélien Bompard (LP: 1175967).
+* Fix untranslatable template strings. Contributed by Sumana Harihareswara (LP: 1157947).
 
 
 1.0 beta 1 -- "Year of the Parrot"

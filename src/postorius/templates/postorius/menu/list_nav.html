@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load nav_helpers %}
 <div class="mm_subHeader">
-    <span class="mm_context"><a href="{% url 'list_index' %}">{% trans 'Mailing Lists' %}</a> &raquo; {{ list.fqdn_listname }} &raquo; {{ title }}</span>
+    <span class="mm_context"><a href="{% url 'list_index' %}">{% trans 'Mailing Lists' %}</a> &raquo; {{ list.fqdn_listname }} &raquo; {% trans title %}</span>
     {% if user|lower != 'anonymoususer' %}
     <ul class="mm_nav">
         <li class="mm_nav_item"><a class="{% nav_active_class current 'list_summary' %}" href="{% url 'list_summary' list.fqdn_listname %}">{% trans "Info" %}</a></li>

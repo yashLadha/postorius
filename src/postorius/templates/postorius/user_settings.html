@@ -5,7 +5,7 @@
 
 {% block main %}
     {% include 'postorius/menu/user_nav.html' %}
-    <h1>Membership</h1>
+    <h1>{% trans "Membership" %}</h1>
     {% ifequal tab "membership"%}
         {% trans "Membership Settings" %} 
         {% if list %}<span>{% trans "for"%}{% endif %} {{ list.fqdn_listname }}</span>
@@ -17,7 +17,7 @@
         <div class="mm_boxHeader">
         {% trans "Content" %}
         </div>  
-        <p>{%trans "Use this page to manage your account. You'll be able to see a list of your subscribed lists, modify these membership settings of the list and your personal preferences in user_settings <a href='https://bugs.launchpad.net/mailman/+bug/821438' >LP:821438</a> is solved <br>" %}</p>
+        <p>{% trans "Use this page to manage your account. You'll be able to see a list of your subscribed lists, modify these membership settings of the list and your personal preferences in user_settings <a href='https://bugs.launchpad.net/mailman/+bug/821438' >LP:821438</a> is solved <br>" %}</p>
         {% if form %}
             <form action="" method="post" class="user" name="user"> {% csrf_token %}
             <ul class="">
@@ -39,14 +39,14 @@
         {% for list in membership_lists %}
         <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
             <div class="mm_boxHeader">
-                <a href="{% url 'list_summary' fqdn_listname=list.fqdn_listname%}">
+                <a href="{% url 'list_summary' fqdn_listname=list.fqdn_listname %}">
                     {{ list.display_name }} {% if not list.settings.advertised %}(non-public){% endif %}
                 </a>
             </div>
             <ul>
-                <li><a href="{% url 'membership_settings' fqdn_listname=list.fqdn_listname%}"> My Membership</li>
+                <li><a href="{% url 'membership_settings' fqdn_listname=list.fqdn_listname%}"> {% trans "My Membership" %}</li>
                 <li><a href="{% url 'membership_settings' fqdn_listname=list.fqdn_listname %}"> 
-                My Subscription</a></li>
+                {% trans "My Subscription" %}</a></li>
             </ul>
         </div>
         {% endfor %}
