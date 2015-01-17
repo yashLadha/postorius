@@ -55,3 +55,4 @@ class ListCreationTest(MMTestCase):
         self.client.post(reverse('list_new'), post_data)
         a_new_list = self.mm_client.get_list('a_new_list@example.com')
         self.assertEqual(a_new_list.fqdn_listname, u'a_new_list@example.com')
+        self.assertEqual(a_new_list.owners, [u'owner@example.com'])

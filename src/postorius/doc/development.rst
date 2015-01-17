@@ -151,7 +151,7 @@ A quick example:
 
     >>> mailman_dev = client.get_list('mailman-developers@python.org')
     >>> print mailman_dev settings
-    {u'owner_address': u'mailman-developers@python.org', 
+    {u'description': u'Mailman development', 
      u'default_nonmember_action': u'hold', ...}
 
 For detailed information how to use mailman.client, check out its documentation_.
