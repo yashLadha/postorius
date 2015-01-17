@@ -25,7 +25,6 @@ from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
@@ -306,21 +305,6 @@ def user_new(request):
 def user_logout(request):
     logout(request)
     return redirect('user_login')
-
-
-def user_login(request, template='postorius/login.html'):
-    if request.method == 'POST':
-        form = AuthenticationForm(request.POST)
-        user = authenticate(username=request.POST.get('username'),
-                            password=request.POST.get('password'))
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return redirect(request.GET.get('next', 'list_index'))
-    else:
-        form = AuthenticationForm()
-    return render_to_response(template, {'form': form},
-                              context_instance=RequestContext(request))
 
 
 @login_required()
