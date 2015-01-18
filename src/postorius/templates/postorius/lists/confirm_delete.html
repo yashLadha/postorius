@@ -10,6 +10,6 @@
     <p>{% trans "All settings and membership data will be lost!" %}</p>
     <form action="{{submit_url}}" method="post"> {% csrf_token %}
         <button class="btn btn-danger" type="submit">{% trans "Delete" %} {{ list.fqdn_listname }}</button>
-        <a class="btn" href="{% url 'list_summary' fqdn_listname=list.fqdn_listname %}">{% trans "Cancel" %}</a>
+        <a class="btn" href="{% url 'list_summary' list_id=list.list_id %}">{% trans "Cancel" %}</a>
     </form>
 {% endblock main %}
