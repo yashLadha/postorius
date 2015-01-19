@@ -42,7 +42,6 @@ from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
 from postorius.forms import *
 from postorius.auth.decorators import *
-from postorius.views.generic import MailingListView, MailmanUserView
 
 
 @login_required
