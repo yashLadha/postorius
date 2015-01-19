@@ -18,27 +18,45 @@ import logging
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.test import Client, SimpleTestCase
+from django.test.utils import override_settings
+from urllib2 import HTTPError
 
-from postorius.tests.mailman_api_tests import MMTestCase
+from postorius.utils import get_client
+from postorius.tests import MM_VCR
 
 
 logger = logging.getLogger(__name__)
 
 
-class ListSummaryPageTest(MMTestCase):
+API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
+                   'MAILMAN_USER': 'restadmin',
+                   'MAILMAN_PASS': 'restpass'}
+
+
+@override_settings(**API_CREDENTIALS)
+class ListSummaryPageTest(SimpleTestCase):
     """Tests for the list summary page.
 
     Tests accessiblity and existince of the submit form depending on
     login status.
     """
 
+    @MM_VCR.use_cassette('test_list_summary.yaml')
     def setUp(self):
-        domain = self.mm_client.get_domain('example.com')
+        self.client = Client()
+        try:
+            domain = get_client().create_domain('example.com')
+        except HTTPError:
+            domain = get_client().get_domain('example.com')
         self.foo_list = domain.create_list('foo')
 
+    @MM_VCR.use_cassette('test_list_summary.yaml')
     def tearDown(self):
-        self.foo_list.delete()
+        for mlist in get_client().lists:
+            mlist.delete()
 
+    @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_out(self):
         # Response must contain list obj but not the form.
         response = self.client.get(reverse('list_summary',
@@ -49,6 +67,7 @@ class ListSummaryPageTest(MMTestCase):
         self.assertTrue('<h1>' in response.content)
         self.assertTrue('<form ' not in response.content)
 
+    @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_in(self):
         # Response must contain list obj and the form.
         User.objects.create_user('testuser', 'test@example.com', 'testpass')
