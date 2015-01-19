@@ -25,6 +25,25 @@
     			<td>{{ msg.sender }}</td>
     			<td>{{ msg.reason }}</td>
     			<td>{{ msg.hold_date }}</td>
+                <td><!-- Button trigger modal -->
+                  <button type="button" class="btn btn-primary btn-small" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">
+                    View
+                  </button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" id="msg-{{ msg.request_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title">Subject: {{ msg.subject }}</h4>
+                        </div>
+                        <div class="modal-body">
+                          {{ msg.msg | linebreaks }}
+                        </div>
+                      </div>
+                    </div>
+                </td>
                 <td class="mm_action">
                     <a href="{% url 'accept_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
                     <a href="{% url 'defer_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-warning">{% trans 'Defer' %}</a>
