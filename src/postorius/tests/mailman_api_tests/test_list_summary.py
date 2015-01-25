@@ -27,6 +27,8 @@ from postorius.tests import MM_VCR
 
 
 logger = logging.getLogger(__name__)
+vcr_log = logging.getLogger('vcr')
+vcr_log.setLevel(logging.WARNING)
 
 
 API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
@@ -42,7 +44,7 @@ class ListSummaryPageTest(SimpleTestCase):
     login status.
     """
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
+    @MM_VCR.use_cassette('test_list_summary/list_summary_page/setup.yaml')
     def setUp(self):
         self.client = Client()
         try:
@@ -51,12 +53,13 @@ class ListSummaryPageTest(SimpleTestCase):
             domain = get_client().get_domain('example.com')
         self.foo_list = domain.create_list('foo')
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
+    @MM_VCR.use_cassette('test_list_summary/list_summary_page/teardown.yaml')
     def tearDown(self):
         for mlist in get_client().lists:
             mlist.delete()
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
+    @MM_VCR.use_cassette('test_list_summary/list_summary_page/'
+                         'list_summary_logged_out.yaml')
     def test_list_summary_logged_out(self):
         # Response must contain list obj but not the form.
         response = self.client.get(reverse('list_summary',
@@ -67,7 +70,8 @@ class ListSummaryPageTest(SimpleTestCase):
         self.assertTrue('<h1>' in response.content)
         self.assertTrue('<form ' not in response.content)
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
+    @MM_VCR.use_cassette('test_list_summary/list_summary_page/'
+                         'list_summary_logged_in.yaml')
     def test_list_summary_logged_in(self):
         # Response must contain list obj and the form.
         User.objects.create_user('testuser', 'test@example.com', 'testpass')

@@ -28,6 +28,8 @@ from postorius.tests import MM_VCR
 
 
 logger = logging.getLogger(__name__)
+vcr_log = logging.getLogger('vcr')
+vcr_log.setLevel(logging.WARNING)
 
 
 API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
@@ -39,7 +41,7 @@ API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
 class ListCreationTest(SimpleTestCase):
     """Tests for the new list page."""
 
-    @MM_VCR.use_cassette('test_list_new.yaml')
+    @MM_VCR.use_cassette('test_list_new/list_creation/setup.yaml')
     def setUp(self):
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
@@ -49,7 +51,7 @@ class ListCreationTest(SimpleTestCase):
         except HTTPError:
             self.domain = get_client().get_domain('example.com')
 
-    @MM_VCR.use_cassette('test_list_new.yaml')
+    @MM_VCR.use_cassette('test_list_new/list_creation/teardown.yaml')
     def tearDown(self):
         self.user.delete()
         self.superuser.delete()
@@ -63,7 +65,8 @@ class ListCreationTest(SimpleTestCase):
             response,
             '/postorius/accounts/login/?next=/postorius/lists/new/')
 
-    @MM_VCR.use_cassette('test_list_new.yaml')
+    @MM_VCR.use_cassette('test_list_new/list_creation/'
+                         'new_list_created_with_owner.yaml')
     def test_new_list_created_with_owner(self):
         self.client.login(username='su', password='pwd')
         post_data = {'listname': 'a_new_list',
