@@ -6,9 +6,9 @@
 {% block main %}
     <h1>{% trans 'Confirm Remove Role' %}</h1>
     <p>{% trans "Are you sure you want to remove?" %}</p>
-    <form method="post" action="{% url 'remove_role' fqdn_listname role address %}">
+    <form method="post" action="{% url 'remove_role' list_id role address %}">
       {% csrf_token %}
         <button class="btn btn-danger" type="submit">{% trans "Remove " %}{{ address }}</button>
-        <a class="btn" href="{% url 'list_members' fqdn_listname %}">{% trans "Cancel" %}</a>
+        <a class="btn" href="{% url 'list_members' list_id %}">{% trans "Cancel" %}</a>
     </form>
 {% endblock main %}

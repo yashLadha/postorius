@@ -5,21 +5,21 @@
     <span class="mm_context"><a href="{% url 'list_index' %}">{% trans 'Mailing Lists' %}</a> &raquo; {{ list.fqdn_listname }} &raquo; {% trans title %}</span>
     {% if user|lower != 'anonymoususer' %}
     <ul class="mm_nav">
-        <li class="mm_nav_item"><a class="{% nav_active_class current 'list_summary' %}" href="{% url 'list_summary' list.fqdn_listname %}">{% trans "Info" %}</a></li>
+        <li class="mm_nav_item"><a class="{% nav_active_class current 'list_summary' %}" href="{% url 'list_summary' list.list_id %}">{% trans "Info" %}</a></li>
         {% if user.is_superuser or user.is_list_owner %}
-            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_members' %}" href="{% url 'list_members' list.fqdn_listname %}">{% trans "Members" %}</a></li>
+            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_members' %}" href="{% url 'list_members' list.list_id %}">{% trans "Members" %}</a></li>
         {% endif %}
         {% if user.is_superuser or user.is_list_moderator %}
-            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_held_messages' %}" href="{% url 'list_held_messages' list.fqdn_listname %}">{% trans "Held Messages" %}</a></li>
+            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_held_messages' %}" href="{% url 'list_held_messages' list.list_id %}">{% trans "Held Messages" %}</a></li>
         {% endif %}
         {% if user.is_superuser or user.is_list_owner %}
-            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_settings' %}" href="{% url 'list_settings' list.fqdn_listname %}">{% trans "Settings" %}</a></li>
+            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_settings' %}" href="{% url 'list_settings' list.list_id %}">{% trans "Settings" %}</a></li>
         {% endif %}
         {% if user.is_superuser or user.is_list_moderator %}
-            <li class="mm_nav_item"><a class="{% nav_active_class current 'mass_subscribe' %}" href="{% url 'mass_subscribe' list.fqdn_listname %}">{% trans "Mass Subscribe" %}</a></li>
+            <li class="mm_nav_item"><a class="{% nav_active_class current 'mass_subscribe' %}" href="{% url 'mass_subscribe' list.list_id %}">{% trans "Mass Subscribe" %}</a></li>
         {% endif %}
         {% if user.is_superuser or user.is_list_owner %}
-            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_delete' %}" href="{% url 'list_delete' list.fqdn_listname %}">{% trans "Delete List" %}</a></li>
+            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_delete' %}" href="{% url 'list_delete' list.list_id %}">{% trans "Delete List" %}</a></li>
         {% endif %}
     </ul>
     {% endif %}

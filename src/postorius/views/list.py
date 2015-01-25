@@ -44,8 +44,8 @@ class ListMembersView(MailingListView):
     """Display all members of a given list.
     """
 
-    def _get_list(self, fqdn_listname, page):
-        m_list = super(ListMembersView, self)._get_list(fqdn_listname, page)
+    def _get_list(self, list_id, page):
+        m_list = super(ListMembersView, self)._get_list(list_id, page)
         m_list.member_page = m_list.get_member_page(25, page)
         m_list.member_page_nr = page
         m_list.member_page_previous_nr = page - 1
@@ -54,7 +54,7 @@ class ListMembersView(MailingListView):
         return m_list
 
     @method_decorator(list_owner_required)
-    def post(self, request, fqdn_listname, page=1):
+    def post(self, request, list_id, page=1):
         if 'owner_email' in request.POST:
             owner_form = NewOwnerForm(request.POST)
             if owner_form.is_valid():
@@ -88,7 +88,7 @@ class ListMembersView(MailingListView):
                                   context_instance=RequestContext(request))
 
     @method_decorator(list_owner_required)
-    def get(self, request, fqdn_listname, page=1):
+    def get(self, request, list_id, page=1):
         owner_form = NewOwnerForm()
         moderator_form = NewModeratorForm()
         return render_to_response('postorius/lists/members.html',
@@ -102,11 +102,11 @@ class ListMemberOptionsView(MailingListView):
     '''View the preferences for a single member of a mailing list'''
 
     @method_decorator(list_owner_required)
-    def post(self, request, fqdn_listname, email):
+    def post(self, request, list_id, email):
         try:
             client = utils.get_client()
-            mm_member = client.get_member(fqdn_listname, email)
-            mm_list = client.get_list(fqdn_listname)
+            mm_member = client.get_member(list_id, email)
+            mm_list = client.get_list(list_id)
             preferences_form = UserPreferences(request.POST)
             if preferences_form.is_valid():
                 preferences = mm_member.preferences
@@ -134,11 +134,11 @@ class ListMemberOptionsView(MailingListView):
             context_instance=RequestContext(request))
 
     @method_decorator(list_owner_required)
-    def get(self, request, fqdn_listname, email):
+    def get(self, request, list_id, email):
         try:
             client = utils.get_client()
-            mm_member = client.get_member(fqdn_listname, email)
-            mm_list = client.get_list(fqdn_listname)
+            mm_member = client.get_member(list_id, email)
+            mm_list = client.get_list(list_id)
             settingsform = UserPreferences(initial=mm_member.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
@@ -162,7 +162,7 @@ class ListMetricsView(MailingListView):
     """
 
     @method_decorator(list_owner_required)
-    def get(self, request, fqdn_listname):
+    def get(self, request, list_id):
         return render_to_response('postorius/lists/metrics.html',
                                   {'list': self.mailing_list},
                                   context_instance=RequestContext(request))
@@ -173,7 +173,7 @@ class ListSummaryView(MailingListView):
     """Shows common list metrics.
     """
 
-    def get(self, request, fqdn_listname):
+    def get(self, request, list_id):
         user_email = getattr(request.user, 'email', None)
         userSubscribed = False
         try:
@@ -195,7 +195,7 @@ class ListSubsribeView(MailingListView):
     """Subscribe a mailing list."""
 
     @method_decorator(login_required)
-    def post(self, request, fqdn_listname):
+    def post(self, request, list_id):
         try:
             form = ListSubscribe(request.POST)
             if form.is_valid():
@@ -211,7 +211,7 @@ class ListSubsribeView(MailingListView):
             return utils.render_api_error(request)
         except HTTPError, e:
             messages.error(request, e.msg)
-        return redirect('list_summary', self.mailing_list.fqdn_listname)
+        return redirect('list_summary', self.mailing_list.list_id)
 
 
 class ListUnsubscribeView(MailingListView):
@@ -230,7 +230,7 @@ class ListUnsubscribeView(MailingListView):
             return utils.render_api_error(request)
         except ValueError, e:
             messages.error(request, e)
-        return redirect('list_summary', self.mailing_list.fqdn_listname)
+        return redirect('list_summary', self.mailing_list.list_id)
 
 
 class ListMassSubsribeView(MailingListView):
@@ -267,7 +267,7 @@ class ListMassSubsribeView(MailingListView):
                         return utils.render_api_error(request)
                     except HTTPError, e:
                         messages.error(request, e)
-        return redirect('mass_subscribe', self.mailing_list.fqdn_listname)
+        return redirect('mass_subscribe', self.mailing_list.list_id)
 
 
 def _get_choosable_domains(request):
@@ -313,7 +313,7 @@ def list_new(request, template='postorius/lists/new.html'):
                 list_settings.save()
                 messages.success(request, _("List created"))
                 return redirect("list_summary",
-                                fqdn_listname=mailing_list.fqdn_listname)
+                                list_id=mailing_list.list_id)
             # TODO catch correct Error class:
             except HTTPError, e:
                 return render_to_response(
@@ -344,7 +344,7 @@ def list_index(request, template='postorius/lists/index.html'):
         return utils.render_api_error(request)
     choosable_domains = _get_choosable_domains(request)
     if request.method == 'POST':
-        return redirect("list_summary", fqdn_listname=request.POST["list"])
+        return redirect("list_summary", list_id=request.POST["list"])
     else:
         return render_to_response(template,
                                   {'error': error,
@@ -354,7 +354,7 @@ def list_index(request, template='postorius/lists/index.html'):
 
 
 @login_required
-def list_subscriptions(request, option=None, fqdn_listname=None,
+def list_subscriptions(request, option=None, list_id=None,
                        user_email=None,
                        template='postorius/lists/subscriptions.html',
                        *args, **kwargs):
@@ -369,11 +369,11 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
     error = None
     form_subscribe = None
     form_unsubscribe = None
-    if request.POST.get('fqdn_listname', ''):
-        fqdn_listname = request.POST.get('fqdn_listname', '')
+    if request.POST.get('list_id', ''):
+        list_id = request.POST.get('list_id', '')
     # connect REST and catch issues getting the list
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
     except AttributeError, e:
         return render_to_response('postorius/errors/generic.html',
                                   {'error': 'Mailman REST API not available.'
@@ -444,7 +444,7 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
                 initial={'fqdn_listname': fqdn_listname,
                          'email': request.user.username,
                          'name': 'unsubscribe'})
-    the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+    the_list = List.objects.get_or_404(fqdn_listname=list_id)
     return render_to_response(template,
                               {'form_subscribe': form_subscribe,
                                'form_unsubscribe': form_unsubscribe,
@@ -455,11 +455,11 @@ def list_subscriptions(request, option=None, fqdn_listname=None,
 
 
 @list_owner_required
-def list_delete(request, fqdn_listname):
+def list_delete(request, list_id):
     """Deletes a list but asks for confirmation first.
     """
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
     if request.method == 'POST':
@@ -467,7 +467,7 @@ def list_delete(request, fqdn_listname):
         return redirect("list_index")
     else:
         submit_url = reverse('list_delete',
-                             kwargs={'fqdn_listname': fqdn_listname})
+                             kwargs={'list_id': list_id})
         cancel_url = reverse('list_index',)
         return render_to_response(
             'postorius/lists/confirm_delete.html',
@@ -477,11 +477,11 @@ def list_delete(request, fqdn_listname):
 
 
 @list_owner_required
-def list_held_messages(request, fqdn_listname):
+def list_held_messages(request, list_id):
     """Shows a list of held messages.
     """
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
     return render_to_response('postorius/lists/held_messages.html',
@@ -490,71 +490,71 @@ def list_held_messages(request, fqdn_listname):
 
 
 @list_owner_required
-def accept_held_message(request, fqdn_listname, msg_id):
+def accept_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
         the_list.accept_message(msg_id)
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
         messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.fqdn_listname)
+        return redirect('list_held_messages', the_list.list_id)
     messages.success(request, 'The message has been accepted.')
-    return redirect('list_held_messages', the_list.fqdn_listname)
+    return redirect('list_held_messages', the_list.list_id)
 
 
 @list_owner_required
-def discard_held_message(request, fqdn_listname, msg_id):
+def discard_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
         the_list.discard_message(msg_id)
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
         messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.fqdn_listname)
+        return redirect('list_held_messages', the_list.list_id)
     messages.success(request, 'The message has been discarded.')
-    return redirect('list_held_messages', the_list.fqdn_listname)
+    return redirect('list_held_messages', the_list.list_id)
 
 
 @list_owner_required
-def defer_held_message(request, fqdn_listname, msg_id):
+def defer_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
         the_list.defer_message(msg_id)
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
         messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.fqdn_listname)
+        return redirect('list_held_messages', the_list.list_id)
     messages.success(request, 'The message has been defered.')
-    return redirect('list_held_messages', the_list.fqdn_listname)
+    return redirect('list_held_messages', the_list.list_id)
 
 
 @list_owner_required
-def reject_held_message(request, fqdn_listname, msg_id):
+def reject_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
         the_list.reject_message(msg_id)
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError, e:
         messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.fqdn_listname)
+        return redirect('list_held_messages', the_list.list_id)
     messages.success(request, 'The message has been rejected.')
-    return redirect('list_held_messages', the_list.fqdn_listname)
+    return redirect('list_held_messages', the_list.list_id)
 
 
 @list_owner_required
-def list_settings(request, fqdn_listname=None, visible_section=None,
+def list_settings(request, list_id=None, visible_section=None,
                   visible_option=None,
                   template='postorius/lists/settings.html'):
     """
@@ -572,7 +572,7 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
         visible_section = 'List Identity'
     form_sections = []
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
     # collect all Form sections for the links:
@@ -623,12 +623,12 @@ def list_settings(request, fqdn_listname=None, visible_section=None,
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def remove_role(request, fqdn_listname=None, role=None, address=None,
+def remove_role(request, list_id=None, role=None, address=None,
                 template='postorius/lists/confirm_remove_role.html'):
     """Removes a list moderator or owner.
     """
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=fqdn_listname)
+        the_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
 
@@ -636,12 +636,12 @@ def remove_role(request, fqdn_listname=None, role=None, address=None,
         if address not in the_list.owners:
             messages.error(request,
                            _('The user {} is not an owner'.format(address)))
-            return redirect("list_members", the_list.fqdn_listname)
+            return redirect("list_members", the_list.list_id)
     elif role == 'moderator':
         if address not in the_list.moderators:
             messages.error(request,
                            _('The user {} is not a moderator'.format(address)))
-            return redirect("list_members", the_list.fqdn_listname)
+            return redirect("list_members", the_list.list_id)
 
     if request.method == 'POST':
         try:
@@ -651,13 +651,13 @@ def remove_role(request, fqdn_listname=None, role=None, address=None,
         except HTTPError as e:
             messages.error(request, _('The {0} could not be removed:'
                                       ' {1}'.format(role, e.msg)))
-            return redirect("list_members", the_list.fqdn_listname)
+            return redirect("list_members", the_list.list_id)
         messages.success(request,
                          _('The user {0} has been removed as {1}.'
                            .format(address, role)))
-        return redirect("list_members", the_list.fqdn_listname)
+        return redirect("list_members", the_list.list_id)
 
     return render_to_response(template,
                               {'role': role, 'address': address,
-                               'fqdn_listname': the_list.fqdn_listname},
+                               'list_id': the_list.list_id},
                               context_instance=RequestContext(request))
