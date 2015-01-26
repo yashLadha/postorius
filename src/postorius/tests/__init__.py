@@ -15,14 +15,17 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import vcr
 
 from django.conf import settings
 
-from postorius.tests import test_utils
+
+TEST_DIR = os.path.abspath(os.path.dirname(__file__))
+FIXTURES_DIR = os.path.join(TEST_DIR, 'fixtures', 'vcr_cassettes')
 
 
 MM_VCR = vcr.VCR(serializer='json',
-                 cassette_library_dir='fixtures/vcr_cassettes',
+                 cassette_library_dir=FIXTURES_DIR,
                  record_mode=getattr(settings, 'VCR_RECORD_MODE', 'none'),
                  match_on=['uri', 'method', 'body'])
