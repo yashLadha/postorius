@@ -32,6 +32,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * Fix wrong labels in metrics template. Contributed by Sumana Harihareswara (LP: 1409033).
 * URLs now contain the list-id instead of the fqdn_listname. Contributed by Abhilash Raj (LP: 1201150).
 * Fix small bug moderator/owner forms on list members page. Contributed by Pranjal Yadav (LP: 1308219).
+* Fix broken translation string on the login page. Contributed by Pranjal Yadav.
 
 
 1.0 beta 1 -- "Year of the Parrot"
