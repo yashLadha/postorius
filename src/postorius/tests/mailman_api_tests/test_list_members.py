@@ -45,6 +45,7 @@ class ListMembersAccessTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def setUp(self):
+        self.client = Client()
         try:
             self.domain = get_client().create_domain('example.com')
         except HTTPError:
@@ -53,7 +54,6 @@ class ListMembersAccessTest(SimpleTestCase):
             self.foo_list = self.domain.create_list('foo')
         except HTTPError:
             self.foo_list = get_client().get_list('foo.example.com')
-        logger.warning(self.foo_list)
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'testpass')
         self.superuser = User.objects.create_superuser(
@@ -117,6 +117,7 @@ class AddOwnerTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_members/add_owner_setup.yaml')
     def setUp(self):
+        self.client = Client()
         try:
             self.domain = get_client().create_domain('example.com')
         except HTTPError:
@@ -149,6 +150,7 @@ class AddOwnerTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_members/add_moderator_setup.yaml')
     def setUp(self):
+        self.client = Client()
         try:
             self.domain = get_client().create_domain('example.com')
         except HTTPError:

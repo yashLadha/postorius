@@ -19,7 +19,7 @@ import logging
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import SimpleTestCase
+from django.test import Client, SimpleTestCase
 from django.test.utils import override_settings
 from urllib2 import HTTPError
 
@@ -43,6 +43,7 @@ class ListCreationTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_new/list_creation/setup.yaml')
     def setUp(self):
+        self.client = Client()
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')
@@ -61,9 +62,9 @@ class ListCreationTest(SimpleTestCase):
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
         response = self.client.get(reverse('list_new'))
-        self.assertRedirects(
-            response,
-            '/postorius/accounts/login/?next=/postorius/lists/new/')
+        self.assertEqual(
+            response['location'],
+            'http://testserver/postorius/accounts/login/?next=/lists/new/')
 
     @MM_VCR.use_cassette('test_list_new/list_creation/'
                          'new_list_created_with_owner.yaml')
