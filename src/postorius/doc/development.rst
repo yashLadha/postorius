@@ -49,14 +49,26 @@ Mocking calls to Mailman's REST API
 
 A lot of Postorius' code involves calls to Mailman's REST API (through
 the mailman.client library). Running these tests against a real instance
-of Mailman would be bad practice and slow, so ``vcrpy`` fixtures are
+of Mailman would be bad practice and slow, so ``vcrpy`` *cassettes* are
 used instead. See the `vcrpy Documentation`_ for details.
 
 .. _`vcrpy Documentation`: https://github.com/kevin1024/vcrpy
 
 If you write new tests, it's advisable to add a separate fixture file
 for each test case, so the cached responses don't interfere with other
-tests.
+tests. The cassette files are stored in the
+``tests/fixtures/vcr_cassettes`` directory.
+
+
+Re-Recording all vcrpy cassettes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Remove all cassette files
+- Start Mailman with a clean db in devmode with the API port set to 9001
+  in mailman.cfg
+- Set ``VCR_RECORD_MODE`` to 'all' in ``testing/test_settings.py``
+- Run ``tox``
+- Set ``VCR_RECORD_MODE`` to 'once' in ``testing/test_settings.py``
 
 
 View Auth

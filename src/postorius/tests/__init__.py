@@ -25,6 +25,5 @@ TEST_DIR = os.path.abspath(os.path.dirname(__file__))
 FIXTURES_DIR = os.path.join(TEST_DIR, 'fixtures', 'vcr_cassettes')
 
 
-MM_VCR = vcr.VCR(serializer='json',
-                 cassette_library_dir=FIXTURES_DIR,
-                 match_on=['uri', 'method'])
+MM_VCR = vcr.VCR(cassette_library_dir=FIXTURES_DIR,
+                 record_mode=getattr(settings, 'VCR_RECORD_MODE', 'once'))
