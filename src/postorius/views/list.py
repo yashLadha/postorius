@@ -66,8 +66,6 @@ class ListMembersView(MailingListView):
                                    % request.POST['owner_email']))
                 except HTTPError as e:
                     messages.error(request, _(e.msg))
-        else:
-            owner_form = NewOwnerForm()
         if 'moderator_email' in request.POST:
             moderator_form = NewModeratorForm(request.POST)
             if moderator_form.is_valid():
@@ -79,8 +77,8 @@ class ListMembersView(MailingListView):
                                    % request.POST['moderator_email']))
                 except HTTPError as e:
                     messages.error(request, _(e.msg))
-        else:
-            moderator_form = NewModeratorForm()
+        owner_form = NewOwnerForm()
+        moderator_form = NewModeratorForm()
         return render_to_response('postorius/lists/members.html',
                                   {'list': self.mailing_list,
                                    'owner_form': owner_form,
