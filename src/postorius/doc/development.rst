@@ -205,20 +205,3 @@ This approach has the obvious downside that the Postorius tests will not
 recognize any changes to the Mailman API. So at some point there should be some
 separate integration tests to test the whole chain. But let's not worry about
 that for now.
-
-
-Mocking mailman.client objects
-------------------------------
-
-Postorius uses Michael Foord's ``mock`` library for mocking. There are some
-shortcuts you can use to quickly create mock objects that behave a little bit
-like objects retreived from mailman.client, like:
-
-- create_mock_domain
-- create_mock_list
-- create_mock_member
-
-These ``create_mock_*`` functions are very simple tools that return MagigMock objects with the properties passed to them in a dictionary. They also set some defaults for properties that you didn't pass to its ``create_mock_*`` function. For instance, a mock list created with ``create_mock_list()`` will always have ``members``, ``moderators`` and ``owners`` properties. 
-
-
-.. automodule:: postorius.tests.test_utils
