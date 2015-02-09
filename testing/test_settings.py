@@ -159,4 +159,4 @@ NOSE_ARGS = [
 
 # Set VCR_RECORD_MODE to 'all' to re-record all API responses.
 # (Remember to use an empty mailman database!)
-# VCR_RECORD_MODE = 'all'
+VCR_RECORD_MODE = 'once'

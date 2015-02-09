@@ -115,7 +115,7 @@ class AddOwnerTest(SimpleTestCase):
     Tests creation of list owners.
     """
 
-    @MM_VCR.use_cassette('test_list_members/add_owner_setup.yaml')
+    @MM_VCR.use_cassette('test_list_members_add_owner.yaml')
     def setUp(self):
         self.client = Client()
         try:
@@ -130,25 +130,26 @@ class AddOwnerTest(SimpleTestCase):
         self.client.post(
             reverse('list_members', args=('foo@example.com', )),
             {'owner_email': 'newowner@example.com'})
+        owners = self.foo_list.owners
 
-    @MM_VCR.use_cassette('test_list_members/add_owner_teardown.yaml')
+    @MM_VCR.use_cassette('test_list_members_add_owner.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
 
-    @MM_VCR.use_cassette('test_list_members/new_owner_added.yaml')
+    @MM_VCR.use_cassette('test_list_members_add_owner_new_owner_added.yaml')
     def test_new_owner_added(self):
         self.assertTrue(u'newowner@example.com' in self.foo_list.owners)
 
 
 @override_settings(**API_CREDENTIALS)
-class AddOwnerTest(SimpleTestCase):
+class AddModeratorTest(SimpleTestCase):
     """Tests for the list members page.
 
     Tests creation of moderators.
     """
 
-    @MM_VCR.use_cassette('test_list_members/add_moderator_setup.yaml')
+    @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')
     def setUp(self):
         self.client = Client()
         try:
@@ -163,12 +164,13 @@ class AddOwnerTest(SimpleTestCase):
         self.client.post(
             reverse('list_members', args=('foo@example.com', )),
             {'moderator_email': 'newmod@example.com'})
+        moderators = self.foo_list.moderators
 
-    @MM_VCR.use_cassette('test_list_members/add_moderator_teardown.yaml')
+    @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
 
-    @MM_VCR.use_cassette('test_list_members/new_moderator_added.yaml')
+    @MM_VCR.use_cassette('test_list_members_new_moderator_added.yaml')
     def test_new_moderator_added(self):
         self.assertTrue(u'newmod@example.com' in self.foo_list.moderators)

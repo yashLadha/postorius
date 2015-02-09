@@ -29,7 +29,7 @@ TEST_API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
 @override_settings(**TEST_API_CREDENTIALS)
 class TestListMetrics(SimpleTestCase):
 
-    @MM_VCR.use_cassette('test_list_metrics/list_metrics.yaml')
+    @MM_VCR.use_cassette('test_list_metrics.yaml')
     def setUp(self):
         self.mm_client = get_client()
         self.client = Client()
@@ -43,18 +43,18 @@ class TestListMetrics(SimpleTestCase):
         self.superuser = User.objects.create_superuser(
             'su', 'su@example.com', 'pwd')
 
-    @MM_VCR.use_cassette('test_list_metrics/list_metrics.yaml')
+    @MM_VCR.use_cassette('test_list_metrics.yaml')
     def test_metrics_page_not_accessible_to_anonymous(self):
         response = self.client.get(reverse('list_metrics', args=['test@example.org']))
         self.assertEqual(response.status_code, 403)
 
-    @MM_VCR.use_cassette('test_list_metrics/list_metrics.yaml')
+    @MM_VCR.use_cassette('test_list_metrics.yaml')
     def test_metrics_page_contains_metrics(self):
         self.client.login(username='su', password='pwd')
         response = self.client.get(reverse('list_metrics', args=['test@example.org']))
         self.assertEqual(response.status_code, 200)
 
-    @MM_VCR.use_cassette('test_list_metrics/list_metrics.yaml')
+    @MM_VCR.use_cassette('test_list_metrics.yaml')
     def tearDown(self):
         self.superuser.delete()
         self.test_list.delete()

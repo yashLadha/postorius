@@ -40,7 +40,7 @@ API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
 class ListIndexPageTest(SimpleTestCase):
     """Tests for the list index page."""
 
-    @MM_VCR.use_cassette('test_list_index/list_index_page/setup.yaml')
+    @MM_VCR.use_cassette('test_list_index.yaml')
     def setUp(self):
         self.client = Client()
         try:
@@ -49,13 +49,12 @@ class ListIndexPageTest(SimpleTestCase):
             self.domain = get_client().get_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
 
-    @MM_VCR.use_cassette('test_list_index/list_index_page/teardown.yaml')
+    @MM_VCR.use_cassette('test_list_index.yaml')
     def tearDown(self):
         for mlist in get_client().lists:
             mlist.delete()
 
-    @MM_VCR.use_cassette('test_list_index/list_index_page/'
-                         'list_index_contains_one_list.yaml')
+    @MM_VCR.use_cassette('test_list_index.yaml')
     def test_list_index_contains_one_list(self):
         # The list index page should contain the
         response = self.client.get(reverse('list_index'))

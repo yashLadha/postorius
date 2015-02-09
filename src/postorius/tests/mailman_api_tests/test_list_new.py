@@ -41,7 +41,7 @@ API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
 class ListCreationTest(SimpleTestCase):
     """Tests for the new list page."""
 
-    @MM_VCR.use_cassette('test_list_new/list_creation/setup.yaml')
+    @MM_VCR.use_cassette('test_list_creation.yaml')
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
@@ -52,7 +52,7 @@ class ListCreationTest(SimpleTestCase):
         except HTTPError:
             self.domain = get_client().get_domain('example.com')
 
-    @MM_VCR.use_cassette('test_list_new/list_creation/teardown.yaml')
+    @MM_VCR.use_cassette('test_list_creation.yaml')
     def tearDown(self):
         self.user.delete()
         self.superuser.delete()
@@ -66,8 +66,7 @@ class ListCreationTest(SimpleTestCase):
             response['location'],
             'http://testserver/postorius/accounts/login/?next=/lists/new/')
 
-    @MM_VCR.use_cassette('test_list_new/list_creation/'
-                         'new_list_created_with_owner.yaml')
+    @MM_VCR.use_cassette('test_list_creation.yaml')
     def test_new_list_created_with_owner(self):
         self.client.login(username='su', password='pwd')
         post_data = {'listname': 'a_new_list',
