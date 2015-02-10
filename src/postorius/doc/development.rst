@@ -17,31 +17,50 @@ Changes are usually not made directly in the project's trunk branch, but in
 feature-related personal branches, which get reviewed and then merged into
 the trunk. 
 
-The ideal workflow would be like this:
+An ideal workflow would be like this:
 
 1. File a bug to suggest a new feature or report a bug (or just pick one of 
    the existing bugs).
 2. Create a new branch with your code changes.
 3. Make a "merge proposal" to get your code reviewed and merged. 
 
-Launchpad has a nice tour_ which describes all this in detail. 
-
-.. _tour: https://launchpad.net/+tour/index
-
 
 Testing
 =======
 
 
-After a fresh checkout of Postorius you can run the test from
+After a fresh checkout of Postorius you can run the tests from
 Postorius' root directory using ``tox``:
 
 ::
 
     $ tox
 
+By default this will test against a couple of different environments.
+If you want to only run the tests in a specific environment or a single
+module, you can specify this using the ``-e`` option and/or a double
+dash:
+
+::
+
+    # List all currently configured envs:
+    $ tox -l
+    py27-django1.5
+    py27-django1.6
+    py27-django1.7
+
+    # Test Django 1.7 on Python2.7 only:
+    $ tox -e py27-django1.7
+
+    # Run the ``test_address_activation`` only:
+    $ tox -- postorius.tests.test_address_activation
+
+    # You get the idea...
+    $ tox -e py27-django1.7 -- postorius.tests.test_address_activation
+
+
 All test modules reside in the ``postorius/src/postorius/tests``
-directory.
+directory. Please have a look at the existing examples. 
 
 
 Mocking calls to Mailman's REST API
@@ -50,7 +69,8 @@ Mocking calls to Mailman's REST API
 A lot of Postorius' code involves calls to Mailman's REST API (through
 the mailman.client library). Running these tests against a real instance
 of Mailman would be bad practice and slow, so ``vcrpy`` *cassettes* are
-used instead. See the `vcrpy Documentation`_ for details.
+used instead (see the `vcrpy Documentation`_ for details). These files 
+contain pre-recorded HTTP responses.
 
 .. _`vcrpy Documentation`: https://github.com/kevin1024/vcrpy
 
@@ -59,16 +79,21 @@ for each test case, so the cached responses don't interfere with other
 tests. The cassette files are stored in the
 ``tests/fixtures/vcr_cassettes`` directory.
 
+In order to record new API responses for your test case, you need  to
+first start the mailman core, with the API server listening on port
+9001. You can use the ``testing/test_mailman.cfg`` file from the
+Postorius source. Make sure, you use a fresh mailman.db file. 
 
-Re-Recording all vcrpy cassettes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Once the core is running, you can record the new cassette file defined
+in your test case like by running tox with the `rerecord` test env:
 
-- Remove all cassette files
-- Start Mailman with a clean db in devmode with the API port set to 9001
-  in mailman.cfg
-- Set ``VCR_RECORD_MODE`` to 'all' in ``testing/test_settings.py``
-- Run ``tox``
-- Set ``VCR_RECORD_MODE`` to 'once' in ``testing/test_settings.py``
+::
+
+    # This will only record the cassette files defined in my_new_test_module:
+    $ tox -e rerecord -- postorius.tests.my_new_test_module
+
+    # This will re-record all cassette files:
+    $ tox -e rerecord
 
 
 View Auth
