@@ -52,7 +52,7 @@ dash:
     # Test Django 1.7 on Python2.7 only:
     $ tox -e py27-django1.7
 
-    # Run the ``test_address_activation`` only:
+    # Run only tests in ``test_address_activation``:
     $ tox -- postorius.tests.test_address_activation
 
     # You get the idea...
