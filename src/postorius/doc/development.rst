@@ -85,15 +85,15 @@ first start the mailman core, with the API server listening on port
 Postorius source. Make sure, you use a fresh mailman.db file. 
 
 Once the core is running, you can record the new cassette file defined
-in your test case like by running tox with the `rerecord` test env:
+in your test case like by running tox with the `record` test env:
 
 ::
 
     # This will only record the cassette files defined in my_new_test_module:
-    $ tox -e rerecord -- postorius.tests.my_new_test_module
+    $ tox -e record -- postorius.tests.my_new_test_module
 
     # This will re-record all cassette files:
-    $ tox -e rerecord
+    $ tox -e record
 
 
 View Auth
