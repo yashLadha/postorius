@@ -21,9 +21,16 @@ import vcr
 from django.conf import settings
 
 
-TEST_DIR = os.path.abspath(os.path.dirname(__file__))
-FIXTURES_DIR = os.path.join(TEST_DIR, 'fixtures', 'vcr_cassettes')
+TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+FIXTURES_DIR = getattr(
+    settings, 'FIXTURES_DIR',
+    os.path.join(TEST_ROOT, 'fixtures'))
 
-MM_VCR = vcr.VCR(cassette_library_dir=FIXTURES_DIR,
-                 record_mode=getattr(settings, 'VCR_RECORD_MODE', 'once'))
+VCR_RECORD_MODE = os.environ.get(
+    'POSTORIUS_VCR_RECORD_MODE',
+    getattr(settings, 'VCR_RECORD_MODE', 'once'))
+
+MM_VCR = vcr.VCR(
+    cassette_library_dir=os.path.join(FIXTURES_DIR, 'vcr_cassettes'),
+    record_mode=VCR_RECORD_MODE)
