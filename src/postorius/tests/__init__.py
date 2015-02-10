@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,10 +15,22 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from postorius.tests import test_utils
+import os
+import vcr
 
-__test__ = {
-    "Test Utils": test_utils,
-    # "Page Tests": test_pages,
-    # "Doctest": tests,
-}
+from django.conf import settings
+
+
+TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+FIXTURES_DIR = getattr(
+    settings, 'FIXTURES_DIR',
+    os.path.join(TEST_ROOT, 'fixtures'))
+
+VCR_RECORD_MODE = os.environ.get(
+    'POSTORIUS_VCR_RECORD_MODE',
+    getattr(settings, 'VCR_RECORD_MODE', 'once'))
+
+MM_VCR = vcr.VCR(
+    cassette_library_dir=os.path.join(FIXTURES_DIR, 'vcr_cassettes'),
+    record_mode=VCR_RECORD_MODE)

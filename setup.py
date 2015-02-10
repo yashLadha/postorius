@@ -15,27 +15,31 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-import ez_setup
-ez_setup.use_setuptools()
+try:
+    import setuptools
+except ImportError:
+    import ez_setup
+    ez_setup.use_setuptools()
 
 from setuptools import setup, find_packages
 
+
 setup(
-    name = "postorius",
-    version = '1.0.0b1',
-    description = "A web user interface for GNU Mailman",
+    name="postorius",
+    version='1.0.0b1',
+    description="A web user interface for GNU Mailman",
     long_description=open('README.rst').read(),
-    maintainer = "The Mailman GSOC Coders",
-    license = 'GPLv3',
-    keywords = 'email mailman django',
-    url = "https://launchpad.net/postorius",
-    classifiers = [
+    maintainer="The Mailman GSOC Coders",
+    license='GPLv3',
+    keywords='email mailman django',
+    url="https://launchpad.net/postorius",
+    classifiers=[
         "Programming Language :: Python",
         ],
-    packages = find_packages('src'),
-    package_dir = {'': 'src'},
-    include_package_data = True,
-    install_requires = ['django>=1.4',
-                        'django-social-auth>=0.7.8',
-                        'mailmanclient']
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    include_package_data=True,
+    install_requires=['django>=1.5',
+                      'django-social-auth>=0.7.8',
+                      'mailmanclient']
 )

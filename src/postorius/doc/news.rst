@@ -2,7 +2,7 @@
 News / Changelog
 ================
 
-Copyright (C) 2012-2014 by the Free Software Foundation, Inc.
+Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
 
 The Postorius Django app provides a web user interface to
 access GNU Mailman.
@@ -34,7 +34,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * Fix small bug moderator/owner forms on list members page. Contributed by Pranjal Yadav (LP: 1308219).
 * Fix broken translation string on the login page. Contributed by Pranjal Yadav.
 * Show held message details in a modal window. Contributed by Abhilash Raj (LP: 1004049).
-
+* Rework of internal testing
 
 1.0 beta 1 -- "Year of the Parrot"
 ==================================

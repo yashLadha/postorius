@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -18,23 +18,43 @@
 import logging
 
 from django.core.urlresolvers import reverse
+from django.test import Client, SimpleTestCase
+from django.test.utils import override_settings
+from urllib2 import HTTPError
 
-from postorius.tests.mailman_api_tests import MMTestCase
+from postorius.utils import get_client
+from postorius.tests import MM_VCR
 
 
 logger = logging.getLogger(__name__)
+vcr_log = logging.getLogger('vcr')
+vcr_log.setLevel(logging.WARNING)
 
 
-class ListIndexPageTest(MMTestCase):
+API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
+                   'MAILMAN_USER': 'restadmin',
+                   'MAILMAN_PASS': 'restpass'}
+
+
+@override_settings(**API_CREDENTIALS)
+class ListIndexPageTest(SimpleTestCase):
     """Tests for the list index page."""
 
+    @MM_VCR.use_cassette('test_list_index.yaml')
     def setUp(self):
-        domain = self.mm_client.get_domain('example.com')
-        self.foo_list = domain.create_list('foo')
+        self.client = Client()
+        try:
+            self.domain = get_client().create_domain('example.com')
+        except HTTPError:
+            self.domain = get_client().get_domain('example.com')
+        self.foo_list = self.domain.create_list('foo')
 
+    @MM_VCR.use_cassette('test_list_index.yaml')
     def tearDown(self):
-        self.foo_list.delete()
+        for mlist in get_client().lists:
+            mlist.delete()
 
+    @MM_VCR.use_cassette('test_list_index.yaml')
     def test_list_index_contains_one_list(self):
         # The list index page should contain the
         response = self.client.get(reverse('list_index'))
