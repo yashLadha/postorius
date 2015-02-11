@@ -28,16 +28,7 @@ An ideal workflow would be like this:
 Installing and running the tests
 ================================
 
-After a fresh checkout, first install Postorius in develop mode, as well as
-the development dependencies:
-
-::
-
-    $ python setup.py develop
-    $ pip -r dev-requirements.txt
-
-
-Once that's done you can run the tests running ``tox``:
+After checkout you can run the tests using ``tox``:
 
 ::
 
