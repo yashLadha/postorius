@@ -77,7 +77,8 @@ contain pre-recorded HTTP responses.
 If you write new tests, it's advisable to add a separate fixture file
 for each test case, so the cached responses don't interfere with other
 tests. The cassette files are stored in the
-``tests/fixtures/vcr_cassettes`` directory.
+``tests/fixtures/vcr_cassettes`` directory. Check out the existing test
+cases for examples.
 
 In order to record new API responses for your test case, you need  to
 first start the mailman core, with the API server listening on port
@@ -88,7 +89,7 @@ Postorius source.
     Make sure, you use a fresh mailman.db file. 
 
 Once the core is running, you can record the new cassette file defined
-in your test case like by running tox with the `record` test env:
+in your test case by running tox with the `record` test env:
 
 ::
 
