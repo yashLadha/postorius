@@ -25,12 +25,19 @@ An ideal workflow would be like this:
 3. Make a "merge proposal" to get your code reviewed and merged. 
 
 
-Testing
-=======
+Installing and running the tests
+================================
+
+After a fresh checkout, first install Postorius in develop mode, as well as
+the development dependencies:
+
+::
+
+    $ python setup.py develop
+    $ pip -r dev-requirements.txt
 
 
-After a fresh checkout of Postorius you can run the tests from
-Postorius' root directory using ``tox``:
+Once that's done you can run the tests running ``tox``:
 
 ::
 
