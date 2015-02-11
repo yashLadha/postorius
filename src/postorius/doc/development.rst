@@ -82,7 +82,10 @@ tests. The cassette files are stored in the
 In order to record new API responses for your test case, you need  to
 first start the mailman core, with the API server listening on port
 9001. You can use the ``testing/test_mailman.cfg`` file from the
-Postorius source. Make sure, you use a fresh mailman.db file. 
+Postorius source.
+
+.. note::
+    Make sure, you use a fresh mailman.db file. 
 
 Once the core is running, you can record the new cassette file defined
 in your test case like by running tox with the `record` test env:
