@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 import logging
+import csv
+
+from django.http import HttpResponse
 
 from django.conf import settings
 from django.contrib import messages
@@ -34,7 +37,6 @@ from postorius.models import (Domain, List, MailmanUser,
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView
-
 
 logger = logging.getLogger(__name__)
 
@@ -268,6 +270,30 @@ class ListMassSubsribeView(MailingListView):
         return redirect('mass_subscribe', self.mailing_list.list_id)
 
 
+def csv_view(request, list_id):
+        """Export all the subscriber in csv 
+        """
+    	error = None
+	mm_lists = []
+    	if request.user.is_superuser:
+        	only_public = False
+    	try:
+            	client = utils.get_client()
+		mm_lists= client.get_list(list_id)
+    	except MailmanApiError:
+        	return utils.render_api_error(request)
+	
+    	response = HttpResponse(content_type='text/csv')
+    	response['Content-Disposition'] = 'attachment; filename="Subscribers.csv"'
+
+    	writer = csv.writer(response)
+	if mm_lists:
+   		for i in mm_lists.members:
+	    	    writer.writerow([i.email])
+
+    	return response
+
+
 def _get_choosable_domains(request):
     try:
         domains = Domain.objects.all()
@@ -325,7 +351,6 @@ def list_new(request, template='postorius/lists/new.html'):
                        initial={'list_owner': request.user.email})
     return render_to_response(template, {'form': form},
                               context_instance=RequestContext(request))
-
 
 def list_index(request, template='postorius/lists/index.html'):
     """Show a table of all public mailing lists.
