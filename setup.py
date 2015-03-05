@@ -40,6 +40,6 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=['django>=1.5',
-                      'django-social-auth>=0.7.8',
+                      'django-browserid',
                       'mailmanclient']
 )
