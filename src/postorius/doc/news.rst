@@ -35,6 +35,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * Fix broken translation string on the login page. Contributed by Pranjal Yadav.
 * Show held message details in a modal window. Contributed by Abhilash Raj (LP: 1004049).
 * Rework of internal testing
+* Mozilla Persona integration: switch from django-social-auto to django-browserid: Contributed by Abhilash Raj.
 
 1.0 beta 1 -- "Year of the Parrot"
 ==================================
