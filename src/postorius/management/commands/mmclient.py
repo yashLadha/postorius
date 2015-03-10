@@ -45,5 +45,7 @@ A complete list of commands can be found in the mailman.client documentation."""
             console_fn = shell.interact
         # connect to mailmanclient
         client = utils.get_client()
+        # Putting client back in the global scope
+        globals()['client'] = client
         # run the interpreter
         console_fn()
