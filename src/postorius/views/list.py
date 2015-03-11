@@ -230,6 +230,27 @@ class ListUnsubscribeView(MailingListView):
             messages.error(request, e)
         return redirect('list_summary', self.mailing_list.list_id)
 
+class ListUnsubscribeAllView(MailingListView):
+   
+    """Empty the list by unsubscribing all members."""
+    
+    @method_decorator(list_owner_required)
+    def get(self, request, list_id, page=1):
+	try:
+	    print self._get_list(list_id, page)
+	    mlist = self._get_list(list_id, page)
+	    if len(mlist.members) == 0:
+	        messages.error(request, 'No member is subscribed to the list.')
+	        return redirect('list_members', self.mailing_list.list_id)
+	    for names in mlist.members:
+	        self.mailing_list.unsubscribe(names.email)
+	    messages.success(request,
+			    'All members have been unsubscribed from the list.')
+        except MailmanApiError:
+            return utils.render_api_error(request)
+	except Exception, e:
+	    messages.error(request, e)
+	return redirect('list_members', self.mailing_list.list_id)
 
 class ListMassSubsribeView(MailingListView):
 
@@ -267,6 +288,43 @@ class ListMassSubsribeView(MailingListView):
                         messages.error(request, e)
         return redirect('mass_subscribe', self.mailing_list.list_id)
 
+class ListMassRemovalView(MailingListView):
+
+    """Class For Mass Removal"""
+
+    @method_decorator(list_owner_required)
+    def get(self, request, *args, **kwargs):
+        form = ListMassRemoval()
+        return render_to_response('postorius/lists/mass_removal.html',
+                                  {'form': form, 'list': self.mailing_list},
+                                  context_instance=RequestContext(request))
+
+    def post(self, request, *args, **kwargs):
+        form = ListMassRemoval(request.POST)
+        if not form.is_valid():
+            messages.error(request, 'Please fill out the form correctly.')
+        else:
+            emails = request.POST["emails"].splitlines()
+            for email in emails:
+                parts = email.split('@')
+                if len(parts) != 2 or '.' not in parts[1]:
+                    messages.error(request,
+                                   'The email address %s is not valid.' %
+                                   email)
+                else:
+                    try:
+                        self.mailing_list.unsubscribe(email.lower())
+                        messages.success(
+                            request,
+                            'The address %s has been unsubscribed from %s.' %
+                            (email, self.mailing_list.fqdn_listname))
+                    except MailmanApiError:
+                        return utils.render_api_error(request)
+                    except HTTPError, e:
+                        messages.error(request, e)
+		    except ValueError, e:
+                        messages.error(request, e)
+        return redirect('mass_removal', self.mailing_list.list_id)
 
 def _get_choosable_domains(request):
     try:

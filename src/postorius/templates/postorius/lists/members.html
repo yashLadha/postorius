@@ -5,7 +5,6 @@
 
 {% block main %}
     {% list_nav 'list_members' "List Members" %}
-
     <h2>{% trans "Owners" %}</h2>
 
     {{ owner_form.email.errors }}
@@ -61,7 +60,8 @@
     </table>
 
     <h2>{% trans "Members" %}</h2>
-
+    <a href="{% url 'unsubscribe_all' list.fqdn_listname %}" id="confirm" class="btn btn-danger">{% trans 'Unsubscribe All' %}</a>
+    <hr />
     <table class="table table-bordered table-striped">
         <thead>
     		<tr>

@@ -47,13 +47,19 @@ per_list_urlpatterns = patterns('postorius.views',
                                 url(r'^unsubscribe/(?P<email>[^/]+)$',
                                     ListUnsubscribeView.as_view(
                                     ), name='list_unsubscribe'),
-                                url(r'^subscriptions$',
+                                url(r'^unsubscribe_all/$',
+				    ListUnsubscribeAllView.as_view(
+			            ), name='unsubscribe_all'),
+				url(r'^subscriptions$',
                                     'list_subscriptions',
                                     name='list_subscriptions'),
                                 url(r'^mass_subscribe/$',
                                     ListMassSubsribeView.as_view(
                                     ), name='mass_subscribe'),
-                                url(r'^delete$',
+                                url(r'^mass_removal/$',
+				    ListMassRemovalView.as_view(
+			            ), name='mass_removal'),
+				url(r'^delete$',
                                     'list_delete', name='list_delete'),
                                 url(r'^held_messages/(?P<msg_id>[^/]+)/'
                                     'accept$', 'accept_held_message',

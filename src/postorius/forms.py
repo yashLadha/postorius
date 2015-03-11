@@ -717,6 +717,24 @@ class ListMassSubscription(FieldsetForm):
         layout = [["Mass subscription", "emails"]]
 
 
+class ListMassRemoval(FieldsetForm):
+
+    """Form fields to remove multiple list users.
+    """
+    emails = forms.CharField(
+        label=_('Emails to Unsubscribe'),
+        widget=forms.Textarea,
+    )
+
+    class Meta:
+
+        """
+        Class to define the name of the fieldsets and what should be
+        included in each.
+        """
+        layout = [["Mass Removal", "emails"]]
+
+
 class UserPreferences(FieldsetForm):
 
     """
