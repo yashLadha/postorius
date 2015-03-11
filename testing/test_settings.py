@@ -89,8 +89,7 @@ TEMPLATE_LOADERS = (
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'social_auth.backends.OpenIDBackend',
-    'social_auth.backends.browserid.BrowserIDBackend',
+    'django_browserid.auth.BrowserIDBackend',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -103,9 +102,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.csrf",
     "django.contrib.messages.context_processors.messages",
     "postorius.context_processors.postorius",
-    'social_auth.context_processors.social_auth_by_name_backends',
-    'social_auth.context_processors.social_auth_backends',
-    'social_auth.context_processors.social_auth_by_type_backends',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -141,13 +137,17 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'postorius',
-    'social_auth',
+    'django_browserid',
     # These are only used for development
     # 'debug_toolbar',
 )
 LOGIN_URL          = '/postorius/accounts/login/'
 LOGIN_REDIRECT_URL = '/postorius/'
 LOGIN_ERROR_URL    = '/postorius/accounts/login/'
+
+def username(email):
+    return email.rsplit('@', 1)[0]
+BROWSERID_USERNAME_ALGO = username
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
