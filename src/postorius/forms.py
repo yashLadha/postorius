@@ -426,10 +426,19 @@ class ListSettings(FieldsetForm):
     #    label=_('No reply address'),
     #    required=False,
     # )
-    posting_pipeline = forms.CharField(
+    posting_pipeline = forms.ChoiceField(
         label=_('Pipeline'),
+        widget=forms.Select(),
+        required=False,
+        error_messages={
+            'required': _("Please choose a reply-to action.")},
+        choices=(
+            ("default-owner-pipeline", _("default-owner-pipeline")),
+            ("default-posting-pipeline", _("default-posting-pipeline")),
+            ("virgin", _("virgin"))),
         help_text=(
             'Type of pipeline you want to use for this mailing list')
+
     )
     # post_id = forms.IntegerField(
     #    label=_('Post ID'),
