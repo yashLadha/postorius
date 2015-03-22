@@ -230,28 +230,6 @@ class ListUnsubscribeView(MailingListView):
             messages.error(request, e)
         return redirect('list_summary', self.mailing_list.list_id)
 
-class ListUnsubscribeAllView(MailingListView):
-   
-    """Empty the list by unsubscribing all members."""
-    
-    @method_decorator(list_owner_required)
-    def get(self, request, list_id, page=1):
-	try:
-	    print self._get_list(list_id, page)
-	    mlist = self._get_list(list_id, page)
-	    if len(mlist.members) == 0:
-	        messages.error(request, 'No member is subscribed to the list.')
-	        return redirect('list_members', self.mailing_list.list_id)
-	    for names in mlist.members:
-	        self.mailing_list.unsubscribe(names.email)
-	    messages.success(request,
-			    'All members have been unsubscribed from the list.')
-        except MailmanApiError:
-            return utils.render_api_error(request)
-	except Exception, e:
-	    messages.error(request, e)
-	return redirect('list_members', self.mailing_list.list_id)
-
 class ListMassSubsribeView(MailingListView):
 
     """Mass subscription."""
@@ -717,3 +695,29 @@ def remove_role(request, list_id=None, role=None, address=None,
                               {'role': role, 'address': address,
                                'list_id': the_list.list_id},
                               context_instance=RequestContext(request))
+
+@list_owner_required
+def remove_all_subscribers(request, list_id):
+   
+    """Empty the list by unsubscribing all members."""
+    
+    try:
+	mlist = List.objects.get_or_404(fqdn_listname=list_id)
+	if len(mlist.members) == 0:
+	    messages.error(request, 'No member is subscribed to the list currently.')
+	    return redirect('mass_removal', mlist.list_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+	
+    if request.method == 'POST':
+	try:
+	    for names in mlist.members:
+                mlist.unsubscribe(names.email)
+	    messages.success(request,
+			    'All members have been unsubscribed from the list.')
+	except Exception, e:
+	    messages.error(request, e)
+	return redirect('list_members', mlist.list_id)
+    return render_to_response('postorius/lists/confirm_removeall_subscribers.html', 
+			     {'list_id' : mlist.list_id},
+			     context_instance=RequestContext(request))

@@ -47,9 +47,6 @@ per_list_urlpatterns = patterns('postorius.views',
                                 url(r'^unsubscribe/(?P<email>[^/]+)$',
                                     ListUnsubscribeView.as_view(
                                     ), name='list_unsubscribe'),
-                                url(r'^unsubscribe_all/$',
-				    ListUnsubscribeAllView.as_view(
-			            ), name='unsubscribe_all'),
 				url(r'^subscriptions$',
                                     'list_subscriptions',
                                     name='list_subscriptions'),
@@ -83,6 +80,8 @@ per_list_urlpatterns = patterns('postorius.views',
                                     '(?:/(?P<visible_option>.*))?$',
                                     'list_settings',
                                     name='list_settings'),
+                                url(r'^unsubscribe_all$',
+				    'remove_all_subscribers', name='unsubscribe_all'),
                                 )
 
 urlpatterns = patterns(
