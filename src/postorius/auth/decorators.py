@@ -82,13 +82,18 @@ def list_moderator_required(fn):
         if getattr(user, 'is_list_owner', None):
             return fn(*args, **kwargs)
         if getattr(user, 'is_list_moderator', None):
-            return fn(*args, **kwargs)
+	    return fn(*args, **kwargs)
         mlist = List.objects.get_or_404(fqdn_listname=list_id)
         if user.email not in mlist.moderators and \
                 user.email not in mlist.owners:
             raise PermissionDenied
-        else:
-            user.is_list_moderator = True
+	else:
+	    if user.email in mlist.moderators and \
+		    user.email not in mlist.owners:
+	        user.is_list_moderator = True
+	    else:
+	        user.is_list_moderator = True
+	        user.is_list_owner = True
             return fn(*args, **kwargs)
     return wrapper
 
