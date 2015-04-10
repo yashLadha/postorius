@@ -18,7 +18,7 @@ import logging
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import Client, SimpleTestCase
+from django.test import Client, TestCase
 from django.test.utils import override_settings
 from urllib2 import HTTPError
 
@@ -37,7 +37,7 @@ API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
 
 
 @override_settings(**API_CREDENTIALS)
-class ListMembersAccessTest(SimpleTestCase):
+class ListMembersAccessTest(TestCase):
     """Tests for the list members page.
 
     Tests permissions and creation of list owners and moderators.
@@ -109,7 +109,7 @@ class ListMembersAccessTest(SimpleTestCase):
 
 
 @override_settings(**API_CREDENTIALS)
-class AddOwnerTest(SimpleTestCase):
+class AddOwnerTest(TestCase):
     """Tests for the list members page.
 
     Tests creation of list owners.
@@ -143,7 +143,7 @@ class AddOwnerTest(SimpleTestCase):
 
 
 @override_settings(**API_CREDENTIALS)
-class AddModeratorTest(SimpleTestCase):
+class AddModeratorTest(TestCase):
     """Tests for the list members page.
 
     Tests creation of moderators.
