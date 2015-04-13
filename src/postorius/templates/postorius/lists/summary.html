@@ -17,6 +17,11 @@
 
     {% if user.is_authenticated %}
     {% if userSubscribed %}
+    {% trans "You are subscribed to this list with your address:" %}
+    {% for address in subscribed_address %}
+    {{ address }}
+    {% endfor %}
+    <br/>
     <a href="{% url 'list_unsubscribe' list.list_id user.email %}" class="btn btn-danger">{% trans "Unsubscribe" %}</a>
     {% else %}
     <h2>{% trans 'Subscribe to this list' %}</h2>

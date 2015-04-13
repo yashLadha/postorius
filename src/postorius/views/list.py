@@ -183,17 +183,21 @@ class ListSummaryView(MailingListView):
             # The user does not have a mailman user associated with it.
             user_emails = [request.user.email]
         userSubscribed = False
-        try:
-            userMember = self.mailing_list.get_member(user_emails[0])
-        except ValueError:
-            pass
-        else:
-            userSubscribed = True
+        subscribed_address = []
+        for address in user_emails:
+            try:
+                userMember = self.mailing_list.get_member(address)
+            except ValueError:
+                pass
+            else:
+                userSubscribed = True
+                subscribed_address.append(address)
         return render_to_response(
             'postorius/lists/summary.html',
             {'list': self.mailing_list,
              'subscribe_form': ListSubscribe(user_emails),
-             'userSubscribed': userSubscribed},
+             'userSubscribed': userSubscribed,
+             'subscribed_address': subscribed_address},
             context_instance=RequestContext(request))
 
 
