@@ -168,16 +168,22 @@ class ListNew(FieldsetForm):
 
 
 class ListSubscribe(FieldsetForm):
-
     """Form fields to join an existing list.
     """
-    email = forms.EmailField(
+
+    email = forms.ChoiceField(
         label=_('Your email address'),
-        widget=forms.HiddenInput(),
+        validators=[validate_email],
+        widget=forms.Select(),
         error_messages={'required': _('Please enter an email address.'),
                         'invalid': _('Please enter a valid email address.')})
     display_name = forms.CharField(label=_('Your name (optional)'),
                                    required=False)
+
+    def __init__(self, user_emails, *args, **kwargs):
+        super(ListSubscribe, self).__init__(*args, **kwargs)
+        self.fields['email'].choices = ((address, address)
+                                        for address in user_emails)
 
 
 class ListUnsubscribe(FieldsetForm):

@@ -16,7 +16,8 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 from django.utils import unittest
 
-from postorius.forms import UserPreferences, DomainNew
+from postorius.forms import (
+    UserPreferences, DomainNew, ListSubscribe)
 
 
 class UserPreferencesTest(unittest.TestCase):
@@ -47,5 +48,31 @@ class DomainNewTest(unittest.TestCase):
             'web_host': 'mailman.most-desirable.org',
             'description': 'The Most Desirable organization',
             'contact_address': 'contact@mailman.most-desirable.org',
+        })
+        self.assertFalse(form.is_valid())
+
+class ListSubscribeTest(unittest.TestCase):
+    def test_subscribe_works(self):
+        user_emails = ['someone@example.com']
+        form = ListSubscribe(user_emails, {
+            'email' : 'someone@example.com',
+            'display_name' : 'Someone',
+        })
+        self.assertTrue(form.is_valid())
+
+
+    def test_subscribe_fails(self):
+        user_emails = ['someone@example.com']
+        form = ListSubscribe(user_emails, {
+            'email' : 'notaemail',
+            'display_name' : 'Someone',
+        })
+        self.assertFalse(form.is_valid())
+
+    def test_subscribe_validates_email(self):
+        user_emails = ['something']
+        form = ListSubscribe(user_emails, {
+            'email' : 'something',
+            'display_name' : 'Someone',
         })
         self.assertFalse(form.is_valid())

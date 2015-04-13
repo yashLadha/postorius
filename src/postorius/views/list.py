@@ -172,10 +172,19 @@ class ListSummaryView(MailingListView):
     """
 
     def get(self, request, list_id):
-        user_email = getattr(request.user, 'email', None)
+        try:
+            mm_user = MailmanUser.objects.get(address=request.user.email)
+            user_emails = [str(address) for address in getattr(mm_user, 'addresses')]
+                           # TODO:maxking - add the clause below in above
+                           # statement after the subscription policy is sorted
+                           # out
+                           # if address.verified_on is not None]
+        except Mailman404Error:
+            # The user does not have a mailman user associated with it.
+            user_emails = [request.user.email]
         userSubscribed = False
         try:
-            userMember = self.mailing_list.get_member(user_email)
+            userMember = self.mailing_list.get_member(user_emails[0])
         except ValueError:
             pass
         else:
@@ -183,7 +192,7 @@ class ListSummaryView(MailingListView):
         return render_to_response(
             'postorius/lists/summary.html',
             {'list': self.mailing_list,
-             'subscribe_form': ListSubscribe(initial={'email': user_email}),
+             'subscribe_form': ListSubscribe(user_emails),
              'userSubscribed': userSubscribed},
             context_instance=RequestContext(request))
 
@@ -195,7 +204,9 @@ class ListSubsribeView(MailingListView):
     @method_decorator(login_required)
     def post(self, request, list_id):
         try:
-            form = ListSubscribe(request.POST)
+            mm_user = MailmanUser.objects.get(address=request.user.email)
+            user_addresses = [str(address) for address in mm_user.addresses]
+            form = ListSubscribe(user_addresses, request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
                 self.mailing_list.subscribe(email)
@@ -474,7 +485,7 @@ def list_delete(request, list_id):
             context_instance=RequestContext(request))
 
 
- 
+
 @list_moderator_required
 def list_held_messages(request, list_id):
     """Shows a list of held messages.
