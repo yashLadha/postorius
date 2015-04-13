@@ -18,11 +18,9 @@
     {% if user.is_authenticated %}
     {% if userSubscribed %}
     {% trans "You are subscribed to this list with your address:" %}
-    {% for address in subscribed_address %}
-    {{ address }}
-    {% endfor %}
+    <em>{{ subscribed_address }}</em>
     <br/>
-    <a href="{% url 'list_unsubscribe' list.list_id user.email %}" class="btn btn-danger">{% trans "Unsubscribe" %}</a>
+    <a href="{% url 'list_unsubscribe' list.list_id user.email %}" class="btn btn-danger">{% trans "Unsubscribe" %} {{ subscribed_address }}</a>
     {% else %}
     <h2>{% trans 'Subscribe to this list' %}</h2>
     <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="list_subscribe"> {% csrf_token %}

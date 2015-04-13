@@ -183,7 +183,7 @@ class ListSummaryView(MailingListView):
             # The user does not have a mailman user associated with it.
             user_emails = [request.user.email]
         userSubscribed = False
-        subscribed_address = []
+        subscribed_address = None
         for address in user_emails:
             try:
                 userMember = self.mailing_list.get_member(address)
@@ -191,7 +191,7 @@ class ListSummaryView(MailingListView):
                 pass
             else:
                 userSubscribed = True
-                subscribed_address.append(address)
+                subscribed_address = address
         return render_to_response(
             'postorius/lists/summary.html',
             {'list': self.mailing_list,
@@ -215,8 +215,8 @@ class ListSubsribeView(MailingListView):
                 email = request.POST.get('email')
                 self.mailing_list.subscribe(email)
                 messages.success(
-                    request, 'You are subscribed to %s.' %
-                    self.mailing_list.fqdn_listname)
+                    request, 'You are subscribed to %s using your %s address' %
+                    (self.mailing_list.fqdn_listname, email))
             else:
                 messages.error(request, 'Something went wrong. '
                                'Please try again.')
