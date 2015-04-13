@@ -188,7 +188,7 @@ class ListSummaryView(MailingListView):
             context_instance=RequestContext(request))
 
 
-class ListSubsribeView(MailingListView):
+class ListSubscribeView(MailingListView):
 
     """Subscribe a mailing list."""
 
@@ -231,7 +231,7 @@ class ListUnsubscribeView(MailingListView):
         return redirect('list_summary', self.mailing_list.list_id)
 
 
-class ListMassSubsribeView(MailingListView):
+class ListMassSubscribeView(MailingListView):
 
     """Mass subscription."""
 
