@@ -296,7 +296,7 @@ class ListMassRemovalView(MailingListView):
                     return utils.render_api_error(request)
                 except HTTPError, e:
                     messages.error(request, e)
-		except ValueError, e:
+                except ValueError, e:
                     messages.error(request, e)
                 except ValidationError:
                     messages.error(request,
