@@ -261,8 +261,8 @@ class AddressConfirmationProfile(models.Model):
         The following settings are recognized:
 
             >>> EMAIL_CONFIRMATION_TEMPLATE = 'postorius/address_confirmation_message.txt'
-            >>> EMAIL_CONFIRMATION_FROM = 'Confirmation needed'
-            >>> EMAIL_CONFIRMATION_SUBJECT = 'postmaster@list.org'
+            >>> EMAIL_CONFIRMATION_FROM = 'postmaster@list.org'
+            >>> EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
 
         :param request: The HTTP request object.
         :type request: HTTPRequest 
