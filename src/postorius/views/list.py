@@ -22,10 +22,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
 from django.core.urlresolvers import reverse
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from urllib2 import HTTPError
@@ -190,7 +190,7 @@ class ListSummaryView(MailingListView):
             context_instance=RequestContext(request))
 
 
-class ListSubsribeView(MailingListView):
+class ListSubscribeView(MailingListView):
 
     """Subscribe a mailing list."""
 
@@ -233,11 +233,11 @@ class ListUnsubscribeView(MailingListView):
         return redirect('list_summary', self.mailing_list.list_id)
 
 
-class ListMassSubsribeView(MailingListView):
+class ListMassSubscribeView(MailingListView):
 
     """Mass subscription."""
 
-    @method_decorator(list_moderator_required)
+    @method_decorator(list_owner_required)
     def get(self, request, *args, **kwargs):
         form = ListMassSubscription()
         return render_to_response('postorius/lists/mass_subscribe.html',
@@ -252,7 +252,7 @@ class ListMassSubsribeView(MailingListView):
             emails = request.POST["emails"].splitlines()
             for email in emails:
                 try:
-	            validate_email(email)
+                    validate_email(email)
                     self.mailing_list.subscribe(address=email)
                     messages.success(request,
                                    'The address %s has been subscribed to %s.' %
@@ -266,7 +266,6 @@ class ListMassSubsribeView(MailingListView):
                                    'The email address %s is not valid.' %
                                    email)
         return redirect('mass_subscribe', self.mailing_list.list_id)
-
 
 def _get_choosable_domains(request):
     try:
