@@ -22,11 +22,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
 from django.core.urlresolvers import reverse
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
-
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from urllib2 import HTTPError
@@ -191,7 +190,7 @@ class ListSummaryView(MailingListView):
             context_instance=RequestContext(request))
 
 
-class ListSubsribeView(MailingListView):
+class ListSubscribeView(MailingListView):
 
     """Subscribe a mailing list."""
 
@@ -233,7 +232,8 @@ class ListUnsubscribeView(MailingListView):
             messages.error(request, e)
         return redirect('list_summary', self.mailing_list.list_id)
 
-class ListMassSubsribeView(MailingListView):
+
+class ListMassSubscribeView(MailingListView):
 
     """Mass subscription."""
 
@@ -251,23 +251,22 @@ class ListMassSubsribeView(MailingListView):
         else:
             emails = request.POST["emails"].splitlines()
             for email in emails:
-                parts = email.split('@')
-                if len(parts) != 2 or '.' not in parts[1]:
+                try:
+                    validate_email(email)
+                    self.mailing_list.subscribe(address=email)
+                    messages.success(request,
+                                   'The address %s has been subscribed to %s.' %
+                                    (email, self.mailing_list.fqdn_listname))
+                except MailmanApiError:
+                    return utils.render_api_error(request)
+                except HTTPError, e:
+                    messages.error(request, e)
+                except ValidationError:
                     messages.error(request,
                                    'The email address %s is not valid.' %
                                    email)
-                else:
-                    try:
-                        self.mailing_list.subscribe(address=email)
-                        messages.success(
-                            request,
-                            'The address %s has been subscribed to %s.' %
-                            (email, self.mailing_list.fqdn_listname))
-                    except MailmanApiError:
-                        return utils.render_api_error(request)
-                    except HTTPError, e:
-                        messages.error(request, e)
         return redirect('mass_subscribe', self.mailing_list.list_id)
+
 
 class ListMassRemovalView(MailingListView):
 
@@ -304,6 +303,7 @@ class ListMassRemovalView(MailingListView):
                                   'The email address %s is not valid.' %
                                   email)
         return redirect('mass_removal', self.mailing_list.list_id)
+
 
 def _get_choosable_domains(request):
     try:
@@ -511,7 +511,8 @@ def list_delete(request, list_id):
             context_instance=RequestContext(request))
 
 
-@list_owner_required
+ 
+@list_moderator_required
 def list_held_messages(request, list_id):
     """Shows a list of held messages.
     """
@@ -524,7 +525,7 @@ def list_held_messages(request, list_id):
                               context_instance=RequestContext(request))
 
 
-@list_owner_required
+@list_moderator_required
 def accept_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
@@ -540,7 +541,7 @@ def accept_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
-@list_owner_required
+@list_moderator_required
 def discard_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
@@ -556,7 +557,7 @@ def discard_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
-@list_owner_required
+@list_moderator_required
 def defer_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
@@ -572,7 +573,7 @@ def defer_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
-@list_owner_required
+@list_moderator_required
 def reject_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
