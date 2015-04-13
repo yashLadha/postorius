@@ -6,7 +6,7 @@
 {% block body_class %}list_summary{% endblock %}
 
 {% block main %}
-    {% if user.is_superuser %}
+    {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
         {% include 'postorius/menu/list_nav.html' %}
     {% endif %}
     <h1>{{list.display_name}}</h1>

@@ -474,7 +474,8 @@ def list_delete(request, list_id):
             context_instance=RequestContext(request))
 
 
-@list_owner_required
+ 
+@list_moderator_required
 def list_held_messages(request, list_id):
     """Shows a list of held messages.
     """
@@ -487,7 +488,7 @@ def list_held_messages(request, list_id):
                               context_instance=RequestContext(request))
 
 
-@list_owner_required
+@list_moderator_required
 def accept_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
@@ -503,7 +504,7 @@ def accept_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
-@list_owner_required
+@list_moderator_required
 def discard_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
@@ -519,7 +520,7 @@ def discard_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
-@list_owner_required
+@list_moderator_required
 def defer_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
@@ -535,7 +536,7 @@ def defer_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
-@list_owner_required
+@list_moderator_required
 def reject_held_message(request, list_id, msg_id):
     """Accepts a held message.
     """
