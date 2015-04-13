@@ -22,6 +22,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
 from django.core.urlresolvers import reverse
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
@@ -249,22 +251,20 @@ class ListMassSubsribeView(MailingListView):
         else:
             emails = request.POST["emails"].splitlines()
             for email in emails:
-                parts = email.split('@')
-                if len(parts) != 2 or '.' not in parts[1]:
+                try:
+	            validate_email(email)
+                    self.mailing_list.subscribe(address=email)
+                    messages.success(request,
+                                   'The address %s has been subscribed to %s.' %
+                                    (email, self.mailing_list.fqdn_listname))
+                except MailmanApiError:
+                    return utils.render_api_error(request)
+                except HTTPError, e:
+                    messages.error(request, e)
+                except ValidationError:
                     messages.error(request,
                                    'The email address %s is not valid.' %
                                    email)
-                else:
-                    try:
-                        self.mailing_list.subscribe(address=email)
-                        messages.success(
-                            request,
-                            'The address %s has been subscribed to %s.' %
-                            (email, self.mailing_list.fqdn_listname))
-                    except MailmanApiError:
-                        return utils.render_api_error(request)
-                    except HTTPError, e:
-                        messages.error(request, e)
         return redirect('mass_subscribe', self.mailing_list.list_id)
 
 

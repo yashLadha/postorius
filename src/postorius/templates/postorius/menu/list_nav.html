@@ -15,7 +15,7 @@
         {% if user.is_superuser or user.is_list_owner %}
             <li class="mm_nav_item"><a class="{% nav_active_class current 'list_settings' %}" href="{% url 'list_settings' list.list_id %}">{% trans "Settings" %}</a></li>
         {% endif %}
-        {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
+        {% if user.is_superuser or user.is_list_owner %}
             <li class="mm_nav_item"><a class="{% nav_active_class current 'mass_subscribe' %}" href="{% url 'mass_subscribe' list.list_id %}">{% trans "Mass Subscribe" %}</a></li>
         {% endif %}
         {% if user.is_superuser or user.is_list_owner %}
