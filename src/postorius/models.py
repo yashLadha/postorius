@@ -228,7 +228,7 @@ class AddressConfirmationProfile(models.Model):
 
     def __unicode__(self):
         return u'Address Confirmation Profile for {0}'.format(self.email)
-    
+
     @property
     def is_expired(self):
         """
@@ -266,9 +266,9 @@ class AddressConfirmationProfile(models.Model):
             >>> EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
 
         :param request: The HTTP request object.
-        :type request: HTTPRequest 
+        :type request: HTTPRequest
         :param template_context: The context used when rendering the template.
-            Falls back to host url and activation link. 
+            Falls back to host url and activation link.
         :type template_context: django.template.Context
         """
         # create the host url and the activation link need for the template
@@ -277,7 +277,7 @@ class AddressConfirmationProfile(models.Model):
         url = reverse('address_activation_link',
                       kwargs={'activation_key': self.activation_key})
         activation_link = '{0}{1}'.format(host_url, url)
-        # Detect the right template path, either from the param, 
+        # Detect the right template path, either from the param,
         # the setting or the default
         if not template_path:
             template_path = getattr(settings,
@@ -296,7 +296,7 @@ class AddressConfirmationProfile(models.Model):
             # settings.EMAIL_CONFIRMATION_FROM is not defined, fallback
             # settings.DEFAULT_EMAIL_FROM as mentioned in the django
             # docs. If that also fails, raise a `ImproperlyConfigured` Error.
-            try: 
+            try:
                 sender_address = getattr(settings, 'DEFAULT_FROM_EMAIL')
             except AttributeError:
                 raise ImproperlyConfigured
