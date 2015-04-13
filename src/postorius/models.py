@@ -295,10 +295,12 @@ class AddressConfirmationProfile(models.Model):
         except AttributeError:
             # settings.EMAIL_CONFIRMATION_FROM is not defined, fallback
             # settings.DEFAULT_EMAIL_FROM as mentioned in the django
-            # docs. At the end just raise a `ImproperlyConfigured` Error.
-            sender_address = getattr(settings, 'DEFAULT_FROM_EMAIL')
-        else:
-            raise ImproperlyConfigured
+            # docs. If that also fails, raise a `ImproperlyConfigured` Error.
+            try: 
+                sender_address = getattr(settings, 'DEFAULT_FROM_EMAIL')
+            except AttributeError:
+                raise ImproperlyConfigured
+
         send_mail(email_subject,
                   get_template(template_path).render(template_context),
                   sender_address,
