@@ -26,6 +26,7 @@ import logging
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from django.db import models
@@ -289,7 +290,16 @@ class AddressConfirmationProfile(models.Model):
                 {'activation_link': activation_link, 'host_url': host_url})
         email_subject = getattr(
             settings, 'EMAIL_CONFIRMATION_SUBJECT', u'Confirmation needed')
+        try:
+            sender_address = getattr(settings, 'EMAIL_CONFIRMATION_FROM')
+        except AttributeError:
+            # settings.EMAIL_CONFIRMATION_FROM is not defined, fallback
+            # settings.DEFAULT_EMAIL_FROM as mentioned in the django
+            # docs. At the end just raise a `ImproperlyConfigured` Error.
+            sender_address = getattr(settings, 'DEFAULT_FROM_EMAIL')
+        else:
+            raise ImproperlyConfigured
         send_mail(email_subject,
                   get_template(template_path).render(template_context),
-                  getattr(settings, 'EMAIL_CONFIRMATION_FROM'),
+                  sender_address,
                   [self.email])
