@@ -17,7 +17,6 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
@@ -31,8 +30,7 @@ from django.utils.translation import gettext as _
 from urllib2 import HTTPError
 
 from postorius import utils
-from postorius.models import (Domain, List, MailmanUser,
-                              MailmanApiError)
+from postorius.models import (Domain, List, MailmanApiError)
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView
@@ -234,7 +232,6 @@ class ListUnsubscribeView(MailingListView):
 
 
 class ListMassSubscribeView(MailingListView):
-
     """Mass subscription."""
 
     @method_decorator(list_owner_required)
@@ -254,9 +251,10 @@ class ListMassSubscribeView(MailingListView):
                 try:
                     validate_email(email)
                     self.mailing_list.subscribe(address=email)
-                    messages.success(request,
-                                   'The address %s has been subscribed to %s.' %
-                                    (email, self.mailing_list.fqdn_listname))
+                    messages.success(
+                        request,
+                        'The address %s has been subscribed to %s.' %
+                        (email, self.mailing_list.fqdn_listname))
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except HTTPError, e:
@@ -266,6 +264,7 @@ class ListMassSubscribeView(MailingListView):
                                    'The email address %s is not valid.' %
                                    email)
         return redirect('mass_subscribe', self.mailing_list.list_id)
+
 
 def _get_choosable_domains(request):
     try:
@@ -473,7 +472,6 @@ def list_delete(request, list_id):
             context_instance=RequestContext(request))
 
 
- 
 @list_moderator_required
 def list_held_messages(request, list_id):
     """Shows a list of held messages.
@@ -686,11 +684,11 @@ def list_archival_options(request, list_id):
         if len(to_activate) > 0:
             messages.success(request,
                              _('You activated new archivers for this list: '
-                             '{0}'.format(', '.join(to_activate))))
+                               '{0}'.format(', '.join(to_activate))))
         if len(to_disable) > 0:
             messages.success(request,
                              _('You disabled the following archivers: '
-                             '{0}'.format(', '.join(to_disable))))
+                               '{0}'.format(', '.join(to_disable))))
     enabled = [key for key in archivers.keys() if archivers[key] is True]
     initial = {'archivers': enabled}
     form = ListArchiverForm(initial=initial, archivers=archivers)

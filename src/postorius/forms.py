@@ -20,7 +20,6 @@ from django import forms
 from django.core.validators import validate_email, URLValidator
 from django.utils.translation import gettext_lazy as _
 from fieldset_forms import FieldsetForm
-from django.forms.models import modelformset_factory
 
 
 class DomainNew(FieldsetForm):
@@ -927,5 +926,6 @@ class AddressActivationForm(forms.Form):
         email = cleaned_data.get('email')
         user_email = cleaned_data.get('user_email')
         if email == user_email:
-            raise forms.ValidationError(_('Please provide a different email address than your own.'))
+            raise forms.ValidationError(_('Please provide a different email '
+                                          'address than your own.'))
         return cleaned_data
