@@ -681,7 +681,7 @@ class ListArchiverForm(forms.Form):
         archiver_choices = sorted([(key, key) for key in archivers.keys()]) 
         self.fields['archivers'] = forms.MultipleChoiceField(
             widget=forms.CheckboxSelectMultiple,
-            label=_('Choose the Archivers for this list'),
+            label=_('Activate archivers for this list'),
             choices=archiver_choices)
 
 

@@ -683,6 +683,14 @@ def list_archival_options(request, list_id):
         for arc in to_disable:
             archivers[arc] = False
         archivers = m_list.archivers
+        if len(to_activate) > 0:
+            messages.success(request,
+                             _('New archivers activated for this list: '
+                             '{0}'.format(', '.join(to_activate))))
+        if len(to_disable) > 0:
+            messages.success(request,
+                             _('Archivers disabled for this list: '
+                             '{0}'.format(', '.join(to_disable))))
     enabled = [key for key in archivers.keys() if archivers[key] is True]
     initial = {'archivers': enabled}
     form = ListArchiverForm(initial=initial, archivers=archivers)
