@@ -549,6 +549,18 @@ def reject_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
+def list_subscription_requests(request, list_id):
+    """Shows a list of held messages.
+    """
+    try:
+        m_list = utils.get_client().get_list(list_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    return render_to_response('postorius/lists/subscription_requests.html',
+                              {'list': m_list},
+                              context_instance=RequestContext(request))
+
+
 @list_owner_required
 def list_settings(request, list_id=None, visible_section=None,
                   visible_option=None,
