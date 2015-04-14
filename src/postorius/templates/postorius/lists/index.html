@@ -17,24 +17,32 @@
         </p>
     {% endif %}
 
-    <table class="table table-bordered table-striped">
-    	<thead>
-    		<tr>
-    			<th>{% trans 'List name' %}</th>
-    			<th>{% trans 'List address' %}</th>
-    			<th>{% trans 'Description' %}</th>
-    		</tr>
-    	</thead>
-    	<tbody>
-            {% for list in lists %}
-    		<tr>
-    			<td>
-                    <a href="{% url 'list_summary' list_id=list.list_id %}">{{ list.display_name }}</a>
-                </td>
-    			<td>{{ list.fqdn_listname }}</td>
-    			<td>{{ list.settings.description }}</td>
-    		</tr>
-            {% endfor %}
-    	</tbody>
-    </table>
+    {% if lists|length > 0 %}
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>{% trans 'List name' %}</th>
+                    <th>{% trans 'List address' %}</th>
+                    <th>{% trans 'Description' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for list in lists %}
+                <tr>
+                    <td>
+                        <a href="{% url 'list_summary' list_id=list.list_id %}">{{ list.display_name }}</a>
+                    </td>
+                    <td>{{ list.fqdn_listname }}</td>
+                    <td>{{ list.settings.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+
+        <p>There are currently no mailing lists.</p>
+
+    {% endif %}
 {% endblock main %}
