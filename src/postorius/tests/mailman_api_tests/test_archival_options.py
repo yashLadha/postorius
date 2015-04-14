@@ -23,11 +23,12 @@ from __future__ import (
 __metaclass__ = type
 
 
+import mock
 import logging
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import Client, TestCase
+from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
 from urllib2 import HTTPError
 
@@ -35,6 +36,7 @@ from postorius.forms import ListArchiverForm
 from postorius.tests import MM_VCR
 from postorius.tests.mailman_api_tests import API_CREDENTIALS
 from postorius.utils import get_client
+from postorius.views.list import _add_archival_messages
 
 
 logger = logging.getLogger(__name__)
@@ -134,3 +136,33 @@ class ArchivalOptions(TestCase):
                 reverse('list_archival_options', args=('test_list.example.com', )),
                 {'archivers': ['mail-archive']})
             self.assertTrue(self.m_list.archivers['mail-archive'])
+
+
+class ArchivalMessagesTest(TestCase):
+    """
+    Tests the ``_add_archival_messages`` helper method.
+    """
+
+    def setUp(self):
+        factory = RequestFactory()
+        self.request = factory.get('/')
+
+    @mock.patch('django.contrib.messages.success')
+    @mock.patch('django.contrib.messages.warning')
+    def test_warning_messages(self, mock_warning, mock_success):
+        # foo-archiver enabled, but not stored adds warning message.
+        _add_archival_messages(['foo-archiver'], [], {'foo-archiver': False}, self.request)
+        self.assertTrue('could not be enabled' in mock_warning.call_args[0][1])
+        self.assertTrue('foo-archiver' in mock_warning.call_args[0][1])
+        # messages.success should not have been called.
+        self.assertEqual(mock_success.call_count, 0)
+        
+    @mock.patch('django.contrib.messages.success')
+    @mock.patch('django.contrib.messages.warning')
+    def test_success_messages(self, mock_warning, mock_success):
+        # foo-archiver enabled and stored adds success message.
+        _add_archival_messages(['foo-archiver'], [], {'foo-archiver': True}, self.request)
+        self.assertTrue('activated new archivers' in mock_success.call_args[0][1])
+        self.assertTrue('foo-archiver' in mock_success.call_args[0][1])
+        # messages.warning should not have been called.
+        self.assertEqual(mock_warning.call_count, 0)

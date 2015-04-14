@@ -659,6 +659,42 @@ def remove_role(request, list_id=None, role=None, address=None,
                               context_instance=RequestContext(request))
 
 
+def _add_archival_messages(to_activate, to_disable, after_submission,
+                           request):
+    """
+    Add feedback messages to session, depending on previously set archivers.
+    """
+    # There are archivers to enable.
+    if len(to_activate) > 0:
+        # If the archiver shows up in the data set *after* the update, 
+        # we can show a success message.
+        activation_postponed = []
+        activation_success = []
+        for archiver in to_activate:
+            if after_submission[archiver] == True:
+                activation_success.append(archiver)
+            else:
+                activation_postponed.append(archiver)
+        # If archivers couldn't be updated, show a message:
+        if len(activation_postponed) > 0:
+            messages.warning(request,
+                             _('Some archivers could not be enabled, probably '
+                               'because they are not enabled in the Mailman '
+                               'configuration. They will be enabled for '
+                               'this list, if the archiver is enabled in the '
+                               'Mailman configuration. {0}.'
+                               ''.format(', '.join(activation_postponed))))
+        if len(activation_success) > 0:
+            messages.success(request,
+                             _('You activated new archivers for this list: '
+                               '{0}'.format(', '.join(activation_success))))
+    # There are archivers to disable.
+    if len(to_disable) > 0:
+        messages.success(request,
+                         _('You disabled the following archivers: '
+                           '{0}'.format(', '.join(to_disable))))
+
+
 @list_owner_required
 def list_archival_options(request, list_id):
     """
@@ -683,18 +719,11 @@ def list_archival_options(request, list_id):
         for arc in to_disable:
             archivers[arc] = False
 
-        # Add feedback messages to session.
-        if len(to_activate) > 0:
-            messages.success(request,
-                             _('You activated new archivers for this list: '
-                               '{0}'.format(', '.join(to_activate))))
-        if len(to_disable) > 0:
-            messages.success(request,
-                             _('You disabled the following archivers: '
-                               '{0}'.format(', '.join(to_disable))))
-
         # Re-cache list of archivers after update.
         archivers = m_list.archivers
+
+        # Show success/error messages.
+        _add_archival_messages(to_activate, to_disable, archivers, request)
 
     # Instantiate form with current archiver data.
     initial = {'archivers': [key for key in archivers.keys()
