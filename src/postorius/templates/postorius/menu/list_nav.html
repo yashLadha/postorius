@@ -19,6 +19,9 @@
             <li class="mm_nav_item"><a class="{% nav_active_class current 'mass_subscribe' %}" href="{% url 'mass_subscribe' list.list_id %}">{% trans "Mass Subscribe" %}</a></li>
         {% endif %}
         {% if user.is_superuser or user.is_list_owner %}
+            <li class="mm_nav_item"><a class="{% nav_active_class current 'list_archival_options' %}" href="{% url 'list_archival_options' list.list_id %}">{% trans "Archivers" %}</a></li>
+        {% endif %}
+        {% if user.is_superuser or user.is_list_owner %}
             <li class="mm_nav_item"><a class="{% nav_active_class current 'list_delete' %}" href="{% url 'list_delete' list.list_id %}">{% trans "Delete List" %}</a></li>
         {% endif %}
     </ul>
