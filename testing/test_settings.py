@@ -149,13 +149,6 @@ def username(email):
     return email.rsplit('@', 1)[0]
 BROWSERID_USERNAME_ALGO = username
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-package=postorius',
-    '--cover-erase',
-    '--cover-html',
-]
 
 # Set VCR_RECORD_MODE to 'all' to re-record all API responses.
 # (Remember to use an empty mailman database!)

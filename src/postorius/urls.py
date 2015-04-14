@@ -42,7 +42,7 @@ per_list_urlpatterns = patterns('postorius.views',
                                     ListSummaryView.as_view(
                                     ), name='list_summary'),
                                 url(r'^subscribe$',
-                                    ListSubsribeView.as_view(
+                                    ListSubscribeView.as_view(
                                     ), name='list_subscribe'),
                                 url(r'^unsubscribe/(?P<email>[^/]+)$',
                                     ListUnsubscribeView.as_view(
@@ -51,7 +51,7 @@ per_list_urlpatterns = patterns('postorius.views',
                                     'list_subscriptions',
                                     name='list_subscriptions'),
                                 url(r'^mass_subscribe/$',
-                                    ListMassSubsribeView.as_view(
+                                    ListMassSubscribeView.as_view(
                                     ), name='mass_subscribe'),
                                 url(r'^delete$',
                                     'list_delete', name='list_delete'),
@@ -77,13 +77,17 @@ per_list_urlpatterns = patterns('postorius.views',
                                     '(?:/(?P<visible_option>.*))?$',
                                     'list_settings',
                                     name='list_settings'),
+                                url(r'^archival_options$',
+                                    'list_archival_options',
+                                    name='list_archival_options'),
                                 )
 
 urlpatterns = patterns(
     'postorius.views',
     (r'^$', 'list_index'),
     # /account/
-    url(r'^accounts/login/$', login_view, {"template_name": "postorius/login.html"}, name='user_login'),
+    url(r'^accounts/login/$', login_view,
+        {"template_name": "postorius/login.html"}, name='user_login'),
     url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
     url(r'^accounts/profile/$', 'user_profile', name='user_profile'),
     url(r'^tasks/$', 'user_tasks', name='user_tasks'),
