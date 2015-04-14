@@ -13,7 +13,6 @@
 
 	<link rel="stylesheet" href="{% static 'postorius/css/bootstrap.css' %}">
 	<link rel="stylesheet" href="{% static 'postorius/css/style.css' %}">
-
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
@@ -46,7 +45,7 @@
         {% if messages %}
             <ul class="mm_messages">
             {% for message in messages %}
-                <li class="alert {% if message.tags %} class="{{ message.tags }}"{% endif %}">{{ message }}</li>
+                <li class="alert {% if message.tags %} {{ message.tags }}{% endif %}">{{ message }}</li>
             {% endfor %}
             </ul>
 	{% endif %}

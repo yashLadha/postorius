@@ -20,7 +20,6 @@ from django import forms
 from django.core.validators import validate_email, URLValidator
 from django.utils.translation import gettext_lazy as _
 from fieldset_forms import FieldsetForm
-from django.forms.models import modelformset_factory
 
 
 class DomainNew(FieldsetForm):
@@ -672,6 +671,20 @@ class ListSettings(FieldsetForm):
         ]
 
 
+class ListArchiverForm(forms.Form):
+    """
+    Select archivers for a list.
+    """
+    archivers = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        label=_('Activate archivers for this list'))
+
+    def __init__(self, archivers, *args, **kwargs):
+        super(ListArchiverForm, self).__init__(*args, **kwargs)
+        self.fields['archivers'].choices = sorted(
+            [(key, key) for key in archivers.keys()])
+
+
 class Login(FieldsetForm):
 
     """Form fields to let the user log in.
@@ -913,5 +926,6 @@ class AddressActivationForm(forms.Form):
         email = cleaned_data.get('email')
         user_email = cleaned_data.get('user_email')
         if email == user_email:
-            raise forms.ValidationError(_('Please provide a different email address than your own.'))
+            raise forms.ValidationError(_('Please provide a different email '
+                                          'address than your own.'))
         return cleaned_data
