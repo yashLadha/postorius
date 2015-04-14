@@ -7,11 +7,17 @@
     {% if message %}<p class="alert">{{ message }}</p>{% endif %}
     {% list_nav 'list_archival_options' 'Archives' %}
 
-    <h2>Archival Options</h2>
+    <h2>{% trans 'Archival Options' %}</h2>
 
-    <form action="{% url 'list_archival_options' list.list_id %}" method="POST">{% csrf_token %}
-        {{ form }}
-        <button type="submit">{% trans 'Send' %}</button>
-    </form>
+    <div class="well">
+        
+        <form action="{% url 'list_archival_options' list.list_id %}" method="POST">{% csrf_token %}
+            <div class="archival-options-form">
+                {{ form }}
+            </div>
+            <button class="btn btn-primary" type="submit">{% trans 'Save Archivers' %}</button>
+        </form>
+
+    </div>
 
 {% endblock %}
