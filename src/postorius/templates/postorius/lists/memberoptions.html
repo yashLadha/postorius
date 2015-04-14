@@ -1,10 +1,11 @@
 {% extends postorius_base_template %}
+{% block title %}{{ "Member Options | "|add:user.username}}{% endblock %}
 {% load url from future %}
 {% load i18n %}
 {% load nav_helpers %}
 
 {% block main %}
-    {% list_nav '' '' %}
+    {% list_nav '' 'Member Options' %}
 
 {% if not user.is_superuser or not user.is_list_owner %}
     <div class="mm_subHeader" >
