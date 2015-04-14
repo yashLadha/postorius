@@ -77,6 +77,9 @@ per_list_urlpatterns = patterns('postorius.views',
                                     '(?:/(?P<visible_option>.*))?$',
                                     'list_settings',
                                     name='list_settings'),
+                                url(r'^archival_options$',
+                                    'list_archival_options',
+                                    name='list_archival_options'),
                                 )
 
 urlpatterns = patterns(

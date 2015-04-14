@@ -1,0 +1,17 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+{% load nav_helpers %}
+
+{% block main %}
+    {% if message %}<p class="alert">{{ message }}</p>{% endif %}
+    {% list_nav 'list_archival_options' 'Archives' %}
+
+    <h2>Archival Options</h2>
+
+    <form action="{% url 'list_archival_options' list.list_id %}" method="POST">{% csrf_token %}
+        {{ form }}
+        <button type="submit">{% trans 'Send' %}</button>
+    </form>
+
+{% endblock %}

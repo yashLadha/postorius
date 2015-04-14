@@ -672,6 +672,19 @@ class ListSettings(FieldsetForm):
         ]
 
 
+class ListArchiverForm(forms.Form):
+    """
+    Select archivers for a list.
+    """
+    def __init__(self, archivers, *args, **kwargs):
+        super(ListArchiverForm, self).__init__(*args, **kwargs)
+        archiver_choices = sorted([(key, key) for key in archivers.keys()]) 
+        self.fields['archivers'] = forms.MultipleChoiceField(
+            widget=forms.CheckboxSelectMultiple,
+            label=_('Choose the Archivers for this list'),
+            choices=archiver_choices)
+
+
 class Login(FieldsetForm):
 
     """Form fields to let the user log in.

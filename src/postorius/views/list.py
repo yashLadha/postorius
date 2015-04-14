@@ -659,3 +659,35 @@ def remove_role(request, list_id=None, role=None, address=None,
                               {'role': role, 'address': address,
                                'list_id': the_list.list_id},
                               context_instance=RequestContext(request))
+
+
+@list_owner_required
+def list_archival_options(request, list_id):
+    """
+    Activate or deactivate list archivers.
+    """
+    # Get the list and cache the archivers property.
+    m_list = utils.get_client().get_list(list_id)
+    archivers = m_list.archivers
+    if request.method == 'POST':
+        # Make a list if active archivers to make comparing easier
+        current = [key for key in archivers.keys() if archivers[key]]
+        posted = request.POST.getlist('archivers')
+        # These should be activated
+        to_activate = [arc for arc in posted if arc not in current]
+        for arc in to_activate:
+            archivers[arc] = True
+        # These should be disabled
+        to_disable = [arc for arc in current if arc not in posted and
+                      arc in current]
+        for arc in to_disable:
+            archivers[arc] = False
+        archivers = m_list.archivers
+    enabled = [key for key in archivers.keys() if archivers[key] is True]
+    initial = {'archivers': enabled}
+    form = ListArchiverForm(initial=initial, archivers=archivers)
+    return render_to_response('postorius/lists/archival_options.html',
+                              {'list': m_list,
+                               'form': form,
+                               'archivers': archivers},
+                              context_instance=RequestContext(request))
