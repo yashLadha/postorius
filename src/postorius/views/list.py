@@ -667,10 +667,12 @@ def list_archival_options(request, list_id):
     # Get the list and cache the archivers property.
     m_list = utils.get_client().get_list(list_id)
     archivers = m_list.archivers
+
+    # Process form submission.
     if request.method == 'POST':
-        # Make a list if active archivers to make comparing easier
         current = [key for key in archivers.keys() if archivers[key]]
         posted = request.POST.getlist('archivers')
+
         # These should be activated
         to_activate = [arc for arc in posted if arc not in current]
         for arc in to_activate:
@@ -680,7 +682,8 @@ def list_archival_options(request, list_id):
                       arc in current]
         for arc in to_disable:
             archivers[arc] = False
-        archivers = m_list.archivers
+
+        # Add feedback messages to session.
         if len(to_activate) > 0:
             messages.success(request,
                              _('You activated new archivers for this list: '
@@ -689,9 +692,15 @@ def list_archival_options(request, list_id):
             messages.success(request,
                              _('You disabled the following archivers: '
                                '{0}'.format(', '.join(to_disable))))
-    enabled = [key for key in archivers.keys() if archivers[key] is True]
-    initial = {'archivers': enabled}
+
+        # Re-cache list of archivers after update.
+        archivers = m_list.archivers
+
+    # Instantiate form with current archiver data.
+    initial = {'archivers': [key for key in archivers.keys()
+                             if archivers[key] is True]}
     form = ListArchiverForm(initial=initial, archivers=archivers)
+
     return render_to_response('postorius/lists/archival_options.html',
                               {'list': m_list,
                                'form': form,
