@@ -1,7 +1,10 @@
 {% extends postorius_base_template %}
-{% block title %}{{ "Subscribe | "|add:list.fqdn_listname}}{% endblock %}
 {% load url from future %}
 {% load i18n %}
+
+{% block subtitle %}
+{% trans "Subscribe | " as page_title %}{{ page_title|add:list.fqdn_listname }}
+{% endblock %}
 
 {% block main %}
     <h1>{% trans 'Subscribe' %} <span>{{ list.fqdn_listname}}</span></h1>

@@ -1,7 +1,11 @@
 {% extends postorius_base_template %}
-{% block title %}{{ "Info | "|add:list.fqdn_listname}}{% endblock %}
 {% load url from future %}
 {% load i18n %}
+
+{% block subtitle %}
+{% trans "Info | " as page_title %}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
 {% load nav_helpers %}
 
 {% block body_class %}list_summary{% endblock %}
