@@ -560,6 +560,25 @@ def list_subscription_requests(request, list_id):
                               {'list': m_list},
                               context_instance=RequestContext(request))
 
+def handle_subscription_request(request, list_id, request_id, action):
+    """
+    Handle a subscription request. Possible actions:
+        - accept
+        - defer
+        - reject
+        - discard
+    """
+    try:
+        m_list = utils.get_client().get_list(list_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+
+    messages.success(request, 'The message has been rejected.')
+
+    return redirect('list_subscription_requests', the_list.list_id)
+
+    
+
 
 SETTINGS_SECTION_NAMES = (
     ('list_identity', _('List Identity')),
@@ -620,7 +639,7 @@ def list_settings(request, list_id=None, visible_section=None,
     else:
         template='postorius/lists/settings_legacy.html'
         if visible_section is None:
-            visible_section = 'List Identity'
+            visible_section = 'list_identity'
         form_sections = []
         # collect all Form sections for the links:
         temp = ListSettings('', '')
