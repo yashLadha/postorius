@@ -49,7 +49,7 @@ class DomainNew(FieldsetForm):
         try:
             validate_email('mail@' + mail_host)
         except:
-            raise forms.ValidationError(_("Enter a valid Mail Host"))
+            raise forms.ValidationError(_("Please enter a valid domain name"))
         return mail_host
 
     def clean_web_host(self):
@@ -57,7 +57,7 @@ class DomainNew(FieldsetForm):
         try:
             URLValidator()(web_host)
         except:
-            raise forms.ValidationError(_("Please enter a valid Web Host"))
+            raise forms.ValidationError(_("Please enter a valid domain name"))
         return web_host
 
     class Meta:
