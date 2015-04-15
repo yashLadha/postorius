@@ -15,7 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
+
+from django.conf import settings
+from django.core.urlresolvers import reverse, NoReverseMatch
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +35,16 @@ def postorius(request):
     else:
         template_to_extend = "postorius/base.html"
 
+    # Find the HyperKitty URL if installed
+    hyperkitty_url = False
+    if "hyperkitty" in settings.INSTALLED_APPS:
+        try:
+            hyperkitty_url = reverse("hk_root")
+        except NoReverseMatch:
+            pass
+
     return {
         'postorius_base_template': template_to_extend,
         'request': request,
+        'hyperkitty_url': hyperkitty_url,
     }

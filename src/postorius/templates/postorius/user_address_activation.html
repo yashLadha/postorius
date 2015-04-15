@@ -2,6 +2,10 @@
 {% load url from future %}
 {% load i18n %}
 
+{% block subtitle %}
+{% trans "Add Email | " as page_title %}{{ page_title|add:user.username }}
+{% endblock %}
+
 {% block main %}
     {% include 'postorius/menu/user_nav.html' %}
 

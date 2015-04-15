@@ -72,7 +72,8 @@ def domain_new(request):
         if form.is_valid():
             domain = Domain(mail_host=form.cleaned_data['mail_host'],
                             base_url=form.cleaned_data['web_host'],
-                            description=form.cleaned_data['description'])
+                            description=form.cleaned_data['description'],
+                            owner=request.user.email)
             try:
                 domain.save()
             except MailmanApiError:

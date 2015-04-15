@@ -20,9 +20,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
-1.0.0
-=====
-(2015-04-xx)
+1.0 beta 2
+==========
+(2015-04-15)
 
 * French translation. Provided by Guillaume Libersat
 * Addedd an improved test harness using WebTest. Contributed by Aurélien Bompard.

@@ -4,19 +4,19 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
-      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b1']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b2']
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test_list.example.com
   response:
-    body: {string: !!python/unicode '{"member_count": 0, "list_name": "test_list",
-        "self_link": "http://localhost:9001/3.0/lists/test_list.example.com", "display_name":
-        "Test_list", "list_id": "test_list.example.com", "fqdn_listname": "test_list@example.com",
-        "volume": 1, "http_etag": "\"3f02dac6cf71a3be179af5064b09ce668186e785\"",
-        "mail_host": "example.com"}'}
+    body: {string: !!python/unicode '{"fqdn_listname": "test_list@example.com", "list_id":
+        "test_list.example.com", "http_etag": "\"3f02dac6cf71a3be179af5064b09ce668186e785\"",
+        "list_name": "test_list", "self_link": "http://localhost:9001/3.0/lists/test_list.example.com",
+        "volume": 1, "display_name": "Test_list", "mail_host": "example.com", "member_count":
+        0}'}
     headers:
       content-length: ['324']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 14 Apr 2015 14:06:43 GMT']
+      date: ['Wed, 15 Apr 2015 20:00:39 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -24,32 +24,48 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
-      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b1']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b2']
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
-    body: {string: !!python/unicode '{"prototype": true, "http_etag": "\"3dbbbaad592a043938314db0e5249a1ca71d0dc6\"",
-        "mail-archive": true, "mhonarc": true}'}
+    body: {string: !!python/unicode '{"http_etag": "\"dfd159ec866aff2f484eb6399b59057ba112d3e5\"",
+        "prototype": false, "mail-archive": true, "mhonarc": true}'}
     headers:
-      content-length: ['119']
+      content-length: ['120']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 14 Apr 2015 14:06:43 GMT']
+      date: ['Wed, 15 Apr 2015 20:00:39 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
-    body: mail-archive=False&prototype=True&mhonarc=True
+    body: mhonarc=True&mail-archive=True&prototype=True
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b1']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b2']
     method: !!python/unicode 'PUT'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Tue, 14 Apr 2015 14:06:43 GMT']
+      date: ['Wed, 15 Apr 2015 20:00:39 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 204, message: No Content}
+- request:
+    body: mhonarc=True&mail-archive=False&prototype=True
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b2']
+    method: !!python/unicode 'PUT'
+    uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-length: ['0']
+      date: ['Wed, 15 Apr 2015 20:00:39 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 204, message: No Content}
 - request:
@@ -57,16 +73,16 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
-      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b1']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b2']
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
-    body: {string: !!python/unicode '{"prototype": true, "http_etag": "\"9f3e82fa9d7dc70277565c9703a90ad3fbeb9a03\"",
-        "mail-archive": false, "mhonarc": true}'}
+    body: {string: !!python/unicode '{"http_etag": "\"95f97f6e3c57d856b8048a96844ddc64a972f96d\"",
+        "prototype": false, "mail-archive": false, "mhonarc": true}'}
     headers:
-      content-length: ['120']
+      content-length: ['121']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 14 Apr 2015 14:06:43 GMT']
+      date: ['Wed, 15 Apr 2015 20:00:39 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -74,16 +90,16 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
-      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b1']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b2']
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
-    body: {string: !!python/unicode '{"prototype": true, "http_etag": "\"9f3e82fa9d7dc70277565c9703a90ad3fbeb9a03\"",
-        "mail-archive": false, "mhonarc": true}'}
+    body: {string: !!python/unicode '{"http_etag": "\"95f97f6e3c57d856b8048a96844ddc64a972f96d\"",
+        "prototype": false, "mail-archive": false, "mhonarc": true}'}
     headers:
-      content-length: ['120']
+      content-length: ['121']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 14 Apr 2015 14:06:43 GMT']
+      date: ['Wed, 15 Apr 2015 20:00:39 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 version: 1

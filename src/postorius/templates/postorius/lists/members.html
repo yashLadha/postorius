@@ -1,11 +1,15 @@
 {% extends postorius_base_template %}
 {% load url from future %}
 {% load i18n %}
+
+{% block subtitle %}
+{% trans "Members | " as page_title %}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
 {% load nav_helpers %}
 
 {% block main %}
     {% list_nav 'list_members' "List Members" %}
-
     <h2>{% trans "Owners" %}</h2>
 
     {{ owner_form.email.errors }}
@@ -61,7 +65,6 @@
     </table>
 
     <h2>{% trans "Members" %}</h2>
-
     <table class="table table-bordered table-striped">
         <thead>
     		<tr>

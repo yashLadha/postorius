@@ -40,16 +40,13 @@ class DomainNew(FieldsetForm):
     description = forms.CharField(
         label=_('Description'),
         required=False)
-    contact_address = forms.EmailField(
-        label=_('Contact Address'),
-        required=False)
 
     def clean_mail_host(self):
         mail_host = self.cleaned_data['mail_host']
         try:
             validate_email('mail@' + mail_host)
         except:
-            raise forms.ValidationError(_("Enter a valid Mail Host"))
+            raise forms.ValidationError(_("Please enter a valid domain name"))
         return mail_host
 
     def clean_web_host(self):
@@ -57,7 +54,7 @@ class DomainNew(FieldsetForm):
         try:
             URLValidator()(web_host)
         except:
-            raise forms.ValidationError(_("Please enter a valid Web Host"))
+            raise forms.ValidationError(_("Please enter a valid domain name"))
         return web_host
 
     class Meta:
@@ -425,10 +422,19 @@ class ListSettings(FieldsetForm):
     #    label=_('No reply address'),
     #    required=False,
     # )
-    posting_pipeline = forms.CharField(
+    posting_pipeline = forms.ChoiceField(
         label=_('Pipeline'),
+        widget=forms.Select(),
+        required=False,
+        error_messages={
+            'required': _("Please choose a reply-to action.")},
+        choices=(
+            ("default-owner-pipeline", _("default-owner-pipeline")),
+            ("default-posting-pipeline", _("default-posting-pipeline")),
+            ("virgin", _("virgin"))),
         help_text=(
             'Type of pipeline you want to use for this mailing list')
+
     )
     # post_id = forms.IntegerField(
     #    label=_('Post ID'),
@@ -741,6 +747,24 @@ class ListMassSubscription(FieldsetForm):
         included in each.
         """
         layout = [["Mass subscription", "emails"]]
+
+
+class ListMassRemoval(FieldsetForm):
+
+    """Form fields to remove multiple list users.
+    """
+    emails = forms.CharField(
+        label=_('Emails to Unsubscribe'),
+        widget=forms.Textarea,
+    )
+
+    class Meta:
+
+        """
+        Class to define the name of the fieldsets and what should be
+        included in each.
+        """
+        layout = [["Mass Removal", "emails"]]
 
 
 class UserPreferences(FieldsetForm):

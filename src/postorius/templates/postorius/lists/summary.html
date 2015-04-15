@@ -1,6 +1,11 @@
 {% extends postorius_base_template %}
 {% load url from future %}
 {% load i18n %}
+
+{% block subtitle %}
+{% trans "Info | " as page_title %}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
 {% load nav_helpers %}
 
 {% block body_class %}list_summary{% endblock %}
@@ -15,6 +20,14 @@
         <h1>{{list.display_name}} - {{ list.fqdn_listname }}</h1>
         <p>{{list.settings.description }}</p>
 
+        {% if hyperkitty_url %}
+        <h2>{% trans 'Archived messages' %}</h2>
+        {% blocktrans %}
+        To see the prior postings to this list, visit
+        <a href="{{ hyperkitty_url }}">the archives</a>.
+        {% endblocktrans %}
+        {% endif %}
+
         <dl>
             <dt>{% trans 'To contact the list owners, use the following email address:' %}</dt>
             <dd>{{ list.settings.owner_address }}</dd>
@@ -22,6 +35,7 @@
         
     </div>
   
+
     {% if user.is_authenticated %}
 
         {% if userSubscribed %}
@@ -45,4 +59,5 @@
         <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans "Log In" %}</a></p>
 
     {% endif %}
+
 {% endblock %}
