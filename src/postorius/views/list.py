@@ -277,6 +277,7 @@ class ListMassRemovalView(MailingListView):
                                   {'form': form, 'list': self.mailing_list},
                                   context_instance=RequestContext(request))
 
+    @method_decorator(list_owner_required)
     def post(self, request, *args, **kwargs):
         form = ListMassRemoval(request.POST)
         if not form.is_valid():
