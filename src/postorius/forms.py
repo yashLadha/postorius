@@ -597,16 +597,10 @@ class ListSettings(FieldsetForm):
         data = self.cleaned_data['acceptable_aliases']
         return data.splitlines()
 
-    def __init__(self, visible_section, visible_option, *args, **kwargs):
+    def __init__(self, visible_section, *args, **kwargs):
         super(ListSettings, self).__init__(*args, **kwargs)
         # if settings:
         # raise Exception(settings) # debug
-        if visible_option:
-            options = []
-            for option in self.layout:
-                options += option[1:]
-            if visible_option in options:
-                self.layout = [["", visible_option]]
         if visible_section:
             sections = []
             for section in self.layout:
@@ -646,9 +640,9 @@ class ListSettings(FieldsetForm):
         """
         # just a really temporary layout to see that it works. -- Anna
         layout = [
-            ["List Identity", "display_name", "mail_host", "description",
+            ["list_identity", "display_name", "mail_host", "description",
              "advertised", "subject_prefix"],
-            ["Automatic Responses", "autorespond_owner",
+            ["automatic_responses", "autorespond_owner",
              "autoresponse_owner_text", "autorespond_postings",
              "autoresponse_postings_text", "autorespond_requests",
              "autoresponse_request_text", "autoresponse_grace_period",
@@ -656,7 +650,7 @@ class ListSettings(FieldsetForm):
              "welcome_message_uri",
              "admin_immed_notify",
              "admin_notify_mchanges"],
-            ["Alter Messages", "filter_content", "collapse_alternatives",
+            ["alter_messages", "filter_content", "collapse_alternatives",
              "convert_html_to_plaintext", "anonymous_list",
              "include_rfc2369_headers",
              "allow_list_posts",
@@ -664,11 +658,30 @@ class ListSettings(FieldsetForm):
              "reply_to_address",
              "first_strip_reply_to",
              "posting_pipeline"],
-            ["Digest", "digest_size_threshold"],
-            ["Message Acceptance", "acceptable_aliases", "administrivia",
+            ["digest", "digest_size_threshold"],
+            ["message_acceptance", "acceptable_aliases", "administrivia",
              "default_nonmember_action", "default_member_action"],
-            ["Archives", "archive_policy"],
+            ["archiving", "archive_policy"],
         ]
+
+
+SUBSCRIPTION_POLICY_CHOICES = (
+    ('', _('Please Choose')),
+    ('open', _('Open')),
+    ('confirm', _('Confirm')),
+    ('moderate', _('Moderate')),
+    ('confirm_then_moderate', _('Confirm, then moderate')),
+)
+
+
+class ListSubscriptionPolicyForm(forms.Form):
+    """
+    List Settings for subscription policy.
+    """    
+    subscription_policy = forms.ChoiceField(
+        label=_('Subscription Policy'),
+        choices=SUBSCRIPTION_POLICY_CHOICES,
+        help_text=_('Set the subscription policy.'))
 
 
 class ListArchiverForm(forms.Form):

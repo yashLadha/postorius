@@ -561,9 +561,29 @@ def list_subscription_requests(request, list_id):
                               context_instance=RequestContext(request))
 
 
+SETTINGS_SECTION_NAMES = (
+    ('list_identity', _('List Identity')),
+    ('automatic_responses', _('Automatic Responses')),
+    ('alter_messages', _('Alter Messages')),
+    ('digest', _('Digest')),
+    ('message_acceptance', _('Message Acceptance')),
+    ('archiving', _('Archiving')),
+    ('subscription_policy', _('Subscription Policy')),
+)
+
+SETTINGS_FORMS = {
+    'list_identity': None,
+    'automatic_responses': None,
+    'alter_messages': None,
+    'digest': None,
+    'message_acceptance': None,
+    'archiving': None,
+    'subscription_policy': ListSubscriptionPolicyForm,
+}
+
+
 @list_owner_required
 def list_settings(request, list_id=None, visible_section=None,
-                  visible_option=None,
                   template='postorius/lists/settings.html'):
     """
     View and edit the settings of a list.
@@ -576,56 +596,74 @@ def list_settings(request, list_id=None, visible_section=None,
     result in using //option
     """
     message = ""
-    if visible_section is None:
-        visible_section = 'List Identity'
-    form_sections = []
+    # List object.
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
+        m_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
-    # collect all Form sections for the links:
-    temp = ListSettings('', '')
-    for section in temp.layout:
-        try:
-            form_sections.append((section[0],
-                                  temp.section_descriptions[section[0]]))
-        except KeyError:
-            pass
-    del temp
-    # Save a Form Processed by POST
-    if request.method == 'POST':
-        form = ListSettings(visible_section, visible_option, data=request.POST)
-        form.truncate()
-        if form.is_valid():
-            list_settings = the_list.settings
-            for key in form.fields.keys():
-                list_settings[key] = form.cleaned_data[key]
+    list_settings = m_list.settings
+    # List settings are grouped an processed in different forms.
+    form_class = SETTINGS_FORMS.get(visible_section)
+    if form_class:
+        if request.method == 'POST':
+            form = form_class(request.POST)
+            if form.is_valid():
+                for key in form.fields.keys():
+                    list_settings[key] = form.cleaned_data[key]
                 list_settings.save()
-            message = _("The list settings have been updated.")
         else:
-            message = _(
-                "Validation Error - The list settings have not been updated.")
+            form = form_class(initial=list_settings)
+
+
+    # START Legacy section
+    # This really needs to be cleaned up.
     else:
-        # Provide a form with existing values
-        # create form and process layout into form.layout
-        form = ListSettings(visible_section, visible_option, data=None)
-        # create a Dict of all settings which are used in the form
-        used_settings = {}
-        for section in form.layout:
-            for option in section[1:]:
-                used_settings[option] = the_list.settings[option]
-                if option == u'acceptable_aliases':
-                    used_settings[option] = '\n'.join(used_settings[option])
-        # recreate the form using the settings
-        form = ListSettings(visible_section, visible_option,
-                            data=used_settings)
-        form.truncate()
+        template='postorius/lists/settings_legacy.html'
+        if visible_section is None:
+            visible_section = 'List Identity'
+        form_sections = []
+        # collect all Form sections for the links:
+        temp = ListSettings('', '')
+        for section in temp.layout:
+            try:
+                form_sections.append((section[0],
+                                      temp.section_descriptions[section[0]]))
+            except KeyError:
+                pass
+        del temp
+        # Save a Form Processed by POST
+        if request.method == 'POST':
+            form = ListSettings(visible_section, data=request.POST)
+            form.truncate()
+            if form.is_valid():
+                for key in form.fields.keys():
+                    list_settings[key] = form.cleaned_data[key]
+                    list_settings.save()
+                message = _("The list settings have been updated.")
+            else:
+                message = _(
+                    "Validation Error - The list settings have not been updated.")
+        else:
+            # Provide a form with existing values
+            # create form and process layout into form.layout
+            form = ListSettings(visible_section, data=None)
+            # create a Dict of all settings which are used in the form
+            used_settings = {}
+            for section in form.layout:
+                for option in section[1:]:
+                    used_settings[option] = m_list.settings[option]
+                    if option == u'acceptable_aliases':
+                        used_settings[option] = '\n'.join(used_settings[option])
+            # recreate the form using the settings
+            form = ListSettings(visible_section, data=used_settings)
+            form.truncate()
+    # END Legacy section
+
     return render_to_response(template,
                               {'form': form,
-                               'form_sections': form_sections,
+                               'section_names': SETTINGS_SECTION_NAMES,
                                'message': message,
-                               'list': the_list,
-                               'visible_option': visible_option,
+                               'list': m_list,
                                'visible_section': visible_section},
                               context_instance=RequestContext(request))
 

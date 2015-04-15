@@ -76,8 +76,7 @@ per_list_urlpatterns = patterns('postorius.views',
                                 url(r'^remove/(?P<role>[^/]+)/'
                                     '(?P<address>[^/]+)',
                                     'remove_role', name='remove_role'),
-                                url(r'^settings/(?P<visible_section>[^/]+)?'
-                                    '(?:/(?P<visible_option>.*))?$',
+                                url(r'^settings/(?P<visible_section>[^/]+)?$',
                                     'list_settings',
                                     name='list_settings'),
                                 url(r'^archival_options$',
