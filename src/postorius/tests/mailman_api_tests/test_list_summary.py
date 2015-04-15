@@ -93,7 +93,6 @@ class ListSummaryPageTest(SimpleTestCase):
                                            args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('anotheremail@example.com' in response.content)
-        self.assertFalse('Subscribe' in response.content)
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_change_subscription(self):
