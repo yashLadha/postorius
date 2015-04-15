@@ -27,8 +27,10 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
+from django.db.models.signals import post_save
+from django.core.urlresolvers import reverse
+from django.dispatch import receiver
 from django.db import models
 from django.http import Http404
 from django.template import Context
@@ -40,6 +42,22 @@ from urllib2 import HTTPError
 
 logger = logging.getLogger(__name__)
 
+
+@receiver(post_save, sender=User)
+def create_mailman_user(sender, **kwargs):
+    if kwargs.get('created'):
+        autocreate = False
+        try:
+            autocreate = settings.AUTOCREATE_MAILMAN_USER
+        except AttributeError:
+            pass
+        if autocreate:
+            user = kwargs.get('instance')
+            client = get_client()
+            try:
+                client.create_user(user.email, None, None)
+            except HTTPError:
+                pass
 
 class MailmanApiError(Exception):
     """Raised if the API is not available.

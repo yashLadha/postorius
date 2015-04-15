@@ -18,6 +18,7 @@ import logging
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 from django.test import Client, SimpleTestCase
 from django.test.utils import override_settings
 from urllib2 import HTTPError
@@ -53,11 +54,18 @@ class ListSummaryPageTest(SimpleTestCase):
         except HTTPError:
             domain = self.mmclient.get_domain('example.com')
         self.foo_list = domain.create_list('foo')
+        try:
+            User.objects.create_user('testuser', 'test@example.com', 'testpass')
+        except IntegrityError:
+            pass
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def tearDown(self):
-        for mlist in get_client().lists:
+        for mlist in self.mmclient.lists:
             mlist.delete()
+        for user in self.mmclient.users:
+            user.delete()
+        User.objects.all().delete()
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_out(self):
@@ -73,7 +81,6 @@ class ListSummaryPageTest(SimpleTestCase):
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_in(self):
         # Response must contain list obj and the form.
-        User.objects.create_user('testuser', 'test@example.com', 'testpass')
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
@@ -83,23 +90,21 @@ class ListSummaryPageTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_shows_all_addresses(self):
-        User.objects.create_user('testuser2', 'test2@example.com', 'testpass')
         mlist = self.mmclient.get_list('foo@example.com')
-        mlist.subscribe('test2@example.com')
-        user = self.mmclient.get_user('test2@example.com')
+        mlist.subscribe('test@example.com')
+        user = self.mmclient.get_user('test@example.com')
         user.add_address('anotheremail@example.com')
-        self.client.login(username='testuser2', password='testpass')
+        self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('anotheremail@example.com' in response.content)
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
+    @MM_VCR.use_cassette('test_change_subscription.yaml')
     def test_change_subscription(self):
         mlist = self.mmclient.get_list('foo@example.com')
-        User.objects.create_user('testuser3', 'test3@example.com', 'testpass')
-        mlist.subscribe('test3@example.com')
-        self.client.login(username='testuser3', password='testpass')
+        mlist.subscribe('test@example.com')
+        self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
