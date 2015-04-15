@@ -732,12 +732,11 @@ def _add_archival_messages(to_activate, to_disable, after_submission,
                            '{0}'.format(', '.join(to_disable))))
 
 
-
 @list_owner_required
 def remove_all_subscribers(request, list_id):
-   
+
     """Empty the list by unsubscribing all members."""
-    
+
     try:
         mlist = List.objects.get_or_404(fqdn_listname=list_id)
         if len(mlist.members) == 0:
