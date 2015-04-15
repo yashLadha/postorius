@@ -153,7 +153,7 @@ class UserSubscriptionPreferencesView(MailmanUserView):
             if formset.is_valid():
                 for form, subscription in zipped_data:
                     preferences = subscription.preferences
-                    for key in form.fields.keys():
+                    for key in form.cleaned_data.keys():
                         preferences[key] = form.cleaned_data[key]
                     preferences.save()
                 messages.success(
