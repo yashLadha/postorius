@@ -503,7 +503,7 @@ def accept_held_message(request, list_id, msg_id):
 
 @list_moderator_required
 def discard_held_message(request, list_id, msg_id):
-    """Accepts a held message.
+    """Discards a held message.
     """
     try:
         the_list = List.objects.get_or_404(fqdn_listname=list_id)
@@ -519,7 +519,7 @@ def discard_held_message(request, list_id, msg_id):
 
 @list_moderator_required
 def defer_held_message(request, list_id, msg_id):
-    """Accepts a held message.
+    """Defers a held message for a later decision.
     """
     try:
         the_list = List.objects.get_or_404(fqdn_listname=list_id)
@@ -529,13 +529,13 @@ def defer_held_message(request, list_id, msg_id):
     except HTTPError, e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been defered.')
+    messages.success(request, 'The message has been deferred.')
     return redirect('list_held_messages', the_list.list_id)
 
 
 @list_moderator_required
 def reject_held_message(request, list_id, msg_id):
-    """Accepts a held message.
+    """Rejects a held message.
     """
     try:
         the_list = List.objects.get_or_404(fqdn_listname=list_id)
