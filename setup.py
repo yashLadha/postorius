@@ -26,7 +26,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="postorius",
-    version='1.0.0b1',
+    version='1.0.0b3',
     description="A web user interface for GNU Mailman",
     long_description=open('README.rst').read(),
     maintainer="The Mailman GSOC Coders",
@@ -39,7 +39,7 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=['django>=1.5, <1.8',
+    install_requires=['django>=1.6',
                       'django-browserid',
                       'mailmanclient']
 )

@@ -20,7 +20,6 @@ from django import forms
 from django.core.validators import validate_email, URLValidator
 from django.utils.translation import gettext_lazy as _
 from fieldset_forms import FieldsetForm
-from django.forms.models import modelformset_factory
 
 
 class DomainNew(FieldsetForm):
@@ -41,16 +40,13 @@ class DomainNew(FieldsetForm):
     description = forms.CharField(
         label=_('Description'),
         required=False)
-    contact_address = forms.EmailField(
-        label=_('Contact Address'),
-        required=False)
 
     def clean_mail_host(self):
         mail_host = self.cleaned_data['mail_host']
         try:
             validate_email('mail@' + mail_host)
         except:
-            raise forms.ValidationError(_("Enter a valid Mail Host"))
+            raise forms.ValidationError(_("Please enter a valid domain name"))
         return mail_host
 
     def clean_web_host(self):
@@ -58,7 +54,7 @@ class DomainNew(FieldsetForm):
         try:
             URLValidator()(web_host)
         except:
-            raise forms.ValidationError(_("Please enter a valid Web Host"))
+            raise forms.ValidationError(_("Please enter a valid domain name"))
         return web_host
 
     class Meta:
@@ -426,10 +422,19 @@ class ListSettings(FieldsetForm):
     #    label=_('No reply address'),
     #    required=False,
     # )
-    posting_pipeline = forms.CharField(
+    posting_pipeline = forms.ChoiceField(
         label=_('Pipeline'),
+        widget=forms.Select(),
+        required=False,
+        error_messages={
+            'required': _("Please choose a reply-to action.")},
+        choices=(
+            ("default-owner-pipeline", _("default-owner-pipeline")),
+            ("default-posting-pipeline", _("default-posting-pipeline")),
+            ("virgin", _("virgin"))),
         help_text=(
             'Type of pipeline you want to use for this mailing list')
+
     )
     # post_id = forms.IntegerField(
     #    label=_('Post ID'),
@@ -670,6 +675,20 @@ class ListSettings(FieldsetForm):
              "default_nonmember_action", "default_member_action"],
             ["Archives", "archive_policy"],
         ]
+
+
+class ListArchiverForm(forms.Form):
+    """
+    Select archivers for a list.
+    """
+    archivers = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        label=_('Activate archivers for this list'))
+
+    def __init__(self, archivers, *args, **kwargs):
+        super(ListArchiverForm, self).__init__(*args, **kwargs)
+        self.fields['archivers'].choices = sorted(
+            [(key, key) for key in archivers.keys()])
 
 
 class Login(FieldsetForm):
@@ -931,5 +950,6 @@ class AddressActivationForm(forms.Form):
         email = cleaned_data.get('email')
         user_email = cleaned_data.get('user_email')
         if email == user_email:
-            raise forms.ValidationError(_('Please provide a different email address than your own.'))
+            raise forms.ValidationError(_('Please provide a different email '
+                                          'address than your own.'))
         return cleaned_data
