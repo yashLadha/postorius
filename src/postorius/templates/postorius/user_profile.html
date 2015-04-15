@@ -2,6 +2,10 @@
 {% load url from future %}
 {% load i18n %}
 
+{% block subtitle %}
+{% trans "Profile | " as page_title %}{{ page_title|add:user.username }}
+{% endblock %}
+
 {% block main %}
     {% include 'postorius/menu/user_nav.html' %}
     <h1>{% trans "User Profile" %} <span>- {{ user }}</span></h1>

@@ -3,6 +3,10 @@
 {% load i18n %}
 {% load nav_helpers %}
 
+{% block subtitle %}
+{% trans "Member Options | " as page_title %}{{ page_title|add:user.username}}
+{% endblock %}
+
 {% block main %}
     {% list_nav '' 'Member Options' %}
 
