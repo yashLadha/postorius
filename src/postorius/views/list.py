@@ -228,7 +228,7 @@ class ListUnsubscribeView(MailingListView):
             return utils.render_api_error(request)
         except ValueError, e:
             messages.error(request, e)
-        return redirect('list_summary', self.mailing_list.list_id)
+        return redirect('list_members', self.mailing_list.list_id)
 
 
 class ListMassSubscribeView(MailingListView):
