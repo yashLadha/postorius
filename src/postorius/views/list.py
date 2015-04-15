@@ -666,12 +666,12 @@ def _add_archival_messages(to_activate, to_disable, after_submission,
     """
     # There are archivers to enable.
     if len(to_activate) > 0:
-        # If the archiver shows up in the data set *after* the update, 
+        # If the archiver shows up in the data set *after* the update,
         # we can show a success message.
         activation_postponed = []
         activation_success = []
         for archiver in to_activate:
-            if after_submission[archiver] == True:
+            if after_submission[archiver] is True:
                 activation_success.append(archiver)
             else:
                 activation_postponed.append(archiver)
