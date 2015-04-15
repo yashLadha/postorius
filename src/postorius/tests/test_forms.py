@@ -17,7 +17,7 @@
 from django.utils import unittest
 
 from postorius.forms import (
-    UserPreferences, DomainNew, ListSubscribe)
+    UserPreferences, DomainNew, ListSubscribe, ChangeSubscriptionForm)
 
 
 class UserPreferencesTest(unittest.TestCase):
@@ -76,3 +76,16 @@ class ListSubscribeTest(unittest.TestCase):
             'display_name' : 'Someone',
         })
         self.assertFalse(form.is_valid())
+
+class ChangeSubscriptionTest(unittest.TestCase):
+    def test_subscription_changes_only_to_user_addresses(self):
+        user_emails = ['one@example.com', 'two@example.com']
+        form = ChangeSubscriptionForm(user_emails,
+                                      {'email': 'abcd@d.com'})
+        self.assertFalse(form.is_valid())
+
+    def test_subscription_works(self):
+        user_emails = ['one@example.com', 'two@example.com']
+        form = ChangeSubscriptionForm(user_emails,
+                                      {'email': 'two@example.com'})
+        self.assertTrue(form.is_valid())

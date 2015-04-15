@@ -20,6 +20,13 @@
     {% trans "You are subscribed to this list with your address:" %}
     <em>{{ subscribed_address }}</em>
     <br/>
+    <h2>Change Subscription</h2>
+    <form action="{% url 'change_subscription' list.list_id %}" method="POST" class="change_subscription">
+      {% csrf_token %}
+      {{change_subscription_form.as_p}}
+      <input class="btn btn-success" type="submit" value="{% trans 'Change Subscription' %}">
+    </form>
+    <h2>Unsubscribe</h2>
     <a href="{% url 'list_unsubscribe' list.list_id subscribed_address %}" class="btn btn-danger">{% trans "Unsubscribe" %} {{ subscribed_address }}</a>
     {% else %}
     <h2>{% trans 'Subscribe to this list' %}</h2>

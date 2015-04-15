@@ -921,3 +921,14 @@ class AddressActivationForm(forms.Form):
         if email == user_email:
             raise forms.ValidationError(_('Please provide a different email address than your own.'))
         return cleaned_data
+
+class ChangeSubscriptionForm(forms.Form):
+    email = forms.ChoiceField()
+
+    def __init__(self, user_emails, *args, **kwargs):
+        super(ChangeSubscriptionForm, self).__init__(*args, **kwargs)
+        self.fields['email'] = forms.ChoiceField(
+            label=_('Select Email'),
+            required=False,
+            widget=forms.Select(),
+            choices=((address, address) for address in user_emails))
