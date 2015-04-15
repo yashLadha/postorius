@@ -9,11 +9,11 @@
     {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
         {% include 'postorius/menu/list_nav.html' %}
     {% endif %}
-    <h1>{{list.display_name}}</h1>
-
-
-    <h2>{% trans 'Description' %}</h2>
-    <p>{{list.settings.description }}</p>
+    <div class="well">
+        <h1>{{list.display_name}} - {{ list.fqdn_listname }}</h1>
+        
+        <p>{{list.settings.description }}</p>
+    </div>
   
     {% if user.is_authenticated %}
     {% if userSubscribed %}
@@ -26,7 +26,7 @@
     </form>
     {% endif %}
     {% else %}
-        <p>{% trans "To subscribe to or unsubscribe from this list you have to be logged in." %}</p>
+        <p>{% trans "You have to log in to subscribe to this list." %}</p>
         <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans "Log In" %}</a></p>
     {% endif %}
 {% endblock %}
