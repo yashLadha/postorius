@@ -171,12 +171,12 @@ class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
     """
 
-    email = forms.ChoiceField(
-        label=_('Your email address'),
-        validators=[validate_email],
-        widget=forms.Select(),
-        error_messages={'required': _('Please enter an email address.'),
-                        'invalid': _('Please enter a valid email address.')})
+    email = forms.ChoiceField(label=_('Your email address'),
+                validators=[validate_email],
+                widget=forms.Select(),
+                error_messages={'required': _('Please enter an email address.'),
+                                'invalid': _('Please enter a valid email address.')})
+
     display_name = forms.CharField(label=_('Your name (optional)'),
                                    required=False)
 

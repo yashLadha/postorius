@@ -47,10 +47,11 @@ class ListSummaryPageTest(SimpleTestCase):
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def setUp(self):
         self.client = Client()
+        self.mmclient = get_client()
         try:
-            domain = get_client().create_domain('example.com')
+            domain = self.mmclient.create_domain('example.com')
         except HTTPError:
-            domain = get_client().get_domain('example.com')
+            domain = self.mmclient.get_domain('example.com')
         self.foo_list = domain.create_list('foo')
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
@@ -78,3 +79,30 @@ class ListSummaryPageTest(SimpleTestCase):
                                    args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
         self.assertTrue('<form ' in response.content)
+        self.assertTrue('Subscribe' in response.content)
+
+    @MM_VCR.use_cassette('test_list_summary.yaml')
+    def test_list_summary_shows_all_addresses(self):
+        User.objects.create_user('testuser2', 'test2@example.com', 'testpass')
+        mlist = self.mmclient.get_list('foo@example.com')
+        mlist.subscribe('test2@example.com')
+        user = self.mmclient.get_user('test2@example.com')
+        user.add_address('anotheremail@example.com')
+        self.client.login(username='testuser2', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com', )))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('anotheremail@example.com' in response.content)
+        self.assertFalse('Subscribe' in response.content)
+
+    @MM_VCR.use_cassette('test_list_summary.yaml')
+    def test_change_subscription(self):
+        mlist = self.mmclient.get_list('foo@example.com')
+        User.objects.create_user('testuser3', 'test3@example.com', 'testpass')
+        mlist.subscribe('test3@example.com')
+        self.client.login(username='testuser3', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com', )))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('Change Subscription' in response.content)
+        self.assertTrue('Unsubscribe' in response.content)
