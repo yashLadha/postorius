@@ -717,23 +717,12 @@ class Login(FieldsetForm):
 
 
 class ListMassSubscription(FieldsetForm):
-
     """Form fields to masssubscribe users to a list.
     """
     emails = forms.CharField(
         label=_('Emails to mass subscribe'),
         widget=forms.Textarea,
     )
-
-    verify_with_email = forms.BooleanField(required=False)
-
-    class Meta:
-
-        """
-        Class to define the name of the fieldsets and what should be
-        included in each.
-        """
-        layout = [["Mass subscription", "emails"]]
 
 
 class ListMassRemoval(FieldsetForm):
