@@ -587,6 +587,7 @@ def reject_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
+@list_moderator_required
 def list_subscription_requests(request, list_id):
     """Shows a list of held messages.
     """
@@ -598,6 +599,8 @@ def list_subscription_requests(request, list_id):
                               {'list': m_list},
                               context_instance=RequestContext(request))
 
+
+@list_moderator_required
 def handle_subscription_request(request, list_id, request_id, action):
     """
     Handle a subscription request. Possible actions:
@@ -606,16 +609,23 @@ def handle_subscription_request(request, list_id, request_id, action):
         - reject
         - discard
     """
+    confirmation_messages = {
+        'accept': _('The request has been accepted.'),
+        'reject': _('The request has been rejected.'),
+        'discard': _('The request has been discarded.'),
+        'defer': _('The request has been defered.'),
+    }
     try:
         m_list = utils.get_client().get_list(list_id)
+        # Moderate request and add feedback message to session.
+        m_list.moderate_request(request_id, action)
+        messages.success(request, confirmation_messages[action])
     except MailmanApiError:
         return utils.render_api_error(request)
-
-    messages.success(request, 'The message has been rejected.')
-
-    return redirect('list_subscription_requests', the_list.list_id)
-
-    
+    except HTTPError as e:
+        messages.error(request, '{0}: {1}'.format(
+            _('The request could not be moderated'), e.reason))
+    return redirect('list_subscription_requests', m_list.list_id)
 
 
 SETTINGS_SECTION_NAMES = (
