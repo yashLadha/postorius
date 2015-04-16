@@ -2,6 +2,10 @@
 {% load url from future %}
 {% load i18n %}
 
+{% block subtitle %}
+{% trans "Add Domain" as page_title %}{{ page_title }}
+{% endblock %}
+
 {% block main %}
     {% include 'postorius/menu/settings_nav.html' %}
 
@@ -34,15 +38,6 @@
 	    <div class="controls">
 		{{ form.description}}
 		<p class="help-block"><strong>{% trans "Example:" %}</strong> {% trans "Test lists will live on this domain." %}</p>
-	    </div>
-	</div>
-
-	<div class="control-group">
-	    {{ form.contact_address.errors }}
-	    <label for="id_contact_address" class="control-label">{% trans "Contact Address:" %}</label>
-	    <div class="controls">
-		{{ form.contact_address}}
-		<p class="help-block"><strong>{% trans "Example:" %}</strong> {% trans "postmaster@domain.org" %}</p>
 	    </div>
 	</div>
 

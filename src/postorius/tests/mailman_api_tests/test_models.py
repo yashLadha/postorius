@@ -59,7 +59,7 @@ class ModelTest(SimpleTestCase):
             user.delete()
         User.objects.all().delete()
 
-    @MM_VCR.use_cassette('test_model.yaml')
+    @MM_VCR.use_cassette('test_model-2.yaml')
     def test_mailman_user_not_created_when_flag_is_off(self):
         with self.settings(AUTOCREATE_MAILMAN_USER=False):
             User.objects.create_user('testuser', 'test@example.com', 'testpass')

@@ -17,7 +17,6 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
@@ -31,8 +30,7 @@ from django.utils.translation import gettext as _
 from urllib2 import HTTPError
 
 from postorius import utils
-from postorius.models import (Domain, List, MailmanUser,
-                              MailmanApiError)
+from postorius.models import (Domain, List, MailmanApiError)
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView
@@ -291,11 +289,10 @@ class ListUnsubscribeView(MailingListView):
             return utils.render_api_error(request)
         except ValueError, e:
             messages.error(request, e)
-        return redirect('list_summary', self.mailing_list.list_id)
+        return redirect('list_members', self.mailing_list.list_id)
 
 
 class ListMassSubscribeView(MailingListView):
-
     """Mass subscription."""
 
     @method_decorator(list_owner_required)
@@ -315,9 +312,10 @@ class ListMassSubscribeView(MailingListView):
                 try:
                     validate_email(email)
                     self.mailing_list.subscribe(address=email)
-                    messages.success(request,
-                                   'The address %s has been subscribed to %s.' %
-                                    (email, self.mailing_list.fqdn_listname))
+                    messages.success(
+                        request,
+                        'The address %s has been subscribed to %s.' %
+                        (email, self.mailing_list.fqdn_listname))
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except HTTPError, e:
@@ -327,6 +325,45 @@ class ListMassSubscribeView(MailingListView):
                                    'The email address %s is not valid.' %
                                    email)
         return redirect('mass_subscribe', self.mailing_list.list_id)
+
+
+class ListMassRemovalView(MailingListView):
+
+    """Class For Mass Removal"""
+
+    @method_decorator(list_owner_required)
+    def get(self, request, *args, **kwargs):
+        form = ListMassRemoval()
+        return render_to_response('postorius/lists/mass_removal.html',
+                                  {'form': form, 'list': self.mailing_list},
+                                  context_instance=RequestContext(request))
+
+    @method_decorator(list_owner_required)
+    def post(self, request, *args, **kwargs):
+        form = ListMassRemoval(request.POST)
+        if not form.is_valid():
+            messages.error(request, 'Please fill out the form correctly.')
+        else:
+            emails = request.POST["emails"].splitlines()
+            for email in emails:
+                try:
+                    validate_email(email)
+                    self.mailing_list.unsubscribe(email.lower())
+                    messages.success(request,
+                                    'The address %s has been unsubscribed from %s.' %
+                                    (email, self.mailing_list.fqdn_listname))
+                except MailmanApiError:
+                    return utils.render_api_error(request)
+                except HTTPError, e:
+                    messages.error(request, e)
+                except ValueError, e:
+                    messages.error(request, e)
+                except ValidationError:
+                    messages.error(request,
+                                  'The email address %s is not valid.' %
+                                  email)
+        return redirect('mass_removal', self.mailing_list.list_id)
+
 
 def _get_choosable_domains(request):
     try:
@@ -534,7 +571,6 @@ def list_delete(request, list_id):
             context_instance=RequestContext(request))
 
 
-
 @list_moderator_required
 def list_held_messages(request, list_id):
     """Shows a list of held messages.
@@ -566,7 +602,7 @@ def accept_held_message(request, list_id, msg_id):
 
 @list_moderator_required
 def discard_held_message(request, list_id, msg_id):
-    """Accepts a held message.
+    """Discards a held message.
     """
     try:
         the_list = List.objects.get_or_404(fqdn_listname=list_id)
@@ -582,7 +618,7 @@ def discard_held_message(request, list_id, msg_id):
 
 @list_moderator_required
 def defer_held_message(request, list_id, msg_id):
-    """Accepts a held message.
+    """Defers a held message for a later decision.
     """
     try:
         the_list = List.objects.get_or_404(fqdn_listname=list_id)
@@ -592,13 +628,13 @@ def defer_held_message(request, list_id, msg_id):
     except HTTPError, e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been defered.')
+    messages.success(request, 'The message has been deferred.')
     return redirect('list_held_messages', the_list.list_id)
 
 
 @list_moderator_required
 def reject_held_message(request, list_id, msg_id):
-    """Accepts a held message.
+    """Rejects a held message.
     """
     try:
         the_list = List.objects.get_or_404(fqdn_listname=list_id)
@@ -719,4 +755,108 @@ def remove_role(request, list_id=None, role=None, address=None,
     return render_to_response(template,
                               {'role': role, 'address': address,
                                'list_id': the_list.list_id},
+                              context_instance=RequestContext(request))
+
+
+def _add_archival_messages(to_activate, to_disable, after_submission,
+                           request):
+    """
+    Add feedback messages to session, depending on previously set archivers.
+    """
+    # There are archivers to enable.
+    if len(to_activate) > 0:
+        # If the archiver shows up in the data set *after* the update,
+        # we can show a success message.
+        activation_postponed = []
+        activation_success = []
+        for archiver in to_activate:
+            if after_submission[archiver] is True:
+                activation_success.append(archiver)
+            else:
+                activation_postponed.append(archiver)
+        # If archivers couldn't be updated, show a message:
+        if len(activation_postponed) > 0:
+            messages.warning(request,
+                             _('Some archivers could not be enabled, probably '
+                               'because they are not enabled in the Mailman '
+                               'configuration. They will be enabled for '
+                               'this list, if the archiver is enabled in the '
+                               'Mailman configuration. {0}.'
+                               ''.format(', '.join(activation_postponed))))
+        if len(activation_success) > 0:
+            messages.success(request,
+                             _('You activated new archivers for this list: '
+                               '{0}'.format(', '.join(activation_success))))
+    # There are archivers to disable.
+    if len(to_disable) > 0:
+        messages.success(request,
+                         _('You disabled the following archivers: '
+                           '{0}'.format(', '.join(to_disable))))
+
+
+@list_owner_required
+def remove_all_subscribers(request, list_id):
+
+    """Empty the list by unsubscribing all members."""
+
+    try:
+        mlist = List.objects.get_or_404(fqdn_listname=list_id)
+        if len(mlist.members) == 0:
+            messages.error(request, 'No member is subscribed to the list currently.')
+            return redirect('mass_removal', mlist.list_id)
+        if request.method == 'POST':
+            try:
+                for names in mlist.members:
+                    mlist.unsubscribe(names.email)
+                messages.success(request,
+                                'All members have been unsubscribed from the list.')
+                return redirect('list_members', mlist.list_id)
+            except Exception, e:
+                messages.error(request, e)
+        return render_to_response('postorius/lists/confirm_removeall_subscribers.html',
+                                 {'list_id': mlist.list_id},
+                                 context_instance=RequestContext(request))
+    except MailmanApiError:
+        return utils.render_api_error(request)
+
+
+@list_owner_required
+def list_archival_options(request, list_id):
+    """
+    Activate or deactivate list archivers.
+    """
+    # Get the list and cache the archivers property.
+    m_list = utils.get_client().get_list(list_id)
+    archivers = m_list.archivers
+
+    # Process form submission.
+    if request.method == 'POST':
+        current = [key for key in archivers.keys() if archivers[key]]
+        posted = request.POST.getlist('archivers')
+
+        # These should be activated
+        to_activate = [arc for arc in posted if arc not in current]
+        for arc in to_activate:
+            archivers[arc] = True
+        # These should be disabled
+        to_disable = [arc for arc in current if arc not in posted and
+                      arc in current]
+        for arc in to_disable:
+            archivers[arc] = False
+
+        # Re-cache list of archivers after update.
+        archivers = m_list.archivers
+
+        # Show success/error messages.
+        _add_archival_messages(to_activate, to_disable, archivers, request)
+
+    # Instantiate form with current archiver data.
+    initial = {'archivers': [key for key in archivers.keys()
+                             if archivers[key] is True]}
+    form = ListArchiverForm(initial=initial, archivers=archivers)
+
+    return render_to_response('postorius/lists/archival_options.html',
+                              {'list': m_list,
+                               'form': form,
+                               'archivers': archivers},
                               context_instance=RequestContext(request))

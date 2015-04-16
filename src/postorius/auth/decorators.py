@@ -88,7 +88,12 @@ def list_moderator_required(fn):
                 user.email not in mlist.owners:
             raise PermissionDenied
         else:
-            user.is_list_moderator = True
+            if user.email in mlist.moderators and \
+                    user.email not in mlist.owners:
+                user.is_list_moderator = True
+            else:
+                user.is_list_moderator = True
+                user.is_list_owner = True
             return fn(*args, **kwargs)
     return wrapper
 

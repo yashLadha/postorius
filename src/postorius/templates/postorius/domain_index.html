@@ -2,6 +2,10 @@
 {% load url from future %}
 {% load i18n %}
 
+{% block subtitle %}
+{% trans "Domains" as page_title %}{{ page_title }}
+{% endblock %}
+
 {% block main %}
     <h1>{% trans "Domain Index" %}</h1>
     <p>
@@ -13,7 +17,6 @@
     		<tr>
                 <th>{% trans "Mail Host" %}</th>
                 <th>{% trans "URL Host" %}</th>
-                <th>{% trans "Contact Address" %}</th>
                 <th>{% trans "Description" %}</th>
                 <th>&nbsp;</th>
     		</tr>
@@ -23,7 +26,6 @@
     		<tr>
     			<td>{{ domain.mail_host }}</td>
     			<td>{{ domain.base_url }}</td>
-                <td> </td>
     			<td>{{ domain.description }}</td>
     			<td><a href="{% url 'domain_delete' domain.mail_host %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a></td>
     		</tr>

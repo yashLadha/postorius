@@ -88,7 +88,7 @@ class ListSummaryPageTest(SimpleTestCase):
         self.assertTrue('<form ' in response.content)
         self.assertTrue('Subscribe' in response.content)
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
+    @MM_VCR.use_cassette('test_change_subscription-2.yaml')
     def test_list_summary_shows_all_addresses(self):
         mlist = self.mmclient.get_list('foo@example.com')
         mlist.subscribe('test@example.com')

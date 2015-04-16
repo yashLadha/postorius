@@ -14,3 +14,18 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals)
+
+__metaclass__ = type
+
+
+from urllib2 import HTTPError
+
+from postorius.tests import MM_VCR
+from postorius.utils import get_client
+
+
+API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
+                   'MAILMAN_USER': 'restadmin',
+                   'MAILMAN_PASS': 'restpass'}
