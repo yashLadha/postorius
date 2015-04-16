@@ -198,7 +198,8 @@ class ListSubscribeView(MailingListView):
             form = ListSubscribe(request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
-                self.mailing_list.subscribe(email)
+                self.mailing_list.subscribe(email, pre_verified=True,
+                                            pre_confirmed=True)
                 messages.success(
                     request, 'You are subscribed to %s.' %
                     self.mailing_list.fqdn_listname)
@@ -250,7 +251,8 @@ class ListMassSubscribeView(MailingListView):
             for email in emails:
                 try:
                     validate_email(email)
-                    self.mailing_list.subscribe(address=email)
+                    self.mailing_list.subscribe(address=email, pre_verified=True,
+                                                pre_confirmed=True)
                     messages.success(
                         request,
                         'The address %s has been subscribed to %s.' %
