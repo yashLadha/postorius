@@ -639,8 +639,8 @@ SETTINGS_SECTION_NAMES = (
 )
 
 SETTINGS_FORMS = {
-    'list_identity': None,
-    'automatic_responses': None,
+    'list_identity': ListIdentityForm,
+    'automatic_responses': ListAutomaticResponsesForm,
     'alter_messages': None,
     'digest': None,
     'message_acceptance': None,
@@ -663,21 +663,29 @@ def list_settings(request, list_id=None, visible_section=None,
     result in using //option
     """
     message = ""
-    # List object.
+    if visible_section is None:
+        visible_section = 'list_identity'
+    form_class = SETTINGS_FORMS.get(visible_section)
     try:
         m_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
+        list_settings = m_list.settings
+    except MailmanApiError, HTTPError:
         return utils.render_api_error(request)
-    list_settings = m_list.settings
     # List settings are grouped an processed in different forms.
-    form_class = SETTINGS_FORMS.get(visible_section)
     if form_class:
         if request.method == 'POST':
             form = form_class(request.POST)
             if form.is_valid():
-                for key in form.fields.keys():
-                    list_settings[key] = form.cleaned_data[key]
-                list_settings.save()
+                try:
+                    for key in form.fields.keys():
+                        list_settings[key] = form.cleaned_data[key]
+                    list_settings.save()
+                    messages.success(request,
+                                     _('The settings have been updated.'))
+                except HTTPError as e:
+                    messages.error(
+                        request,
+                        '{0}: {1}'.format(_('An error occured'), e.reason))
         else:
             form = form_class(initial=list_settings)
 
@@ -686,8 +694,6 @@ def list_settings(request, list_id=None, visible_section=None,
     # This really needs to be cleaned up.
     else:
         template='postorius/lists/settings_legacy.html'
-        if visible_section is None:
-            visible_section = 'list_identity'
         form_sections = []
         # collect all Form sections for the links:
         temp = ListSettings('', '')

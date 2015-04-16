@@ -242,65 +242,10 @@ class ListSettings(FieldsetForm):
         label=_('Archive Policy'),
         help_text=_('Policy for archiving messages for this list'),
     )
-    autorespond_choices = (
-        ("respond_and_continue", _("Respond and continue processing")),
-        ("respond_and_discard", _("Respond and discard message")),
-        ("none", _("No automatic response")))
-    autorespond_owner = forms.ChoiceField(
-        choices=autorespond_choices,
-        widget=forms.RadioSelect,
-        label=_('Autorespond to list owner'),
-        help_text=(
-            'Should Mailman send an auto-response to emails sent to the '
-            '-owner address?'))
-    autoresponse_owner_text = forms.CharField(
-        label=_('Autoresponse owner text'),
-        widget=forms.Textarea(),
-        required=False,
-        help_text=('Auto-response text to send to -owner emails.'))
-    autorespond_postings = forms.ChoiceField(
-        choices=autorespond_choices,
-        widget=forms.RadioSelect,
-        label=_('Autorespond postings'),
-        help_text=(
-            'Should Mailman send an auto-response to mailing list posters?'))
-    autoresponse_postings_text = forms.CharField(
-        label=_('Autoresponse postings text'),
-        widget=forms.Textarea(),
-        required=False,
-        help_text=('Auto-response text to send to mailing list posters.'))
-    autorespond_requests = forms.ChoiceField(
-        choices=autorespond_choices,
-        widget=forms.RadioSelect,
-        label=_('Autorespond requests'),
-        help_text=(
-            'Should Mailman send an auto-response to emails sent to the '
-            '-request address? If you choose yes, decide whether you want '
-            'Mailman to discard the original email, or forward it on to the '
-            'system as a normal mail command.'))
-    autoresponse_request_text = forms.CharField(
-        label=_('Autoresponse request text'),
-        widget=forms.Textarea(),
-        required=False,
-        help_text=('Auto-response text to send to -request emails.'))
-    autoresponse_grace_period = forms.CharField(
-        label=_('Autoresponse grace period'),
-        help_text=(
-            'Number of days between auto-responses to either the mailing list '
-            'or -request/-owner address from the same poster. Set to zero '
-            '(or negative) for no grace period (i.e. auto-respond to every '
-            'message).'))
     # This doesn't make sense as a configurable, so we're leaving it out
     # bounces_address = forms.EmailField(
     #    label=_('Bounces Address'),
     #    required=False)
-    advertised = forms.TypedChoiceField(
-        coerce=lambda x: x == 'True',
-        choices=((True, _('Yes')), (False, _('No'))),
-        widget=forms.RadioSelect,
-        label=_('Advertise the existence of this list?'),
-        help_text=(
-            'Choose whether to include this list on the list of all lists'))
     filter_content = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -365,14 +310,6 @@ class ListSettings(FieldsetForm):
             'is matched against the list of explicitly accepted, held, '
             'rejected (bounced), and discarded addresses. '
             'If no match is found, then this action is taken.'))
-    description = forms.CharField(
-        label=_('Description'),
-        help_text=(
-            'This description is used when the mailing list is listed with '
-            'other mailing lists, or in headers, and so forth. It should be '
-            'as succinct as you can get it, while still identifying what the '
-            'list is.'),
-        widget=forms.Textarea())
     digest_size_threshold = forms.DecimalField(
         label=_('Digest size threshold'),
         help_text=('How big in Kb should a digest be before it gets sent out?')
@@ -399,17 +336,6 @@ class ListSettings(FieldsetForm):
             'invalid': _('Please provide an integer.')
         }
     )
-    mail_host = forms.CharField(
-        label=_('Mail Host'),
-        error_messages={'required': _('Please a domain name'),
-                        'invalid': _('Please enter a valid domain name.')},
-        required=True,
-        help_text=(
-            "The \"host_name\" is the preferred name for email to "
-            "'mailman-related addresses on this host, and generally should be "
-            "the mail host's exchanger address, if any. This setting can be "
-            "useful for selecting among alternative names of a host that "
-            "has multiple addresses."))
     # informational, not editable
     # next_digest_number = forms.IntegerField(
     #    label=_('Next digest number'),
@@ -443,13 +369,6 @@ class ListSettings(FieldsetForm):
     #    },
     #    required=False,
     # )
-    display_name = forms.CharField(
-        label=_('Display name'),
-        help_text=('Display name is the name shown in the web interface.')
-    )
-    subject_prefix = forms.CharField(
-        label=_('Subject prefix'),
-    )
     reply_goes_to_list = forms.ChoiceField(
         label=_('Reply goes to list'),
         widget=forms.Select(),
@@ -497,24 +416,6 @@ class ListSettings(FieldsetForm):
     # request_address = forms.EmailField(
     #    label=_('Request address'),
     #    required=False)
-    send_welcome_message = forms.TypedChoiceField(
-        coerce=lambda x: x == 'True',
-        choices=((True, _('Yes')), (False, _('No'))),
-        widget=forms.RadioSelect,
-        required=False,
-        label=_('Send welcome message'),
-        help_text=(
-            'Send welcome message to newly subscribed members? '
-            'Turn this off only if you plan on subscribing people manually '
-            'and don\'t want them to know that you did so. This option is '
-            'most useful for transparently migrating lists from some other '
-            'mailing list manager to Mailman.'))
-    welcome_message_uri = forms.CharField(
-        label=_('URI for the welcome message'),
-        help_text=_(
-            'If a welcome message is to be sent to subscribers, you can '
-            'specify a URI that gives the text of this message.'),
-    )
     # tko - look this up
     # scheme = forms.CharField(
     #    label=_('Scheme'),
@@ -543,13 +444,6 @@ class ListSettings(FieldsetForm):
             'or postings that are being held for one reason or another. '
             'Setting this option causes notices to be sent immediately on the '
             'arrival of new requests as well. '))
-    admin_notify_mchanges = forms.BooleanField(
-        widget=forms.RadioSelect(choices=choices),
-        required=False,
-        label=_('Notify admin of membership changes'),
-        help_text=(
-            'Should administrator get notices of subscribes and unsubscribes?'
-            ))
     administrivia = forms.BooleanField(
         widget=forms.RadioSelect(choices=choices),
         required=False,
@@ -646,16 +540,6 @@ class ListSettings(FieldsetForm):
         """
         # just a really temporary layout to see that it works. -- Anna
         layout = [
-            ["list_identity", "display_name", "mail_host", "description",
-             "advertised", "subject_prefix"],
-            ["automatic_responses", "autorespond_owner",
-             "autoresponse_owner_text", "autorespond_postings",
-             "autoresponse_postings_text", "autorespond_requests",
-             "autoresponse_request_text", "autoresponse_grace_period",
-             "send_welcome_message",
-             "welcome_message_uri",
-             "admin_immed_notify",
-             "admin_notify_mchanges"],
             ["alter_messages", "filter_content", "collapse_alternatives",
              "convert_html_to_plaintext", "anonymous_list",
              "include_rfc2369_headers",
@@ -671,6 +555,136 @@ class ListSettings(FieldsetForm):
         ]
 
 
+class ListAutomaticResponsesForm(forms.Form):
+    """
+    List settings for automatic responses.
+    """
+    autorespond_choices = (
+        ("respond_and_continue", _("Respond and continue processing")),
+        ("respond_and_discard", _("Respond and discard message")),
+        ("none", _("No automatic response")))
+    autorespond_owner = forms.ChoiceField(
+        choices=autorespond_choices,
+        widget=forms.RadioSelect,
+        label=_('Autorespond to list owner'),
+        help_text=(
+            'Should Mailman send an auto-response to emails sent to the '
+            '-owner address?'))
+    autoresponse_owner_text = forms.CharField(
+        label=_('Autoresponse owner text'),
+        widget=forms.Textarea(),
+        required=False,
+        help_text=('Auto-response text to send to -owner emails.'))
+    autorespond_postings = forms.ChoiceField(
+        choices=autorespond_choices,
+        widget=forms.RadioSelect,
+        label=_('Autorespond postings'),
+        help_text=(
+            'Should Mailman send an auto-response to mailing list posters?'))
+    autoresponse_postings_text = forms.CharField(
+        label=_('Autoresponse postings text'),
+        widget=forms.Textarea(),
+        required=False,
+        help_text=('Auto-response text to send to mailing list posters.'))
+    autorespond_requests = forms.ChoiceField(
+        choices=autorespond_choices,
+        widget=forms.RadioSelect,
+        label=_('Autorespond requests'),
+        help_text=(
+            'Should Mailman send an auto-response to emails sent to the '
+            '-request address? If you choose yes, decide whether you want '
+            'Mailman to discard the original email, or forward it on to the '
+            'system as a normal mail command.'))
+    autoresponse_request_text = forms.CharField(
+        label=_('Autoresponse request text'),
+        widget=forms.Textarea(),
+        required=False,
+        help_text=('Auto-response text to send to -request emails.'))
+    autoresponse_grace_period = forms.CharField(
+        label=_('Autoresponse grace period'),
+        help_text=(
+            'Number of days between auto-responses to either the mailing list '
+            'or -request/-owner address from the same poster. Set to zero '
+            '(or negative) for no grace period (i.e. auto-respond to every '
+            'message).'))
+    send_welcome_message = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Send welcome message'),
+        help_text=(
+            'Send welcome message to newly subscribed members? '
+            'Turn this off only if you plan on subscribing people manually '
+            'and don\'t want them to know that you did so. This option is '
+            'most useful for transparently migrating lists from some other '
+            'mailing list manager to Mailman.'))
+    welcome_message_uri = forms.CharField(
+        label=_('URI for the welcome message'),
+        help_text=_(
+            'If a welcome message is to be sent to subscribers, you can '
+            'specify a URI that gives the text of this message.'),
+    )
+    admin_immed_notify = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Admin immed notify'),
+        help_text=(
+            'Should the list moderators get immediate notice of new requests, '
+            'as well as daily notices about collected ones? List moderators '
+            '(and list administrators) are sent daily reminders of requests '
+            'pending approval, like subscriptions to a moderated list, '
+            'or postings that are being held for one reason or another. '
+            'Setting this option causes notices to be sent immediately on the '
+            'arrival of new requests as well. '))
+    admin_notify_mchanges = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Notify admin of membership changes'),
+        help_text=(
+            'Should administrator get notices of subscribes and unsubscribes?'
+            ))
+
+
+class ListIdentityForm(forms.Form):
+    """
+    List identity settings.
+    """
+    advertised = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        label=_('Show list on index page'),
+        help_text=(
+            'Choose whether to include this list on the list of all lists'))
+    description = forms.CharField(
+        label=_('Description'),
+        help_text=(
+            'This description is used when the mailing list is listed with '
+            'other mailing lists, or in headers, and so forth. It should be '
+            'as succinct as you can get it, while still identifying what the '
+            'list is.'),
+        widget=forms.Textarea())
+    mail_host = forms.CharField(
+        label=_('Mail Host'),
+        error_messages={'required': _('Please a domain name'),
+                        'invalid': _('Please enter a valid domain name.')},
+        required=True,
+        help_text=(
+            "The \"host_name\" is the preferred name for email to "
+            "'mailman-related addresses on this host, and generally should be "
+            "the mail host's exchanger address, if any. This setting can be "
+            "useful for selecting among alternative names of a host that "
+            "has multiple addresses."))
+    display_name = forms.CharField(
+        label=_('Display name'),
+        help_text=('Display name is the name shown in the web interface.')
+    )
+    subject_prefix = forms.CharField(
+        label=_('Subject prefix'),
+    )
+
+
 SUBSCRIPTION_POLICY_CHOICES = (
     ('', _('Please Choose')),
     ('open', _('Open')),
@@ -682,7 +696,7 @@ SUBSCRIPTION_POLICY_CHOICES = (
 
 class ListSubscriptionPolicyForm(forms.Form):
     """
-    List Settings for subscription policy.
+    List subscription policy settings.
     """    
     subscription_policy = forms.ChoiceField(
         label=_('Subscription Policy'),
