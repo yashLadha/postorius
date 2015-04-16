@@ -641,10 +641,10 @@ SETTINGS_SECTION_NAMES = (
 SETTINGS_FORMS = {
     'list_identity': ListIdentityForm,
     'automatic_responses': ListAutomaticResponsesForm,
-    'alter_messages': None,
-    'digest': None,
-    'message_acceptance': None,
-    'archiving': None,
+    'alter_messages': AlterMessagesForm,
+    'digest': DigestSettingsForm,
+    'message_acceptance': MessageAcceptanceForm,
+    'archiving': ArchivePolicySettingsForm,
     'subscription_policy': ListSubscriptionPolicyForm,
 }
 
@@ -688,49 +688,6 @@ def list_settings(request, list_id=None, visible_section=None,
                         '{0}: {1}'.format(_('An error occured'), e.reason))
         else:
             form = form_class(initial=list_settings)
-
-
-    # START Legacy section
-    # This really needs to be cleaned up.
-    else:
-        template='postorius/lists/settings_legacy.html'
-        form_sections = []
-        # collect all Form sections for the links:
-        temp = ListSettings('', '')
-        for section in temp.layout:
-            try:
-                form_sections.append((section[0],
-                                      temp.section_descriptions[section[0]]))
-            except KeyError:
-                pass
-        del temp
-        # Save a Form Processed by POST
-        if request.method == 'POST':
-            form = ListSettings(visible_section, data=request.POST)
-            form.truncate()
-            if form.is_valid():
-                for key in form.fields.keys():
-                    list_settings[key] = form.cleaned_data[key]
-                    list_settings.save()
-                message = _("The list settings have been updated.")
-            else:
-                message = _(
-                    "Validation Error - The list settings have not been updated.")
-        else:
-            # Provide a form with existing values
-            # create form and process layout into form.layout
-            form = ListSettings(visible_section, data=None)
-            # create a Dict of all settings which are used in the form
-            used_settings = {}
-            for section in form.layout:
-                for option in section[1:]:
-                    used_settings[option] = m_list.settings[option]
-                    if option == u'acceptable_aliases':
-                        used_settings[option] = '\n'.join(used_settings[option])
-            # recreate the form using the settings
-            form = ListSettings(visible_section, data=used_settings)
-            form.truncate()
-    # END Legacy section
 
     return render_to_response(template,
                               {'form': form,
