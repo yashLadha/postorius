@@ -30,7 +30,7 @@ per_list_urlpatterns = patterns('postorius.views',
                                     ListMembersView.as_view(
                                     ), name='list_members_paged'),
                                 url(r'^csv_view/$',
-                                    'csv_view' , name='csv_view'),
+                                    'csv_view', name='csv_view'),
                                 url(r'^members/$',
                                     ListMembersView.as_view(
                                     ), name='list_members'),
@@ -85,7 +85,8 @@ urlpatterns = patterns(
     'postorius.views',
     (r'^$', 'list_index'),
     # /account/
-    url(r'^accounts/login/$', login_view, {"template_name": "postorius/login.html"}, name='user_login'),
+    url(r'^accounts/login/$', login_view,
+        {"template_name": "postorius/login.html"}, name='user_login'),
     url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
     url(r'^accounts/profile/$', 'user_profile', name='user_profile'),
     url(r'^tasks/$', 'user_tasks', name='user_tasks'),
