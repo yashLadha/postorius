@@ -74,6 +74,10 @@
     		</tr>
         </thead>
     	<tbody>
+	    <form action="{% url 'csv_view' list.list_id %}" method="post" class="well"> {% csrf_token %}
+		     <button type="submit" class="btn">{% trans 'CSV Export' %}</button>
+	    </form>
+
             {% for member in list.member_page %}
                 <tr>
                     <td> <a href="{% url 'list_member_options' list.fqdn_listname member.email %}">

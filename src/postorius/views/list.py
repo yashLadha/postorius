@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 import logging
+import csv
+
+from django.http import HttpResponse
 
 from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
@@ -302,6 +305,29 @@ class ListMassRemovalView(MailingListView):
                                   'The email address %s is not valid.' %
                                   email)
         return redirect('mass_removal', self.mailing_list.list_id)
+
+
+@list_owner_required
+def csv_view(request, list_id):
+    """Export all the subscriber in csv
+    """
+    mm_lists = []
+    try:
+        client = utils.get_client()
+        mm_lists = client.get_list(list_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = (
+        'attachment; filename="Subscribers.csv"')
+
+    writer = csv.writer(response)
+    if mm_lists:
+        for i in mm_lists.members:
+            writer.writerow([i.email])
+
+    return response
 
 
 def _get_choosable_domains(request):

@@ -29,6 +29,8 @@ per_list_urlpatterns = patterns('postorius.views',
                                 url(r'^members/(?P<page>\d+)/$',
                                     ListMembersView.as_view(
                                     ), name='list_members_paged'),
+                                url(r'^csv_view/$',
+                                    'csv_view', name='csv_view'),
                                 url(r'^members/$',
                                     ListMembersView.as_view(
                                     ), name='list_members'),
