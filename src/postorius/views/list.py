@@ -203,11 +203,18 @@ class ListSubscribeView(MailingListView):
             form = ListSubscribe(request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
-                self.mailing_list.subscribe(email, pre_verified=True,
-                                            pre_confirmed=True)
-                messages.success(
-                    request, 'You are subscribed to %s.' %
-                    self.mailing_list.fqdn_listname)
+                response = self.mailing_list.subscribe(
+                    email, pre_verified=True, pre_confirmed=True)
+                if type(response) == dict and response.get('token_owner') == \
+                        'moderator':
+                    messages.success(
+                        request,
+                        'Your subscription request has been submitted and is '
+                        'waiting for moderator approval.')
+                else:
+                    messages.success(
+                        request, 'You are subscribed to %s.' %
+                        self.mailing_list.fqdn_listname)
             else:
                 messages.error(request, 'Something went wrong. '
                                'Please try again.')
@@ -234,7 +241,7 @@ class ListUnsubscribeView(MailingListView):
             return utils.render_api_error(request)
         except ValueError, e:
             messages.error(request, e)
-        return redirect('list_members', self.mailing_list.list_id)
+        return redirect('list_summary', self.mailing_list.list_id)
 
 
 class ListMassSubscribeView(MailingListView):
