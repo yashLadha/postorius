@@ -170,26 +170,82 @@ class ListMetricsView(MailingListView):
 
 
 class ListSummaryView(MailingListView):
-
     """Shows common list metrics.
     """
 
     def get(self, request, list_id):
-        user_email = getattr(request.user, 'email', None)
-        userSubscribed = False
         try:
-            userMember = self.mailing_list.get_member(user_email)
-        except ValueError:
-            pass
+            mm_user = MailmanUser.objects.get(address=request.user.email)
+            user_emails = [str(address) for address in getattr(mm_user, 'addresses')]
+            # TODO:maxking - add the clause below in above
+            # statement after the subscription policy is sorted out
+            # if address.verified_on is not None]
+        except Mailman404Error:
+            # The user does not have a mailman user associated with it.
+            user_emails = [request.user.email]
+        except AttributeError:
+            # Anonymous User, everyone logged out.
+            user_emails = None
+
+        userSubscribed = False
+        subscribed_address = None
+        if user_emails is not None:
+            for address in user_emails:
+                try:
+                    userMember = self.mailing_list.get_member(address)
+                except ValueError:
+                    pass
+                else:
+                    userSubscribed = True
+                    subscribed_address = address
+        data =  {'list': self.mailing_list,
+                 'userSubscribed': userSubscribed,
+                 'subscribed_address': subscribed_address}
+        if user_emails is not None:
+            data['change_subscription_form'] = ChangeSubscriptionForm(user_emails,
+                                                 initial={'email': subscribed_address})
+            data['subscribe_form'] = ListSubscribe(user_emails)
         else:
-            userSubscribed = True
+            data['change_subscription_form'] = None
         return render_to_response(
-            'postorius/lists/summary.html',
-            {'list': self.mailing_list,
-             'subscribe_form': ListSubscribe(initial={'email': user_email}),
-             'userSubscribed': userSubscribed},
+            'postorius/lists/summary.html', data,
             context_instance=RequestContext(request))
 
+class ChangeSubscriptionView(MailingListView):
+    """Change mailing list subscription
+    """
+
+    @method_decorator(login_required)
+    def post(self, request, list_id):
+        try:
+            mm_user = MailmanUser.objects.get(address=request.user.email)
+            user_emails = [str(address) for address in mm_user.addresses]
+            form = ListSubscribe(user_emails, request.POST)
+            for address in user_emails:
+                try:
+                    userMember = self.mailing_list.get_member(address)
+                except ValueError:
+                    pass
+                else:
+                    userSubscribed = True
+                    old_email = address
+            if form.is_valid():
+                email = form.cleaned_data['email']
+                if old_email == email:
+                    messages.error(request, 'You are already subscribed')
+                else:
+                    self.mailing_list.unsubscribe(old_email)
+                    self.mailing_list.subscribe(email)
+                    messages.success(request,
+                        'Subscription changed to {} address'.format(email))
+            else:
+                messages.error(request, 'Something went wrong. '
+                               'Please try again.')
+        except MailmanApiError:
+            return utils.render_api_error(request)
+        except HTTPError, e:
+            messages.error(request, e.msg)
+        return redirect('list_summary', self.mailing_list.list_id)
 
 class ListSubscribeView(MailingListView):
     """
@@ -203,7 +259,13 @@ class ListSubscribeView(MailingListView):
         redirects to the `list_summary` view.
         """
         try:
-            form = ListSubscribe(request.POST)
+            try:
+                mm_user = MailmanUser.objects.get(address=request.user.email)
+                user_addresses = [str(address) for address in mm_user.addresses]
+            except Mailman404Error:
+                mm_user = None
+                user_addresses = (request.POST.get('email'),)
+            form = ListSubscribe(user_addresses, request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
                 response = self.mailing_list.subscribe(

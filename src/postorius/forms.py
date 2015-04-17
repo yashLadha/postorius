@@ -164,16 +164,22 @@ class ListNew(FieldsetForm):
 
 
 class ListSubscribe(FieldsetForm):
-
     """Form fields to join an existing list.
     """
-    email = forms.EmailField(
-        label=_('Your email address'),
-        widget=forms.HiddenInput(),
-        error_messages={'required': _('Please enter an email address.'),
-                        'invalid': _('Please enter a valid email address.')})
+
+    email = forms.ChoiceField(label=_('Your email address'),
+                validators=[validate_email],
+                widget=forms.Select(),
+                error_messages={'required': _('Please enter an email address.'),
+                                'invalid': _('Please enter a valid email address.')})
+
     display_name = forms.CharField(label=_('Your name (optional)'),
                                    required=False)
+
+    def __init__(self, user_emails, *args, **kwargs):
+        super(ListSubscribe, self).__init__(*args, **kwargs)
+        self.fields['email'].choices = ((address, address)
+                                        for address in user_emails)
 
 
 class ListUnsubscribe(FieldsetForm):
@@ -826,3 +832,14 @@ class AddressActivationForm(forms.Form):
             raise forms.ValidationError(_('Please provide a different email '
                                           'address than your own.'))
         return cleaned_data
+
+class ChangeSubscriptionForm(forms.Form):
+    email = forms.ChoiceField()
+
+    def __init__(self, user_emails, *args, **kwargs):
+        super(ChangeSubscriptionForm, self).__init__(*args, **kwargs)
+        self.fields['email'] = forms.ChoiceField(
+            label=_('Select Email'),
+            required=False,
+            widget=forms.Select(),
+            choices=((address, address) for address in user_emails))

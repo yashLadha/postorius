@@ -40,7 +40,23 @@
 
         {% if userSubscribed %}
 
-            <a href="{% url 'list_unsubscribe' list.list_id user.email %}" class="btn btn-danger">{% trans "Unsubscribe" %}</a>
+
+            <p>
+                {% trans "You are subscribed to this list with the following address" %}: <em>{{ subscribed_address }}</em>
+            </p>
+
+            <hr />
+
+            <form action="{% url 'change_subscription' list.list_id %}" method="POST" class="change_subscription">
+                {% csrf_token %}
+                {{change_subscription_form.as_p}}
+                <input class="btn btn-success" type="submit" value="{% trans 'Change Subscription' %}">
+            </form>
+
+            <hr />
+
+            <a href="{% url 'list_unsubscribe' list.list_id subscribed_address %}" class="btn btn-danger">{% trans "Unsubscribe" %} {{ subscribed_address }}</a>
+
 
         {% else %}
 

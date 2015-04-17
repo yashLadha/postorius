@@ -16,7 +16,8 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 from django.utils import unittest
 
-from postorius.forms import UserPreferences, DomainNew, ListNew
+from postorius.forms import (ListNew,
+    UserPreferences, DomainNew, ListSubscribe, ChangeSubscriptionForm)
 
 
 class UserPreferencesTest(unittest.TestCase):
@@ -50,6 +51,47 @@ class DomainNewTest(unittest.TestCase):
         })
         self.assertFalse(form.is_valid())
 
+
+class ListSubscribeTest(unittest.TestCase):
+    def test_subscribe_works(self):
+        user_emails = ['someone@example.com']
+        form = ListSubscribe(user_emails, {
+            'email' : 'someone@example.com',
+            'display_name' : 'Someone',
+        })
+        self.assertTrue(form.is_valid())
+
+
+    def test_subscribe_fails(self):
+        user_emails = ['someone@example.com']
+        form = ListSubscribe(user_emails, {
+            'email' : 'notaemail',
+            'display_name' : 'Someone',
+        })
+        self.assertFalse(form.is_valid())
+
+    def test_subscribe_validates_email(self):
+        user_emails = ['something']
+        form = ListSubscribe(user_emails, {
+            'email' : 'something',
+            'display_name' : 'Someone',
+        })
+        self.assertFalse(form.is_valid())
+
+class ChangeSubscriptionTest(unittest.TestCase):
+    def test_subscription_changes_only_to_user_addresses(self):
+        user_emails = ['one@example.com', 'two@example.com']
+        form = ChangeSubscriptionForm(user_emails,
+                                      {'email': 'abcd@d.com'})
+        self.assertFalse(form.is_valid())
+
+    def test_subscription_works(self):
+        user_emails = ['one@example.com', 'two@example.com']
+        form = ChangeSubscriptionForm(user_emails,
+                                      {'email': 'two@example.com'})
+        self.assertTrue(form.is_valid())
+
+
 class ListNewTest(unittest.TestCase):
 
     def test_form_fields_list(self):
@@ -71,4 +113,3 @@ class ListNewTest(unittest.TestCase):
              'description': 'The Most Desirable organization',
         })
         self.assertFalse(form.is_valid())
-

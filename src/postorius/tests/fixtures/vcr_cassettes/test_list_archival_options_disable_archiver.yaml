@@ -8,14 +8,14 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test_list.example.com
   response:
-    body: {string: !!python/unicode '{"list_name": "test_list", "volume": 1, "list_id":
-        "test_list.example.com", "self_link": "http://localhost:9001/3.0/lists/test_list.example.com",
-        "fqdn_listname": "test_list@example.com", "mail_host": "example.com", "member_count":
-        0, "display_name": "Test_list", "http_etag": "\"3f02dac6cf71a3be179af5064b09ce668186e785\""}'}
+    body: {string: !!python/unicode '{"volume": 1, "mail_host": "example.com", "list_name":
+        "test_list", "display_name": "Test_list", "list_id": "test_list.example.com",
+        "member_count": 0, "fqdn_listname": "test_list@example.com", "http_etag":
+        "\"3f02dac6cf71a3be179af5064b09ce668186e785\"", "self_link": "http://localhost:9001/3.0/lists/test_list.example.com"}'}
     headers:
       content-length: ['324']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 17 Apr 2015 21:06:27 GMT']
+      date: ['Fri, 17 Apr 2015 21:49:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -27,16 +27,16 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
-    body: {string: !!python/unicode '{"mhonarc": true, "http_etag": "\"dfd159ec866aff2f484eb6399b59057ba112d3e5\"",
-        "prototype": false, "mail-archive": true}'}
+    body: {string: !!python/unicode '{"prototype": false, "mhonarc": true, "mail-archive":
+        true, "http_etag": "\"dfd159ec866aff2f484eb6399b59057ba112d3e5\""}'}
     headers:
       content-length: ['120']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 17 Apr 2015 21:06:28 GMT']
+      date: ['Fri, 17 Apr 2015 21:49:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
-    body: prototype=True&mhonarc=True&mail-archive=True
+    body: mail-archive=True&prototype=True&mhonarc=True
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
@@ -48,11 +48,11 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Fri, 17 Apr 2015 21:06:28 GMT']
+      date: ['Fri, 17 Apr 2015 21:49:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 204, message: No Content}
 - request:
-    body: prototype=True&mhonarc=True&mail-archive=False
+    body: mail-archive=False&prototype=True&mhonarc=True
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
@@ -64,7 +64,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Fri, 17 Apr 2015 21:06:28 GMT']
+      date: ['Fri, 17 Apr 2015 21:49:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 204, message: No Content}
 - request:
@@ -76,12 +76,12 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
-    body: {string: !!python/unicode '{"mhonarc": true, "http_etag": "\"95f97f6e3c57d856b8048a96844ddc64a972f96d\"",
-        "prototype": false, "mail-archive": false}'}
+    body: {string: !!python/unicode '{"prototype": false, "mhonarc": true, "mail-archive":
+        false, "http_etag": "\"95f97f6e3c57d856b8048a96844ddc64a972f96d\""}'}
     headers:
       content-length: ['121']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 17 Apr 2015 21:06:28 GMT']
+      date: ['Fri, 17 Apr 2015 21:49:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -93,12 +93,12 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
-    body: {string: !!python/unicode '{"mhonarc": true, "http_etag": "\"95f97f6e3c57d856b8048a96844ddc64a972f96d\"",
-        "prototype": false, "mail-archive": false}'}
+    body: {string: !!python/unicode '{"prototype": false, "mhonarc": true, "mail-archive":
+        false, "http_etag": "\"95f97f6e3c57d856b8048a96844ddc64a972f96d\""}'}
     headers:
       content-length: ['121']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 17 Apr 2015 21:06:28 GMT']
+      date: ['Fri, 17 Apr 2015 21:49:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 version: 1
