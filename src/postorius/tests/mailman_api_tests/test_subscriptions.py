@@ -43,7 +43,7 @@ class TestSubscriptionPolicyOpen(TestCase):
     Tests permissions and creation of list owners and moderators.
     """
 
-    @MM_VCR.use_cassette('list_subscription.yaml')
+    @MM_VCR.use_cassette('test_list_subscription.yaml')
     def setUp(self):
         self.client = Client()
         try:
@@ -51,27 +51,69 @@ class TestSubscriptionPolicyOpen(TestCase):
         except HTTPError:
             self.domain = get_client().get_domain('example.com')
         try:
-            self.foo_list = self.domain.create_list('foo')
+            self.test_list = self.domain.create_list('open_list')
         except HTTPError:
-            self.foo_list = get_client().get_list('foo.example.com')
+            self.test_list = get_client().get_list('open_list.example.com')
         # Set subscription policy to open
-        settings = self.foo_list.settings
+        settings = self.test_list.settings
         settings['subscription_policy'] = 'open'
         settings.save()
         self.user = User.objects.create_user(
-            'testuser', 'test@example.com', 'testpass')
+            'testuser', 'test@example.com', 'pwd')
 
-    @MM_VCR.use_cassette('list_subscription.yaml')
+    @MM_VCR.use_cassette('test_list_subscription.yaml')
     def tearDown(self):
-        self.foo_list.delete()
+        self.test_list.delete()
         self.user.delete()
 
-    @MM_VCR.use_cassette('list_subscription.yaml')
+    @MM_VCR.use_cassette('test_list_subscription.yaml')
     def test_subscribing_adds_member(self):
-        print(self.foo_list.settings['subscription_policy'])
+        # The subscription goes straight through.
+        self.client.login(username='testuser', password='pwd')
         response = self.client.post(
-            reverse('list_subscribe', args=('foo.example.com', )),
+            reverse('list_subscribe', args=('open_list.example.com', )),
             {'email': 'fritz@example.org'})
-        print(response.status_code)
-        print(self.foo_list.members)
-        self.assertEqual(2, len(self.foo_list.members))
+        self.assertEqual(len(self.test_list.members), 1)
+        self.assertEqual(len(self.test_list.requests), 0)
+
+
+@override_settings(**API_CREDENTIALS)
+class TestSubscriptionPolicyModerate(TestCase):
+    """Tests for the list members page.
+
+    Tests permissions and creation of list owners and moderators.
+    """
+
+    @MM_VCR.use_cassette('test_list_subscription_moderate.yaml')
+    def setUp(self):
+        self.client = Client()
+        try:
+            self.domain = get_client().create_domain('example.com')
+        except HTTPError:
+            self.domain = get_client().get_domain('example.com')
+        try:
+            self.test_list = self.domain.create_list('moderate_subs')
+        except HTTPError:
+            self.test_list = get_client().get_list('moderate_subs.example.com')
+        # Set subscription policy to open
+        settings = self.test_list.settings
+        settings['subscription_policy'] = 'moderate'
+        settings.save()
+        # Create django user.
+        self.user = User.objects.create_user(
+            'testuser', 'test@example.com', 'pwd')
+
+    @MM_VCR.use_cassette('test_list_subscription_moderate.yaml')
+    def tearDown(self):
+        self.test_list.delete()
+        self.user.delete()
+
+    @MM_VCR.use_cassette('test_list_subscription_moderate.yaml')
+    def test_subscribing_adds_member(self):
+        # The subscription is held for approval.
+        self.client.login(username='testuser', password='pwd')
+        response = self.client.post(
+            reverse('list_subscribe', args=('moderate_subs.example.com', )),
+            {'email': 'fritz@example.org'})
+        self.assertEqual(len(self.test_list.members), 0)
+        self.assertEqual(len(self.test_list.requests), 1)
