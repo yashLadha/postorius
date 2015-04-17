@@ -14,32 +14,50 @@
     {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
         {% include 'postorius/menu/list_nav.html' %}
     {% endif %}
-    <h1>{{list.display_name}}</h1>
 
+    <div class="well">
+        
+        <h1>{{list.display_name}} - {{ list.fqdn_listname }}</h1>
+        <p>{{list.settings.description }}</p>
 
-    <h2>{% trans 'Description' %}</h2>
-    <p>{{list.settings.description }}</p>
+        {% if hyperkitty_url %}
+        <h2>{% trans 'Archived messages' %}</h2>
+        {% blocktrans %}
+        To see the prior postings to this list, visit
+        <a href="{{ hyperkitty_url }}">the archives</a>.
+        {% endblocktrans %}
+        {% endif %}
 
-    {% if hyperkitty_url %}
-    <h2>{% trans 'Archived messages' %}</h2>
-    {% blocktrans %}
-    To see the prior postings to this list, visit
-    <a href="{{ hyperkitty_url }}">the archives</a>.
-    {% endblocktrans %}
-    {% endif %}
+        <dl>
+            <dt>{% trans 'To contact the list owners, use the following email address:' %}</dt>
+            <dd>{{ list.settings.owner_address }}</dd>
+        </dl>
+        
+    </div>
+  
 
-    <h2>{% trans 'Subscription' %}</h2>
     {% if user.is_authenticated %}
-    {% if userSubscribed %}
-    <a href="{% url 'list_unsubscribe' list.list_id user.email %}" class="btn btn-danger">{% trans "Unsubscribe" %}</a>
+
+        {% if userSubscribed %}
+
+            <a href="{% url 'list_unsubscribe' list.list_id user.email %}" class="btn btn-danger">{% trans "Unsubscribe" %}</a>
+
+        {% else %}
+
+            <h2>{% trans 'Subscribe to this list' %}</h2>
+
+            <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="list_subscribe"> {% csrf_token %}
+                {{subscribe_form.as_p}}
+                <input class="btn btn-success" type="submit" value="{% trans 'Subscribe' %}" />
+            </form>
+
+        {% endif %}
+
     {% else %}
-    <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="list_subscribe"> {% csrf_token %}
-        {{subscribe_form.as_p}}
-        <input class="btn btn-success" type="submit" value="{% trans 'Subscribe' %}" />
-    </form>
-    {% endif %}
-    {% else %}
-        <p>{% trans "To subscribe to or unsubscribe from this list you have to be logged in." %}</p>
+
+        <p>{% trans "You have to log in to subscribe to this list." %}</p>
         <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans "Log In" %}</a></p>
+
     {% endif %}
+
 {% endblock %}

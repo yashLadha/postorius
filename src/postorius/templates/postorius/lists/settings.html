@@ -12,28 +12,39 @@
     {% if message %}<p class="alert">{{ message }}</p>{% endif %}
     {% list_nav 'list_settings' 'Settings' %}
     <ul class="nav nav-tabs">
-        {% for section in form_sections %}
-        <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 visible_option=None %}">{{section.0}}</a></li>
+        {% for section in section_names %}
+        <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}">{{section.1}}</a></li>
         {% endfor %}
     </ul>
 
-    {% if visible_section %}
+    <form action="{% url 'list_settings' list_id=list.list_id visible_section=visible_section %}" method="post" class="well form-horizontal list_settings">{% csrf_token %}
+        
+        {% for field in form %}
 
-        <table class="well">
-        <form class="well" action="{% url 'list_settings' list_id=list.list_id visible_section=visible_section visible_option=visible_option %}" method="post" class="list_settings"> {% csrf_token %}
-			{% for field in form %}
-            <tr><td>
-                {{ field.errors }}
-                {{ field.label_tag }} <br />
-                [<span class="more_info"><a href="{% url 'more_info_tab'  formid='list_settings' helpid=field.name %}" target="_blank">{% trans "More info" %}</a><span>{{ field.help_text }}
-                </span></span>]
-            </td><td>{{ field }}</td></tr>
+            {% if field.errors %}
+                <div class="field-errors">{{ field.errors }}</div>
+            {% endif %}
+
+            <div class="control-group">
+
+                <div class="control-label">
+                    {{ field.label_tag }}
+                    [<span class="more_info"><a href="{% url 'more_info_tab'  formid='list_settings' helpid=field.name %}" target="_blank">{% trans "?" %}</a><span>{{ field.help_text }}</span></span>]
+                </div>
+
+                <div class="controls">
+                    {{ field }}
+                </div>
+            </div>
+
         {% endfor %}
-        <tr><td colspan="2">
-	         <button class="btn btn-primary" type="submit">{% trans "Save changes" %}</button>
-        </td></tr>
-        </form>
-        </table>
-    {% endif %}
+
+        <div class="form-actions">
+        
+            <button class="btn btn-primary btn-success" type="submit">{% trans "Save changes" %}</button>
+
+        </div>
+
+    </form>
 
 {% endblock %}

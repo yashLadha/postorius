@@ -192,19 +192,32 @@ class ListSummaryView(MailingListView):
 
 
 class ListSubscribeView(MailingListView):
-
-    """Subscribe a mailing list."""
+    """
+    view name: `list_subscribe`
+    """
 
     @method_decorator(login_required)
     def post(self, request, list_id):
+        """
+        Subscribes an email address to a mailing list via POST and 
+        redirects to the `list_summary` view.
+        """
         try:
             form = ListSubscribe(request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
-                self.mailing_list.subscribe(email)
-                messages.success(
-                    request, 'You are subscribed to %s.' %
-                    self.mailing_list.fqdn_listname)
+                response = self.mailing_list.subscribe(
+                    email, pre_verified=True, pre_confirmed=True)
+                if type(response) == dict and response.get('token_owner') == \
+                        'moderator':
+                    messages.success(
+                        request,
+                        'Your subscription request has been submitted and is '
+                        'waiting for moderator approval.')
+                else:
+                    messages.success(
+                        request, 'You are subscribed to %s.' %
+                        self.mailing_list.fqdn_listname)
             else:
                 messages.error(request, 'Something went wrong. '
                                'Please try again.')
@@ -231,7 +244,7 @@ class ListUnsubscribeView(MailingListView):
             return utils.render_api_error(request)
         except ValueError, e:
             messages.error(request, e)
-        return redirect('list_members', self.mailing_list.list_id)
+        return redirect('list_summary', self.mailing_list.list_id)
 
 
 class ListMassSubscribeView(MailingListView):
@@ -253,7 +266,8 @@ class ListMassSubscribeView(MailingListView):
             for email in emails:
                 try:
                     validate_email(email)
-                    self.mailing_list.subscribe(address=email)
+                    self.mailing_list.subscribe(address=email, pre_verified=True,
+                                                pre_confirmed=True)
                     messages.success(
                         request,
                         'The address %s has been subscribed to %s.' %
@@ -613,9 +627,70 @@ def reject_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
+@list_moderator_required
+def list_subscription_requests(request, list_id):
+    """Shows a list of held messages.
+    """
+    try:
+        m_list = utils.get_client().get_list(list_id)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    return render_to_response('postorius/lists/subscription_requests.html',
+                              {'list': m_list},
+                              context_instance=RequestContext(request))
+
+
+@list_moderator_required
+def handle_subscription_request(request, list_id, request_id, action):
+    """
+    Handle a subscription request. Possible actions:
+        - accept
+        - defer
+        - reject
+        - discard
+    """
+    confirmation_messages = {
+        'accept': _('The request has been accepted.'),
+        'reject': _('The request has been rejected.'),
+        'discard': _('The request has been discarded.'),
+        'defer': _('The request has been defered.'),
+    }
+    try:
+        m_list = utils.get_client().get_list(list_id)
+        # Moderate request and add feedback message to session.
+        m_list.moderate_request(request_id, action)
+        messages.success(request, confirmation_messages[action])
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    except HTTPError as e:
+        messages.error(request, '{0}: {1}'.format(
+            _('The request could not be moderated'), e.reason))
+    return redirect('list_subscription_requests', m_list.list_id)
+
+
+SETTINGS_SECTION_NAMES = (
+    ('list_identity', _('List Identity')),
+    ('automatic_responses', _('Automatic Responses')),
+    ('alter_messages', _('Alter Messages')),
+    ('digest', _('Digest')),
+    ('message_acceptance', _('Message Acceptance')),
+    ('archiving', _('Archiving')),
+    ('subscription_policy', _('Subscription Policy')),
+)
+
+SETTINGS_FORMS = {
+    'list_identity': ListIdentityForm,
+    'automatic_responses': ListAutomaticResponsesForm,
+    'alter_messages': AlterMessagesForm,
+    'digest': DigestSettingsForm,
+    'message_acceptance': MessageAcceptanceForm,
+    'archiving': ArchivePolicySettingsForm,
+    'subscription_policy': ListSubscriptionPolicyForm,
+}
+
+
 @list_owner_required
 def list_settings(request, list_id=None, visible_section=None,
-                  visible_option=None,
                   template='postorius/lists/settings.html'):
     """
     View and edit the settings of a list.
@@ -629,55 +704,36 @@ def list_settings(request, list_id=None, visible_section=None,
     """
     message = ""
     if visible_section is None:
-        visible_section = 'List Identity'
-    form_sections = []
+        visible_section = 'list_identity'
+    form_class = SETTINGS_FORMS.get(visible_section)
     try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
+        m_list = List.objects.get_or_404(fqdn_listname=list_id)
+        list_settings = m_list.settings
+    except MailmanApiError, HTTPError:
         return utils.render_api_error(request)
-    # collect all Form sections for the links:
-    temp = ListSettings('', '')
-    for section in temp.layout:
-        try:
-            form_sections.append((section[0],
-                                  temp.section_descriptions[section[0]]))
-        except KeyError:
-            pass
-    del temp
-    # Save a Form Processed by POST
-    if request.method == 'POST':
-        form = ListSettings(visible_section, visible_option, data=request.POST)
-        form.truncate()
-        if form.is_valid():
-            list_settings = the_list.settings
-            for key in form.fields.keys():
-                list_settings[key] = form.cleaned_data[key]
-                list_settings.save()
-            message = _("The list settings have been updated.")
+    # List settings are grouped an processed in different forms.
+    if form_class:
+        if request.method == 'POST':
+            form = form_class(request.POST)
+            if form.is_valid():
+                try:
+                    for key in form.fields.keys():
+                        list_settings[key] = form.cleaned_data[key]
+                    list_settings.save()
+                    messages.success(request,
+                                     _('The settings have been updated.'))
+                except HTTPError as e:
+                    messages.error(
+                        request,
+                        '{0}: {1}'.format(_('An error occured'), e.reason))
         else:
-            message = _(
-                "Validation Error - The list settings have not been updated.")
-    else:
-        # Provide a form with existing values
-        # create form and process layout into form.layout
-        form = ListSettings(visible_section, visible_option, data=None)
-        # create a Dict of all settings which are used in the form
-        used_settings = {}
-        for section in form.layout:
-            for option in section[1:]:
-                used_settings[option] = the_list.settings[option]
-                if option == u'acceptable_aliases':
-                    used_settings[option] = '\n'.join(used_settings[option])
-        # recreate the form using the settings
-        form = ListSettings(visible_section, visible_option,
-                            data=used_settings)
-        form.truncate()
+            form = form_class(initial=list_settings)
+
     return render_to_response(template,
                               {'form': form,
-                               'form_sections': form_sections,
+                               'section_names': SETTINGS_SECTION_NAMES,
                                'message': message,
-                               'list': the_list,
-                               'visible_option': visible_option,
+                               'list': m_list,
                                'visible_section': visible_section},
                               context_instance=RequestContext(request))
 

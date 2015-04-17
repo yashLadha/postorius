@@ -188,21 +188,138 @@ class ListUnsubscribe(FieldsetForm):
             'invalid': _('Please enter a valid email address.')})
 
 
-class ListSettings(FieldsetForm):
-
-    """Form fields dealing with the list settings.
+class ArchivePolicySettingsForm(forms.Form):
     """
-    choices = ((True, _('Yes')), (False, _('No')))
-    # list_name = forms.CharField(
-    #    label=_('List Name'),
-    #    required=False)
-    host_name = forms.CharField(
-        label=_('Domain host name'),
-        required=False)
-    # informational, not configurable
-    # fqdn_listname = forms.CharField(
-    #    label=_('Fqdn listname'),
-    #    required=False)
+    Set the general archive policy.
+    """
+    archive_policy_choices = (
+        ("public", _("Public Archives")),
+        ("private", _("Private Archives")),
+        ("never", _("Do not archive this list")),
+    )
+    archive_policy = forms.ChoiceField(
+        choices=archive_policy_choices,
+        widget=forms.RadioSelect,
+        label=_('Archive Policy'),
+        help_text=_('Policy for archiving messages for this list'),
+    )
+
+
+class MessageAcceptanceForm(forms.Form):
+    """
+    List messages acceptance settings.
+    """
+    action_choices = (
+        ("hold", _("Hold for moderator")),
+        ("reject", _("Reject (with notification)")),
+        ("discard", _("Discard (no notification)")),
+        ("accept", _("Accept")),
+        ("defer", _("Defer")))
+    acceptable_aliases = forms.CharField(
+        widget=forms.Textarea(),
+        label=_("Acceptable aliases"),
+        required=False,
+        help_text=(
+            'Alias names which qualify as explicit to or cc destination names '
+            'for this list. Alternate addresses that are acceptable when '
+            '`require_explicit_destination\' is enabled. This option takes a '
+            'list of regular expressions, one per line, which is matched '
+            'against every recipient address in the message. The matching is '
+            'performed with Python\'s re.match() function, meaning they are '
+            'anchored to the start of the string.'))
+    administrivia = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Administrivia'),
+        help_text=(
+            'Administrivia tests will check postings to see whether it\'s '
+            'really meant as an administrative request (like subscribe, '
+            'unsubscribe, etc), and will add it to the the administrative '
+            'requests queue, notifying the administrator of the new request, '
+            'in the process.'))
+    default_member_action = forms.ChoiceField(
+        widget=forms.RadioSelect(),
+        label=_('Default action to take when a member posts to the list:'),
+        error_messages={
+            'required': _("Please choose a default member action.")},
+        required=True,
+        choices=action_choices,
+        help_text=(
+            'Default action to take when a member posts to the list. '
+            'Hold -- This holds the message for approval by the list '
+            'moderators.'
+            'Reject -- this automatically rejects the message by sending a '
+            'bounce notice to the post\'s author. The text of the bounce '
+            'notice can be configured by you. '
+            'Discard -- this simply discards the message, with no notice '
+            'sent to the post\'s author. '
+            'Accept --accepts any postings to the list by default. '
+            'Defer -- Defers any postings to the list by default. '))
+    default_nonmember_action = forms.ChoiceField(
+        widget=forms.RadioSelect(),
+        label=_('Default action to take when a non-member posts to the'
+                'list:'),
+        error_messages={
+            'required': _("Please choose a default non-member action.")},
+        required=True,
+        choices=action_choices,
+        help_text=(
+            'When a post from a non-member is received, the message\'s sender '
+            'is matched against the list of explicitly accepted, held, '
+            'rejected (bounced), and discarded addresses. '
+            'If no match is found, then this action is taken.'))
+
+
+class DigestSettingsForm(forms.Form):
+    """
+    List digest settings.
+    """
+    digest_size_threshold = forms.DecimalField(
+        label=_('Digest size threshold'),
+        help_text=('How big in Kb should a digest be before it gets sent '
+                   'out?'))
+
+
+class AlterMessagesForm(forms.Form):
+    """
+    Alter messages list settings.
+    """
+    filter_content = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Filter content'),
+        help_text=(
+            'Should Mailman filter the content of list traffic according to '
+            'the settings below?'))
+    collapse_alternatives = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Collapse alternatives'),
+        help_text=(
+            'Should Mailman collapse multipart/alternative to its first part '
+            'content?'))
+    convert_html_to_plaintext = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Convert html to plaintext'),
+        help_text=(
+            'Should Mailman convert text/html parts to plain text? This '
+            'conversion happens after MIME attachments have been stripped.'))
+    anonymous_list = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Anonymous list'),
+        help_text=(
+            'Hide the sender of a message, replacing it with the list address '
+            '(Removes From, Sender and Reply-To fields)'))
     include_rfc2369_headers = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -223,25 +340,82 @@ class ListSettings(FieldsetForm):
             'recommended (and in fact, your ability to disable these headers '
             'may eventually go away).'))
     allow_list_posts = forms.TypedChoiceField(
-        choices=choices,
+        choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         label=_("Include the list post header"),
         help_text=_(
             "This can be set to no for announce lists that do not wish to "
             "include the List-Post header because posting to the list is "
-            "discouraged."),
-    )
-    archive_policy_choices = (
-        ("public", _("Public Archives")),
-        ("private", _("Private Archives")),
-        ("never", _("Do not archive this list")),
-    )
-    archive_policy = forms.ChoiceField(
-        choices=archive_policy_choices,
+            "discouraged."))
+    reply_to_address = forms.CharField(
+        label=_('Explicit reply-to address'),
+        required=False,
+        help_text=_(
+            'This option allows admins to set an explicit Reply-to address. '
+            'It is only used if the reply-to is set to use an explicitly set '
+            'header'))
+    first_strip_reply_to = forms.TypedChoiceField(
+        coerce=lambda x: x == 'False',
+        choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
-        label=_('Archive Policy'),
-        help_text=_('Policy for archiving messages for this list'),
-    )
+        required=False,
+        help_text=_(
+            'Should any existing Reply-To: header found in the original '
+            'message be stripped? If so, this will be done regardless of '
+            'whether an explict Reply-To: header is added by Mailman or not.'))
+    reply_goes_to_list = forms.ChoiceField(
+        label=_('Reply goes to list'),
+        widget=forms.Select(),
+        required=False,
+        error_messages={
+            'required': _("Please choose a reply-to action.")},
+        choices=(
+            ("no_munging", _("No Munging")),
+            ("point_to_list", _("Reply goes to list")),
+            ("explicit_header", _("Explicit Reply-to header set"))),
+        help_text=(
+            'Where are replies to list messages directed? No Munging is '
+            'strongly recommended for most mailing lists. \nThis option '
+            'controls what Mailman does to the Reply-To: header in messages '
+            'flowing through this mailing list. When set to No Munging, no '
+            'Reply-To: header is '
+            'added by Mailman, although if one is present in the original '
+            'message, it is not stripped. Setting this value to either Reply '
+            'to List or Explicit Reply causes Mailman to insert a specific '
+            'Reply-To: header in all messages, overriding the header in the '
+            'original message if necessary (Explicit Reply inserts the value '
+            'of reply_to_address). There are many reasons not to introduce or '
+            'override the Reply-To: header. One is that some posters depend '
+            'on their own Reply-To: settings to convey their valid return '
+            'address. Another is that modifying Reply-To: makes it much more '
+            'difficult to send private replies. See `Reply-To\' Munging '
+            'Considered Harmful for a general discussion of this issue. '
+            'See Reply-To Munging Considered Useful for a dissenting opinion. '
+            'Some mailing lists have restricted '
+            'posting privileges, with a parallel list devoted to discussions. '
+            'Examples are `patches\' or `checkin\' lists, where software '
+            'changes are posted by a revision control system, but discussion '
+            'about the changes occurs on a developers mailing list. To '
+            'support these types of mailing lists, select Explicit Reply and '
+            'set the Reply-To: address option to point to the parallel list.'))
+    posting_pipeline = forms.ChoiceField(
+        label=_('Pipeline'),
+        widget=forms.Select(),
+        required=False,
+        error_messages={
+            'required': _("Please choose a reply-to action.")},
+        choices=(
+            ("default-owner-pipeline", _("default-owner-pipeline")),
+            ("default-posting-pipeline", _("default-posting-pipeline")),
+            ("virgin", _("virgin"))),
+        help_text=(
+            'Type of pipeline you want to use for this mailing list'))
+
+
+class ListAutomaticResponsesForm(forms.Form):
+    """
+    List settings for automatic responses.
+    """
     autorespond_choices = (
         ("respond_and_continue", _("Respond and continue processing")),
         ("respond_and_discard", _("Respond and discard message")),
@@ -290,213 +464,6 @@ class ListSettings(FieldsetForm):
             'or -request/-owner address from the same poster. Set to zero '
             '(or negative) for no grace period (i.e. auto-respond to every '
             'message).'))
-    # This doesn't make sense as a configurable, so we're leaving it out
-    # bounces_address = forms.EmailField(
-    #    label=_('Bounces Address'),
-    #    required=False)
-    advertised = forms.TypedChoiceField(
-        coerce=lambda x: x == 'True',
-        choices=((True, _('Yes')), (False, _('No'))),
-        widget=forms.RadioSelect,
-        label=_('Advertise the existence of this list?'),
-        help_text=(
-            'Choose whether to include this list on the list of all lists'))
-    filter_content = forms.TypedChoiceField(
-        coerce=lambda x: x == 'True',
-        choices=((True, _('Yes')), (False, _('No'))),
-        widget=forms.RadioSelect,
-        required=False,
-        label=_('Filter content'),
-        help_text=(
-            'Should Mailman filter the content of list traffic according to '
-            'the settings below?'))
-    collapse_alternatives = forms.TypedChoiceField(
-        coerce=lambda x: x == 'True',
-        choices=((True, _('Yes')), (False, _('No'))),
-        widget=forms.RadioSelect,
-        required=False,
-        label=_('Collapse alternatives'),
-        help_text=(
-            'Should Mailman collapse multipart/alternative to its first part '
-            'content?'))
-    convert_html_to_plaintext = forms.TypedChoiceField(
-        coerce=lambda x: x == 'True',
-        choices=((True, _('Yes')), (False, _('No'))),
-        widget=forms.RadioSelect,
-        required=False,
-        label=_('Convert html to plaintext'),
-        help_text=(
-            'Should Mailman convert text/html parts to plain text? This '
-            'conversion happens after MIME attachments have been stripped.'))
-    action_choices = (
-        ("hold", _("Hold for moderator")),
-        ("reject", _("Reject (with notification)")),
-        ("discard", _("Discard (no notification)")),
-        ("accept", _("Accept")),
-        ("defer", _("Defer")))
-    default_member_action = forms.ChoiceField(
-        widget=forms.RadioSelect(),
-        label=_('Default action to take when a member posts to the list:'),
-        error_messages={
-            'required': _("Please choose a default member action.")},
-        required=True,
-        choices=action_choices,
-        help_text=(
-            'Default action to take when a member posts to the list. '
-            'Hold -- This holds the message for approval by the list '
-            'moderators.'
-            'Reject -- this automatically rejects the message by sending a '
-            'bounce notice to the post\'s author. The text of the bounce '
-            'notice can be configured by you. '
-            'Discard -- this simply discards the message, with no notice '
-            'sent to the post\'s author. '
-            'Accept --accepts any postings to the list by default. '
-            'Defer -- Defers any postings to the list by default. '))
-    default_nonmember_action = forms.ChoiceField(
-        widget=forms.RadioSelect(),
-        label=_('Default action to take when a non-member posts to the'
-                'list:'),
-        error_messages={
-            'required': _("Please choose a default non-member action.")},
-        required=True,
-        choices=action_choices,
-        help_text=(
-            'When a post from a non-member is received, the message\'s sender '
-            'is matched against the list of explicitly accepted, held, '
-            'rejected (bounced), and discarded addresses. '
-            'If no match is found, then this action is taken.'))
-    description = forms.CharField(
-        label=_('Description'),
-        help_text=(
-            'This description is used when the mailing list is listed with '
-            'other mailing lists, or in headers, and so forth. It should be '
-            'as succinct as you can get it, while still identifying what the '
-            'list is.'),
-        widget=forms.Textarea())
-    digest_size_threshold = forms.DecimalField(
-        label=_('Digest size threshold'),
-        help_text=('How big in Kb should a digest be before it gets sent out?')
-    )
-    # Informational
-    # digest_last_sent_at = forms.IntegerField(
-    #    label=_('Digest last sent at'),
-    #    error_messages={
-    #        'invalid': _('Please provide an integer.')},
-    #    required=False)
-    first_strip_reply_to = forms.TypedChoiceField(
-        coerce=lambda x: x == 'False',
-        choices=((True, _('Yes')), (False, _('No'))),
-        widget=forms.RadioSelect,
-        required=False,
-        help_text=_(
-            'Should any existing Reply-To: header found in the original '
-            'message be stripped? If so, this will be done regardless of '
-            'whether an explict Reply-To: header is added by Mailman or not.')
-    )
-    generic_nonmember_action = forms.IntegerField(
-        label=_('Generic nonmember action'),
-        error_messages={
-            'invalid': _('Please provide an integer.')
-        }
-    )
-    mail_host = forms.CharField(
-        label=_('Mail Host'),
-        error_messages={'required': _('Please a domain name'),
-                        'invalid': _('Please enter a valid domain name.')},
-        required=True,
-        help_text=(
-            "The \"host_name\" is the preferred name for email to "
-            "'mailman-related addresses on this host, and generally should be "
-            "the mail host's exchanger address, if any. This setting can be "
-            "useful for selecting among alternative names of a host that "
-            "has multiple addresses."))
-    # informational, not editable
-    # next_digest_number = forms.IntegerField(
-    #    label=_('Next digest number'),
-    #    error_messages={
-    #        'invalid': _('Please provide an integer.'),
-    #    },
-    #    required=False,
-    # )
-    # no_reply_address = forms.EmailField(
-    #    label=_('No reply address'),
-    #    required=False,
-    # )
-    posting_pipeline = forms.ChoiceField(
-        label=_('Pipeline'),
-        widget=forms.Select(),
-        required=False,
-        error_messages={
-            'required': _("Please choose a reply-to action.")},
-        choices=(
-            ("default-owner-pipeline", _("default-owner-pipeline")),
-            ("default-posting-pipeline", _("default-posting-pipeline")),
-            ("virgin", _("virgin"))),
-        help_text=(
-            'Type of pipeline you want to use for this mailing list')
-
-    )
-    # post_id = forms.IntegerField(
-    #    label=_('Post ID'),
-    #    error_messages={
-    #        'invalid': _('Please provide an integer.'),
-    #    },
-    #    required=False,
-    # )
-    display_name = forms.CharField(
-        label=_('Display name'),
-        help_text=('Display name is the name shown in the web interface.')
-    )
-    subject_prefix = forms.CharField(
-        label=_('Subject prefix'),
-    )
-    reply_goes_to_list = forms.ChoiceField(
-        label=_('Reply goes to list'),
-        widget=forms.Select(),
-        required=False,
-        error_messages={
-            'required': _("Please choose a reply-to action.")},
-        choices=(
-            ("no_munging", _("No Munging")),
-            ("point_to_list", _("Reply goes to list")),
-            ("explicit_header", _("Explicit Reply-to header set"))),
-        help_text=(
-            'Where are replies to list messages directed? No Munging is '
-            'strongly recommended for most mailing lists. \nThis option '
-            'controls what Mailman does to the Reply-To: header in messages '
-            'flowing through this mailing list. When set to No Munging, no '
-            'Reply-To: header is '
-            'added by Mailman, although if one is present in the original '
-            'message, it is not stripped. Setting this value to either Reply '
-            'to List or Explicit Reply causes Mailman to insert a specific '
-            'Reply-To: header in all messages, overriding the header in the '
-            'original message if necessary (Explicit Reply inserts the value '
-            'of reply_to_address). There are many reasons not to introduce or '
-            'override the Reply-To: header. One is that some posters depend '
-            'on their own Reply-To: settings to convey their valid return '
-            'address. Another is that modifying Reply-To: makes it much more '
-            'difficult to send private replies. See `Reply-To\' Munging '
-            'Considered Harmful for a general discussion of this issue. '
-            'See Reply-To Munging Considered Useful for a dissenting opinion. '
-            'Some mailing lists have restricted '
-            'posting privileges, with a parallel list devoted to discussions. '
-            'Examples are `patches\' or `checkin\' lists, where software '
-            'changes are posted by a revision control system, but discussion '
-            'about the changes occurs on a developers mailing list. To '
-            'support these types of mailing lists, select Explicit Reply and '
-            'set the Reply-To: address option to point to the parallel list.'))
-    reply_to_address = forms.CharField(
-        label=_('Explicit reply-to address'),
-        required=False,
-        help_text=_(
-            'This option allows admins to set an explicit Reply-to address. '
-            'It is only used if the reply-to is set to use an explicitly set '
-            'header'),
-    )
-    # informational, not editable
-    # request_address = forms.EmailField(
-    #    label=_('Request address'),
-    #    required=False)
     send_welcome_message = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -515,24 +482,8 @@ class ListSettings(FieldsetForm):
             'If a welcome message is to be sent to subscribers, you can '
             'specify a URI that gives the text of this message.'),
     )
-    # tko - look this up
-    # scheme = forms.CharField(
-    #    label=_('Scheme'),
-    #    required=False)
-    acceptable_aliases = forms.CharField(
-        widget=forms.Textarea(),
-        label=_("Acceptable aliases"),
-        required=False,
-        help_text=(
-            'Alias names which qualify as explicit to or cc destination names '
-            'for this list. Alternate addresses that are acceptable when '
-            '`require_explicit_destination\' is enabled. This option takes a '
-            'list of regular expressions, one per line, which is matched '
-            'against every recipient address in the message. The matching is '
-            'performed with Python\'s re.match() function, meaning they are '
-            'anchored to the start of the string.'))
     admin_immed_notify = forms.BooleanField(
-        widget=forms.RadioSelect(choices=choices),
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
         label=_('Admin immed notify'),
         help_text=(
@@ -544,137 +495,70 @@ class ListSettings(FieldsetForm):
             'Setting this option causes notices to be sent immediately on the '
             'arrival of new requests as well. '))
     admin_notify_mchanges = forms.BooleanField(
-        widget=forms.RadioSelect(choices=choices),
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
         label=_('Notify admin of membership changes'),
         help_text=(
             'Should administrator get notices of subscribes and unsubscribes?'
             ))
-    administrivia = forms.BooleanField(
-        widget=forms.RadioSelect(choices=choices),
-        required=False,
-        label=_('Administrivia'),
-        help_text=(
-            'Administrivia tests will check postings to see whether it\'s '
-            'really meant as an administrative request (like subscribe, '
-            'unsubscribe, etc), and will add it to the the administrative '
-            'requests queue, notifying the administrator of the new request, '
-            'in the process.'))
-    anonymous_list = forms.TypedChoiceField(
+
+
+class ListIdentityForm(forms.Form):
+    """
+    List identity settings.
+    """
+    advertised = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
-        required=False,
-        label=_('Anonymous list'),
+        label=_('Show list on index page'),
         help_text=(
-            'Hide the sender of a message, replacing it with the list address '
-            '(Removes From, Sender and Reply-To fields)'))
-    # Informational field, not needed.
-    # created_at = forms.IntegerField(
-    #    label=_('Created at'),
-    #    widget=forms.HiddenInput(),
-    #    required=False)
-    # join_address = forms.EmailField(
-    #    label=_('Join address'),
-    #    required=False)
-    # last_post_at = forms.IntegerField(
-    #    label=_('Last post at'),
-    #    required=False)
-    # leave_address = forms.EmailField(
-    #    label=_('Leave address'),
-    #    required=False)
-    # owner_address = forms.EmailField(
-    #    label=_('Owner Address'),
-    #    required=False)
-    # posting_address = forms.EmailField(
-    #    label=_('Posting Address'),
-    #    required=False)
+            'Choose whether to include this list on the list of all lists'))
+    description = forms.CharField(
+        label=_('Description'),
+        help_text=(
+            'This description is used when the mailing list is listed with '
+            'other mailing lists, or in headers, and so forth. It should be '
+            'as succinct as you can get it, while still identifying what the '
+            'list is.'),
+        widget=forms.Textarea())
+    mail_host = forms.CharField(
+        label=_('Mail Host'),
+        error_messages={'required': _('Please a domain name'),
+                        'invalid': _('Please enter a valid domain name.')},
+        required=True,
+        help_text=(
+            "The \"host_name\" is the preferred name for email to "
+            "'mailman-related addresses on this host, and generally should be "
+            "the mail host's exchanger address, if any. This setting can be "
+            "useful for selecting among alternative names of a host that "
+            "has multiple addresses."))
+    display_name = forms.CharField(
+        label=_('Display name'),
+        help_text=('Display name is the name shown in the web interface.')
+    )
+    subject_prefix = forms.CharField(
+        label=_('Subject prefix'),
+    )
 
-    # Descriptions used in the Settings Overview Page
-    section_descriptions = {
-        "List Identity": _("Basic identity settings for the list"),
-        "Automatic Responses": _("All options for Autoreply"),
-        "Alter Messages": _("Settings that modify member messages"),
-        "Digest": _("Digest-related options"),
-        "Message Acceptance": _("Options related to accepting messages"),
-        "Archives": _("Options related to archiving messages")}
 
-    def clean_acceptable_aliases(self):
-        data = self.cleaned_data['acceptable_aliases']
-        return data.splitlines()
+SUBSCRIPTION_POLICY_CHOICES = (
+    ('', _('Please Choose')),
+    ('open', _('Open')),
+    ('confirm', _('Confirm')),
+    ('moderate', _('Moderate')),
+    ('confirm_then_moderate', _('Confirm, then moderate')),
+)
 
-    def __init__(self, visible_section, visible_option, *args, **kwargs):
-        super(ListSettings, self).__init__(*args, **kwargs)
-        # if settings:
-        # raise Exception(settings) # debug
-        if visible_option:
-            options = []
-            for option in self.layout:
-                options += option[1:]
-            if visible_option in options:
-                self.layout = [["", visible_option]]
-        if visible_section:
-            sections = []
-            for section in self.layout:
-                sections.append(section[0])
-            if visible_section in sections:
-                for section in self.layout:
-                    if section[0] == visible_section:
-                        self.layout = [section]
-        try:
-            if data:
-                for section in self.layout:
-                    for option in section[1:]:
-                        self.fields[option].initial = settings[option]
-        except:
-            pass  # empty form
 
-    def truncate(self):
-        """
-        truncates the form to have only those fields which are in self.layout
-        """
-        # delete form.fields which are not in the layout
-        used_options = []
-        for section in self.layout:
-            used_options += section[1:]
-
-        for key in self.fields.keys():
-            if not(key in used_options):
-                del self.fields[key]
-
-    class Meta:
-
-        """Class to handle the automatic insertion of fieldsets and divs.
-
-        To use it: add a list for each wished fieldset. The first item in
-        the list should be the wished name of the fieldset, the following
-        the fields that should be included in the fieldset.
-        """
-        # just a really temporary layout to see that it works. -- Anna
-        layout = [
-            ["List Identity", "display_name", "mail_host", "description",
-             "advertised", "subject_prefix"],
-            ["Automatic Responses", "autorespond_owner",
-             "autoresponse_owner_text", "autorespond_postings",
-             "autoresponse_postings_text", "autorespond_requests",
-             "autoresponse_request_text", "autoresponse_grace_period",
-             "send_welcome_message",
-             "welcome_message_uri",
-             "admin_immed_notify",
-             "admin_notify_mchanges"],
-            ["Alter Messages", "filter_content", "collapse_alternatives",
-             "convert_html_to_plaintext", "anonymous_list",
-             "include_rfc2369_headers",
-             "allow_list_posts",
-             "reply_goes_to_list",
-             "reply_to_address",
-             "first_strip_reply_to",
-             "posting_pipeline"],
-            ["Digest", "digest_size_threshold"],
-            ["Message Acceptance", "acceptable_aliases", "administrivia",
-             "default_nonmember_action", "default_member_action"],
-            ["Archives", "archive_policy"],
-        ]
+class ListSubscriptionPolicyForm(forms.Form):
+    """
+    List subscription policy settings.
+    """    
+    subscription_policy = forms.ChoiceField(
+        label=_('Subscription Policy'),
+        choices=SUBSCRIPTION_POLICY_CHOICES,
+        help_text=_('Set the subscription policy.'))
 
 
 class ListArchiverForm(forms.Form):

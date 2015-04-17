@@ -12,7 +12,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       location: ['http://localhost:9001/3.0/domains/example.org']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 201, message: Created}
@@ -25,13 +25,14 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/domains/example.org
   response:
-    body: {string: !!python/unicode '{"self_link": "http://localhost:9001/3.0/domains/example.org",
+    body: {string: !!python/unicode '{"mail_host": "example.org", "description": null,
         "base_url": "http://example.org", "http_etag": "\"f8247f55d4a0a1d987c89cc238bb0dbc2c0e1089\"",
-        "mail_host": "example.org", "description": null, "url_host": "example.org"}'}
+        "self_link": "http://localhost:9001/3.0/domains/example.org", "url_host":
+        "example.org"}'}
     headers:
       content-length: ['233']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -47,7 +48,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       location: ['http://localhost:9001/3.0/lists/test.example.org']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 201, message: Created}
@@ -60,15 +61,14 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org
   response:
-    body: {string: !!python/unicode '{"fqdn_listname": "test@example.org", "list_id":
-        "test.example.org", "http_etag": "\"bdbe0068d985e63808436177de1063200d586b0d\"",
-        "list_name": "test", "self_link": "http://localhost:9001/3.0/lists/test.example.org",
-        "volume": 1, "display_name": "Test", "mail_host": "example.org", "member_count":
-        0}'}
+    body: {string: !!python/unicode '{"list_name": "test", "volume": 1, "list_id":
+        "test.example.org", "self_link": "http://localhost:9001/3.0/lists/test.example.org",
+        "fqdn_listname": "test@example.org", "mail_host": "example.org", "member_count":
+        0, "display_name": "Test", "http_etag": "\"bdbe0068d985e63808436177de1063200d586b0d\""}'}
     headers:
       content-length: ['299']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -80,15 +80,14 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org
   response:
-    body: {string: !!python/unicode '{"fqdn_listname": "test@example.org", "list_id":
-        "test.example.org", "http_etag": "\"bdbe0068d985e63808436177de1063200d586b0d\"",
-        "list_name": "test", "self_link": "http://localhost:9001/3.0/lists/test.example.org",
-        "volume": 1, "display_name": "Test", "mail_host": "example.org", "member_count":
-        0}'}
+    body: {string: !!python/unicode '{"list_name": "test", "volume": 1, "list_id":
+        "test.example.org", "self_link": "http://localhost:9001/3.0/lists/test.example.org",
+        "fqdn_listname": "test@example.org", "mail_host": "example.org", "member_count":
+        0, "display_name": "Test", "http_etag": "\"bdbe0068d985e63808436177de1063200d586b0d\""}'}
     headers:
       content-length: ['299']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -101,11 +100,11 @@ interactions:
     uri: http://localhost:9001/3.0/lists/test.example.org/roster/owner
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
-        "start": 0, "total_size": 0}'}
+        "total_size": 0, "start": 0}'}
     headers:
       content-length: ['90']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -118,11 +117,11 @@ interactions:
     uri: http://localhost:9001/3.0/lists/test.example.org/roster/moderator
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
-        "start": 0, "total_size": 0}'}
+        "total_size": 0, "start": 0}'}
     headers:
       content-length: ['90']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -134,30 +133,31 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org/config
   response:
-    body: {string: !!python/unicode '{"request_address": "test-request@example.org",
-        "web_host": "example.org", "digest_last_sent_at": null, "posting_address":
-        "test@example.org", "reply_to_address": "", "digest_size_threshold": 30.0,
-        "admin_notify_mchanges": false, "scheme": "http", "autorespond_owner": "none",
-        "send_welcome_message": true, "fqdn_listname": "test@example.org", "http_etag":
-        "\"878451fcdc59291f9e13c6f12134bdc400d45b97\"", "admin_immed_notify": true,
-        "owner_address": "test-owner@example.org", "convert_html_to_plaintext": false,
-        "autorespond_requests": "none", "list_name": "test", "autoresponse_postings_text":
-        "", "post_id": 1, "volume": 1, "include_rfc2369_headers": true, "first_strip_reply_to":
-        false, "subscription_policy": "confirm", "description": "", "default_member_action":
-        "defer", "bounces_address": "test-bounces@example.org", "join_address": "test-join@example.org",
-        "autoresponse_grace_period": "90d", "anonymous_list": false, "default_nonmember_action":
-        "hold", "acceptable_aliases": [], "advertised": true, "display_name": "Test",
-        "posting_pipeline": "default-posting-pipeline", "filter_content": false, "last_post_at":
-        null, "leave_address": "test-leave@example.org", "no_reply_address": "noreply@example.org",
-        "created_at": "2015-04-15T20:00:46.186892", "subject_prefix": "[Test] ", "autoresponse_request_text":
-        "", "administrivia": true, "reply_goes_to_list": "no_munging", "next_digest_number":
-        1, "collapse_alternatives": true, "archive_policy": "public", "welcome_message_uri":
-        "mailman:///welcome.txt", "mail_host": "example.org", "autoresponse_owner_text":
-        "", "allow_list_posts": true, "autorespond_postings": "none"}'}
+    body: {string: !!python/unicode '{"list_name": "test", "default_member_action":
+        "defer", "anonymous_list": false, "autorespond_postings": "none", "advertised":
+        true, "reply_to_address": "", "send_welcome_message": true, "autorespond_owner":
+        "none", "autoresponse_request_text": "", "web_host": "example.org", "autoresponse_grace_period":
+        "90d", "volume": 1, "digest_size_threshold": 30.0, "request_address": "test-request@example.org",
+        "posting_address": "test@example.org", "first_strip_reply_to": false, "http_etag":
+        "\"5bec8629f56043f9353337168030dc506fceac83\"", "administrivia": true, "mail_host":
+        "example.org", "include_rfc2369_headers": true, "admin_immed_notify": true,
+        "posting_pipeline": "default-posting-pipeline", "collapse_alternatives": true,
+        "autoresponse_postings_text": "", "admin_notify_mchanges": false, "last_post_at":
+        null, "filter_content": false, "autoresponse_owner_text": "", "join_address":
+        "test-join@example.org", "scheme": "http", "subscription_policy": "confirm",
+        "welcome_message_uri": "mailman:///welcome.txt", "post_id": 1, "fqdn_listname":
+        "test@example.org", "allow_list_posts": true, "subject_prefix": "[Test] ",
+        "owner_address": "test-owner@example.org", "archive_policy": "public", "leave_address":
+        "test-leave@example.org", "description": "", "acceptable_aliases": [], "bounces_address":
+        "test-bounces@example.org", "next_digest_number": 1, "default_nonmember_action":
+        "hold", "reply_goes_to_list": "no_munging", "created_at": "2015-04-17T21:06:36.091279",
+        "convert_html_to_plaintext": false, "display_name": "Test", "autorespond_requests":
+        "none", "no_reply_address": "noreply@example.org", "digest_last_sent_at":
+        null}'}
     headers:
       content-length: ['1627']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -169,30 +169,31 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org/config
   response:
-    body: {string: !!python/unicode '{"request_address": "test-request@example.org",
-        "web_host": "example.org", "digest_last_sent_at": null, "posting_address":
-        "test@example.org", "reply_to_address": "", "digest_size_threshold": 30.0,
-        "admin_notify_mchanges": false, "scheme": "http", "autorespond_owner": "none",
-        "send_welcome_message": true, "fqdn_listname": "test@example.org", "http_etag":
-        "\"878451fcdc59291f9e13c6f12134bdc400d45b97\"", "admin_immed_notify": true,
-        "owner_address": "test-owner@example.org", "convert_html_to_plaintext": false,
-        "autorespond_requests": "none", "list_name": "test", "autoresponse_postings_text":
-        "", "post_id": 1, "volume": 1, "include_rfc2369_headers": true, "first_strip_reply_to":
-        false, "subscription_policy": "confirm", "description": "", "default_member_action":
-        "defer", "bounces_address": "test-bounces@example.org", "join_address": "test-join@example.org",
-        "autoresponse_grace_period": "90d", "anonymous_list": false, "default_nonmember_action":
-        "hold", "acceptable_aliases": [], "advertised": true, "display_name": "Test",
-        "posting_pipeline": "default-posting-pipeline", "filter_content": false, "last_post_at":
-        null, "leave_address": "test-leave@example.org", "no_reply_address": "noreply@example.org",
-        "created_at": "2015-04-15T20:00:46.186892", "subject_prefix": "[Test] ", "autoresponse_request_text":
-        "", "administrivia": true, "reply_goes_to_list": "no_munging", "next_digest_number":
-        1, "collapse_alternatives": true, "archive_policy": "public", "welcome_message_uri":
-        "mailman:///welcome.txt", "mail_host": "example.org", "autoresponse_owner_text":
-        "", "allow_list_posts": true, "autorespond_postings": "none"}'}
+    body: {string: !!python/unicode '{"list_name": "test", "default_member_action":
+        "defer", "anonymous_list": false, "autorespond_postings": "none", "advertised":
+        true, "reply_to_address": "", "send_welcome_message": true, "autorespond_owner":
+        "none", "autoresponse_request_text": "", "web_host": "example.org", "autoresponse_grace_period":
+        "90d", "volume": 1, "digest_size_threshold": 30.0, "request_address": "test-request@example.org",
+        "posting_address": "test@example.org", "first_strip_reply_to": false, "http_etag":
+        "\"5bec8629f56043f9353337168030dc506fceac83\"", "administrivia": true, "mail_host":
+        "example.org", "include_rfc2369_headers": true, "admin_immed_notify": true,
+        "posting_pipeline": "default-posting-pipeline", "collapse_alternatives": true,
+        "autoresponse_postings_text": "", "admin_notify_mchanges": false, "last_post_at":
+        null, "filter_content": false, "autoresponse_owner_text": "", "join_address":
+        "test-join@example.org", "scheme": "http", "subscription_policy": "confirm",
+        "welcome_message_uri": "mailman:///welcome.txt", "post_id": 1, "fqdn_listname":
+        "test@example.org", "allow_list_posts": true, "subject_prefix": "[Test] ",
+        "owner_address": "test-owner@example.org", "archive_policy": "public", "leave_address":
+        "test-leave@example.org", "description": "", "acceptable_aliases": [], "bounces_address":
+        "test-bounces@example.org", "next_digest_number": 1, "default_nonmember_action":
+        "hold", "reply_goes_to_list": "no_munging", "created_at": "2015-04-17T21:06:36.091279",
+        "convert_html_to_plaintext": false, "display_name": "Test", "autorespond_requests":
+        "none", "no_reply_address": "noreply@example.org", "digest_last_sent_at":
+        null}'}
     headers:
       content-length: ['1627']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -204,30 +205,31 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org/config
   response:
-    body: {string: !!python/unicode '{"request_address": "test-request@example.org",
-        "web_host": "example.org", "digest_last_sent_at": null, "posting_address":
-        "test@example.org", "reply_to_address": "", "digest_size_threshold": 30.0,
-        "admin_notify_mchanges": false, "scheme": "http", "autorespond_owner": "none",
-        "send_welcome_message": true, "fqdn_listname": "test@example.org", "http_etag":
-        "\"878451fcdc59291f9e13c6f12134bdc400d45b97\"", "admin_immed_notify": true,
-        "owner_address": "test-owner@example.org", "convert_html_to_plaintext": false,
-        "autorespond_requests": "none", "list_name": "test", "autoresponse_postings_text":
-        "", "post_id": 1, "volume": 1, "include_rfc2369_headers": true, "first_strip_reply_to":
-        false, "subscription_policy": "confirm", "description": "", "default_member_action":
-        "defer", "bounces_address": "test-bounces@example.org", "join_address": "test-join@example.org",
-        "autoresponse_grace_period": "90d", "anonymous_list": false, "default_nonmember_action":
-        "hold", "acceptable_aliases": [], "advertised": true, "display_name": "Test",
-        "posting_pipeline": "default-posting-pipeline", "filter_content": false, "last_post_at":
-        null, "leave_address": "test-leave@example.org", "no_reply_address": "noreply@example.org",
-        "created_at": "2015-04-15T20:00:46.186892", "subject_prefix": "[Test] ", "autoresponse_request_text":
-        "", "administrivia": true, "reply_goes_to_list": "no_munging", "next_digest_number":
-        1, "collapse_alternatives": true, "archive_policy": "public", "welcome_message_uri":
-        "mailman:///welcome.txt", "mail_host": "example.org", "autoresponse_owner_text":
-        "", "allow_list_posts": true, "autorespond_postings": "none"}'}
+    body: {string: !!python/unicode '{"list_name": "test", "default_member_action":
+        "defer", "anonymous_list": false, "autorespond_postings": "none", "advertised":
+        true, "reply_to_address": "", "send_welcome_message": true, "autorespond_owner":
+        "none", "autoresponse_request_text": "", "web_host": "example.org", "autoresponse_grace_period":
+        "90d", "volume": 1, "digest_size_threshold": 30.0, "request_address": "test-request@example.org",
+        "posting_address": "test@example.org", "first_strip_reply_to": false, "http_etag":
+        "\"5bec8629f56043f9353337168030dc506fceac83\"", "administrivia": true, "mail_host":
+        "example.org", "include_rfc2369_headers": true, "admin_immed_notify": true,
+        "posting_pipeline": "default-posting-pipeline", "collapse_alternatives": true,
+        "autoresponse_postings_text": "", "admin_notify_mchanges": false, "last_post_at":
+        null, "filter_content": false, "autoresponse_owner_text": "", "join_address":
+        "test-join@example.org", "scheme": "http", "subscription_policy": "confirm",
+        "welcome_message_uri": "mailman:///welcome.txt", "post_id": 1, "fqdn_listname":
+        "test@example.org", "allow_list_posts": true, "subject_prefix": "[Test] ",
+        "owner_address": "test-owner@example.org", "archive_policy": "public", "leave_address":
+        "test-leave@example.org", "description": "", "acceptable_aliases": [], "bounces_address":
+        "test-bounces@example.org", "next_digest_number": 1, "default_nonmember_action":
+        "hold", "reply_goes_to_list": "no_munging", "created_at": "2015-04-17T21:06:36.091279",
+        "convert_html_to_plaintext": false, "display_name": "Test", "autorespond_requests":
+        "none", "no_reply_address": "noreply@example.org", "digest_last_sent_at":
+        null}'}
     headers:
       content-length: ['1627']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -239,30 +241,31 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org/config
   response:
-    body: {string: !!python/unicode '{"request_address": "test-request@example.org",
-        "web_host": "example.org", "digest_last_sent_at": null, "posting_address":
-        "test@example.org", "reply_to_address": "", "digest_size_threshold": 30.0,
-        "admin_notify_mchanges": false, "scheme": "http", "autorespond_owner": "none",
-        "send_welcome_message": true, "fqdn_listname": "test@example.org", "http_etag":
-        "\"878451fcdc59291f9e13c6f12134bdc400d45b97\"", "admin_immed_notify": true,
-        "owner_address": "test-owner@example.org", "convert_html_to_plaintext": false,
-        "autorespond_requests": "none", "list_name": "test", "autoresponse_postings_text":
-        "", "post_id": 1, "volume": 1, "include_rfc2369_headers": true, "first_strip_reply_to":
-        false, "subscription_policy": "confirm", "description": "", "default_member_action":
-        "defer", "bounces_address": "test-bounces@example.org", "join_address": "test-join@example.org",
-        "autoresponse_grace_period": "90d", "anonymous_list": false, "default_nonmember_action":
-        "hold", "acceptable_aliases": [], "advertised": true, "display_name": "Test",
-        "posting_pipeline": "default-posting-pipeline", "filter_content": false, "last_post_at":
-        null, "leave_address": "test-leave@example.org", "no_reply_address": "noreply@example.org",
-        "created_at": "2015-04-15T20:00:46.186892", "subject_prefix": "[Test] ", "autoresponse_request_text":
-        "", "administrivia": true, "reply_goes_to_list": "no_munging", "next_digest_number":
-        1, "collapse_alternatives": true, "archive_policy": "public", "welcome_message_uri":
-        "mailman:///welcome.txt", "mail_host": "example.org", "autoresponse_owner_text":
-        "", "allow_list_posts": true, "autorespond_postings": "none"}'}
+    body: {string: !!python/unicode '{"list_name": "test", "default_member_action":
+        "defer", "anonymous_list": false, "autorespond_postings": "none", "advertised":
+        true, "reply_to_address": "", "send_welcome_message": true, "autorespond_owner":
+        "none", "autoresponse_request_text": "", "web_host": "example.org", "autoresponse_grace_period":
+        "90d", "volume": 1, "digest_size_threshold": 30.0, "request_address": "test-request@example.org",
+        "posting_address": "test@example.org", "first_strip_reply_to": false, "http_etag":
+        "\"5bec8629f56043f9353337168030dc506fceac83\"", "administrivia": true, "mail_host":
+        "example.org", "include_rfc2369_headers": true, "admin_immed_notify": true,
+        "posting_pipeline": "default-posting-pipeline", "collapse_alternatives": true,
+        "autoresponse_postings_text": "", "admin_notify_mchanges": false, "last_post_at":
+        null, "filter_content": false, "autoresponse_owner_text": "", "join_address":
+        "test-join@example.org", "scheme": "http", "subscription_policy": "confirm",
+        "welcome_message_uri": "mailman:///welcome.txt", "post_id": 1, "fqdn_listname":
+        "test@example.org", "allow_list_posts": true, "subject_prefix": "[Test] ",
+        "owner_address": "test-owner@example.org", "archive_policy": "public", "leave_address":
+        "test-leave@example.org", "description": "", "acceptable_aliases": [], "bounces_address":
+        "test-bounces@example.org", "next_digest_number": 1, "default_nonmember_action":
+        "hold", "reply_goes_to_list": "no_munging", "created_at": "2015-04-17T21:06:36.091279",
+        "convert_html_to_plaintext": false, "display_name": "Test", "autorespond_requests":
+        "none", "no_reply_address": "noreply@example.org", "digest_last_sent_at":
+        null}'}
     headers:
       content-length: ['1627']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -277,7 +280,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 204, message: No Content}
 - request:
@@ -292,7 +295,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 204, message: No Content}
 - request:
@@ -308,7 +311,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       location: ['http://localhost:9001/3.0/domains/example.org']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 201, message: Created}
@@ -321,13 +324,14 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/domains/example.org
   response:
-    body: {string: !!python/unicode '{"self_link": "http://localhost:9001/3.0/domains/example.org",
+    body: {string: !!python/unicode '{"mail_host": "example.org", "description": null,
         "base_url": "http://example.org", "http_etag": "\"f8247f55d4a0a1d987c89cc238bb0dbc2c0e1089\"",
-        "mail_host": "example.org", "description": null, "url_host": "example.org"}'}
+        "self_link": "http://localhost:9001/3.0/domains/example.org", "url_host":
+        "example.org"}'}
     headers:
       content-length: ['233']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -343,7 +347,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       location: ['http://localhost:9001/3.0/lists/test.example.org']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 201, message: Created}
@@ -356,15 +360,14 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org
   response:
-    body: {string: !!python/unicode '{"fqdn_listname": "test@example.org", "list_id":
-        "test.example.org", "http_etag": "\"bdbe0068d985e63808436177de1063200d586b0d\"",
-        "list_name": "test", "self_link": "http://localhost:9001/3.0/lists/test.example.org",
-        "volume": 1, "display_name": "Test", "mail_host": "example.org", "member_count":
-        0}'}
+    body: {string: !!python/unicode '{"list_name": "test", "volume": 1, "list_id":
+        "test.example.org", "self_link": "http://localhost:9001/3.0/lists/test.example.org",
+        "fqdn_listname": "test@example.org", "mail_host": "example.org", "member_count":
+        0, "display_name": "Test", "http_etag": "\"bdbe0068d985e63808436177de1063200d586b0d\""}'}
     headers:
       content-length: ['299']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -376,15 +379,14 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org
   response:
-    body: {string: !!python/unicode '{"fqdn_listname": "test@example.org", "list_id":
-        "test.example.org", "http_etag": "\"bdbe0068d985e63808436177de1063200d586b0d\"",
-        "list_name": "test", "self_link": "http://localhost:9001/3.0/lists/test.example.org",
-        "volume": 1, "display_name": "Test", "mail_host": "example.org", "member_count":
-        0}'}
+    body: {string: !!python/unicode '{"list_name": "test", "volume": 1, "list_id":
+        "test.example.org", "self_link": "http://localhost:9001/3.0/lists/test.example.org",
+        "fqdn_listname": "test@example.org", "mail_host": "example.org", "member_count":
+        0, "display_name": "Test", "http_etag": "\"bdbe0068d985e63808436177de1063200d586b0d\""}'}
     headers:
       content-length: ['299']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 15 Apr 2015 20:00:46 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:36 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -399,7 +401,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Wed, 15 Apr 2015 20:00:47 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:37 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 204, message: No Content}
 - request:
@@ -414,7 +416,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      date: ['Wed, 15 Apr 2015 20:00:47 GMT']
+      date: ['Fri, 17 Apr 2015 21:06:37 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 204, message: No Content}
 version: 1
