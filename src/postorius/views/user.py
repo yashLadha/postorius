@@ -326,28 +326,6 @@ def user_tasks(request):
                               context_instance=RequestContext(request))
 
 
-@login_required
-def more_info_tab(request, formid=None, helpid=None,
-                  template='postorius/more_info_display.html'):
-    """Displays more_info in new tab.
-    """
-
-    if(formid == 'list_settings'):
-        form = ListSettings(
-            visible_section='List Identity',
-            visible_option='None',
-            data=request.POST)
-
-    for field in form:
-        if field.name == helpid:
-            help_text = field.help_text
-
-    return render_to_response(template,
-                              {'help_text': help_text,
-                               'helpid': helpid},
-                              context_instance=RequestContext(request))
-
-
 @user_passes_test(lambda u: u.is_superuser)
 def user_delete(request, user_id,
                 template='postorius/users/user_confirm_delete.html'):

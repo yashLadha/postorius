@@ -125,8 +125,6 @@ urlpatterns = patterns(
     # /lists/
     url(r'^lists/$', 'list_index', name='list_index'),
     url(r'^lists/new/$', 'list_new', name='list_new'),
-    url(r'^more_info/(?P<formid>[^/]+)/(?P<helpid>[^/]+)$',
-        'more_info_tab', name='more_info_tab'),
     url(r'^lists/(?P<list_id>[^/]+)/', include(per_list_urlpatterns)),
     url(r'^users/address_activation/$',
         AddressActivationView.as_view(),
