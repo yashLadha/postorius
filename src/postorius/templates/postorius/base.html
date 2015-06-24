@@ -34,9 +34,9 @@
                 </ul>
                 <div class="mm_loginName">
                 {% if user.is_authenticated %}
-                        {% trans "Logged in as:" %} <a href="{% url 'user_profile' %}">{{ user.username }}</a> <a href="{% url 'user_logout' %}" title="{% trans 'Logout' %}" class="mm_logout"><i class="icon-off"></i></a>
+                        {% trans "Logged in as:" %} <a href="{% url 'user_profile' %}">{{ user.username }}</a> <a href="{{ logout_url }}?next={% url 'list_index' %}" title="{% trans 'Logout' %}" class="mm_logout"><i class="icon-off"></i></a>
                 {% else %}
-                    <a href="{% url 'user_login' %}">{% trans "Login" %}</a>
+                    <a href="{{ login_url }}?next={{ next|default:request.path|urlencode }}">{% trans "Login" %}</a>
                 {% endif %}
                 </div>
             </div>

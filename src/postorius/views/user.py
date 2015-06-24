@@ -302,15 +302,8 @@ def user_new(request):
                               context_instance=RequestContext(request))
 
 
-def user_logout(request):
-    logout(request)
-    return redirect('user_login')
-
-
 @login_required()
 def user_profile(request, user_email=None):
-    if not request.user.is_authenticated():
-        return redirect('user_login')
     # try:
     #    the_user = User.objects.get(email=user_email)
     # except MailmanApiError:

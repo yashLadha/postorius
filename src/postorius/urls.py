@@ -20,6 +20,7 @@ from django.conf.urls import *
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import login as login_view
+from django.contrib.auth.views import logout as logout_view
 
 from postorius.views import *
 from postorius.views.generic import *
@@ -103,7 +104,7 @@ urlpatterns = patterns(
     # /account/
     url(r'^accounts/login/$', login_view,
         {"template_name": "postorius/login.html"}, name='user_login'),
-    url(r'^accounts/logout/$', 'user_logout', name='user_logout'),
+    url(r'^accounts/logout/$', logout_view, name='user_logout'),
     url(r'^accounts/profile/$', 'user_profile', name='user_profile'),
     url(r'^tasks/$', 'user_tasks', name='user_tasks'),
     url(r'^accounts/subscriptions/$', UserSubscriptionsView.as_view(),
