@@ -320,9 +320,13 @@ def address_activation_link(request, activation_key):
                 except Mailman404Error:
                     mailman_user = MailmanUser.objects.create(
                         request.user.email, '')
-                mm_address = mailman_user.add_address(profile.email)
+                # If the adress already exists, it's an import artefact: it's been
+                # validated by email, so it's safe to merge.
+                mm_address = mailman_user.add_address(
+                    profile.email, absorb_existing=True)
                 # The address has just been verified.
-                mm_address.verify()
+                if not mm_address.verified_on:
+                    mm_address.verify()
             except (MailmanApiError, MailmanConnectionError):
                 messages.error(request, _('The address could not be added.'))
                 return

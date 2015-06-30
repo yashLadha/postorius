@@ -835,13 +835,6 @@ class AddressActivationForm(forms.Form):
                 _('This email is in use. Please choose another or contact'
                   ' the administrator'), 'error')
 
-        # Check if the email is attached to a user in Mailman
-        try:
-            utils.get_client().get_user(email)
-            raise forms.ValidationError(
-                _('This email already belongs to a user'), 'error')
-        except HTTPError:
-            pass
         return email
 
 
