@@ -482,11 +482,12 @@ def list_index(request, template='postorius/lists/index.html'):
     if request.method == 'POST':
         return redirect("list_summary", list_id=request.POST["list"])
     else:
-        return render_to_response(template,
-                                  {'error': error,
-                                   'lists': lists,
-                                   'domain_count': len(choosable_domains)},
-                                  context_instance=RequestContext(request))
+        return render_to_response(
+            template, {
+                'error': error,
+                'lists': sorted(lists, key=lambda l: l.fqdn_listname),
+                'domain_count': len(choosable_domains),
+            }, context_instance=RequestContext(request))
 
 
 @login_required
