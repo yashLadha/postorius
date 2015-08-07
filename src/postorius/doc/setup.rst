@@ -42,7 +42,7 @@ should install Postorius using git:
 
 ::
 
-    $ git clone git@gitlab.com:mailman/postorius.git
+    $ git clone https://gitlab.com/mailman/postorius.git
     $ cd postorius
     $ sudo python setup.py develop
 
@@ -57,7 +57,7 @@ First, get the project directory from gitlab:
 
 ::
 
-    $ git clone git@gitlab.com:mailman/postorius_standalone.git
+    $ git clone https://gitlab.com/mailman/postorius_standalone.git
 
 Change the database setting in ``postorius_standalone/settings.py`` to
 your preferred database, if you want something other than SQlite.
