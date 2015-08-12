@@ -9,7 +9,7 @@ Development Workflow
 ====================
 
 The source code is hosted on GitLab_, which means that we are using
-Bazaar for version control.
+Git for version control.
 
 .. _GitLab: https://gitlab.com/mailman/postorius
 

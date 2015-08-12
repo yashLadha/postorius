@@ -11,7 +11,7 @@ Installation
     out the `mailman-bundler`_ project on GitLab.
 
 .. _mailman-bundler: https://gitlab.com/mailman/mailman-bundler
-.. _documentation: https://pythonhosted.org/mailman/
+.. _documentation: http://mailman.readthedocs.org
 
 Install Postorius
 =================
