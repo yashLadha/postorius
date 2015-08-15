@@ -31,6 +31,7 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
+from django.core.urlresolvers import reverse
 from urllib2 import HTTPError
 
 from postorius import utils
@@ -227,7 +228,7 @@ class UserSubscriptionsView(MailmanUserView):
 
 class AddressActivationView(TemplateView):
     """
-    Starts the process of adding additional email addresses to a mailman user 
+    Starts the process of adding additional email addresses to a mailman user
     record. Forms are processes and email notifications are sent accordingly.
     """
 
@@ -367,15 +368,19 @@ def _add_address(request, user_email, address):
 def address_activation_link(request, activation_key):
     """
     Checks the given activation_key. If it is valid, the saved address will be
-    added to mailman. Also, the corresponding profile record will be removed. 
-    If the key is not valid, it will be ignored. 
+    added to mailman. Also, the corresponding profile record will be removed.
+    If the key is not valid, it will be ignored.
     """
     try:
         profile = AddressConfirmationProfile.objects.get(
             activation_key=activation_key)
         if not profile.is_expired:
             _add_address(request, profile.user.email, profile.email)
-    except profile.DoesNotExist:
-        pass
-    return render_to_response('postorius/user_address_activation_link.html',
-        {}, context_instance=RequestContext(request))
+            profile.delete()
+            messages.success(request, _('The email address has been activated!'))
+        else:
+            messages.error(request, _('The activation link has expired, please add the email again!'))
+            profile.delete()
+    except AddressConfirmationProfile.DoesNotExist:
+        messages.error(request, _('The activation link is invalid'))
+    return redirect(reverse('list_index'))
