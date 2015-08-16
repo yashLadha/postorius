@@ -17,34 +17,15 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import re
-import sys
 import json
 import logging
 
 
-from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.decorators import (login_required,
-                                            permission_required,
-                                            user_passes_test)
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response, redirect
-from django.template import Context, loader, RequestContext
-from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
-from urllib2 import HTTPError
+
+from django.http import HttpResponse
 
 from postorius import utils
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
-from postorius.forms import *
 from postorius.auth.decorators import *
-from postorius.views.generic import MailingListView, MailmanUserView
 
 
 logger = logging.getLogger(__name__)

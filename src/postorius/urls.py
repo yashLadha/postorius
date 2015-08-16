@@ -17,13 +17,10 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import *
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib.auth.views import login as login_view
 from django.contrib.auth.views import logout as logout_view
 
 from postorius.views import *
-from postorius.views.generic import *
 
 
 per_list_urlpatterns = patterns('postorius.views',

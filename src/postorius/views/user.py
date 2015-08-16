@@ -17,15 +17,9 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import logging
-
-
 from django.forms.formsets import formset_factory
 from django.contrib import messages
-from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.decorators import (login_required,
-                                            user_passes_test)
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import (login_required,user_passes_test)
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
@@ -37,9 +31,7 @@ except ImportError:
     from urllib.error import HTTPError
 
 from postorius import utils
-from postorius.models import (
-    MailmanUser, MailmanConnectionError, MailmanApiError, Mailman404Error,
-    AddressConfirmationProfile)
+from postorius.models import MailmanConnectionError, AddressConfirmationProfile
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailmanUserView

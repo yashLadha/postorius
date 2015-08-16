@@ -26,7 +26,6 @@ from django.contrib.auth.decorators import (login_required,
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
@@ -34,8 +33,8 @@ try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
+
 from postorius import utils
-from postorius.models import (Domain, List, MailmanApiError)
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView
