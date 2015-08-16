@@ -84,21 +84,21 @@ class MailmanRestManager(object):
             return getattr(get_client(), self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
-        except MailmanConnectionError, e:
+        except MailmanConnectionError as e:
             raise MailmanApiError(e)
 
     def get(self, **kwargs):
         try:
             method = getattr(get_client(), 'get_' + self.resource_name)
             return method(**kwargs)
-        except AttributeError, e:
+        except AttributeError as e:
             raise MailmanApiError(e)
-        except HTTPError, e:
+        except HTTPError as e:
             if e.code == 404:
                 raise Mailman404Error('Mailman resource could not be found.')
             else:
                 raise
-        except MailmanConnectionError, e:
+        except MailmanConnectionError as e:
             raise MailmanApiError(e)
 
     def get_or_404(self, **kwargs):
@@ -108,16 +108,16 @@ class MailmanRestManager(object):
             return self.get(**kwargs)
         except Mailman404Error:
             raise Http404
-        except MailmanConnectionError, e:
+        except MailmanConnectionError as e:
             raise MailmanApiError(e)
 
     def create(self, **kwargs):
         try:
             method = getattr(get_client(), 'create_' + self.resource_name)
             return method(**kwargs)
-        except AttributeError, e:
+        except AttributeError as e:
             raise MailmanApiError(e)
-        except HTTPError, e:
+        except HTTPError as e:
             if e.code == 409:
                 raise MailmanApiError
             else:
@@ -142,7 +142,7 @@ class MailmanListManager(MailmanRestManager):
             objects = getattr(get_client(), self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
-        except MailmanConnectionError, e:
+        except MailmanConnectionError as e:
             raise MailmanApiError(e)
         if only_public:
             public = []

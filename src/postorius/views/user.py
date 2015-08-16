@@ -106,7 +106,7 @@ class UserAddressPreferencesView(MailmanUserView):
                 messages.error(request, 'Something went wrong.')
         except MailmanApiError:
             return utils.render_api_error(request)
-        except HTTPError, e:
+        except HTTPError as e:
             messages.error(request, e.msg)
         return redirect("user_address_preferences")
 
@@ -162,7 +162,7 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                 messages.error(request, 'Something went wrong.')
         except MailmanApiError:
             return utils.render_api_error(request)
-        except HTTPError, e:
+        except HTTPError as e:
             messages.error(request, e.msg)
         return redirect("user_subscription_preferences")
 
@@ -290,7 +290,7 @@ def user_new(request):
                 user.save()
             except MailmanApiError:
                 return utils.render_api_error(request)
-            except HTTPError, e:
+            except HTTPError as e:
                 messages.error(request, e)
             else:
                 messages.success(request, _("New User registered"))

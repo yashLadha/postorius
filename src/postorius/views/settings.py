@@ -78,7 +78,7 @@ def domain_new(request):
                 domain.save()
             except MailmanApiError:
                 return utils.render_api_error(request)
-            except HTTPError, e:
+            except HTTPError as e:
                 messages.error(request, e)
             else:
                 messages.success(request, _("New Domain registered"))
@@ -101,7 +101,6 @@ def domain_delete(request, domain):
                              _('The domain %s has been deleted.' % domain))
             return redirect("domain_index")
         except HTTPError as e:
-            print e.__dict__
             messages.error(request, _('The domain could not be deleted:'
                                       ' %s' % e.msg))
             return redirect("domain_index")

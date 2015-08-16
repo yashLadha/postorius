@@ -124,7 +124,7 @@ class ListMemberOptionsView(MailingListView):
             settingsform = UserPreferences(initial=mm_member.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
-        except HTTPError, e:
+        except HTTPError as e:
             messages.error(request, e.msg)
         return render_to_response(
             'postorius/lists/memberoptions.html',
@@ -243,7 +243,7 @@ class ChangeSubscriptionView(MailingListView):
                                'Please try again.')
         except MailmanApiError:
             return utils.render_api_error(request)
-        except HTTPError, e:
+        except HTTPError as e:
             messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
 
@@ -285,7 +285,7 @@ class ListSubscribeView(MailingListView):
                                'Please try again.')
         except MailmanApiError:
             return utils.render_api_error(request)
-        except HTTPError, e:
+        except HTTPError as e:
             messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
 
@@ -304,7 +304,7 @@ class ListUnsubscribeView(MailingListView):
                              email)
         except MailmanApiError:
             return utils.render_api_error(request)
-        except ValueError, e:
+        except ValueError as e:
             messages.error(request, e)
         return redirect('list_summary', self.mailing_list.list_id)
 
@@ -336,7 +336,7 @@ class ListMassSubscribeView(MailingListView):
                         (email, self.mailing_list.fqdn_listname))
                 except MailmanApiError:
                     return utils.render_api_error(request)
-                except HTTPError, e:
+                except HTTPError as e:
                     messages.error(request, e)
                 except ValidationError:
                     messages.error(request,
@@ -372,9 +372,7 @@ class ListMassRemovalView(MailingListView):
                                     (email, self.mailing_list.fqdn_listname))
                 except MailmanApiError:
                     return utils.render_api_error(request)
-                except HTTPError, e:
-                    messages.error(request, e)
-                except ValueError, e:
+                except (HTTPError, ValueError) as e:
                     messages.error(request, e)
                 except ValidationError:
                     messages.error(request,
@@ -451,7 +449,7 @@ def list_new(request, template='postorius/lists/new.html'):
                 return redirect("list_summary",
                                 list_id=mailing_list.list_id)
             # TODO catch correct Error class:
-            except HTTPError, e:
+            except HTTPError as e:
                 return render_to_response(
                     'postorius/errors/generic.html',
                     {'error': e}, context_instance=RequestContext(request))
@@ -634,7 +632,7 @@ def accept_held_message(request, list_id, msg_id):
         the_list.accept_message(msg_id)
     except MailmanApiError:
         return utils.render_api_error(request)
-    except HTTPError, e:
+    except HTTPError as e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
     messages.success(request, 'The message has been accepted.')
@@ -650,7 +648,7 @@ def discard_held_message(request, list_id, msg_id):
         the_list.discard_message(msg_id)
     except MailmanApiError:
         return utils.render_api_error(request)
-    except HTTPError, e:
+    except HTTPError as e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
     messages.success(request, 'The message has been discarded.')
@@ -666,7 +664,7 @@ def defer_held_message(request, list_id, msg_id):
         the_list.defer_message(msg_id)
     except MailmanApiError:
         return utils.render_api_error(request)
-    except HTTPError, e:
+    except HTTPError as e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
     messages.success(request, 'The message has been deferred.')
@@ -682,7 +680,7 @@ def reject_held_message(request, list_id, msg_id):
         the_list.reject_message(msg_id)
     except MailmanApiError:
         return utils.render_api_error(request)
-    except HTTPError, e:
+    except HTTPError as e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
     messages.success(request, 'The message has been rejected.')
@@ -771,7 +769,7 @@ def list_settings(request, list_id=None, visible_section=None,
     try:
         m_list = List.objects.get_or_404(fqdn_listname=list_id)
         list_settings = m_list.settings
-    except MailmanApiError, HTTPError:
+    except (MailmanApiError, HTTPError):
         return utils.render_api_error(request)
     # List settings are grouped an processed in different forms.
     if form_class:
@@ -894,7 +892,7 @@ def remove_all_subscribers(request, list_id):
                 messages.success(request,
                                 'All members have been unsubscribed from the list.')
                 return redirect('list_members', mlist.list_id)
-            except Exception, e:
+            except Exception as e:
                 messages.error(request, e)
         return render_to_response('postorius/lists/confirm_removeall_subscribers.html',
                                  {'list_id': mlist.list_id},
