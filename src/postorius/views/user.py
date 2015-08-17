@@ -31,7 +31,10 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
-from urllib2 import HTTPError
+try:
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.error import HTTPError
 
 from postorius import utils
 from postorius.models import (
@@ -227,7 +230,7 @@ class UserSubscriptionsView(MailmanUserView):
 
 class AddressActivationView(TemplateView):
     """
-    Starts the process of adding additional email addresses to a mailman user 
+    Starts the process of adding additional email addresses to a mailman user
     record. Forms are processes and email notifications are sent accordingly.
     """
 
@@ -367,8 +370,8 @@ def _add_address(request, user_email, address):
 def address_activation_link(request, activation_key):
     """
     Checks the given activation_key. If it is valid, the saved address will be
-    added to mailman. Also, the corresponding profile record will be removed. 
-    If the key is not valid, it will be ignored. 
+    added to mailman. Also, the corresponding profile record will be removed.
+    If the key is not valid, it will be ignored.
     """
     try:
         profile = AddressConfirmationProfile.objects.get(

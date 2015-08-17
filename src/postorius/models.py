@@ -37,8 +37,10 @@ from django.template import Context
 from django.template.loader import get_template
 from mailmanclient import MailmanConnectionError
 from postorius.utils import get_client
-from urllib2 import HTTPError
-
+try:
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.error import HTTPError
 
 logger = logging.getLogger(__name__)
 

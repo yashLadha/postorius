@@ -30,8 +30,10 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from urllib2 import HTTPError
-
+try:
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.error import HTTPError
 from postorius import utils
 from postorius.models import (Domain, List, MailmanApiError)
 from postorius.forms import *
@@ -255,7 +257,7 @@ class ListSubscribeView(MailingListView):
     @method_decorator(login_required)
     def post(self, request, list_id):
         """
-        Subscribes an email address to a mailing list via POST and 
+        Subscribes an email address to a mailing list via POST and
         redirects to the `list_summary` view.
         """
         try:

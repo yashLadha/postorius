@@ -35,8 +35,10 @@ from django.shortcuts import render_to_response, redirect
 from django.template import Context, loader, RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from urllib2 import HTTPError
-
+try:
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.error import HTTPError
 from postorius import utils
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
