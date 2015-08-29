@@ -20,7 +20,10 @@ import logging
 from django.core.urlresolvers import reverse
 from django.test import Client, SimpleTestCase
 from django.test.utils import override_settings
-from urllib2 import HTTPError
+try:
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.error import HTTPError
 
 from postorius.utils import get_client
 from postorius.tests import MM_VCR
