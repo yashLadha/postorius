@@ -31,7 +31,10 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
-from urllib2 import HTTPError
+try:
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.error import HTTPError
 
 from postorius import utils
 from postorius.models import (
@@ -106,7 +109,7 @@ class UserAddressPreferencesView(MailmanUserView):
                 messages.error(request, 'Something went wrong.')
         except MailmanApiError:
             return utils.render_api_error(request)
-        except HTTPError, e:
+        except HTTPError as e:
             messages.error(request, e.msg)
         return redirect("user_address_preferences")
 
@@ -162,7 +165,7 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                 messages.error(request, 'Something went wrong.')
         except MailmanApiError:
             return utils.render_api_error(request)
-        except HTTPError, e:
+        except HTTPError as e:
             messages.error(request, e.msg)
         return redirect("user_subscription_preferences")
 
@@ -227,7 +230,7 @@ class UserSubscriptionsView(MailmanUserView):
 
 class AddressActivationView(TemplateView):
     """
-    Starts the process of adding additional email addresses to a mailman user 
+    Starts the process of adding additional email addresses to a mailman user
     record. Forms are processes and email notifications are sent accordingly.
     """
 
@@ -290,7 +293,7 @@ def user_new(request):
                 user.save()
             except MailmanApiError:
                 return utils.render_api_error(request)
-            except HTTPError, e:
+            except HTTPError as e:
                 messages.error(request, e)
             else:
                 messages.success(request, _("New User registered"))
@@ -367,8 +370,8 @@ def _add_address(request, user_email, address):
 def address_activation_link(request, activation_key):
     """
     Checks the given activation_key. If it is valid, the saved address will be
-    added to mailman. Also, the corresponding profile record will be removed. 
-    If the key is not valid, it will be ignored. 
+    added to mailman. Also, the corresponding profile record will be removed.
+    If the key is not valid, it will be ignored.
     """
     try:
         profile = AddressConfirmationProfile.objects.get(
