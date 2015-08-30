@@ -31,7 +31,6 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
-from django.core.urlresolvers import reverse
 from urllib2 import HTTPError
 
 from postorius import utils
@@ -379,8 +378,9 @@ def address_activation_link(request, activation_key):
             profile.delete()
             messages.success(request, _('The email address has been activated!'))
         else:
-            messages.error(request, _('The activation link has expired, please add the email again!'))
             profile.delete()
+            messages.error(request, _('The activation link has expired, please add the email again!'))
+            return redirect('address_activation')
     except AddressConfirmationProfile.DoesNotExist:
         messages.error(request, _('The activation link is invalid'))
-    return redirect(reverse('list_index'))
+    return redirect('list_index')
