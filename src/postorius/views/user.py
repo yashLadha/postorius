@@ -378,7 +378,12 @@ def address_activation_link(request, activation_key):
             activation_key=activation_key)
         if not profile.is_expired:
             _add_address(request, profile.user.email, profile.email)
-    except profile.DoesNotExist:
-        pass
-    return render_to_response('postorius/user_address_activation_link.html',
-        {}, context_instance=RequestContext(request))
+            profile.delete()
+            messages.success(request, _('The email address has been activated!'))
+        else:
+            profile.delete()
+            messages.error(request, _('The activation link has expired, please add the email again!'))
+            return redirect('address_activation')
+    except AddressConfirmationProfile.DoesNotExist:
+        messages.error(request, _('The activation link is invalid'))
+    return redirect('list_index')

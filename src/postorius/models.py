@@ -264,16 +264,6 @@ class AddressConfirmationProfile(models.Model):
             self.created.replace(tzinfo=None)
         return age > expiration_delta
 
-    def _create_host_url(self, request):
-        # Create the host url
-        protocol = 'https'
-        if not request.is_secure():
-            protocol = 'http'
-        server_name = request.META['SERVER_NAME']
-        if server_name[-1] == '/':
-            server_name = server_name[:len(server_name) - 1]
-        return '{0}://{1}'.format(protocol, server_name)
-
     def send_confirmation_link(self, request, template_context=None,
                                template_path=None):
         """
@@ -291,12 +281,10 @@ class AddressConfirmationProfile(models.Model):
             Falls back to host url and activation link.
         :type template_context: django.template.Context
         """
-        # create the host url and the activation link need for the template
-        host_url = self._create_host_url(request)
         # Get the url string from url conf.
         url = reverse('address_activation_link',
                       kwargs={'activation_key': self.activation_key})
-        activation_link = '{0}{1}'.format(host_url, url)
+        activation_link = request.build_absolute_uri(url)
         # Detect the right template path, either from the param,
         # the setting or the default
         if not template_path:
@@ -307,7 +295,8 @@ class AddressConfirmationProfile(models.Model):
         # the activation_link and the host_url.
         if not template_context:
             template_context = Context(
-                {'activation_link': activation_link, 'host_url': host_url})
+                {'activation_link': activation_link,
+                 'host_url': request.build_absolute_uri("/")})
         email_subject = getattr(
             settings, 'EMAIL_CONFIRMATION_SUBJECT', u'Confirmation needed')
         try:
