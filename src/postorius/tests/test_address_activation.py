@@ -122,6 +122,7 @@ class TestAddressConfirmationProfile(unittest.TestCase):
     def tearDown(self):
         self.profile.delete()
         self.user.delete()
+        mail.outbox = []
 
     def test_profile_creation(self):
         # Profile is created and has all necessary properties.
@@ -174,10 +175,14 @@ class TestAddressConfirmationProfile(unittest.TestCase):
         # set the activation key to a fixed string for testing
         self.profile.activation_key = \
             '6323fba0097781fdb887cfc37a1122ee7c8bb0b0'
+        # Simulate a VirtualHost with a different name
+        self.request.META["HTTP_HOST"] = "another-virtualhost"
+        # Now send the email
         self.profile.send_confirmation_link(self.request)
         self.assertEqual(mail.outbox[0].to[0], u'les@example.org')
         self.assertEqual(mail.outbox[0].subject, u'Confirmation needed')
-        self.assertTrue(self.profile.activation_key in mail.outbox[0].body)
+        self.assertIn(self.profile.activation_key, mail.outbox[0].body)
+        self.assertIn("another-virtualhost", mail.outbox[0].body)
 
 
 class TestAddressActivationLinkSuccess(unittest.TestCase):
