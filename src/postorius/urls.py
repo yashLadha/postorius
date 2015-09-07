@@ -83,7 +83,7 @@ per_list_urlpatterns = patterns('postorius.views',
                                     'reject$', 'reject_held_message',
                                     name='reject_held_message'),
                                 url(r'^held_messages$',
-                                    'list_held_messages',
+                                    ListModerationView.as_view(),
                                     name='list_held_messages'),
                                 url(r'^remove/(?P<role>[^/]+)/'
                                     '(?P<address>[^/]+)',

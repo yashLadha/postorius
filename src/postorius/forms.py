@@ -843,3 +843,20 @@ class ChangeSubscriptionForm(forms.Form):
             required=False,
             widget=forms.Select(),
             choices=((address, address) for address in user_emails))
+
+
+class HeldMessagesModerationForm(forms.Form):
+
+    class HeldMessageMultipleChoiceField(forms.MultipleChoiceField):
+
+        def validate(self, value):
+            pass
+
+    choices = HeldMessageMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    def clean_choices(self):
+        if len(self.cleaned_data['choices']) < 1:
+            raise forms.ValidationError(_('Please select at least one message to perform an action'))
+        return self.cleaned_data['choices']

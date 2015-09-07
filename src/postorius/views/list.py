@@ -384,6 +384,44 @@ class ListMassRemovalView(MailingListView):
         return redirect('mass_removal', self.mailing_list.list_id)
 
 
+class ListModerationView(MailingListView):
+
+    """Class for moderating held messages"""
+
+    @staticmethod
+    def _perform_action(message_ids, action):
+        for message_id in message_ids:
+            action(message_id)
+
+    @method_decorator(list_moderator_required)
+    def get(self, request, *args, **kwargs):
+        return render_to_response('postorius/lists/held_messages.html',
+                                  {'list': self.mailing_list, 'form':HeldMessagesModerationForm()},
+                                  context_instance=RequestContext(request))
+
+    @method_decorator(list_moderator_required)
+    def post(self, request, *args, **kwargs):
+        form = HeldMessagesModerationForm(request.POST)
+        if form.is_valid():
+            message_ids = form.cleaned_data['choices']
+            try:
+                if 'accept' in request.POST:
+                    ListModerationView._perform_action(message_ids, self.mailing_list.accept_message)
+                    messages.success(request, _('The selected messages were accepted'))
+                elif 'reject' in request.POST:
+                    ListModerationView._perform_action(message_ids, self.mailing_list.reject_message)
+                    messages.success(request, _('The selected messages were rejected'))
+                elif 'discard' in request.POST:
+                    ListModerationView._perform_action(message_ids, self.mailing_list.discard_message)
+                    messages.success(request, _('The selected messages were discarded'))
+            except MailmanApiError:
+                return utils.render_api_error(request)
+            except HTTPError as e:
+                messages.error(request, e.msg)
+        return render_to_response('postorius/lists/held_messages.html',
+                                  {'list': self.mailing_list, 'form':form},
+                                  context_instance=RequestContext(request))
+
 @list_owner_required
 def csv_view(request, list_id):
     """Export all the subscriber in csv
@@ -625,19 +663,6 @@ def list_delete(request, list_id):
             {'submit_url': submit_url, 'cancel_url': cancel_url,
              'list': the_list},
             context_instance=RequestContext(request))
-
-
-@list_moderator_required
-def list_held_messages(request, list_id):
-    """Shows a list of held messages.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    return render_to_response('postorius/lists/held_messages.html',
-                              {'list': the_list},
-                              context_instance=RequestContext(request))
 
 
 @list_moderator_required

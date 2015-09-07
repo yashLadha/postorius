@@ -11,23 +11,36 @@
 {% block body_class %}list_summary{% endblock %}
 
 {% block main %}
+
     {% list_nav 'list_held_messages' "Held Messages" %}
 
     {% if list.held|length > 0 %}
-
+        <form method="post">
+            {% if form.choices.errors %}
+                <div class="alert alert-error">{{ form.choices.errors.0 }}</div>
+            {% endif %}
+            {% csrf_token %}
         <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>{% trans 'Subject' %}</th>
-                    <th>{% trans 'Sender' %}</th>
-                    <th>{% trans 'Reason' %}</th>
-                    <th>{% trans 'Hold Date' %}</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
+            <tr>
+                <td colspan="5">{% trans 'Perform action on selected messages' %}</td>
+                <td class="mm_action">
+                    <input type="submit" class="btn btn-mini btn-success" name="accept" value="{% trans 'Accept' %}" />
+                    <input type="submit" class="btn btn-mini btn-danger" name="reject" value="{% trans 'Reject' %}" />
+                    <input type="submit" class="btn btn-mini btn-danger" name="discard" value="{% trans 'Discard' %}" />
+                </td>
+            </tr>
+            <tr>
+                <th><input class="hidden" type="checkbox" id="all-messages-checkbox" /></th>
+                <th>{% trans 'Subject' %}</th>
+                <th>{% trans 'Sender' %}</th>
+                <th>{% trans 'Reason' %}</th>
+                <th>{% trans 'Hold Date' %}</th>
+                <th></th>
+            </tr>
             <tbody>
                 {% for msg in list.held %}
                 <tr>
+                    <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
                     <td>{{ msg.subject }}</td>
                     <td>{{ msg.sender }}</td>
                     <td>{{ msg.reason }}</td>
@@ -36,7 +49,6 @@
                     <td class="mm_action">
                         <a href="#" class="btn btn-mini btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
                         <a href="{% url 'accept_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
-                        <a href="{% url 'defer_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-warning">{% trans 'Defer' %}</a>
                         <a href="{% url 'reject_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
                         <a href="{% url 'discard_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
                       <!-- Modal -->
@@ -58,11 +70,19 @@
                 {% endfor %}
             </tbody>
         </table>
-
+        </form>
     {% else %}
 
         <p>{% trans 'There are currently no held messages.' %}</p>
 
     {% endif %}
 
+{% endblock %}
+{% block additionaljs %}
+<script>
+$('#all-messages-checkbox').change(function() {
+    $('.message-checkbox').prop('checked', this.checked);
+    });
+$('.hidden').removeClass()
+</script>
 {% endblock %}
