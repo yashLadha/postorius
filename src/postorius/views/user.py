@@ -119,10 +119,7 @@ class UserAddressPreferencesView(MailmanUserView):
             helperform = UserPreferences()
             mm_user = MailmanUser.objects.get(address=request.user.email)
             addresses = mm_user.addresses
-            i = 0
-            for address in addresses:
-                i = i + 1
-            AFormset = formset_factory(UserPreferences, extra=i)
+            AFormset = formset_factory(UserPreferences, extra=len(addresses._addresses))
             formset = AFormset()
             zipped_data = zip(formset.forms, addresses)
             for form, address in zipped_data:
