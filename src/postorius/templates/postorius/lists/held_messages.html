@@ -34,13 +34,11 @@
                     <td>{{ msg.hold_date }}</td>
 
                     <td class="mm_action">
-                        <a href="{% url 'accept_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
-
+                        <a href="#" class="btn btn-mini btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
                         <a href="{% url 'accept_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
                         <a href="{% url 'defer_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-warning">{% trans 'Defer' %}</a>
                         <a href="{% url 'reject_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
                         <a href="{% url 'discard_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
-
                       <!-- Modal -->
                       <div class="modal fade held-message-details" id="msg-{{ msg.request_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -66,5 +64,5 @@
         <p>{% trans 'There are currently no held messages.' %}</p>
 
     {% endif %}
-  
+
 {% endblock %}
