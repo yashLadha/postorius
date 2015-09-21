@@ -17,8 +17,10 @@
 import time
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.shortcuts import resolve_url
 from django.test import Client, SimpleTestCase
 from django.test.utils import override_settings
 try:
@@ -60,9 +62,9 @@ class ListCreationTest(SimpleTestCase):
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
         response = self.client.get(reverse('list_new'))
-        self.assertEqual(
-            response['location'],
-            'http://testserver/postorius/accounts/login/?next=/lists/new/')
+        expected = 'http://testserver%s?next=%s' % (
+            resolve_url(settings.LOGIN_URL), reverse('list_new'))
+        self.assertEqual(response['location'], expected)
 
     @MM_VCR.use_cassette('test_list_creation.yaml')
     def test_new_list_created_with_owner(self):
