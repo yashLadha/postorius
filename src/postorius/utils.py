@@ -27,9 +27,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_client():
-    return Client('{0}/3.0'.format(settings.MAILMAN_API_URL),
-                  settings.MAILMAN_USER,
-                  settings.MAILMAN_PASS)
+    return Client('{0}/3.0'.format(settings.MAILMAN_REST_API_URL),
+                  settings.MAILMAN_REST_API_USER,
+                  settings.MAILMAN_REST_API_PASS)
 
 
 def render_api_error(request):
