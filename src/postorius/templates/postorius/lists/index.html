@@ -34,13 +34,15 @@
             </thead>
             <tbody>
                 {% for list in lists %}
+                {% with settings=list.settings %}
                 <tr>
                     <td>
-                        <a href="{% url 'list_summary' list_id=list.list_id %}">{{ list.display_name }}</a>{% if not list.settings.advertised %} ({% trans 'unadvertised' %}*){% endif %}
+                        <a href="{% url 'list_summary' list_id=list.list_id %}">{{ list.display_name }}</a>{% if not settings.advertised %} ({% trans 'unadvertised' %}*){% endif %}
                     </td>
                     <td>{{ list.fqdn_listname }}</td>
-                    <td>{{ list.settings.description }}</td>
+                    <td>{{ settings.description }}</td>
                 </tr>
+                {% endwith %}
                 {% endfor %}
             </tbody>
         </table>
