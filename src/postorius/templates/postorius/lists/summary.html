@@ -73,7 +73,7 @@
     {% else %}
 
         <p>{% trans "You have to log in to subscribe to this list." %}</p>
-        <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans "Log In" %}</a></p>
+        <p><a href="{{ login_url }}?next={{ request.path|urlencode }}" class="btn btn-primary">{% trans "Log In" %}</a></p>
 
     {% endif %}
 

@@ -20,6 +20,7 @@ import logging
 
 from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
+from django.shortcuts import resolve_url
 
 logger = logging.getLogger(__name__)
 
@@ -47,4 +48,8 @@ def postorius(request):
         'postorius_base_template': template_to_extend,
         'request': request,
         'hyperkitty_url': hyperkitty_url,
+        # Resolve the login and logout URLs from the settings (they can be
+        # either URLs or view names since Django 1.6)
+        'login_url':  resolve_url(settings.LOGIN_URL),
+        'logout_url': resolve_url(settings.LOGOUT_URL),
     }
