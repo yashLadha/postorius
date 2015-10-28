@@ -51,6 +51,28 @@
             <small>* {% trans 'Only admins see unadvertised lists in the list index.' %}</small>
         {% endif %}
 
+        <div class="pagination pagination-centered">
+          <ul>
+            {% if lists.has_previous %}
+            <li><a href="?page={{ lists.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for pagenum in lists.paginator.page_range %}
+                {% if lists.number == pagenum %}
+                <li class="active"><span>{{ pagenum }}</span></li>
+                {% else %}
+                <li><a href="?page={{ pagenum }}">{{ pagenum }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if lists.has_next %}
+            <li><a href="?page={{ lists.next_page_number }}">&raquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+        </div>
+
     {% else %}
 
         <p>There are currently no mailing lists.</p>
