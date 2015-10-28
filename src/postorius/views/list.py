@@ -484,7 +484,7 @@ def list_index(request, template='postorius/lists/index.html'):
         return utils.render_api_error(request)
 
     # Paginate
-    paginator = Paginator(lists, 25) # Show 25 lists per page
+    paginator = Paginator(lists, 15) # Show 10 lists per page
     page = request.GET.get('page')
     try:
         lists = paginator.page(page)
