@@ -13,7 +13,7 @@ from django.test.utils import override_settings
 from six.moves.urllib_error import HTTPError
 
 from postorius.utils import get_client
-from postorius.tests import MM_VCR
+from postorius.tests import MM_VCR, API_CREDENTIALS
 
 
 logger = logging.getLogger(__name__)
@@ -21,12 +21,8 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-TEST_API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
-                        'MAILMAN_USER': 'restadmin',
-                        'MAILMAN_PASS': 'restpass'}
 
-
-@override_settings(**TEST_API_CREDENTIALS)
+@override_settings(**API_CREDENTIALS)
 class TestListMetrics(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_metrics.yaml')

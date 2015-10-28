@@ -25,18 +25,13 @@ try:
 except ImportError:
     from urllib.error import HTTPError
 
-from postorius.tests import MM_VCR
+from postorius.tests import MM_VCR, API_CREDENTIALS
 from postorius.utils import get_client
 
 
 logger = logging.getLogger(__name__)
 vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
-
-
-API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
-                   'MAILMAN_USER': 'restadmin',
-                   'MAILMAN_PASS': 'restpass'}
 
 
 @override_settings(**API_CREDENTIALS)

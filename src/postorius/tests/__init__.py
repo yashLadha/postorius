@@ -34,3 +34,8 @@ VCR_RECORD_MODE = os.environ.get(
 MM_VCR = vcr.VCR(
     cassette_library_dir=os.path.join(FIXTURES_DIR, 'vcr_cassettes'),
     record_mode=VCR_RECORD_MODE)
+
+
+API_CREDENTIALS = {'MAILMAN_REST_API_URL':  'http://localhost:9001',
+                   'MAILMAN_REST_API_USER': 'restadmin',
+                   'MAILMAN_REST_API_PASS': 'restpass'}

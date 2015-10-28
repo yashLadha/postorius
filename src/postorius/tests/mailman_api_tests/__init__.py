@@ -22,10 +22,5 @@ __metaclass__ = type
 
 from urllib2 import HTTPError
 
-from postorius.tests import MM_VCR
+from postorius.tests import MM_VCR, API_CREDENTIALS
 from postorius.utils import get_client
-
-
-API_CREDENTIALS = {'MAILMAN_API_URL': 'http://localhost:9001',
-                   'MAILMAN_USER': 'restadmin',
-                   'MAILMAN_PASS': 'restpass'}
