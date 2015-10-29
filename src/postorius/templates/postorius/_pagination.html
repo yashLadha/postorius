@@ -1,0 +1,59 @@
+{% load url from future %}
+{% load i18n %}
+
+{% if page.paginator.num_pages > 1 %}
+<nav>
+    {% if page.paginator.num_pages > 10 %}
+    <ul class="pager">
+        {% if page.has_previous %}
+            <li><a href="?page={{ page.previous_page_number }}">&larr; {% trans 'Previous' %}</a></li>
+        {% else %}
+            <li class="disabled"><span>&larr; {% trans 'Previous' %}</span></li>
+        {% endif %}
+        <li class="pager-select">
+            <a href="">{% blocktrans with num=page.number total=page.paginator.num_pages %}Page {{ num }} of {{ total }}{% endblocktrans %}</a>
+            <form class="form-inline hidden" action="" method="GET">
+            <label>
+                {% trans 'Jump to page:' %}
+                <select class="form-control input-mini" name="page">
+                {% for pagenum in page.paginator.page_range %}
+                    <option value="{{ pagenum }}"
+                        {% if page.number == pagenum %}selected{% endif %}>
+                        {{ pagenum }}
+                    </option>
+                {% endfor %}
+                </select>
+            </label>
+            </form>
+        </li>
+        {% if page.has_next %}
+            <li><a href="?page={{ page.next_page_number }}">{% trans 'Next' %} &rarr;</a></li>
+        {% else %}
+            <li class="disabled"><span>{% trans 'Next' %} &rarr;</span></li>
+        {% endif %}
+    </ul>
+    {% else %}
+    <div class="pagination pagination-centered">
+        <ul>
+        {% if page.has_previous %}
+            <li><a href="?page={{ page.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+            {% for pagenum in page.paginator.page_range %}
+                {% if page.number == pagenum %}
+                <li class="active"><span>{{ pagenum }}</span></li>
+                {% else %}
+                <li><a href="?page={{ pagenum }}">{{ pagenum }}</a></li>
+                {% endif %}
+            {% endfor %}
+        {% if page.has_next %}
+            <li><a href="?page={{ page.next_page_number }}">&raquo;</a></li>
+        {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+</nav>
+{% endif %}

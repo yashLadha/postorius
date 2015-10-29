@@ -30,6 +30,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -468,26 +469,39 @@ def list_new(request, template='postorius/lists/new.html'):
 def list_index(request, template='postorius/lists/index.html'):
     """Show a table of all public mailing lists.
     """
+    if request.method == 'POST':
+        return redirect("list_summary", list_id=request.POST["list"])
     lists = []
     error = None
     only_public = True
     if request.user.is_superuser:
         only_public = False
     try:
-        lists = List.objects.all(only_public=only_public)
+        lists = sorted(List.objects.all(only_public=only_public),
+                       key=lambda l: l.fqdn_listname)
         logger.debug(lists)
     except MailmanApiError:
         return utils.render_api_error(request)
+
+    # Paginate
+    paginator = Paginator(lists, 15) # Show 15 lists per page
+    page = request.GET.get('page')
+    try:
+        lists = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        lists = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        lists = paginator.page(paginator.num_pages)
+
     choosable_domains = _get_choosable_domains(request)
-    if request.method == 'POST':
-        return redirect("list_summary", list_id=request.POST["list"])
-    else:
-        return render_to_response(
-            template, {
-                'error': error,
-                'lists': sorted(lists, key=lambda l: l.fqdn_listname),
-                'domain_count': len(choosable_domains),
-            }, context_instance=RequestContext(request))
+    return render_to_response(
+        template, {
+            'error': error,
+            'lists': lists,
+            'domain_count': len(choosable_domains),
+        }, context_instance=RequestContext(request))
 
 
 @login_required
