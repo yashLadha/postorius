@@ -24,11 +24,12 @@
 $(function() {
 
     /* Pagination */
-    $(".pager .pager-content span").click(function() {
+    $(".pager .pager-select a").click(function(e) {
+        e.preventDefault();
         $(this).hide();
-        $(this).next().css("display", "inline-block");
+        $(this).next("form").css("display", "inline-block");
     });
-    $(".pager .pager-content form select").change(function() {
+    $(".pager .pager-select form select").change(function() {
         $(this).closest("form").submit();
     });
 
