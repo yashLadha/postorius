@@ -30,7 +30,6 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -395,17 +394,7 @@ class ListModerationView(MailingListView):
 
     @method_decorator(list_moderator_required)
     def get(self, request, *args, **kwargs):
-        # Paginate
-        paginator = Paginator(self.mailing_list.held, 20) # Show 20 messages per page
-        page = request.GET.get('page')
-        try:
-            held_messages = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            held_messages = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            held_messages = paginator.page(paginator.num_pages)
+        held_messages = utils.paginate(request, self.mailing_list.held, 20)
         return render_to_response(
             'postorius/lists/held_messages.html', {
                 'list': self.mailing_list,
@@ -534,24 +523,11 @@ def list_index(request, template='postorius/lists/index.html'):
         logger.debug(lists)
     except MailmanApiError:
         return utils.render_api_error(request)
-
-    # Paginate
-    paginator = Paginator(lists, 15) # Show 15 lists per page
-    page = request.GET.get('page')
-    try:
-        lists = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        lists = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        lists = paginator.page(paginator.num_pages)
-
     choosable_domains = _get_choosable_domains(request)
     return render_to_response(
         template, {
             'error': error,
-            'lists': lists,
+            'lists': utils.paginate(request, lists, 15),
             'domain_count': len(choosable_domains),
         }, context_instance=RequestContext(request))
 
