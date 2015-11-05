@@ -395,9 +395,23 @@ class ListModerationView(MailingListView):
 
     @method_decorator(list_moderator_required)
     def get(self, request, *args, **kwargs):
-        return render_to_response('postorius/lists/held_messages.html',
-                                  {'list': self.mailing_list, 'form':HeldMessagesModerationForm()},
-                                  context_instance=RequestContext(request))
+        # Paginate
+        paginator = Paginator(self.mailing_list.held, 20) # Show 20 messages per page
+        page = request.GET.get('page')
+        try:
+            held_messages = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            held_messages = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            held_messages = paginator.page(paginator.num_pages)
+        return render_to_response(
+            'postorius/lists/held_messages.html', {
+                'list': self.mailing_list,
+                'held_messages': held_messages,
+                'form':HeldMessagesModerationForm()
+            }, context_instance=RequestContext(request))
 
     @method_decorator(list_moderator_required)
     def post(self, request, *args, **kwargs):
