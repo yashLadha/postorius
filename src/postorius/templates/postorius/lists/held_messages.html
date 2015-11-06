@@ -42,7 +42,15 @@
           <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
           <td>{{ msg.subject }}</td>
           <td>{{ msg.sender }}</td>
-          <td>{{ msg.reason }}</td>
+          <td>
+            {% if msg.reason %}
+              {{ msg.reason }}
+            {% else %}
+              {% for reason in msg.moderation_reasons %}
+                <p>{{ reason }}</p>
+              {% endfor %}
+            {% endif %}
+          </td>
           <td>{{ msg.hold_date }}</td>
 
           <td class="mm_action">
