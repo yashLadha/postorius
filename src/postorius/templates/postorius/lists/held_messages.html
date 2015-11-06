@@ -1,68 +1,84 @@
 {% extends postorius_base_template %}
 {% load url from future %}
 {% load i18n %}
-
-{% block subtitle %}
-{% trans "Held Messages | " as page_title %}{{ page_title|add:list.fqdn_listname}}
-{% endblock %}
-
 {% load nav_helpers %}
 
-{% block body_class %}list_summary{% endblock %}
+{% block subtitle %}
+{% trans 'Held Messages' %} | {{ list.fqdn_listname }}
+{% endblock %}
 
 {% block main %}
-    {% list_nav 'list_held_messages' "Held Messages" %}
+  {% list_nav 'list_held_messages' 'Held Messages' %}
+  {% if list.held|length > 0 %}
+    <form method="post">
+      {% if form.choices.errors %}
+        {% for error in form.choices.errors %}
+          <div class="alert alert-error">{{ error }}</div>
+        {% endfor %}
+      {% endif %}
+      {% csrf_token %}
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <td colspan="5">{% trans 'Perform action on selected messages' %}</td>
+          <td class="mm_action">
+            <input type="submit" class="btn btn-mini btn-success" name="accept" value="{% trans 'Accept' %}" />
+            <input type="submit" class="btn btn-mini btn-danger" name="reject" value="{% trans 'Reject' %}" />
+            <input type="submit" class="btn btn-mini btn-danger" name="discard" value="{% trans 'Discard' %}" />
+          </td>
+        </tr>
+        <tr>
+          <th><input type="checkbox" id="all-messages-checkbox" /></th>
+          <th>{% trans 'Subject' %}</th>
+          <th>{% trans 'Sender' %}</th>
+          <th>{% trans 'Reason' %}</th>
+          <th>{% trans 'Hold Date' %}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for msg in list.held %}
+        <tr>
+          <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
+          <td>{{ msg.subject }}</td>
+          <td>{{ msg.sender }}</td>
+          <td>{{ msg.reason }}</td>
+          <td>{{ msg.hold_date }}</td>
 
-    {% if list.held|length > 0 %}
+          <td class="mm_action">
+            <a href="#" class="btn btn-mini btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
+            <a href="{% url 'accept_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
+            <a href="{% url 'reject_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
+            <a href="{% url 'discard_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
 
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>{% trans 'Subject' %}</th>
-                    <th>{% trans 'Sender' %}</th>
-                    <th>{% trans 'Reason' %}</th>
-                    <th>{% trans 'Hold Date' %}</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for msg in list.held %}
-                <tr>
-                    <td>{{ msg.subject }}</td>
-                    <td>{{ msg.sender }}</td>
-                    <td>{{ msg.reason }}</td>
-                    <td>{{ msg.hold_date }}</td>
+            <div class="modal fade held-message-details" id="msg-{{ msg.request_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Subject: {{ msg.subject }}</h4>
+                  </div>
+                  <div class="modal-body">
+                    {{ msg.msg | linebreaks }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </form>
+  {% else %}
+    <p>{% trans 'There are currently no held messages.' %}</p>
+  {% endif %}
+{% endblock %}
 
-                    <td class="mm_action">
-                        <a href="#" class="btn btn-mini btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
-                        <a href="{% url 'accept_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
-                        <a href="{% url 'defer_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-warning">{% trans 'Defer' %}</a>
-                        <a href="{% url 'reject_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
-                        <a href="{% url 'discard_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
-                      <!-- Modal -->
-                      <div class="modal fade held-message-details" id="msg-{{ msg.request_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              <h4 class="modal-title">Subject: {{ msg.subject }}</h4>
-                            </div>
-                            <div class="modal-body">
-                              {{ msg.msg | linebreaks }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-    {% else %}
-
-        <p>{% trans 'There are currently no held messages.' %}</p>
-
-    {% endif %}
-
+{% block additionaljs %}
+<script>
+$('#all-messages-checkbox').change(function() {
+  $('.message-checkbox').prop('checked', this.checked);
+});
+</script>
 {% endblock %}
