@@ -9,7 +9,7 @@
 
 {% block main %}
   {% list_nav 'list_held_messages' 'Held Messages' %}
-  {% if list.held|length > 0 %}
+  {% if held_messages|length > 0 %}
     <form method="post">
       {% if form.choices.errors %}
         {% for error in form.choices.errors %}
@@ -37,7 +37,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for msg in list.held %}
+        {% for msg in held_messages %}
         <tr>
           <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
           <td>{{ msg.subject }}</td>
@@ -70,6 +70,9 @@
       </tbody>
     </table>
     </form>
+
+    {% include 'postorius/_pagination.html' with page=held_messages %}
+
   {% else %}
     <p>{% trans 'There are currently no held messages.' %}</p>
   {% endif %}

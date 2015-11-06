@@ -18,6 +18,7 @@
 import logging
 
 from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from mailmanclient import Client
@@ -41,3 +42,17 @@ def render_api_error(request):
         {'error': "Mailman REST API not available.  "
                   "Please start Mailman core."},
         context_instance=RequestContext(request))
+
+def paginate(request, collection, count=20):
+    # count is the number of items per page
+    paginator = Paginator(collection, count)
+    page = request.GET.get('page')
+    try:
+        results = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        results = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        results = paginator.page(paginator.num_pages)
+    return results
