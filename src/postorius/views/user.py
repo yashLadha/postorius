@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2015 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
@@ -59,7 +59,7 @@ class UserMailmanSettingsView(MailmanUserView):
                 for key in global_preferences_form.fields.keys():
                     preferences[
                         key] = global_preferences_form.cleaned_data[key]
-                    preferences.save()
+                preferences.save()
                 messages.success(
                     request, 'Your preferences have been updated.')
             else:
@@ -102,7 +102,7 @@ class UserAddressPreferencesView(MailmanUserView):
                     for key in form.fields.keys():
                         preferences[
                             key] = form.cleaned_data[key]
-                        preferences.save()
+                    preferences.save()
                 messages.success(
                     request, 'Your preferences have been updated.')
             else:
