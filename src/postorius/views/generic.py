@@ -85,7 +85,7 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
     """A generic view for everything based on a mailman.client
     user object.
 
-    Sets self.mm_user to list object if user_id in **kwargs.
+    Sets self.mm_user to user object if user_id in **kwargs.
     """
 
     def _get_first_address(self, user_obj):
