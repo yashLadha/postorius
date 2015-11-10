@@ -178,10 +178,8 @@ class ListSummaryView(MailingListView):
     def get(self, request, list_id):
         try:
             mm_user = MailmanUser.objects.get(address=request.user.email)
-            user_emails = [str(address) for address in getattr(mm_user, 'addresses')]
-            # TODO:maxking - add the clause below in above
-            # statement after the subscription policy is sorted out
-            # if address.verified_on is not None]
+            user_emails = [str(address) for address in mm_user.addresses
+                           if address.verified_on is not None]
         except Mailman404Error:
             # The user does not have a mailman user associated with it.
             user_emails = [request.user.email]

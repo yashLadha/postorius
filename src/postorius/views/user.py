@@ -304,22 +304,13 @@ def user_new(request):
 
 @login_required()
 def user_profile(request, user_email=None):
+    utils.set_other_emails(request.user)
     try:
         mm_user = MailmanUser.objects.get(address=request.user.email)
-        other_emails = [
-            str(address) for address in mm_user.addresses
-            if address.verified_on is not None
-        ]
-        if request.user.email in other_emails:
-            other_emails.remove(request.user.email)
-     except MailmanApiError:
+    except MailmanApiError:
         return utils.render_api_error(request)
-    except Mailman404Error:
-        # The user does not have a mailman user associated with it.
-        user_emails = []
     return render_to_response('postorius/user_profile.html',
-                              {'mm_user': mm_user,
-                               'other_emails': other_emails},
+                              {'mm_user': mm_user},
                               context_instance=RequestContext(request))
 
 
