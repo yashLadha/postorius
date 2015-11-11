@@ -91,7 +91,8 @@ class ListSummaryPageTest(SimpleTestCase):
         mlist = self.mmclient.get_list('foo@example.com')
         mlist.subscribe('test@example.com')
         user = self.mmclient.get_user('test@example.com')
-        user.add_address('anotheremail@example.com')
+        address = user.add_address('anotheremail@example.com')
+        address.verify()
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com', )))
