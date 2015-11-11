@@ -212,8 +212,7 @@ class ChangeSubscriptionView(MailingListView):
     @method_decorator(login_required)
     def post(self, request, list_id):
         try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            user_emails = [str(address) for address in mm_user.addresses]
+            user_emails = [request.user.email] + request.user.other_emails
             form = ListSubscribe(user_emails, request.POST)
             for address in user_emails:
                 try:
@@ -223,6 +222,7 @@ class ChangeSubscriptionView(MailingListView):
                 else:
                     userSubscribed = True
                     old_email = address
+                    break # no need to test more addresses
             if form.is_valid():
                 email = form.cleaned_data['email']
                 if old_email == email:
@@ -253,12 +253,9 @@ class ListSubscribeView(MailingListView):
         redirects to the `list_summary` view.
         """
         try:
-            try:
-                mm_user = MailmanUser.objects.get(address=request.user.email)
-                user_addresses = [str(address) for address in mm_user.addresses]
-            except Mailman404Error:
-                mm_user = None
-                user_addresses = (request.POST.get('email'),)
+            user_addresses = [request.user.email] + request.user.other_emails
+            if not user_addresses:
+                user_addresses = [request.POST.get('email')]
             form = ListSubscribe(user_addresses, request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
