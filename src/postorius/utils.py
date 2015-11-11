@@ -44,9 +44,47 @@ def render_api_error(request):
         context_instance=RequestContext(request))
 
 
-def paginate(request, collection, count=20):
+
+class MailmanPaginator(Paginator):
+    """
+    Subclass of Django's Paginator that works with MailmanClient's 'get_*_page'
+    functions. Use the function reference as the first argument::
+
+        MailmanPaginator(get_member_page, 25)
+
+    """
+
+    def __init__(self, function, per_page, **kwargs):
+        self.function = function
+        super(MailmanPaginator, self).__init__(None, per_page, **kwargs)
+
+    def page(self, number):
+        """
+        Returns a Page object for the given 1-based page number.
+        """
+        number = self.validate_number(number)
+        result = self.function(count=self.per_page, page=number)
+        if self._count is None:
+            self._count = result.total_size
+        return self._get_page(result, number, self)
+
+    def _get_count(self):
+        """
+        Returns the total number of objects, across all pages.
+        """
+        if self._count is None:
+            # For now we need to get the first page to have the total_size.
+            # Mitigate the price of this call by using count=1.
+            result = self.function(count=1, page=1)
+            self._count = result.total_size
+        return self._count
+    count = property(_get_count)
+
+
+
+def paginate(request, collection, count=20, paginator_class=Paginator):
     # count is the number of items per page
-    paginator = Paginator(collection, count)
+    paginator = paginator_class(collection, count)
     page = request.GET.get('page')
     try:
         results = paginator.page(page)
