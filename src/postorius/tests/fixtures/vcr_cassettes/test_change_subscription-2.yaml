@@ -78,6 +78,21 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
       !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
+    method: !!python/unicode 'POST'
+    uri: http://localhost:9001/3.0/addresses/anotheremail@example.com/verify
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-length: ['0']
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/foo@example.com
   response:
@@ -98,50 +113,15 @@ interactions:
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
       !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
     method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/lists/foo.example.com/roster/owner
-  response:
-    body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
-        "total_size": 0, "start": 0}'}
-    headers:
-      content-length: ['90']
-      content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Nov 2015 12:49:46 GMT']
-      server: [WSGIServer/0.2 CPython/3.4.2]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
-      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
-    method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/lists/foo.example.com/roster/moderator
-  response:
-    body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
-        "total_size": 0, "start": 0}'}
-    headers:
-      content-length: ['90']
-      content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Nov 2015 12:49:46 GMT']
-      server: [WSGIServer/0.2 CPython/3.4.2]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
-      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
-    method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/users/test@example.com
   response:
-    body: {string: !!python/unicode '{"http_etag": "\"37b41a08d3ada12388d91b9b9bc153f05b3ff730\"",
-        "is_server_owner": false, "user_id": 175101733981884185786040725666736952966,
-        "display_name": "None", "self_link": "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
-        "created_on": "2015-11-11T12:49:46.231219"}'}
+    body: {string: !!python/unicode '{"is_server_owner": false, "http_etag": "\"46c89e4c192af91458b3bc8ca8efd3199d39672e\"",
+        "user_id": 175101733981884185786040725666736952966, "self_link": "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
+        "display_name": "None", "created_on": "2015-11-11T08:52:29.896503"}'}
     headers:
       content-length: ['295']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Nov 2015 12:49:46 GMT']
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -153,14 +133,13 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/users/175101733981884185786040725666736952966
   response:
-    body: {string: !!python/unicode '{"http_etag": "\"37b41a08d3ada12388d91b9b9bc153f05b3ff730\"",
-        "is_server_owner": false, "user_id": 175101733981884185786040725666736952966,
-        "display_name": "None", "self_link": "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
-        "created_on": "2015-11-11T12:49:46.231219"}'}
+    body: {string: !!python/unicode '{"is_server_owner": false, "http_etag": "\"46c89e4c192af91458b3bc8ca8efd3199d39672e\"",
+        "user_id": 175101733981884185786040725666736952966, "self_link": "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
+        "display_name": "None", "created_on": "2015-11-11T08:52:29.896503"}'}
     headers:
       content-length: ['295']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Nov 2015 12:49:46 GMT']
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -172,21 +151,21 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/users/175101733981884185786040725666736952966/addresses
   response:
-    body: {string: !!python/unicode '{"entries": [{"email": "anotheremail@example.com",
+    body: {string: !!python/unicode '{"total_size": 2, "entries": [{"verified_on":
+        "2015-11-11T08:52:30.262179", "original_email": "anotheremail@example.com",
         "user": "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
-        "http_etag": "\"f426bc970d106dbe0b97a94d2a1cb7d4841c7426\"", "self_link":
+        "http_etag": "\"81c4cd219f97c86934e5fcdb7804c920e891bcc8\"", "self_link":
         "http://localhost:9001/3.0/addresses/anotheremail@example.com", "registered_on":
-        "2015-11-11T12:49:46.474206", "original_email": "anotheremail@example.com"},
-        {"email": "test@example.com", "user": "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
-        "display_name": "None", "http_etag": "\"ff99ece0c664fbdc7c31e598be6fff735098d6e8\"",
-        "self_link": "http://localhost:9001/3.0/addresses/test@example.com", "registered_on":
-        "2015-11-11T12:49:46.213354", "original_email": "test@example.com"}], "http_etag":
-        "\"f2c8e9b9e18b8429f7f55962f7ec73bd670fb7f4\"", "total_size": 2, "start":
-        0}'}
+        "2015-11-11T08:52:30.155031", "email": "anotheremail@example.com"}, {"original_email":
+        "test@example.com", "user": "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
+        "http_etag": "\"dbf31067cb3a34f66b4b7e99d58e8e714923dcba\"", "registered_on":
+        "2015-11-11T08:52:29.878035", "self_link": "http://localhost:9001/3.0/addresses/test@example.com",
+        "display_name": "None", "email": "test@example.com"}], "http_etag": "\"6cd8190baf5403ef8476c864d712db23cafc3bd2\"",
+        "start": 0}'}
     headers:
-      content-length: ['809']
+      content-length: ['854']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Nov 2015 12:49:46 GMT']
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -196,15 +175,73 @@ interactions:
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
       !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
     method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/lists/foo.example.com/member/anotheremail@example.com
+    uri: http://localhost:9001/3.0/addresses/anotheremail@example.com
   response:
-    body: {string: !!python/unicode '{}'}
+    body: {string: !!python/unicode '{"verified_on": "2015-11-11T08:52:30.262179",
+        "original_email": "anotheremail@example.com", "user": "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
+        "http_etag": "\"81c4cd219f97c86934e5fcdb7804c920e891bcc8\"", "self_link":
+        "http://localhost:9001/3.0/addresses/anotheremail@example.com", "registered_on":
+        "2015-11-11T08:52:30.155031", "email": "anotheremail@example.com"}'}
     headers:
-      content-length: ['2']
-      content-type: [application/json]
-      date: ['Wed, 11 Nov 2015 12:49:46 GMT']
+      content-length: ['396']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
-    status: {code: 404, message: Not Found}
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/addresses/test@example.com
+  response:
+    body: {string: !!python/unicode '{"original_email": "test@example.com", "user":
+        "http://localhost:9001/3.0/users/175101733981884185786040725666736952966",
+        "http_etag": "\"dbf31067cb3a34f66b4b7e99d58e8e714923dcba\"", "registered_on":
+        "2015-11-11T08:52:29.878035", "self_link": "http://localhost:9001/3.0/addresses/test@example.com",
+        "display_name": "None", "email": "test@example.com"}'}
+    headers:
+      content-length: ['351']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/foo.example.com/roster/owner
+  response:
+    body: {string: !!python/unicode '{"total_size": 0, "http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
+        "start": 0}'}
+    headers:
+      content-length: ['90']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/foo.example.com/roster/moderator
+  response:
+    body: {string: !!python/unicode '{"total_size": 0, "http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
+        "start": 0}'}
+    headers:
+      content-length: ['90']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 200, message: OK}
 - request:
     body: null
     headers:
@@ -218,7 +255,23 @@ interactions:
     headers:
       content-length: ['2']
       content-type: [application/json]
-      date: ['Wed, 11 Nov 2015 12:49:46 GMT']
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/foo.example.com/member/anotheremail@example.com
+  response:
+    body: {string: !!python/unicode '{}'}
+    headers:
+      content-length: ['2']
+      content-type: [application/json]
+      date: ['Wed, 11 Nov 2015 08:52:30 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 404, message: Not Found}
 - request:
