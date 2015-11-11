@@ -176,34 +176,28 @@ class ListSummaryView(MailingListView):
     """
 
     def get(self, request, list_id):
-        try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            user_emails = [str(address) for address in mm_user.addresses
-                           if address.verified_on is not None]
-        except Mailman404Error:
-            # The user does not have a mailman user associated with it.
-            user_emails = [request.user.email]
-        except AttributeError:
-            # Anonymous User, everyone logged out.
+        if request.user.is_authenticated():
+            user_emails = [request.user.email] + request.user.other_emails
+        else:
             user_emails = None
 
         userSubscribed = False
         subscribed_address = None
-        if user_emails is not None:
+        data =  {'list': self.mailing_list,
+                 'userSubscribed': False,
+                 'subscribed_address': None}
+        if request.user.is_authenticated():
             for address in user_emails:
                 try:
-                    userMember = self.mailing_list.get_member(address)
+                    self.mailing_list.get_member(address)
                 except ValueError:
                     pass
                 else:
-                    userSubscribed = True
-                    subscribed_address = address
-        data =  {'list': self.mailing_list,
-                 'userSubscribed': userSubscribed,
-                 'subscribed_address': subscribed_address}
-        if user_emails is not None:
-            data['change_subscription_form'] = ChangeSubscriptionForm(user_emails,
-                                                 initial={'email': subscribed_address})
+                    data['userSubscribed'] = True
+                    data['subscribed_address'] = address
+                    break # no need to test more addresses
+            data['change_subscription_form'] = ChangeSubscriptionForm(
+                user_emails, initial={'email': data['subscribed_address']})
             data['subscribe_form'] = ListSubscribe(user_emails)
         else:
             data['change_subscription_form'] = None
