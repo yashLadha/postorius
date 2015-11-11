@@ -48,14 +48,6 @@ class MailingListView(TemplateView, MailmanClientMixin):
     def _get_list(self, list_id, page):
         return List.objects.get_or_404(fqdn_listname=list_id)
 
-    def _is_in_list_roster(self, user, mailing_list, roster):
-        if not user.is_authenticated():
-            return False
-        addresses = set(user.email) | set(user.other_emails)
-        if addresses & set(getattr(mailing_list, roster)):
-            return True # At least one address is in the roster
-        return False
-
     def dispatch(self, request, *args, **kwargs):
         # get the list object.
         if 'list_id' in kwargs:
@@ -65,9 +57,9 @@ class MailingListView(TemplateView, MailmanClientMixin):
             except MailmanApiError:
                 return utils.render_api_error(request)
             utils.set_other_emails(request.user)
-            request.user.is_list_owner = self._is_in_list_roster(
+            request.user.is_list_owner = utils.user_is_in_list_roster(
                 request.user, self.mailing_list, "owners")
-            request.user.is_list_moderator = self._is_in_list_roster(
+            request.user.is_list_moderator = utils.user_is_in_list_roster(
                 request.user, self.mailing_list, "moderators")
         # set the template
         if 'template' in kwargs:

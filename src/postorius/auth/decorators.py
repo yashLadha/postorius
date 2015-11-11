@@ -23,6 +23,7 @@ from django.core.exceptions import PermissionDenied
 
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
+from postorius.utils import user_is_in_list_roster
 
 
 def basic_auth_login(fn):
@@ -56,14 +57,13 @@ def list_owner_required(fn):
             raise PermissionDenied
         if user.is_superuser:
             return fn(*args, **kwargs)
-        if getattr(user, 'is_list_owner', None):
+        if not hasattr(user, 'is_list_owner'):
+            mlist = List.objects.get_or_404(fqdn_listname=list_id)
+            user.is_list_owner = user_is_in_list_roster(user, mlist, "owners")
+        if user.is_list_owner:
             return fn(*args, **kwargs)
-        mlist = List.objects.get_or_404(fqdn_listname=list_id)
-        if user.email not in mlist.owners:
-            raise PermissionDenied
         else:
-            user.is_list_owner = True
-            return fn(*args, **kwargs)
+            raise PermissionDenied
     return wrapper
 
 
@@ -79,22 +79,19 @@ def list_moderator_required(fn):
             raise PermissionDenied
         if user.is_superuser:
             return fn(*args, **kwargs)
-        if getattr(user, 'is_list_owner', None):
+        if (not hasattr(user, 'is_list_owner')
+            or not hasattr(user, 'is_list_moderator')):
+            mlist = List.objects.get_or_404(fqdn_listname=list_id)
+            if not hasattr(user, 'is_list_owner'):
+                user.is_list_owner = user_is_in_list_roster(
+                    user, mlist, "owners")
+            if not hasattr(user, 'is_list_moderator'):
+                user.is_list_moderator = user_is_in_list_roster(
+                    user, mlist, "moderators")
+        if user.is_list_owner or user.is_list_moderator:
             return fn(*args, **kwargs)
-        if getattr(user, 'is_list_moderator', None):
-            return fn(*args, **kwargs)
-        mlist = List.objects.get_or_404(fqdn_listname=list_id)
-        if user.email not in mlist.moderators and \
-                user.email not in mlist.owners:
-            raise PermissionDenied
         else:
-            if user.email in mlist.moderators and \
-                    user.email not in mlist.owners:
-                user.is_list_moderator = True
-            else:
-                user.is_list_moderator = True
-                user.is_list_owner = True
-            return fn(*args, **kwargs)
+            raise PermissionDenied
     return wrapper
 
 
