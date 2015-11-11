@@ -304,12 +304,13 @@ def user_new(request):
 
 @login_required()
 def user_profile(request, user_email=None):
-    # try:
-    #    the_user = User.objects.get(email=user_email)
-    # except MailmanApiError:
-    #    return utils.render_api_error(request)
+    utils.set_other_emails(request.user)
+    try:
+        mm_user = MailmanUser.objects.get(address=request.user.email)
+    except MailmanApiError:
+        return utils.render_api_error(request)
     return render_to_response('postorius/user_profile.html',
-                              # {'mm_user': the_user},
+                              {'mm_user': mm_user},
                               context_instance=RequestContext(request))
 
 

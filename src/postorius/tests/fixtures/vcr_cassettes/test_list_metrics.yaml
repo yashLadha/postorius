@@ -96,6 +96,22 @@ interactions:
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
       !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
     method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/users/su@example.com
+  response:
+    body: {string: !!python/unicode '404 Not Found'}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 11 Nov 2015 12:49:38 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
+    method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test.example.org/roster/owner
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -115,12 +131,12 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test.example.org/roster/moderator
   response:
-    body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
-        "total_size": 0, "start": 0}'}
+    body: {string: !!python/unicode '{"total_size": 0, "http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
+        "start": 0}'}
     headers:
       content-length: ['90']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Nov 2015 12:49:38 GMT']
+      date: ['Wed, 11 Nov 2015 08:52:22 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:
@@ -132,31 +148,30 @@ interactions:
     method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/test@example.org/config
   response:
-    body: {string: !!python/unicode '{"autoresponse_grace_period": "90d", "autorespond_requests":
-        "none", "display_name": "Test", "default_member_action": "defer", "no_reply_address":
-        "noreply@example.org", "autorespond_postings": "none", "admin_notify_mchanges":
-        false, "fqdn_listname": "test@example.org", "autoresponse_postings_text":
-        "", "advertised": true, "description": "", "reply_goes_to_list": "no_munging",
-        "post_id": 1, "filter_content": false, "last_post_at": null, "next_digest_number":
-        1, "autoresponse_owner_text": "", "acceptable_aliases": [], "administrivia":
-        true, "collapse_alternatives": true, "owner_address": "test-owner@example.org",
-        "welcome_message_uri": "mailman:///welcome.txt", "allow_list_posts": true,
-        "subscription_policy": "confirm", "list_name": "test", "admin_immed_notify":
-        true, "leave_address": "test-leave@example.org", "autoresponse_request_text":
-        "", "posting_pipeline": "default-posting-pipeline", "convert_html_to_plaintext":
-        false, "reply_to_address": "", "request_address": "test-request@example.org",
-        "join_address": "test-join@example.org", "send_welcome_message": true, "archive_policy":
-        "public", "volume": 1, "first_strip_reply_to": false, "default_nonmember_action":
-        "hold", "posting_address": "test@example.org", "http_etag": "\"844dfa3141895bd6e9e2fe0cc3ac2614f6f8104a\"",
+    body: {string: !!python/unicode '{"autorespond_postings": "none", "subject_prefix":
+        "[Test] ", "reply_to_address": "", "autoresponse_request_text": "", "volume":
+        1, "display_name": "Test", "subscription_policy": "confirm", "leave_address":
+        "test-leave@example.org", "last_post_at": null, "convert_html_to_plaintext":
+        false, "posting_pipeline": "default-posting-pipeline", "admin_notify_mchanges":
+        false, "posting_address": "test@example.org", "post_id": 1, "reply_goes_to_list":
+        "no_munging", "anonymous_list": false, "default_member_action": "defer", "scheme":
+        "http", "list_name": "test", "archive_policy": "public", "collapse_alternatives":
+        true, "autoresponse_owner_text": "", "request_address": "test-request@example.org",
+        "acceptable_aliases": [], "include_rfc2369_headers": true, "default_nonmember_action":
+        "hold", "description": "", "no_reply_address": "noreply@example.org", "welcome_message_uri":
+        "mailman:///welcome.txt", "advertised": true, "mail_host": "example.org",
         "bounces_address": "test-bounces@example.org", "autorespond_owner": "none",
-        "created_at": "2015-11-11T12:49:38.244516", "digest_size_threshold": 30.0,
-        "web_host": "example.org", "anonymous_list": false, "scheme": "http", "digest_last_sent_at":
-        null, "subject_prefix": "[Test] ", "mail_host": "example.org", "include_rfc2369_headers":
-        true}'}
+        "created_at": "2015-11-11T08:52:21.804288", "autoresponse_grace_period": "90d",
+        "http_etag": "\"2231d4e997010bb6438b563d2948fac3695a7232\"", "administrivia":
+        true, "fqdn_listname": "test@example.org", "send_welcome_message": true, "autoresponse_postings_text":
+        "", "allow_list_posts": true, "digest_size_threshold": 30.0, "admin_immed_notify":
+        true, "digest_last_sent_at": null, "web_host": "example.org", "first_strip_reply_to":
+        false, "filter_content": false, "join_address": "test-join@example.org", "next_digest_number":
+        1, "owner_address": "test-owner@example.org", "autorespond_requests": "none"}'}
     headers:
       content-length: ['1627']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 11 Nov 2015 12:49:38 GMT']
+      date: ['Wed, 11 Nov 2015 08:52:22 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
     status: {code: 200, message: OK}
 - request:

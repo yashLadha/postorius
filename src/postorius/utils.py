@@ -43,6 +43,7 @@ def render_api_error(request):
                   "Please start Mailman core."},
         context_instance=RequestContext(request))
 
+
 def paginate(request, collection, count=20):
     # count is the number of items per page
     paginator = Paginator(collection, count)
@@ -56,3 +57,31 @@ def paginate(request, collection, count=20):
         # If page is out of range (e.g. 9999), deliver last page of results.
         results = paginator.page(paginator.num_pages)
     return results
+
+
+def set_other_emails(user):
+    from postorius.models import MailmanUser, MailmanApiError, Mailman404Error
+    user.other_emails = []
+    if not user.is_authenticated():
+        return
+    try:
+        mm_user = MailmanUser.objects.get(address=user.email)
+        user.other_emails = [str(address) for address in mm_user.addresses
+                             if address.verified_on is not None]
+    except (MailmanApiError, Mailman404Error, AttributeError):
+        # MailmanApiError: No connection to Mailman
+        # Mailman404Error: The user does not have a mailman user associated with it.
+        # AttributeError: Anonymous user
+        return
+    if user.email in user.other_emails:
+        user.other_emails.remove(user.email)
+
+def user_is_in_list_roster(user, mailing_list, roster):
+    if not user.is_authenticated():
+        return False
+    if not hasattr(user, 'other_emails'):
+        set_other_emails(user)
+    addresses = set([user.email]) | set(user.other_emails)
+    if addresses & set(getattr(mailing_list, roster)):
+        return True # At least one address is in the roster
+    return False

@@ -48,20 +48,6 @@ class MailingListView(TemplateView, MailmanClientMixin):
     def _get_list(self, list_id, page):
         return List.objects.get_or_404(fqdn_listname=list_id)
 
-    def _is_list_owner(self, user, mailing_list):
-        if not user.is_authenticated():
-            return False
-        if user.email in mailing_list.owners:
-            return True
-        return False
-
-    def _is_list_moderator(self, user, mailing_list):
-        if not user.is_authenticated():
-            return False
-        if user.email in mailing_list.moderators:
-            return True
-        return False
-
     def dispatch(self, request, *args, **kwargs):
         # get the list object.
         if 'list_id' in kwargs:
@@ -70,10 +56,11 @@ class MailingListView(TemplateView, MailmanClientMixin):
                                                    int(kwargs.get('page', 1)))
             except MailmanApiError:
                 return utils.render_api_error(request)
-            request.user.is_list_owner = self._is_list_owner(
-                request.user, self.mailing_list)
-            request.user.is_list_moderator = self._is_list_moderator(
-                request.user, self.mailing_list)
+            utils.set_other_emails(request.user)
+            request.user.is_list_owner = utils.user_is_in_list_roster(
+                request.user, self.mailing_list, "owners")
+            request.user.is_list_moderator = utils.user_is_in_list_roster(
+                request.user, self.mailing_list, "moderators")
         # set the template
         if 'template' in kwargs:
             self.template = kwargs['template']
@@ -85,7 +72,7 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
     """A generic view for everything based on a mailman.client
     user object.
 
-    Sets self.mm_user to list object if user_id in **kwargs.
+    Sets self.mm_user to user object if user_id in **kwargs.
     """
 
     def _get_first_address(self, user_obj):

@@ -579,6 +579,22 @@ interactions:
       !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
       !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
     method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/users/test@example.com
+  response:
+    body: {string: !!python/unicode '404 Not Found'}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 11 Nov 2015 08:52:15 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0']
+    method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/foo.example.com/roster/owner
   response:
     body: {string: !!python/unicode '{"entries": [{"self_link": "http://localhost:9001/3.0/members/159620023615929456754306653256797611603",
@@ -589,7 +605,7 @@ interactions:
         "regular", "email": "owner@example.com"}], "http_etag": "\"b9d5581015ee3a6a62d5a44b9f50829408a7301c\"",
         "total_size": 1, "start": 0}'}
     headers:
-      content-length: ['565']
+      content-length: ['564']
       content-type: [application/json; charset=utf-8]
       date: ['Wed, 11 Nov 2015 12:49:31 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]
@@ -652,7 +668,7 @@ interactions:
         "regular", "email": "owner@example.com"}], "http_etag": "\"b9d5581015ee3a6a62d5a44b9f50829408a7301c\"",
         "total_size": 1, "start": 0}'}
     headers:
-      content-length: ['565']
+      content-length: ['564']
       content-type: [application/json; charset=utf-8]
       date: ['Wed, 11 Nov 2015 12:49:32 GMT']
       server: [WSGIServer/0.2 CPython/3.4.2]

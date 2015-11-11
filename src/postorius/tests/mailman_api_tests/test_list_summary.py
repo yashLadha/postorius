@@ -91,7 +91,8 @@ class ListSummaryPageTest(SimpleTestCase):
         mlist = self.mmclient.get_list('foo@example.com')
         mlist.subscribe('test@example.com')
         user = self.mmclient.get_user('test@example.com')
-        user.add_address('anotheremail@example.com')
+        address = user.add_address('anotheremail@example.com')
+        address.verify()
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com', )))
@@ -110,3 +111,55 @@ class ListSummaryPageTest(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Change Subscription' in response.content)
         self.assertTrue('Unsubscribe' in response.content)
+
+    @MM_VCR.use_cassette('test_list_summary_owner.yaml')
+    def test_list_summary_owner(self):
+        # Response must contain the administration menu
+        user = self.mmclient.create_user('test@example.com', None)
+        mlist = self.mmclient.get_list('foo@example.com')
+        mlist.add_owner('test@example.com')
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                   args=('foo@example.com', )))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<li class="mm_nav_item">', count=9)
+
+    @MM_VCR.use_cassette('test_list_summary_moderator.yaml')
+    def test_list_summary_moderator(self):
+        # Response must contain the administration menu
+        user = self.mmclient.create_user('test@example.com', None)
+        mlist = self.mmclient.get_list('foo@example.com')
+        mlist.add_moderator('test@example.com')
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                   args=('foo@example.com', )))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<li class="mm_nav_item">', count=3)
+
+    @MM_VCR.use_cassette('test_list_summary_secondary_owner.yaml')
+    def test_list_summary_is_admin_secondary_owner(self):
+        # Response must contain the administration menu
+        user = self.mmclient.create_user('test@example.com', None)
+        address = user.add_address('anotheremail@example.com')
+        address.verify()
+        mlist = self.mmclient.get_list('foo@example.com')
+        mlist.add_owner('anotheremail@example.com')
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                   args=('foo@example.com', )))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<li class="mm_nav_item">', count=9)
+
+    @MM_VCR.use_cassette('test_list_summary_secondary_moderator.yaml')
+    def test_list_summary_is_admin_secondary_moderator(self):
+        # Response must contain the administration menu
+        user = self.mmclient.create_user('test@example.com', None)
+        address = user.add_address('anotheremail@example.com')
+        address.verify()
+        mlist = self.mmclient.get_list('foo@example.com')
+        mlist.add_moderator('anotheremail@example.com')
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                   args=('foo@example.com', )))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<li class="mm_nav_item">', count=3)
