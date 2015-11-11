@@ -49,17 +49,10 @@ class ListMembersView(MailingListView):
     """Display all members of a given list.
     """
 
-    def _get_list(self, list_id, page):
-        m_list = super(ListMembersView, self)._get_list(list_id, page)
-        m_list.member_page = m_list.get_member_page(25, page)
-        m_list.member_page_nr = page
-        m_list.member_page_previous_nr = page - 1
-        m_list.member_page_next_nr = page + 1
-        m_list.member_page_show_next = len(m_list.member_page) >= 25
-        return m_list
-
     @method_decorator(list_owner_required)
-    def post(self, request, list_id, page=1):
+    def post(self, request, list_id):
+        # FIXME: form usage is wrong here, they should be instantiated only
+        # once or the form errors will be erased.
         if 'owner_email' in request.POST:
             owner_form = NewOwnerForm(request.POST)
             if owner_form.is_valid():
@@ -84,20 +77,30 @@ class ListMembersView(MailingListView):
                     messages.error(request, _(e.msg))
         owner_form = NewOwnerForm()
         moderator_form = NewModeratorForm()
+        members = utils.paginate(
+            request, self.mailing_list.get_member_page, 25,
+            paginator_class=utils.MailmanPaginator)
         return render_to_response('postorius/lists/members.html',
                                   {'list': self.mailing_list,
                                    'owner_form': owner_form,
-                                   'moderator_form': moderator_form},
+                                   'moderator_form': moderator_form,
+                                   'members': members,
+                                   },
                                   context_instance=RequestContext(request))
 
     @method_decorator(list_owner_required)
     def get(self, request, list_id, page=1):
         owner_form = NewOwnerForm()
         moderator_form = NewModeratorForm()
+        members = utils.paginate(
+            request, self.mailing_list.get_member_page, 25,
+            paginator_class=utils.MailmanPaginator)
         return render_to_response('postorius/lists/members.html',
                                   {'list': self.mailing_list,
                                    'owner_form': owner_form,
-                                   'moderator_form': moderator_form},
+                                   'moderator_form': moderator_form,
+                                   'members': members,
+                                  },
                                   context_instance=RequestContext(request))
 
 

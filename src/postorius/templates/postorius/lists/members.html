@@ -78,7 +78,7 @@
 		     <button type="submit" class="btn">{% trans 'CSV Export' %}</button>
 	    </form>
 
-            {% for member in list.member_page %}
+            {% for member in members %}
                 <tr>
                     <td> <a href="{% url 'list_member_options' list.fqdn_listname member.email %}">
                         {{ member.email }}</a></td>
@@ -91,22 +91,6 @@
     	</tbody>
     </table>
 
-    <div class="pagination pagination-centered">
-        <ul>
-            {% if list.member_page_nr > 1 %}
-                <li><a href="{% url 'list_members_paged' list.fqdn_listname list.member_page_previous_nr %}">&laquo;</a></li> 
-            {% else %}
-                <li class="disabled"><span>&laquo;</span></li> 
-            {% endif %}
-
-        	<li><span>{{ list.member_page_nr }}</span></li>
-
-            {% if list.member_page_show_next %}
-                <li><a href="{% url 'list_members_paged' list.fqdn_listname list.member_page_next_nr %}">&raquo;</a></li> 
-            {% else %}
-                <li class="disabled"><a href="#">&raquo;</a></li> 
-            {% endif %}
-        </ul>
-    </div>
+    {% include 'postorius/_pagination.html' with page=members %}
 
 {% endblock main %}
