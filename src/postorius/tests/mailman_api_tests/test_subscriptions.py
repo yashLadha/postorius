@@ -16,6 +16,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
@@ -26,6 +27,7 @@ except ImportError:
     from urllib.error import HTTPError
 
 from postorius.tests import MM_VCR, API_CREDENTIALS
+from postorius.tests.utils import get_flash_messages
 from postorius.utils import get_client
 
 
@@ -35,83 +37,115 @@ vcr_log.setLevel(logging.WARNING)
 
 
 @override_settings(**API_CREDENTIALS)
-class TestSubscriptionPolicyOpen(TestCase):
-    """Tests for the list members page.
-
-    Tests permissions and creation of list owners and moderators.
-    """
+class TestSubscription(TestCase):
+    """Tests subscription to lists"""
 
     @MM_VCR.use_cassette('test_list_subscription.yaml')
     def setUp(self):
-        self.client = Client()
+        mm_client = get_client()
         try:
-            self.domain = get_client().create_domain('example.com')
+            self.domain = mm_client.create_domain('example.com')
         except HTTPError:
-            self.domain = get_client().get_domain('example.com')
-        try:
-            self.test_list = self.domain.create_list('open_list')
-        except HTTPError:
-            self.test_list = get_client().get_list('open_list.example.com')
+            self.domain = mm_client.get_domain('example.com')
+        self.open_list = self.domain.create_list('open_list')
         # Set subscription policy to open
-        settings = self.test_list.settings
+        settings = self.open_list.settings
         settings['subscription_policy'] = 'open'
         settings.save()
-        self.user = User.objects.create_user(
-            'testuser', 'test@example.com', 'pwd')
-
-    @MM_VCR.use_cassette('test_list_subscription.yaml')
-    def tearDown(self):
-        self.test_list.delete()
-        self.user.delete()
-
-    @MM_VCR.use_cassette('test_list_subscription.yaml')
-    def test_subscribing_adds_member(self):
-        # The subscription goes straight through.
-        self.client.login(username='testuser', password='pwd')
-        response = self.client.post(
-            reverse('list_subscribe', args=('open_list.example.com', )),
-            {'email': 'fritz@example.org'})
-        self.assertEqual(len(self.test_list.members), 1)
-        self.assertEqual(len(self.test_list.requests), 0)
-
-
-@override_settings(**API_CREDENTIALS)
-class TestSubscriptionPolicyModerate(TestCase):
-    """Tests for the list members page.
-
-    Tests permissions and creation of list owners and moderators.
-    """
-
-    @MM_VCR.use_cassette('test_list_subscription_moderate.yaml')
-    def setUp(self):
-        self.client = Client()
-        try:
-            self.domain = get_client().create_domain('example.com')
-        except HTTPError:
-            self.domain = get_client().get_domain('example.com')
-        try:
-            self.test_list = self.domain.create_list('moderate_subs')
-        except HTTPError:
-            self.test_list = get_client().get_list('moderate_subs.example.com')
-        # Set subscription policy to open
-        settings = self.test_list.settings
+        self.mod_list = self.domain.create_list('moderate_subs')
+        # Set subscription policy to moderate
+        settings = self.mod_list.settings
         settings['subscription_policy'] = 'moderate'
         settings.save()
         # Create django user.
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'pwd')
+        # Create Mailman user
+        self.mm_user = get_client().create_user('test@example.com', '')
+        self.mm_user.add_address('fritz@example.org').verify()
 
-    @MM_VCR.use_cassette('test_list_subscription_moderate.yaml')
+    @MM_VCR.use_cassette('test_list_subscription.yaml')
     def tearDown(self):
-        self.test_list.delete()
-        self.user.delete()
+        # Delete all subscription requests
+        for req in self.open_list.requests:
+            self.open_list.moderate_request(req['token'], 'discard')
+        for req in self.mod_list.requests:
+            self.mod_list.moderate_request(req['token'], 'discard')
+        self.open_list.delete()
+        self.mod_list.delete()
+        self.mm_user.delete()
 
-    @MM_VCR.use_cassette('test_list_subscription_moderate.yaml')
-    def test_subscribing_adds_member(self):
+    @MM_VCR.use_cassette('test_list_subscription_open_primary.yaml')
+    def test_subscribe_open(self):
+        # The subscription goes straight through.
+        self.client.login(username='testuser', password='pwd')
+        response = self.client.post(
+            reverse('list_subscribe', args=('open_list.example.com', )),
+            {'email': 'test@example.com'})
+        self.assertEqual(len(self.open_list.members), 1)
+        self.assertEqual(len(self.open_list.requests), 0)
+        self.assertRedirects(response,
+            reverse('list_summary', args=('open_list.example.com', )))
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+
+    @MM_VCR.use_cassette('test_list_subscription_open_secondary.yaml')
+    def test_secondary_open(self):
+        # Subscribe with a secondary email address
+        self.client.login(username='testuser', password='pwd')
+        response = self.client.post(
+            reverse('list_subscribe', args=('open_list.example.com', )),
+            {'email': 'fritz@example.org'})
+        self.assertEqual(len(self.open_list.members), 1)
+        self.assertEqual(len(self.open_list.requests), 0)
+        self.assertRedirects(response,
+            reverse('list_summary', args=('open_list.example.com', )))
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+
+    @MM_VCR.use_cassette('test_list_subscription_unknown.yaml')
+    def test_unknown_address(self):
+        # Impossible to register with an unknown address
+        self.client.login(username='testuser', password='pwd')
+        response = self.client.post(
+            reverse('list_subscribe', args=('open_list.example.com', )),
+            {'email': 'unknown@example.org'})
+        self.assertEqual(len(self.open_list.members), 0)
+        self.assertEqual(len(self.open_list.requests), 0)
+        self.assertRedirects(response,
+            reverse('list_summary', args=('open_list.example.com', )))
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.ERROR, msgs[0].message)
+
+    @MM_VCR.use_cassette('test_list_subscription_mod_primary.yaml')
+    def test_subscribe_mod(self):
         # The subscription is held for approval.
         self.client.login(username='testuser', password='pwd')
         response = self.client.post(
             reverse('list_subscribe', args=('moderate_subs.example.com', )),
+            {'email': 'test@example.com'})
+        self.assertEqual(len(self.mod_list.members), 0)
+        self.assertEqual(len(self.mod_list.requests), 1)
+        self.assertRedirects(response,
+            reverse('list_summary', args=('moderate_subs.example.com', )))
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+
+    @MM_VCR.use_cassette('test_list_subscription_mod_secondary.yaml')
+    def test_secondary_mod(self):
+        # Subscribe with a secondary email address
+        self.client.login(username='testuser', password='pwd')
+        response = self.client.post(
+            reverse('list_subscribe', args=('moderate_subs.example.com', )),
             {'email': 'fritz@example.org'})
-        self.assertEqual(len(self.test_list.members), 0)
-        self.assertEqual(len(self.test_list.requests), 1)
+        self.assertEqual(len(self.mod_list.members), 0)
+        self.assertEqual(len(self.mod_list.requests), 1)
+        self.assertRedirects(response,
+            reverse('list_summary', args=('moderate_subs.example.com', )))
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)

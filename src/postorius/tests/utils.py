@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.test import RequestFactory
+from django.contrib.messages.storage.cookie import CookieStorage
 from mock import patch, MagicMock
 
 
@@ -72,3 +74,12 @@ def create_mock_member(properties=None):
         for key in properties:
             setattr(mock_object, key, properties[key])
     return mock_object
+
+
+def get_flash_messages(response):
+    if "messages" not in response.cookies:
+        return []
+    dummy_request = RequestFactory().get("/")
+    dummy_request.COOKIES["messages"] = response.cookies["messages"].value
+    return list(CookieStorage(dummy_request))
+get_flash_messages.__test__ = False

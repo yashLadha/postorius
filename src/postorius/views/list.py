@@ -257,8 +257,6 @@ class ListSubscribeView(MailingListView):
         """
         try:
             user_addresses = [request.user.email] + request.user.other_emails
-            if not user_addresses:
-                user_addresses = [request.POST.get('email')]
             form = ListSubscribe(user_addresses, request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
