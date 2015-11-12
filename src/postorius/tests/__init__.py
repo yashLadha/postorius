@@ -31,9 +31,18 @@ VCR_RECORD_MODE = os.environ.get(
     'POSTORIUS_VCR_RECORD_MODE',
     getattr(settings, 'VCR_RECORD_MODE', 'once'))
 
+def filter_response_headers(response):
+    for header in ('date', 'server'):
+        if header in response['headers']:
+            del response['headers'][header]
+    return response
+
 MM_VCR = vcr.VCR(
     cassette_library_dir=os.path.join(FIXTURES_DIR, 'vcr_cassettes'),
-    record_mode=VCR_RECORD_MODE)
+    record_mode=VCR_RECORD_MODE,
+    filter_headers=['authorization', 'user-agent', 'date'],
+    before_record_response=filter_response_headers,
+    )
 
 
 API_CREDENTIALS = {'MAILMAN_REST_API_URL':  'http://localhost:9001',
