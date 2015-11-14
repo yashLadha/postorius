@@ -20,6 +20,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.0.2
+=====
+(2015-11-14)
+
+* Bug fix release
+
+
 1.0.1
 =====
 (2015-04-28)
@@ -27,6 +34,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * Help texts Small visual alignment fix; removed unnecessary links to
 separate help pages.
 * Import fix in fieldset_forms module (Django1.6 only)
+
 
 1.0.0 -- "Frizzle Fry"
 ======================
