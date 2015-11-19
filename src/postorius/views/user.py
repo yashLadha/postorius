@@ -75,7 +75,7 @@ class UserMailmanSettingsView(MailmanUserView):
         try:
             mm_user = MailmanUser.objects.get(address=request.user.email)
             settingsform = UserPreferences(initial=mm_user.preferences)
-        except MailmanApiError:
+        except (MailmanApiError, Mailman404Error):
             return utils.render_api_error(request)
         except Mailman404Error:
             mm_user = None
@@ -352,7 +352,10 @@ def user_delete(request, user_id,
 def _add_address(request, user_email, address):
     # Add an address to a user record in mailman.
     try:
-        mailman_user = utils.get_client().get_user(user_email)
+        try:
+            mailman_user = utils.get_client().get_user(user_email)
+        except Mailman404Error:
+            mailman_user = utils.get_client().create_user(user_email, '')
         mailman_user.add_address(address)
     except (MailmanApiError, MailmanConnectionError) as e:
         messages.error(request, 'The address could not be added.')
