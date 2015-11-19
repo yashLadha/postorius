@@ -88,6 +88,7 @@ class ListMembersView(MailingListView):
                                    },
                                   context_instance=RequestContext(request))
 
+    @method_decorator(login_required)
     @method_decorator(list_owner_required)
     def get(self, request, list_id, page=1):
         owner_form = NewOwnerForm()
@@ -139,6 +140,7 @@ class ListMemberOptionsView(MailingListView):
              },
             context_instance=RequestContext(request))
 
+    @method_decorator(login_required)
     @method_decorator(list_owner_required)
     def get(self, request, list_id, email):
         try:
@@ -167,6 +169,7 @@ class ListMetricsView(MailingListView):
     """Shows common list metrics.
     """
 
+    @method_decorator(login_required)
     @method_decorator(list_owner_required)
     def get(self, request, list_id):
         return render_to_response('postorius/lists/metrics.html',
@@ -304,6 +307,7 @@ class ListUnsubscribeView(MailingListView):
 class ListMassSubscribeView(MailingListView):
     """Mass subscription."""
 
+    @method_decorator(login_required)
     @method_decorator(list_owner_required)
     def get(self, request, *args, **kwargs):
         form = ListMassSubscription()
@@ -341,6 +345,7 @@ class ListMassRemovalView(MailingListView):
 
     """Class For Mass Removal"""
 
+    @method_decorator(login_required)
     @method_decorator(list_owner_required)
     def get(self, request, *args, **kwargs):
         form = ListMassRemoval()
@@ -382,6 +387,7 @@ class ListModerationView(MailingListView):
         for message_id in message_ids:
             action(message_id)
 
+    @method_decorator(login_required)
     @method_decorator(list_moderator_required)
     def get(self, request, *args, **kwargs):
         held_messages = utils.paginate(request, self.mailing_list.held, 20)
@@ -415,6 +421,7 @@ class ListModerationView(MailingListView):
                                   {'list': self.mailing_list, 'form':form},
                                   context_instance=RequestContext(request))
 
+@login_required
 @list_owner_required
 def csv_view(request, list_id):
     """Export all the subscriber in csv
@@ -623,6 +630,7 @@ def list_subscriptions(request, option=None, list_id=None,
                               context_instance=RequestContext(request))
 
 
+@login_required
 @list_owner_required
 def list_delete(request, list_id):
     """Deletes a list but asks for confirmation first.
@@ -645,6 +653,7 @@ def list_delete(request, list_id):
             context_instance=RequestContext(request))
 
 
+@login_required
 @list_moderator_required
 def accept_held_message(request, list_id, msg_id):
     """Accepts a held message.
@@ -661,6 +670,7 @@ def accept_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
+@login_required
 @list_moderator_required
 def discard_held_message(request, list_id, msg_id):
     """Discards a held message.
@@ -677,6 +687,7 @@ def discard_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
+@login_required
 @list_moderator_required
 def defer_held_message(request, list_id, msg_id):
     """Defers a held message for a later decision.
@@ -693,6 +704,7 @@ def defer_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
+@login_required
 @list_moderator_required
 def reject_held_message(request, list_id, msg_id):
     """Rejects a held message.
@@ -709,6 +721,7 @@ def reject_held_message(request, list_id, msg_id):
     return redirect('list_held_messages', the_list.list_id)
 
 
+@login_required
 @list_moderator_required
 def list_subscription_requests(request, list_id):
     """Shows a list of held messages.
@@ -722,6 +735,7 @@ def list_subscription_requests(request, list_id):
                               context_instance=RequestContext(request))
 
 
+@login_required
 @list_moderator_required
 def handle_subscription_request(request, list_id, request_id, action):
     """
@@ -771,6 +785,7 @@ SETTINGS_FORMS = {
 }
 
 
+@login_required
 @list_owner_required
 def list_settings(request, list_id=None, visible_section=None,
                   template='postorius/lists/settings.html'):
@@ -897,6 +912,7 @@ def _add_archival_messages(to_activate, to_disable, after_submission,
                            '{0}'.format(', '.join(to_disable))))
 
 
+@login_required
 @list_owner_required
 def remove_all_subscribers(request, list_id):
 
@@ -923,6 +939,7 @@ def remove_all_subscribers(request, list_id):
         return utils.render_api_error(request)
 
 
+@login_required
 @list_owner_required
 def list_archival_options(request, list_id):
     """
