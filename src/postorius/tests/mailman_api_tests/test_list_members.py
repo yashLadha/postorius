@@ -74,9 +74,12 @@ class ListMembersAccessTest(TestCase):
     def test_page_not_accessible_if_not_logged_in(self):
         url = reverse('list_members', args=('foo@example.com', ))
         response = self.client.get(url)
-        expected_redirect = "%s?next=%s" % (settings.LOGIN_URL, quote(url))
-        self.assertRedirects(response, expected_redirect,
-            fetch_redirect_response=False)
+        if "%40" not in url: # Django < 1.8
+            url = quote(url)
+        expected_redirect = "http://testserver%s?next=%s" % (
+            settings.LOGIN_URL, url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["location"], expected_redirect)
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_for_unprivileged_users(self):

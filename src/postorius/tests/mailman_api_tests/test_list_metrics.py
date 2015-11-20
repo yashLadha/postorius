@@ -45,9 +45,12 @@ class TestListMetrics(SimpleTestCase):
     def test_metrics_page_not_accessible_to_anonymous(self):
         url = reverse('list_metrics', args=['test@example.org'])
         response = self.client.get(url)
-        expected_redirect = "%s?next=%s" % (settings.LOGIN_URL, quote(url))
-        self.assertRedirects(response, expected_redirect,
-            fetch_redirect_response=False)
+        if "%40" not in url: # Django < 1.8
+            url = quote(url)
+        expected_redirect = "http://testserver%s?next=%s" % (
+            settings.LOGIN_URL, url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["location"], expected_redirect)
 
     @MM_VCR.use_cassette('test_list_metrics.yaml')
     def test_metrics_page_contains_metrics(self):
