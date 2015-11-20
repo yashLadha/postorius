@@ -16,14 +16,13 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from django.test.utils import override_settings
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
+from six.moves.urllib_error import HTTPError
+from six.moves.urllib_parse import quote
 
 from postorius.tests import MM_VCR, API_CREDENTIALS
 from postorius.utils import get_client
@@ -73,9 +72,11 @@ class ListMembersAccessTest(TestCase):
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_if_not_logged_in(self):
-        response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', )))
-        self.assertEqual(response.status_code, 403)
+        url = reverse('list_members', args=('foo@example.com', ))
+        response = self.client.get(url)
+        expected_redirect = "%s?next=%s" % (settings.LOGIN_URL, quote(url))
+        self.assertRedirects(response, expected_redirect,
+            fetch_redirect_response=False)
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_for_unprivileged_users(self):

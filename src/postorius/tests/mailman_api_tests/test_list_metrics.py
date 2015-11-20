@@ -6,11 +6,13 @@ import six
 import logging
 
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client, SimpleTestCase
 from django.test.utils import override_settings
 from six.moves.urllib_error import HTTPError
+from six.moves.urllib_parse import quote
 
 from postorius.utils import get_client
 from postorius.tests import MM_VCR, API_CREDENTIALS
@@ -41,8 +43,11 @@ class TestListMetrics(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_metrics.yaml')
     def test_metrics_page_not_accessible_to_anonymous(self):
-        response = self.client.get(reverse('list_metrics', args=['test@example.org']))
-        self.assertEqual(response.status_code, 403)
+        url = reverse('list_metrics', args=['test@example.org'])
+        response = self.client.get(url)
+        expected_redirect = "%s?next=%s" % (settings.LOGIN_URL, quote(url))
+        self.assertRedirects(response, expected_redirect,
+            fetch_redirect_response=False)
 
     @MM_VCR.use_cassette('test_list_metrics.yaml')
     def test_metrics_page_contains_metrics(self):

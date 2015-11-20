@@ -417,6 +417,8 @@ class ListModerationView(MailingListView):
                 return utils.render_api_error(request)
             except HTTPError as e:
                 messages.error(request, e.msg)
+            else:
+                return redirect('list_held_messages', self.mailing_list.list_id)
         return render_to_response('postorius/lists/held_messages.html',
                                   {'list': self.mailing_list, 'form':form},
                                   context_instance=RequestContext(request))
