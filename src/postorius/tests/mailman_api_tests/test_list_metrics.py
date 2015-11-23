@@ -48,7 +48,7 @@ class TestListMetrics(SimpleTestCase):
         if "%40" not in url: # Django < 1.8
             url = quote(url)
         expected_redirect = "http://testserver%s?next=%s" % (
-            settings.LOGIN_URL, url)
+            reverse(settings.LOGIN_URL), url)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["location"], expected_redirect)
 
