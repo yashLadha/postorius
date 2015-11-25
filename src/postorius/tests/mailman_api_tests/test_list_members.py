@@ -129,10 +129,6 @@ class AddOwnerTest(TestCase):
             'su', 'su@example.com', 'pwd')
         # login and post new owner data to url
         self.client.login(username='su', password='pwd')
-        self.client.post(
-            reverse('list_members', args=('foo@example.com', )),
-            {'owner_email': 'newowner@example.com'})
-        owners = self.foo_list.owners
 
     @MM_VCR.use_cassette('test_list_members_add_owner.yaml')
     def tearDown(self):
@@ -141,6 +137,9 @@ class AddOwnerTest(TestCase):
 
     @MM_VCR.use_cassette('test_list_members_add_owner_new_owner_added.yaml')
     def test_new_owner_added(self):
+        self.client.post(
+            reverse('list_members', args=('foo@example.com', )),
+            {'owner_email': 'newowner@example.com'})
         self.assertTrue(u'newowner@example.com' in self.foo_list.owners)
 
 
