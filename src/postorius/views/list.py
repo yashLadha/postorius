@@ -853,7 +853,9 @@ def remove_role(request, list_id=None, role=None, address=None,
             messages.error(request,
                            _('The user {} is not an owner'.format(address)))
             return redirect("list_members", the_list.list_id)
-        user_addresses = set([request.user.email]) | set(user.other_emails)
+        # the user may not have a other_emails property if it's a superuser
+        user_addresses = set([request.user.email]) | \
+            set(getattr(request.user, 'other_emails', []))
         if address in user_addresses:
             messages.error(request, _('You cannot remove yourself.'))
             return redirect("list_members", the_list.list_id)
