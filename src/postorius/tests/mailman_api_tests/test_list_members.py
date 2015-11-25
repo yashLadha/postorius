@@ -121,7 +121,7 @@ class AddRemoveOwnerTest(TestCase):
     Tests creation of list owners.
     """
 
-    @MM_VCR.use_cassette('test_list_members_add_owner.yaml')
+    @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def setUp(self):
         self.client = Client()
         self.mm_client = get_client()
@@ -134,12 +134,12 @@ class AddRemoveOwnerTest(TestCase):
             'su', 'su@example.com', 'pwd')
         self.client.login(username='su', password='pwd')
 
-    @MM_VCR.use_cassette('test_list_members_add_owner.yaml')
+    @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
 
-    @MM_VCR.use_cassette('test_list_members_add_owner_new_owner_added.yaml')
+    @MM_VCR.use_cassette('test_list_members_owner_add_remove.yaml')
     def test_add_remove_owner(self):
         self.client.post(
             reverse('list_members', args=('foo@example.com', )),
@@ -150,7 +150,7 @@ class AddRemoveOwnerTest(TestCase):
                                          'newowner@example.com')))
         self.assertFalse('newowner@example.com' in self.foo_list.owners)
 
-    @MM_VCR.use_cassette('test_list_members_add_owner_by_owner.yaml')
+    @MM_VCR.use_cassette('test_list_members_owner_by_owner.yaml')
     def test_remove_owner_as_owner(self):
         self.mm_client.get_list('foo@example.com').add_owner('su@example.com')
         self.assertTrue('su@example.com' in self.foo_list.owners)
