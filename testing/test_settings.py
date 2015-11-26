@@ -141,9 +141,8 @@ INSTALLED_APPS = (
     # These are only used for development
     # 'debug_toolbar',
 )
-LOGIN_URL          = '/postorius/accounts/login/'
-LOGIN_REDIRECT_URL = '/postorius/'
-LOGIN_ERROR_URL    = '/postorius/accounts/login/'
+LOGIN_URL          = 'user_login'
+LOGIN_REDIRECT_URL = 'list_index'
 
 def username(email):
     return email.rsplit('@', 1)[0]

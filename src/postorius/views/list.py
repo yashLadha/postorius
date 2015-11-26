@@ -837,7 +837,8 @@ def list_settings(request, list_id=None, visible_section=None,
                               context_instance=RequestContext(request))
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@login_required
+@list_owner_required
 def remove_role(request, list_id=None, role=None, address=None,
                 template='postorius/lists/confirm_remove_role.html'):
     """Removes a list moderator or owner.
@@ -851,6 +852,12 @@ def remove_role(request, list_id=None, role=None, address=None,
         if address not in the_list.owners:
             messages.error(request,
                            _('The user {} is not an owner'.format(address)))
+            return redirect("list_members", the_list.list_id)
+        # the user may not have a other_emails property if it's a superuser
+        user_addresses = set([request.user.email]) | \
+            set(getattr(request.user, 'other_emails', []))
+        if address in user_addresses:
+            messages.error(request, _('You cannot remove yourself.'))
             return redirect("list_members", the_list.list_id)
     elif role == 'moderator':
         if address not in the_list.moderators:

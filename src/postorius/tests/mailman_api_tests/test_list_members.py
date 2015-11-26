@@ -17,14 +17,18 @@
 import logging
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.utils.timezone import now
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from six.moves.urllib_error import HTTPError
 from six.moves.urllib_parse import quote
 
+from postorius.models import MailmanUser, Mailman404Error
 from postorius.tests import MM_VCR, API_CREDENTIALS
+from postorius.tests.utils import get_flash_messages
 from postorius.utils import get_client
 
 
@@ -77,7 +81,7 @@ class ListMembersAccessTest(TestCase):
         if "%40" not in url: # Django < 1.8
             url = quote(url)
         expected_redirect = "http://testserver%s?next=%s" % (
-            settings.LOGIN_URL, url)
+            reverse(settings.LOGIN_URL), url)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["location"], expected_redirect)
 
@@ -111,37 +115,70 @@ class ListMembersAccessTest(TestCase):
 
 
 @override_settings(**API_CREDENTIALS)
-class AddOwnerTest(TestCase):
+class AddRemoveOwnerTest(TestCase):
     """Tests for the list members page.
 
     Tests creation of list owners.
     """
 
-    @MM_VCR.use_cassette('test_list_members_add_owner.yaml')
+    @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def setUp(self):
         self.client = Client()
+        self.mm_client = get_client()
         try:
-            self.domain = get_client().create_domain('example.com')
+            self.domain = self.mm_client.create_domain('example.com')
         except HTTPError:
-            self.domain = get_client().get_domain('example.com')
+            self.domain = self.mm_client.get_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.su = User.objects.create_superuser(
             'su', 'su@example.com', 'pwd')
-        # login and post new owner data to url
         self.client.login(username='su', password='pwd')
-        self.client.post(
-            reverse('list_members', args=('foo@example.com', )),
-            {'owner_email': 'newowner@example.com'})
-        owners = self.foo_list.owners
 
-    @MM_VCR.use_cassette('test_list_members_add_owner.yaml')
+    @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
 
-    @MM_VCR.use_cassette('test_list_members_add_owner_new_owner_added.yaml')
-    def test_new_owner_added(self):
-        self.assertTrue(u'newowner@example.com' in self.foo_list.owners)
+    @MM_VCR.use_cassette('test_list_members_owner_add_remove.yaml')
+    def test_add_remove_owner(self):
+        self.client.post(
+            reverse('list_members', args=('foo@example.com', )),
+            {'owner_email': 'newowner@example.com'})
+        self.assertTrue('newowner@example.com' in self.foo_list.owners)
+        self.client.post(
+            reverse('remove_role', args=('foo@example.com', 'owner',
+                                         'newowner@example.com')))
+        self.assertFalse('newowner@example.com' in self.foo_list.owners)
+
+    @MM_VCR.use_cassette('test_list_members_owner_by_owner.yaml')
+    def test_remove_owner_as_owner(self):
+        self.mm_client.get_list('foo@example.com').add_owner('su@example.com')
+        self.assertTrue('su@example.com' in self.foo_list.owners)
+        # Make the logged in user a simple list owner
+        self.su.is_superuser = False
+        self.su.save()
+        # It must still be allowed to create and remove owners
+        self.client.post(
+            reverse('list_members', args=('foo@example.com', )),
+            {'owner_email': 'newowner@example.com'})
+        self.assertTrue('newowner@example.com' in self.foo_list.owners)
+        response = self.client.post(
+            reverse('remove_role', args=('foo@example.com', 'owner',
+                                         'newowner@example.com')))
+        self.assertFalse('newowner@example.com' in self.foo_list.owners)
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        # But not to remove itself
+        response = self.client.post(
+            reverse('remove_role', args=('foo@example.com', 'owner',
+                                         'su@example.com')))
+        self.assertTrue('su@example.com' in self.foo_list.owners)
+        self.assertEqual(response.status_code, 302)
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 2)
+        self.assertEqual(msgs[1].level, messages.ERROR, msgs[1].message)
+
 
 
 @override_settings(**API_CREDENTIALS)
