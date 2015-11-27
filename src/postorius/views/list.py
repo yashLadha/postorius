@@ -747,22 +747,29 @@ def remove_role(request, list_id=None, role=None, address=None,
     except MailmanApiError:
         return utils.render_api_error(request)
 
+    redirect_on_success = redirect('list_members', the_list.list_id)
+
     if role == 'owner':
-        if address not in the_list.owners:
+        owners = the_list.owners
+        if address not in owners:
             messages.error(request,
                            _('The user {} is not an owner'.format(address)))
-            return redirect("list_members", the_list.list_id)
+            return redirect('list_members', the_list.list_id)
+        if len(owners) == 1:
+            messages.error(request, _('Removing the last owner is impossible'))
+            return redirect('list_members', the_list.list_id)
         # the user may not have a other_emails property if it's a superuser
         user_addresses = set([request.user.email]) | \
             set(getattr(request.user, 'other_emails', []))
         if address in user_addresses:
-            messages.error(request, _('You cannot remove yourself.'))
-            return redirect("list_members", the_list.list_id)
+            # The user is removing themselves, redirect to the list info page
+            # because they won't have access to the members page anyway.
+            redirect_on_success = redirect('list_summary', the_list.list_id)
     elif role == 'moderator':
         if address not in the_list.moderators:
             messages.error(request,
                            _('The user {} is not a moderator'.format(address)))
-            return redirect("list_members", the_list.list_id)
+            return redirect('list_members', the_list.list_id)
 
     if request.method == 'POST':
         try:
@@ -772,11 +779,11 @@ def remove_role(request, list_id=None, role=None, address=None,
         except HTTPError as e:
             messages.error(request, _('The {0} could not be removed:'
                                       ' {1}'.format(role, e.msg)))
-            return redirect("list_members", the_list.list_id)
+            return redirect('list_members', the_list.list_id)
         messages.success(request,
                          _('The user {0} has been removed as {1}.'
                            .format(address, role)))
-        return redirect("list_members", the_list.list_id)
+        return redirect_on_success
 
     return render_to_response(template,
                               {'role': role, 'address': address,

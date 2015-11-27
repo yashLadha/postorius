@@ -133,6 +133,7 @@ class AddRemoveOwnerTest(TestCase):
         self.su = User.objects.create_superuser(
             'su', 'su@example.com', 'pwd')
         self.client.login(username='su', password='pwd')
+        self.mm_client.get_list('foo@example.com').add_owner('su@example.com')
 
     @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def tearDown(self):
@@ -151,8 +152,7 @@ class AddRemoveOwnerTest(TestCase):
         self.assertFalse('newowner@example.com' in self.foo_list.owners)
 
     @MM_VCR.use_cassette('test_list_members_owner_by_owner.yaml')
-    def test_remove_owner_as_owner(self):
-        self.mm_client.get_list('foo@example.com').add_owner('su@example.com')
+    def test_remove_owner_by_owner(self):
         self.assertTrue('su@example.com' in self.foo_list.owners)
         # Make the logged in user a simple list owner
         self.su.is_superuser = False
@@ -169,7 +169,28 @@ class AddRemoveOwnerTest(TestCase):
         msgs = get_flash_messages(response)
         self.assertEqual(len(msgs), 1)
         self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
-        # But not to remove itself
+
+    @MM_VCR.use_cassette('test_list_members_owner_self_last.yaml')
+    def test_remove_owner_as_owner_self_last(self):
+        # It is allowed to remove itself, but only if there's another owner
+        # left.
+        mm_list = self.mm_client.get_list('foo@example.com')
+        mm_list.add_owner('otherowner@example.com')
+        self.assertTrue('su@example.com' in self.foo_list.owners)
+        self.assertTrue('otherowner@example.com' in self.foo_list.owners)
+        response = self.client.post(
+            reverse('remove_role', args=('foo@example.com', 'owner',
+                                         'su@example.com')))
+        self.assertFalse('su@example.com' in self.foo_list.owners)
+        self.assertEqual(response.status_code, 302)
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        # But not to remove the last owner
+        mm_list.add_owner('su@example.com')
+        mm_list.remove_owner('otherowner@example.com')
+        self.assertTrue('su@example.com' in self.foo_list.owners)
+        self.assertFalse('otherowner@example.com' in self.foo_list.owners)
         response = self.client.post(
             reverse('remove_role', args=('foo@example.com', 'owner',
                                          'su@example.com')))
