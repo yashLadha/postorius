@@ -48,13 +48,6 @@ from postorius.auth.decorators import *
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
-def site_settings(request):
-    return render_to_response('postorius/site_settings.html',
-                              context_instance=RequestContext(request))
-
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
 def domain_index(request):
     try:
         existing_domains = Domain.objects.all()
