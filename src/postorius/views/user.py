@@ -197,22 +197,6 @@ class UserSubscriptionPreferencesView(MailmanUserView):
             context_instance=RequestContext(request))
 
 
-class UserSummaryView(MailmanUserView):
-
-    """Shows a summary of a user.
-    """
-
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def get(self, request, user_id):
-        settingsform = MembershipSettings()
-        memberships = self._get_memberships()
-        return render_to_response('postorius/users/summary.html',
-                                  {'mm_user': self.mm_user,
-                                   'settingsform': settingsform,
-                                   'memberships': memberships},
-                                  context_instance=RequestContext(request))
-
-
 class UserSubscriptionsView(MailmanUserView):
 
     """Shows the subscriptions of a user.

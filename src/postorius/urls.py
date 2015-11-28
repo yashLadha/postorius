@@ -50,9 +50,6 @@ per_list_urlpatterns = patterns('postorius.views',
                                 url(r'^unsubscribe/(?P<email>[^/]+)$',
                                     ListUnsubscribeView.as_view(
                                     ), name='list_unsubscribe'),
-                                url(r'^subscriptions$',
-                                    'list_subscriptions',
-                                    name='list_subscriptions'),
                                 url(r'^subscription_requests$',
                                     'list_subscription_requests',
                                     name='list_subscription_requests'),
@@ -115,7 +112,6 @@ urlpatterns = patterns(
         UserMailmanSettingsView.as_view(),
         name='user_mailmansettings'),
     # /settings/
-    url(r'^settings/$', 'site_settings', name="site_settings"),
     url(r'^domains/$', 'domain_index', name='domain_index'),
     url(r'^domains/new/$', 'domain_new', name='domain_new'),
     url(r'^domains/(?P<domain>[^/]+)/delete$',
