@@ -22,6 +22,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from mailmanclient import Client
+from django.utils.translation import gettext as _
 
 
 logger = logging.getLogger(__name__)
@@ -39,8 +40,7 @@ def render_api_error(request):
     """
     return render_to_response(
         'postorius/errors/generic.html',
-        {'error': "Mailman REST API not available.  "
-                  "Please start Mailman core."},
+        {'error': _('Mailman REST API not available. Please start Mailman core.')},
         context_instance=RequestContext(request))
 
 

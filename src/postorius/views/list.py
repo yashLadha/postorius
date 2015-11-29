@@ -120,10 +120,9 @@ class ListMemberOptionsView(MailingListView):
                 for key in preferences_form.fields.keys():
                     preferences[key] = preferences_form.cleaned_data[key]
                 preferences.save()
-                messages.success(
-                    request, 'The member\'s preferences have been updated.')
+                messages.success(request, _("The member's preferences have been updated."))
             else:
-                messages.error(request, 'Something went wrong.')
+                messages.error(request, _('Something went wrong.'))
 
             # this is a bit silly, since we already have the preferences,
             # but I want to be sure we don't show stale data.
@@ -232,15 +231,13 @@ class ChangeSubscriptionView(MailingListView):
             if form.is_valid():
                 email = form.cleaned_data['email']
                 if old_email == email:
-                    messages.error(request, 'You are already subscribed')
+                    messages.error(request, _('You are already subscribed'))
                 else:
                     self.mailing_list.unsubscribe(old_email)
                     self.mailing_list.subscribe(email)
-                    messages.success(request,
-                        'Subscription changed to {} address'.format(email))
+                    messages.success(request, _('Subscription changed to %s') % email)
             else:
-                messages.error(request, 'Something went wrong. '
-                               'Please try again.')
+                messages.error(request, _('Something went wrong. Please try again.'))
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
@@ -268,16 +265,13 @@ class ListSubscribeView(MailingListView):
                 if type(response) == dict and response.get('token_owner') == \
                         'moderator':
                     messages.success(
-                        request,
-                        'Your subscription request has been submitted and is '
-                        'waiting for moderator approval.')
+                        request, _('Your subscription request has been submitted and is '
+                        'waiting for moderator approval.'))
                 else:
-                    messages.success(
-                        request, 'You are subscribed to %s.' %
-                        self.mailing_list.fqdn_listname)
+                    messages.success(request, _('You are subscribed to %s.') %
+                                     self.mailing_list.fqdn_listname)
             else:
-                messages.error(request, 'Something went wrong. '
-                               'Please try again.')
+                messages.error(request, _('Something went wrong. Please try again.'))
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
@@ -294,9 +288,7 @@ class ListUnsubscribeView(MailingListView):
         email = kwargs['email']
         try:
             self.mailing_list.unsubscribe(email)
-            messages.success(request,
-                             '%s has been unsubscribed from this list.' %
-                             email)
+            messages.success(request, _('%s has been unsubscribed from this list.') % email)
         except MailmanApiError:
             return utils.render_api_error(request)
         except ValueError as e:
@@ -318,26 +310,23 @@ class ListMassSubscribeView(MailingListView):
     def post(self, request, *args, **kwargs):
         form = ListMassSubscription(request.POST)
         if not form.is_valid():
-            messages.error(request, 'Please fill out the form correctly.')
+            messages.error(request, _('Please fill out the form correctly.'))
         else:
-            emails = request.POST["emails"].splitlines()
+            emails = request.POST['emails'].splitlines()
             for email in emails:
                 try:
                     validate_email(email)
                     self.mailing_list.subscribe(address=email, pre_verified=True,
                                                 pre_confirmed=True)
-                    messages.success(
-                        request,
-                        'The address %s has been subscribed to %s.' %
-                        (email, self.mailing_list.fqdn_listname))
+                    messages.success(request,
+                                     _('The address %(address)s has been subscribed to %(list)s.') %
+                                     {'address':email, 'list': self.mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except HTTPError as e:
                     messages.error(request, e)
                 except ValidationError:
-                    messages.error(request,
-                                   'The email address %s is not valid.' %
-                                   email)
+                    messages.error(request, _('The email address %s is not valid.') % email)
         return redirect('mass_subscribe', self.mailing_list.list_id)
 
 
@@ -357,24 +346,22 @@ class ListMassRemovalView(MailingListView):
     def post(self, request, *args, **kwargs):
         form = ListMassRemoval(request.POST)
         if not form.is_valid():
-            messages.error(request, 'Please fill out the form correctly.')
+            messages.error(request, _('Please fill out the form correctly.'))
         else:
-            emails = request.POST["emails"].splitlines()
+            emails = request.POST['emails'].splitlines()
             for email in emails:
                 try:
                     validate_email(email)
                     self.mailing_list.unsubscribe(email.lower())
                     messages.success(request,
-                                    'The address %s has been unsubscribed from %s.' %
-                                    (email, self.mailing_list.fqdn_listname))
+                                    _('The address %(address)s has been unsubscribed from %(list)s.') %
+                                     {'email': email, 'list': self.mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except (HTTPError, ValueError) as e:
                     messages.error(request, e)
                 except ValidationError:
-                    messages.error(request,
-                                  'The email address %s is not valid.' %
-                                  email)
+                    messages.error(request, _('The email address %s is not valid.') % email)
         return redirect('mass_removal', self.mailing_list.list_id)
 
 
@@ -567,7 +554,7 @@ def accept_held_message(request, list_id, msg_id):
     except HTTPError as e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been accepted.')
+    messages.success(request, _('The message has been accepted.'))
     return redirect('list_held_messages', the_list.list_id)
 
 
@@ -584,7 +571,7 @@ def discard_held_message(request, list_id, msg_id):
     except HTTPError as e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been discarded.')
+    messages.success(request, _('The message has been discarded.'))
     return redirect('list_held_messages', the_list.list_id)
 
 
@@ -601,7 +588,7 @@ def defer_held_message(request, list_id, msg_id):
     except HTTPError as e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been deferred.')
+    messages.success(request, _('The message has been deferred.'))
     return redirect('list_held_messages', the_list.list_id)
 
 
@@ -618,7 +605,7 @@ def reject_held_message(request, list_id, msg_id):
     except HTTPError as e:
         messages.error(request, e.msg)
         return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been rejected.')
+    messages.success(request, _('The message has been rejected.'))
     return redirect('list_held_messages', the_list.list_id)
 
 
@@ -660,8 +647,7 @@ def handle_subscription_request(request, list_id, request_id, action):
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError as e:
-        messages.error(request, '{0}: {1}'.format(
-            _('The request could not be moderated'), e.reason))
+        messages.error(request, _('The request could not be moderated: %s') % e.reason)
     return redirect('list_subscription_requests', m_list.list_id)
 
 
@@ -718,12 +704,9 @@ def list_settings(request, list_id=None, visible_section=None,
                     for key in form.fields.keys():
                         list_settings[key] = form.cleaned_data[key]
                     list_settings.save()
-                    messages.success(request,
-                                     _('The settings have been updated.'))
+                    messages.success(request, _('The settings have been updated.'))
                 except HTTPError as e:
-                    messages.error(
-                        request,
-                        '{0}: {1}'.format(_('An error occured'), e.reason))
+                    messages.error(request, _('An error occured: %s') % e.reason)
         else:
             form = form_class(initial=list_settings)
 
@@ -752,8 +735,7 @@ def remove_role(request, list_id=None, role=None, address=None,
     if role == 'owner':
         owners = the_list.owners
         if address not in owners:
-            messages.error(request,
-                           _('The user {} is not an owner'.format(address)))
+            messages.error(request, _('The user %s is not an owner') % address)
             return redirect('list_members', the_list.list_id)
         if len(owners) == 1:
             messages.error(request, _('Removing the last owner is impossible'))
@@ -767,24 +749,20 @@ def remove_role(request, list_id=None, role=None, address=None,
             redirect_on_success = redirect('list_summary', the_list.list_id)
     elif role == 'moderator':
         if address not in the_list.moderators:
-            messages.error(request,
-                           _('The user {} is not a moderator'.format(address)))
+            messages.error(request, _('The user %s is not a moderator') % address)
             return redirect('list_members', the_list.list_id)
-
     if request.method == 'POST':
         try:
             the_list.remove_role(role, address)
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
-            messages.error(request, _('The {0} could not be removed:'
-                                      ' {1}'.format(role, e.msg)))
+            messages.error(request, _('The %(role)s could not be removed: %(msg)s') %
+                           {'role':role, 'msg': e.msg})
             return redirect('list_members', the_list.list_id)
-        messages.success(request,
-                         _('The user {0} has been removed as {1}.'
-                           .format(address, role)))
+        messages.success(request, _('The user %(address)s has been removed as %(role)s.') %
+                         {'address': address, 'role': role})
         return redirect_on_success
-
     return render_to_response(template,
                               {'role': role, 'address': address,
                                'list_id': the_list.list_id},
@@ -814,17 +792,15 @@ def _add_archival_messages(to_activate, to_disable, after_submission,
                                'because they are not enabled in the Mailman '
                                'configuration. They will be enabled for '
                                'this list, if the archiver is enabled in the '
-                               'Mailman configuration. {0}.'
-                               ''.format(', '.join(activation_postponed))))
+                               'Mailman configuration. %s.') %
+                               ', '.join(activation_postponed))
         if len(activation_success) > 0:
-            messages.success(request,
-                             _('You activated new archivers for this list: '
-                               '{0}'.format(', '.join(activation_success))))
+            messages.success(request, _('You activated new archivers for this list: %s') %
+                             ', '.join(activation_success))
     # There are archivers to disable.
     if len(to_disable) > 0:
-        messages.success(request,
-                         _('You disabled the following archivers: '
-                           '{0}'.format(', '.join(to_disable))))
+        messages.success(request, _('You disabled the following archivers: %s') %
+                         ', '.join(to_disable))
 
 
 @login_required
@@ -836,14 +812,13 @@ def remove_all_subscribers(request, list_id):
     try:
         mlist = List.objects.get_or_404(fqdn_listname=list_id)
         if len(mlist.members) == 0:
-            messages.error(request, 'No member is subscribed to the list currently.')
+            messages.error(request, _('No member is subscribed to the list currently.'))
             return redirect('mass_removal', mlist.list_id)
         if request.method == 'POST':
             try:
                 for names in mlist.members:
                     mlist.unsubscribe(names.email)
-                messages.success(request,
-                                'All members have been unsubscribed from the list.')
+                messages.success(request, _('All members have been unsubscribed from the list.'))
                 return redirect('list_members', mlist.list_id)
             except Exception as e:
                 messages.error(request, e)

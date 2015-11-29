@@ -225,7 +225,7 @@ class MessageAcceptanceForm(forms.Form):
         widget=forms.Textarea(),
         label=_("Acceptable aliases"),
         required=False,
-        help_text=(
+        help_text=_(
             'Alias names which qualify as explicit to or cc destination names '
             'for this list. Alternate addresses that are acceptable when '
             '`require_explicit_destination\' is enabled. This option takes a '
@@ -237,7 +237,7 @@ class MessageAcceptanceForm(forms.Form):
         widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
         label=_('Administrivia'),
-        help_text=(
+        help_text=_(
             'Administrivia tests will check postings to see whether it\'s '
             'really meant as an administrative request (like subscribe, '
             'unsubscribe, etc), and will add it to the the administrative '
@@ -250,7 +250,7 @@ class MessageAcceptanceForm(forms.Form):
             'required': _("Please choose a default member action.")},
         required=True,
         choices=action_choices,
-        help_text=(
+        help_text=_(
             'Default action to take when a member posts to the list. '
             'Hold -- This holds the message for approval by the list '
             'moderators.'
@@ -269,7 +269,7 @@ class MessageAcceptanceForm(forms.Form):
             'required': _("Please choose a default non-member action.")},
         required=True,
         choices=action_choices,
-        help_text=(
+        help_text=_(
             'When a post from a non-member is received, the message\'s sender '
             'is matched against the list of explicitly accepted, held, '
             'rejected (bounced), and discarded addresses. '
@@ -282,8 +282,7 @@ class DigestSettingsForm(forms.Form):
     """
     digest_size_threshold = forms.DecimalField(
         label=_('Digest size threshold'),
-        help_text=('How big in Kb should a digest be before it gets sent '
-                   'out?'))
+        help_text=_('How big in Kb should a digest be before it gets sent out?'))
 
 
 class AlterMessagesForm(forms.Form):
@@ -296,36 +295,32 @@ class AlterMessagesForm(forms.Form):
         widget=forms.RadioSelect,
         required=False,
         label=_('Filter content'),
-        help_text=(
-            'Should Mailman filter the content of list traffic according to '
-            'the settings below?'))
+        help_text=_('Should Mailman filter the content of list traffic according '
+                    'to the settings below?'))
     collapse_alternatives = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
         label=_('Collapse alternatives'),
-        help_text=(
-            'Should Mailman collapse multipart/alternative to its first part '
-            'content?'))
+        help_text=_('Should Mailman collapse multipart/alternative to its first '
+                    'part content?'))
     convert_html_to_plaintext = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
         label=_('Convert html to plaintext'),
-        help_text=(
-            'Should Mailman convert text/html parts to plain text? This '
-            'conversion happens after MIME attachments have been stripped.'))
+        help_text=_('Should Mailman convert text/html parts to plain text? '
+                   'This conversion happens after MIME attachments have been stripped.'))
     anonymous_list = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
         label=_('Anonymous list'),
-        help_text=(
-            'Hide the sender of a message, replacing it with the list address '
-            '(Removes From, Sender and Reply-To fields)'))
+        help_text=_('Hide the sender of a message, replacing it with the list address '
+                   '(Removes From, Sender and Reply-To fields)'))
     include_rfc2369_headers = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -376,10 +371,10 @@ class AlterMessagesForm(forms.Form):
         error_messages={
             'required': _("Please choose a reply-to action.")},
         choices=(
-            ("no_munging", _("No Munging")),
-            ("point_to_list", _("Reply goes to list")),
-            ("explicit_header", _("Explicit Reply-to header set"))),
-        help_text=(
+            ('no_munging', _('No Munging')),
+            ('point_to_list', _('Reply goes to list')),
+            ('explicit_header', _('Explicit Reply-to header set'))),
+        help_text=_(
             'Where are replies to list messages directed? No Munging is '
             'strongly recommended for most mailing lists. \nThis option '
             'controls what Mailman does to the Reply-To: header in messages '
@@ -411,11 +406,10 @@ class AlterMessagesForm(forms.Form):
         error_messages={
             'required': _("Please choose a reply-to action.")},
         choices=(
-            ("default-owner-pipeline", _("default-owner-pipeline")),
-            ("default-posting-pipeline", _("default-posting-pipeline")),
-            ("virgin", _("virgin"))),
-        help_text=(
-            'Type of pipeline you want to use for this mailing list'))
+            ('default-owner-pipeline', _('default-owner-pipeline')),
+            ('default-posting-pipeline', _('default-posting-pipeline')),
+            ('virgin', _('virgin'))),
+        help_text=_('Type of pipeline you want to use for this mailing list'))
 
 
 class ListAutomaticResponsesForm(forms.Form):
@@ -430,30 +424,27 @@ class ListAutomaticResponsesForm(forms.Form):
         choices=autorespond_choices,
         widget=forms.RadioSelect,
         label=_('Autorespond to list owner'),
-        help_text=(
-            'Should Mailman send an auto-response to emails sent to the '
-            '-owner address?'))
+        help_text=_('Should Mailman send an auto-response to emails sent to the -owner address?'))
     autoresponse_owner_text = forms.CharField(
         label=_('Autoresponse owner text'),
         widget=forms.Textarea(),
         required=False,
-        help_text=('Auto-response text to send to -owner emails.'))
+        help_text=_('Auto-response text to send to -owner emails.'))
     autorespond_postings = forms.ChoiceField(
         choices=autorespond_choices,
         widget=forms.RadioSelect,
         label=_('Autorespond postings'),
-        help_text=(
-            'Should Mailman send an auto-response to mailing list posters?'))
+        help_text=_('Should Mailman send an auto-response to mailing list posters?'))
     autoresponse_postings_text = forms.CharField(
         label=_('Autoresponse postings text'),
         widget=forms.Textarea(),
         required=False,
-        help_text=('Auto-response text to send to mailing list posters.'))
+        help_text=_('Auto-response text to send to mailing list posters.'))
     autorespond_requests = forms.ChoiceField(
         choices=autorespond_choices,
         widget=forms.RadioSelect,
         label=_('Autorespond requests'),
-        help_text=(
+        help_text=_(
             'Should Mailman send an auto-response to emails sent to the '
             '-request address? If you choose yes, decide whether you want '
             'Mailman to discard the original email, or forward it on to the '
@@ -462,10 +453,10 @@ class ListAutomaticResponsesForm(forms.Form):
         label=_('Autoresponse request text'),
         widget=forms.Textarea(),
         required=False,
-        help_text=('Auto-response text to send to -request emails.'))
+        help_text=_('Auto-response text to send to -request emails.'))
     autoresponse_grace_period = forms.CharField(
         label=_('Autoresponse grace period'),
-        help_text=(
+        help_text=_(
             'Number of days between auto-responses to either the mailing list '
             'or -request/-owner address from the same poster. Set to zero '
             '(or negative) for no grace period (i.e. auto-respond to every '
@@ -476,7 +467,7 @@ class ListAutomaticResponsesForm(forms.Form):
         widget=forms.RadioSelect,
         required=False,
         label=_('Send welcome message'),
-        help_text=(
+        help_text=_(
             'Send welcome message to newly subscribed members? '
             'Turn this off only if you plan on subscribing people manually '
             'and don\'t want them to know that you did so. This option is '
@@ -492,7 +483,7 @@ class ListAutomaticResponsesForm(forms.Form):
         widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
         label=_('Admin immed notify'),
-        help_text=(
+        help_text=_(
             'Should the list moderators get immediate notice of new requests, '
             'as well as daily notices about collected ones? List moderators '
             '(and list administrators) are sent daily reminders of requests '
@@ -504,9 +495,7 @@ class ListAutomaticResponsesForm(forms.Form):
         widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
         label=_('Notify admin of membership changes'),
-        help_text=(
-            'Should administrator get notices of subscribes and unsubscribes?'
-            ))
+        help_text=_('Should administrator get notices of subscribes and unsubscribes?'))
 
 
 class ListIdentityForm(forms.Form):
@@ -518,11 +507,10 @@ class ListIdentityForm(forms.Form):
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         label=_('Show list on index page'),
-        help_text=(
-            'Choose whether to include this list on the list of all lists'))
+        help_text=_('Choose whether to include this list on the list of all lists'))
     description = forms.CharField(
         label=_('Description'),
-        help_text=(
+        help_text=_(
             'This description is used when the mailing list is listed with '
             'other mailing lists, or in headers, and so forth. It should be '
             'as succinct as you can get it, while still identifying what the '
@@ -533,15 +521,15 @@ class ListIdentityForm(forms.Form):
         error_messages={'required': _('Please a domain name'),
                         'invalid': _('Please enter a valid domain name.')},
         required=True,
-        help_text=(
-            "The \"host_name\" is the preferred name for email to "
-            "'mailman-related addresses on this host, and generally should be "
+        help_text=_(
+            'The "host_name" is the preferred name for email to '
+            'mailman-related addresses on this host, and generally should be '
             "the mail host's exchanger address, if any. This setting can be "
-            "useful for selecting among alternative names of a host that "
-            "has multiple addresses."))
+            'useful for selecting among alternative names of a host that '
+            'has multiple addresses.'))
     display_name = forms.CharField(
         label=_('Display name'),
-        help_text=('Display name is the name shown in the web interface.')
+        help_text=_('Display name is the name shown in the web interface.')
     )
     subject_prefix = forms.CharField(
         label=_('Subject prefix'),
@@ -747,7 +735,7 @@ class UserNew(FieldsetForm):
         password = cleaned_data.get("password")
         password_repeat = cleaned_data.get("password_repeat")
         if password != password_repeat:
-            raise forms.ValidationError("Passwords must be identical.")
+            raise forms.ValidationError(_('Passwords must be identical.'))
 
         return cleaned_data
 
