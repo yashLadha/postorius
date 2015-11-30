@@ -9,7 +9,7 @@
 {% block main %}
     {% list_nav '' 'Member Options' %}
 
-{% if not user.is_superuser or not user.is_list_owner %}
+{% if not user.is_superuser and not user.is_list_owner %}
     <div class="mm_subHeader" >
        <h1>{% trans "No Preferences Available" %}</h1>
     </div>
