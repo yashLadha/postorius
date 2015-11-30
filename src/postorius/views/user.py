@@ -60,10 +60,9 @@ class UserMailmanSettingsView(MailmanUserView):
                     preferences[
                         key] = global_preferences_form.cleaned_data[key]
                 preferences.save()
-                messages.success(
-                    request, 'Your preferences have been updated.')
+                messages.success(request, _('Your preferences have been updated.'))
             else:
-                messages.error(request, 'Something went wrong.')
+                messages.error(request, _('Something went wrong.'))
         except MailmanApiError:
             return utils.render_api_error(request)
         except Mailman404Error as e:
@@ -95,18 +94,15 @@ class UserAddressPreferencesView(MailmanUserView):
             mm_user = MailmanUser.objects.get(address=request.user.email)
             formset_class = formset_factory(UserPreferences)
             formset = formset_class(request.POST)
-            zipped_data = zip(formset.forms, mm_user.addresses)
             if formset.is_valid():
-                for form, address in zipped_data:
+                for form, address in zip(formset.forms, mm_user.addresses):
                     preferences = address.preferences
                     for key in form.fields.keys():
-                        preferences[
-                            key] = form.cleaned_data[key]
+                        preferences[key] = form.cleaned_data[key]
                     preferences.save()
-                messages.success(
-                    request, 'Your preferences have been updated.')
+                messages.success(request, _('Your preferences have been updated.'))
             else:
-                messages.error(request, 'Something went wrong.')
+                messages.error(request, _('Something went wrong.'))
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
@@ -149,17 +145,15 @@ class UserSubscriptionPreferencesView(MailmanUserView):
             mm_user = MailmanUser.objects.get(address=request.user.email)
             formset_class = formset_factory(UserPreferences)
             formset = formset_class(request.POST)
-            zipped_data = zip(formset.forms, mm_user.subscriptions)
             if formset.is_valid():
-                for form, subscription in zipped_data:
+                for form, subscription in zip(formset.forms, mm_user.subscriptions):
                     preferences = subscription.preferences
                     for key in form.cleaned_data.keys():
                         preferences[key] = form.cleaned_data[key]
                     preferences.save()
-                messages.success(
-                    request, 'Your preferences have been updated.')
+                messages.success(request, _('Your preferences have been updated.'))
             else:
-                messages.error(request, 'Something went wrong.')
+                messages.error(request, _('Something went wrong.'))
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
@@ -231,8 +225,8 @@ class AddressActivationView(TemplateView):
             try:
                 profile.send_confirmation_link(request)
             except SMTPException:
-                messages.error(request, 'The email confirmation message could '
-                               'not be sent. %s' % profile.activation_key)
+                messages.error(request, _('The email confirmation message could not be sent. %s')
+                               % profile.activation_key)
             return render_to_response('postorius/user_address_activation_sent.html',
                                       context_instance=RequestContext(request))
         return render_to_response('postorius/user_address_activation.html',
@@ -322,14 +316,11 @@ def user_delete(request, user_id,
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
-            messages.error(request, _('The user could not be deleted:'
-                                      ' %s' % e.msg))
-            return redirect("user_index")
-        messages.success(request,
-                         _('The user %s has been deleted.' % email_id))
-        return redirect("user_index")
-    return render_to_response(template,
-                              {'user_id': user_id, 'email_id': email_id},
+            messages.error(request, _('The user could not be deleted: %s') % e.msg)
+            return redirect('user_index')
+        messages.success(request, _('The user %s has been deleted.') % email_id)
+        return redirect('user_index')
+    return render_to_response(template, {'user_id': user_id, 'email_id': email_id},
                               context_instance=RequestContext(request))
 
 
@@ -341,8 +332,8 @@ def _add_address(request, user_email, address):
         except Mailman404Error:
             mailman_user = utils.get_client().create_user(user_email, '')
         mailman_user.add_address(address)
-    except (MailmanApiError, MailmanConnectionError) as e:
-        messages.error(request, 'The address could not be added.')
+    except (MailmanApiError, MailmanConnectionError):
+        messages.error(request, _('The address could not be added.'))
 
 
 def address_activation_link(request, activation_key):
