@@ -12,7 +12,7 @@
     <h2>{% trans "Owners" %}</h2>
 
     {{ owner_form.email.errors }}
-    <form action="{% url 'list_members' list.fqdn_listname %}" method="POST" class="form-inline">{% csrf_token %}
+    <form action="{% url 'list_members' list.list_id %}" method="POST" class="form-inline">{% csrf_token %}
         <label for="id_owner_email">{% trans 'Email Address' %}</label>
         {{ owner_form.owner_email }}
         <button type="submit" class="btn">{% trans 'Add Owner' %}</button>
@@ -29,7 +29,7 @@
                 <tr>
                     <td>{{ member }}</td>
                     <td>
-                      <a href="{% url 'remove_role' list.fqdn_listname 'owner' member %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a>
+                      <a href="{% url 'remove_role' list.list_id 'owner' member %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -38,7 +38,7 @@
 
     <h2>{% trans "Moderators" %}</h2>
     {{ moderator_form.email.errors }}
-    <form action="{% url 'list_members' list.fqdn_listname %}" method="POST" class="form-inline">{% csrf_token %}
+    <form action="{% url 'list_members' list.list_id %}" method="POST" class="form-inline">{% csrf_token %}
         <label for="id_moderator_email">{% trans 'Email Address' %}</label>
         {{ moderator_form.moderator_email }}
         <button type="submit" class="btn">{% trans 'Add Moderator' %}</button>
@@ -56,7 +56,7 @@
                 <tr>
                     <td>{{ member }}</td>
                     <td>
-                      <a href="{% url 'remove_role' list.fqdn_listname 'moderator' member %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a>
+                      <a href="{% url 'remove_role' list.list_id 'moderator' member %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -79,11 +79,11 @@
 
             {% for member in members %}
                 <tr>
-                    <td> <a href="{% url 'list_member_options' list.fqdn_listname member.email %}">
+                    <td> <a href="{% url 'list_member_options' list.list_id member.email %}">
                         {{ member.email }}</a></td>
                     <td>{% trans member.role %}</td>
                     <td>
-                        <a href="{% url 'list_unsubscribe' list.fqdn_listname member.email %}" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
+                        <a href="{% url 'list_unsubscribe' list.list_id member.email %}" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
                     </td>
                 </tr>
             {% endfor %}

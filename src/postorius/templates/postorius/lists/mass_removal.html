@@ -5,11 +5,11 @@
 {% block main %}
     {% list_nav 'mass_removal' "Mass Removal" %}
 
-    <form action="{% url 'mass_removal' list.fqdn_listname %}" method="post" class="well"> {% csrf_token %}
+    <form action="{% url 'mass_removal' list.list_id %}" method="post" class="well"> {% csrf_token %}
     {{ form.as_p }}   
     <hr />
     <button class="btn btn-warning" type="submit">{% trans "Unsubscribe users" %}</button>    
-    <a style="float:right" href="{% url 'unsubscribe_all' list.fqdn_listname %}" class="btn btn-danger">{% trans 'Unsubscribe All' %}</a>
+    <a style="float:right" href="{% url 'unsubscribe_all' list.list_id %}" class="btn btn-danger">{% trans 'Unsubscribe All' %}</a>
     </form>
     <hr />
 

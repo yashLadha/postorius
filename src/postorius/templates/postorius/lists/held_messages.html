@@ -54,9 +54,9 @@
 
           <td class="mm_action">
             <a href="#" class="btn btn-mini btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
-            <a href="{% url 'accept_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
-            <a href="{% url 'reject_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
-            <a href="{% url 'discard_held_message' list.fqdn_listname msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
+            <a href="{% url 'accept_held_message' list.list_id msg.request_id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
+            <a href="{% url 'reject_held_message' list.list_id msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
+            <a href="{% url 'discard_held_message' list.list_id msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
 
             <div class="modal hide fade held-message-details" id="msg-{{ msg.request_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
