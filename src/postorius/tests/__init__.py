@@ -43,8 +43,3 @@ MM_VCR = vcr.VCR(
     filter_headers=['authorization', 'user-agent', 'date'],
     before_record_response=filter_response_headers,
     )
-
-
-API_CREDENTIALS = {'MAILMAN_REST_API_URL':  'http://localhost:9001',
-                   'MAILMAN_REST_API_USER': 'restadmin',
-                   'MAILMAN_REST_API_PASS': 'restpass'}

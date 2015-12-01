@@ -22,12 +22,11 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now
 from django.test import Client, TestCase
-from django.test.utils import override_settings
 from six.moves.urllib_error import HTTPError
 from six.moves.urllib_parse import quote
 
 from postorius.models import MailmanUser, Mailman404Error
-from postorius.tests import MM_VCR, API_CREDENTIALS
+from postorius.tests import MM_VCR
 from postorius.tests.utils import get_flash_messages
 from postorius.utils import get_client
 
@@ -37,7 +36,6 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-@override_settings(**API_CREDENTIALS)
 class ListMembersAccessTest(TestCase):
     """Tests for the list members page.
 
@@ -113,7 +111,6 @@ class ListMembersAccessTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-@override_settings(**API_CREDENTIALS)
 class AddRemoveOwnerTest(TestCase):
     """Tests for the list members page.
 
@@ -200,7 +197,6 @@ class AddRemoveOwnerTest(TestCase):
 
 
 
-@override_settings(**API_CREDENTIALS)
 class AddModeratorTest(TestCase):
     """Tests for the list members page.
 

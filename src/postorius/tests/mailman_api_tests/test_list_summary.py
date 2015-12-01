@@ -20,14 +20,13 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.test import Client, SimpleTestCase
-from django.test.utils import override_settings
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 
 from postorius.utils import get_client
-from postorius.tests import MM_VCR, API_CREDENTIALS
+from postorius.tests import MM_VCR
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +34,6 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-@override_settings(**API_CREDENTIALS)
 class ListSummaryPageTest(SimpleTestCase):
     """Tests for the list summary page.
 

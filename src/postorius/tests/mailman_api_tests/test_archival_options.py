@@ -29,7 +29,6 @@ import logging
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
-from django.test.utils import override_settings
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -37,7 +36,6 @@ except ImportError:
 
 from postorius.forms import ListArchiverForm
 from postorius.tests import MM_VCR
-from postorius.tests.mailman_api_tests import API_CREDENTIALS
 from postorius.utils import get_client
 from postorius.views.list import _add_archival_messages
 
@@ -47,7 +45,6 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-@override_settings(**API_CREDENTIALS)
 class ArchivalOptionsAccessTest(TestCase):
 
     @MM_VCR.use_cassette('archival_options.yaml')
@@ -84,7 +81,6 @@ class ArchivalOptionsAccessTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-@override_settings(**API_CREDENTIALS)
 class ArchivalOptions(TestCase):
 
     @MM_VCR.use_cassette('test_list_archival_options.yaml')
