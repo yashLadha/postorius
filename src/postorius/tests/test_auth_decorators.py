@@ -18,7 +18,7 @@
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import PermissionDenied
 from django.test.client import RequestFactory
-from django.utils import unittest
+from django.test import TestCase
 from mock import patch
 
 from postorius.auth.decorators import (list_owner_required,
@@ -39,7 +39,7 @@ def dummy_function_mod_req(request, list_id):
     return True
 
 
-class ListOwnerRequiredTest(unittest.TestCase):
+class ListOwnerRequiredTest(TestCase):
     """Tests the list_owner_required auth decorator."""
 
     def setUp(self):
@@ -105,7 +105,7 @@ class ListOwnerRequiredTest(unittest.TestCase):
         self.assertEqual(return_value, True)
 
 
-class ListModeratorRequiredTest(unittest.TestCase):
+class ListModeratorRequiredTest(TestCase):
     """Tests the list_owner_required auth decorator."""
 
     def setUp(self):

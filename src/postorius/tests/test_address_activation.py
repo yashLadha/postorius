@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.test.client import Client, RequestFactory
 from django.test.utils import override_settings
-from django.utils import unittest
+from django.test import TestCase
 from mock import patch, call
 
 from postorius.forms import AddressActivationForm
@@ -18,7 +18,7 @@ from postorius import views
 from postorius.views.user import AddressActivationView, address_activation_link
 
 
-class TestAddressActivationForm(unittest.TestCase):
+class TestAddressActivationForm(TestCase):
     """
     Test the activation form.
     """
@@ -48,7 +48,7 @@ class TestAddressActivationForm(unittest.TestCase):
         self.assertFalse(form.is_valid())
 
 
-class TestAddressActivationView(unittest.TestCase):
+class TestAddressActivationView(TestCase):
     """
     Tests to make sure the view is properly connected, renders the form
     correctly and starts the actual address activation process if a valid
@@ -60,7 +60,6 @@ class TestAddressActivationView(unittest.TestCase):
         # We don't use Client().login because it triggers the browserid dance.
         self.user = User.objects.create_user(
             username='les', email='les@example.org', password='secret')
-        self.client = Client()
         self.client.post(reverse('user_login'),
                          {'username': 'les', 'password': 'secret'})
 
@@ -104,7 +103,7 @@ class TestAddressActivationView(unittest.TestCase):
                         in [t.name for t in response.templates])
 
 
-class TestAddressConfirmationProfile(unittest.TestCase):
+class TestAddressConfirmationProfile(TestCase):
     """
     Test the confirmation of an email address activation (validating token,
     expiration, Mailman API calls etc.).
@@ -186,7 +185,7 @@ class TestAddressConfirmationProfile(unittest.TestCase):
         self.assertIn("another-virtualhost", mail.outbox[0].body)
 
 
-class TestAddressActivationLinkSuccess(unittest.TestCase):
+class TestAddressActivationLinkSuccess(TestCase):
     """
     This tests the activation link view if the key is valid and the profile is
     not expired.

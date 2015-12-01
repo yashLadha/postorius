@@ -30,7 +30,6 @@ class TestListMetrics(SimpleTestCase):
     @MM_VCR.use_cassette('test_list_metrics.yaml')
     def setUp(self):
         self.mm_client = get_client()
-        self.client = Client()
         try:
             self.domain = self.mm_client.create_domain('example.org')
         except HTTPError:

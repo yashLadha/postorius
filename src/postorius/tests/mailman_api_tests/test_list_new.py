@@ -43,7 +43,6 @@ class ListCreationTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_creation.yaml')
     def setUp(self):
-        self.client = Client()
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')

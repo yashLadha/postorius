@@ -41,7 +41,6 @@ class ModelTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_model.yaml')
     def setUp(self):
-        self.client = Client()
         self.mmclient = get_client()
         try:
             self.domain = get_client().create_domain('example.com')
