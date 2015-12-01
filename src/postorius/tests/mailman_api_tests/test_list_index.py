@@ -40,7 +40,6 @@ class ListIndexPageTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_index.yaml')
     def setUp(self):
-        self.client = Client()
         try:
             self.domain = get_client().create_domain('example.com')
         except HTTPError:

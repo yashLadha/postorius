@@ -60,7 +60,6 @@ class TestAddressActivationView(TestCase):
         # We don't use Client().login because it triggers the browserid dance.
         self.user = User.objects.create_user(
             username='les', email='les@example.org', password='secret')
-        self.client = Client()
         self.client.post(reverse('user_login'),
                          {'username': 'les', 'password': 'secret'})
 

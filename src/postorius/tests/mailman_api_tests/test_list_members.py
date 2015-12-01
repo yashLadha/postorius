@@ -46,7 +46,6 @@ class ListMembersAccessTest(TestCase):
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def setUp(self):
-        self.client = Client()
         try:
             self.domain = get_client().create_domain('example.com')
         except HTTPError:
@@ -123,7 +122,6 @@ class AddRemoveOwnerTest(TestCase):
 
     @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def setUp(self):
-        self.client = Client()
         self.mm_client = get_client()
         try:
             self.domain = self.mm_client.create_domain('example.com')
@@ -211,7 +209,6 @@ class AddModeratorTest(TestCase):
 
     @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')
     def setUp(self):
-        self.client = Client()
         try:
             self.domain = get_client().create_domain('example.com')
         except HTTPError:

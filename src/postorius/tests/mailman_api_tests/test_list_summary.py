@@ -45,7 +45,6 @@ class ListSummaryPageTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def setUp(self):
-        self.client = Client()
         self.mmclient = get_client()
         try:
             domain = self.mmclient.create_domain('example.com')
