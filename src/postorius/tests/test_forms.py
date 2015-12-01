@@ -14,13 +14,13 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-from django.utils import unittest
+from django.test import TestCase
 
 from postorius.forms import (ListNew,
     UserPreferences, DomainNew, ListSubscribe, ChangeSubscriptionForm)
 
 
-class UserPreferencesTest(unittest.TestCase):
+class UserPreferencesTest(TestCase):
 
     def test_form_fields_valid(self):
         form = UserPreferences({
@@ -31,7 +31,7 @@ class UserPreferencesTest(unittest.TestCase):
         })
         self.assertTrue(form.is_valid())
 
-class DomainNewTest(unittest.TestCase):
+class DomainNewTest(TestCase):
 
     def test_form_fields_webhost(self):
         form = DomainNew({
@@ -52,7 +52,7 @@ class DomainNewTest(unittest.TestCase):
         self.assertFalse(form.is_valid())
 
 
-class ListSubscribeTest(unittest.TestCase):
+class ListSubscribeTest(TestCase):
     def test_subscribe_works(self):
         user_emails = ['someone@example.com']
         form = ListSubscribe(user_emails, {
@@ -78,7 +78,7 @@ class ListSubscribeTest(unittest.TestCase):
         })
         self.assertFalse(form.is_valid())
 
-class ChangeSubscriptionTest(unittest.TestCase):
+class ChangeSubscriptionTest(TestCase):
     def test_subscription_changes_only_to_user_addresses(self):
         user_emails = ['one@example.com', 'two@example.com']
         form = ChangeSubscriptionForm(user_emails,
@@ -92,7 +92,7 @@ class ChangeSubscriptionTest(unittest.TestCase):
         self.assertTrue(form.is_valid())
 
 
-class ListNewTest(unittest.TestCase):
+class ListNewTest(TestCase):
 
     def test_form_fields_list(self):
         form = ListNew({
