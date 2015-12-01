@@ -24,7 +24,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
 from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -48,6 +48,13 @@ class ListMembersView(MailingListView):
 
     """Display all members of a given list.
     """
+
+    @property
+    def _common_context(self):
+        return {
+            'list': self.mailing_list,
+            'count_options': [25, 50, 100, 200],
+            }
 
     @method_decorator(list_owner_required)
     def post(self, request, list_id):
@@ -78,31 +85,31 @@ class ListMembersView(MailingListView):
         owner_form = NewOwnerForm()
         moderator_form = NewModeratorForm()
         members = utils.paginate(
-            request, self.mailing_list.get_member_page, 25,
+            request, self.mailing_list.get_member_page,
+            count=request.GET.get('count', 25),
             paginator_class=utils.MailmanPaginator)
-        return render_to_response('postorius/lists/members.html',
-                                  {'list': self.mailing_list,
-                                   'owner_form': owner_form,
-                                   'moderator_form': moderator_form,
-                                   'members': members,
-                                   },
-                                  context_instance=RequestContext(request))
+        context = {
+            'owner_form': owner_form,
+            'moderator_form': moderator_form,
+            'members': members,
+            }
+        context.update(self._common_context)
+        return render(request, 'postorius/lists/members.html', context)
 
     @method_decorator(login_required)
     @method_decorator(list_owner_required)
     def get(self, request, list_id, page=1):
-        owner_form = NewOwnerForm()
-        moderator_form = NewModeratorForm()
         members = utils.paginate(
-            request, self.mailing_list.get_member_page, 25,
+            request, self.mailing_list.get_member_page,
+            count=request.GET.get('count', 25),
             paginator_class=utils.MailmanPaginator)
-        return render_to_response('postorius/lists/members.html',
-                                  {'list': self.mailing_list,
-                                   'owner_form': owner_form,
-                                   'moderator_form': moderator_form,
-                                   'members': members,
-                                  },
-                                  context_instance=RequestContext(request))
+        context = {
+            'owner_form': NewOwnerForm(),
+            'moderator_form': NewModeratorForm(),
+            'members': members,
+            }
+        context.update(self._common_context)
+        return render(request, 'postorius/lists/members.html', context)
 
 
 class ListMemberOptionsView(MailingListView):
@@ -369,6 +376,13 @@ class ListModerationView(MailingListView):
 
     """Class for moderating held messages"""
 
+    @property
+    def _common_context(self):
+        return {
+            'list': self.mailing_list,
+            'count_options': [25, 50, 100, 200],
+            }
+
     @staticmethod
     def _perform_action(message_ids, action):
         for message_id in message_ids:
@@ -377,13 +391,15 @@ class ListModerationView(MailingListView):
     @method_decorator(login_required)
     @method_decorator(list_moderator_required)
     def get(self, request, *args, **kwargs):
-        held_messages = utils.paginate(request, self.mailing_list.held, 20)
-        return render_to_response(
-            'postorius/lists/held_messages.html', {
-                'list': self.mailing_list,
-                'held_messages': held_messages,
-                'form':HeldMessagesModerationForm()
-            }, context_instance=RequestContext(request))
+        held_messages = utils.paginate(
+            request, self.mailing_list.held,
+            count=request.GET.get('count', 20))
+        context = {
+            'held_messages': held_messages,
+            'form': HeldMessagesModerationForm(),
+            }
+        context.update(self._common_context)
+        return render(request, 'postorius/lists/held_messages.html', context)
 
     @method_decorator(list_moderator_required)
     def post(self, request, *args, **kwargs):
@@ -406,9 +422,10 @@ class ListModerationView(MailingListView):
                 messages.error(request, e.msg)
             else:
                 return redirect('list_held_messages', self.mailing_list.list_id)
-        return render_to_response('postorius/lists/held_messages.html',
-                                  {'list': self.mailing_list, 'form':form},
-                                  context_instance=RequestContext(request))
+        context = {'form': form}
+        context.update(self._common_context)
+        return render(request, 'postorius/lists/held_messages.html', context)
+
 
 @login_required
 @list_owner_required

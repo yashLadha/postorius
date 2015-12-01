@@ -54,5 +54,22 @@
         </ul>
     </div>
     {% endif %}
+    <form action="{{ request.path }}" method="get" class="form-inline">
+        <p class="text-center">
+            <input type="hidden" name="page" value="{{ page.number }}" />
+            {% trans 'Results per page:' %}</span>
+            <select name="count" class="form-control input-mini">
+                {% for count in count_options %}
+                    <option value="{{ count }}"
+                        {% if page.paginator.per_page == count %}
+                        selected="selected"
+                        {% endif %}
+                        >{{ count }}
+                    </option>
+                {% endfor %}
+            </select>
+            <input type="submit" class="btn btn-sm" value="Update" />
+        </p>
+    </form>
 </nav>
 {% endif %}
