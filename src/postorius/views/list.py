@@ -314,6 +314,7 @@ class ListMassSubscribeView(MailingListView):
                                   {'form': form, 'list': self.mailing_list},
                                   context_instance=RequestContext(request))
 
+    @method_decorator(list_owner_required)
     def post(self, request, *args, **kwargs):
         form = ListMassSubscription(request.POST)
         if not form.is_valid():
@@ -323,8 +324,9 @@ class ListMassSubscribeView(MailingListView):
             for email in emails:
                 try:
                     validate_email(email)
-                    self.mailing_list.subscribe(address=email, pre_verified=True,
-                                                pre_confirmed=True)
+                    self.mailing_list.subscribe(
+                        address=email, pre_verified=True, pre_confirmed=True,
+                        pre_approved=True)
                     messages.success(request,
                                      _('The address %(address)s has been subscribed to %(list)s.') %
                                      {'address':email, 'list': self.mailing_list.fqdn_listname})
