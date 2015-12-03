@@ -1,18 +1,33 @@
 {% extends postorius_base_template %}
 {% load i18n %}
+{% load bootstrap_tags %}
+{% load nav_helpers %}
 
 {% block subtitle %}
-{% trans "Add Email | " as page_title %}{{ page_title|add:user.username }}
+{% trans 'Add Email' %} | {{ user.username }}
 {% endblock %}
 
 {% block main %}
-    {% include 'postorius/menu/user_nav.html' %}
-
-    <h1>{% trans 'Add another email address to your account' %}</h1>
-
-    <form action = "{% url 'address_activation' %}" method = "post" class = "well">
-       {% csrf_token %}
-       {{ form.as_p }}
-       <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
-    </form>
+    {% user_nav 'add_email' %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">{% trans 'Add Email' %}</h1></div>
+        <div class="panel-body">
+            <form class="form-horizontal" action="{% url 'address_activation' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% if form.email.errors %}
+                        <div class="row">
+                            <div class="col-md-offset-2 col-md-5 alert alert-danger">{{ form.email.errors }}</div>
+                        </div>
+                    {% endif %}
+                    <label class="control-label col-md-2" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                    <div class="col-md-5">
+                        {{ form.email|add_form_control }}
+                    </div>
+                </div>
+                {{ form.user_email }}
+                <button class="col-md-offset-2 btn btn-success" type="submit">{% trans 'Add Email' %}</button>
+            </form>
+        </div>
+    </div>
 {% endblock main %}
