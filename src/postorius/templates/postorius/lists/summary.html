@@ -1,105 +1,86 @@
 {% extends postorius_base_template %}
 {% load i18n %}
-
-{% block subtitle %}
-{% trans "Info | " as page_title %}{{ page_title|add:list.fqdn_listname}}
-{% endblock %}
-
+{% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block body_class %}list_summary{% endblock %}
+{% block subtitle %}
+{% trans 'Info' %} | {{ list.fqdn_listname }}
+{% endblock %}
 
 {% block main %}
     {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
         {% list_nav 'list_summary' 'Summary' %}
     {% endif %}
-
-    <div class="well">
-        
-        <h1>{{list.display_name}} - {{ list.fqdn_listname }}</h1>
-        <p>{{list.settings.description }}</p>
-
-        {% if hyperkitty_url %}
-        <h2>{% trans 'Archived messages' %}</h2>
-        {% url 'hk_list_overview' list.fqdn_listname as hyperkitty_list_url %}
-        {% blocktrans %}
-        To see the prior postings to this list, visit
-        <a href="{{ hyperkitty_list_url }}">the archives</a>.
-        {% endblocktrans %}
-        {% endif %}
-
-        <dl>
-            <dt>{% trans 'To contact the list owners, use the following email address:' %}</dt>
-            <dd>{{ list.settings.owner_address }}</dd>
-        </dl>
-
-        {% if user.is_authenticated %}
-          {% if user.is_list_owner or user.is_superuser %}
-            <h2>{% trans 'List Metrics' %}</h2>
-            <table class="table table-bordered table-striped">
-              <tbody>
-                <tr>
-                  <th>{% trans 'Created at' %}</th>
-                  <td>{{list.settings.created_at}}</td>
-                </tr>
-                <tr>
-                  <th>{% trans 'Last post at' %}</th>
-                  <td>{{list.settings.last_post_at}}</td>
-                </tr>
-                <tr>
-                  <th>{% trans 'Digest last sent at' %}</th>
-                  <td>{{list.settings.digest_last_sent_at}}</td>
-                </tr>
-                <tr>
-                  <th>{% trans 'Volume' %}</th>
-                  <td>{{list.settings.volume}}</td>
-                </tr>
-              </tbody>
-            </table>
-          {% endif %}
-        {% endif %}
-        
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">{% trans 'Summary' %}</h1></div>
+        <div class="panel-body">
+            <h1>{{list.display_name }} - {{ list.fqdn_listname }}</h1>
+            <p>{{ list.settings.description }}</p>
+            {% if hyperkitty_url %}
+                {% url 'hk_list_overview' list.fqdn_listname as hyperkitty_list_url %}
+                {% blocktrans %}
+                  To see the prior postings to this list, visit
+                  <a href="{{ hyperkitty_list_url }}">the archives</a>.
+                {% endblocktrans %}
+            {% endif %}
+            {% if user.is_authenticated %}
+                {% if user.is_list_owner or user.is_superuser %}
+                  <hr />
+                  <p><label>{% trans 'Created at' %}:</label> {{ list.settings.created_at }}</p>
+                  <p><label>{% trans 'Last post at' %}:</label> {{ list.settings.last_post_at }}</p>
+                  <p><label>{% trans 'Digest last sent at' %}:</label> {{ list.settings.digest_last_sent_at }}</p>
+                  <p><label>{% trans 'Volume' %}:</label> {{ list.settings.volume }}</p>
+                  <hr />
+                {% endif %}
+            {% endif %}
+            {% trans 'To contact the list owners, use the following email address' %}: <em>{{ list.settings.owner_address }}</em>
+            {% if user.is_authenticated %}
+                {% if userSubscribed %}
+                    <p>
+                        {% trans 'You are subscribed to this list with the following address' %}: <em>{{ subscribed_address }}</em>
+                    </p>
+                    <hr />
+                    <form action="{% url 'change_subscription' list.list_id %}" method="POST" class="form-horizontal">
+                        {% csrf_token %}
+                        {% if change_subscription_form.non_field_errors %}
+                            <div class="alert alert-danger">{{ change_subscription_form.non_field_erros }}</div>
+                        {% endif %}
+                        {% for field in change_subscription_form %}
+                            <div class="form-group">
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">{{ field.errors }}</div>
+                                {% endif %}
+                                <label class="control-label col-md-2" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                                <div class="col-md-8">{{ field|add_form_control }}</div>
+                            </div>
+                        {% endfor %}
+                        <input class="col-md-offset-2 btn btn-success" type="submit" value="{% trans 'Change Subscription' %}">
+                    </form>
+                    <hr />
+                    <a href="{% url 'list_unsubscribe' list.list_id subscribed_address %}" class="col-md-offset-2 btn btn-danger">{% trans 'Unsubscribe' %} {{ subscribed_address }}</a>
+                {% else %}
+                    <h2>{% trans 'Subscribe to this list' %}</h2>
+                    <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="form-horizontal">
+                        {% csrf_token %}
+                        {% if subscribe_form.non_field_errors %}
+                            <div class="alert alert-danger">{{ subscribe_form.non_field_erros }}</div>
+                        {% endif %}
+                        {% for field in subscribe_form %}
+                            <div class="form-group">
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">{{ field.errors }}</div>
+                                {% endif %}
+                                <label class="control-label col-md-2" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                                <div class="col-md-8">{{ field|add_form_control }}</div>
+                            </div>
+                        {% endfor %}
+                        <input class="col-md-offset-2 btn btn-success" type="submit" value="{% trans 'Subscribe' %}" />
+                    </form>
+                {% endif %}
+            {% else %}
+                <p>{% trans 'You have to log in to subscribe to this list.' %}</p>
+                <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans 'Log In' %}</a></p>
+            {% endif %}
+        </div>
     </div>
-  
-
-    {% if user.is_authenticated %}
-
-        {% if userSubscribed %}
-
-
-            <p>
-                {% trans "You are subscribed to this list with the following address" %}: <em>{{ subscribed_address }}</em>
-            </p>
-
-            <hr />
-
-            <form action="{% url 'change_subscription' list.list_id %}" method="POST" class="change_subscription">
-                {% csrf_token %}
-                {{change_subscription_form.as_p}}
-                <input class="btn btn-success" type="submit" value="{% trans 'Change Subscription' %}">
-            </form>
-
-            <hr />
-
-            <a href="{% url 'list_unsubscribe' list.list_id subscribed_address %}" class="btn btn-danger">{% trans "Unsubscribe" %} {{ subscribed_address }}</a>
-
-
-        {% else %}
-
-            <h2>{% trans 'Subscribe to this list' %}</h2>
-
-            <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="list_subscribe"> {% csrf_token %}
-                {{subscribe_form.as_p}}
-                <input class="btn btn-success" type="submit" value="{% trans 'Subscribe' %}" />
-            </form>
-
-        {% endif %}
-
-    {% else %}
-
-        <p>{% trans "You have to log in to subscribe to this list." %}</p>
-        <p><a href="{{ login_url }}?next={{ request.path|urlencode }}" class="btn btn-primary">{% trans "Log In" %}</a></p>
-
-    {% endif %}
-
 {% endblock %}

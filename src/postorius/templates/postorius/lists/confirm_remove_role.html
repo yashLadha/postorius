@@ -1,18 +1,23 @@
-{% extends "postorius/base.html" %}
+{% extends postorius_base_template %}
 {% load i18n %}
 
 {% block subtitle %}
-{% trans "Confirm Remove Role | " as page_title %}{{ page_title|add:address}}
+{% trans 'Confirm Remove Role' %} | {{ address }}
 {% endblock %}
 
 {% load nav_helpers %}
 
 {% block main %}
-    <h1>{% trans 'Confirm Remove Role' %}</h1>
-    <p>{% trans "Are you sure you want to remove?" %}</p>
-    <form method="post" action="{% url 'remove_role' list_id role address %}">
-      {% csrf_token %}
-        <button class="btn btn-danger" type="submit">{% trans "Remove " %}{{ address }}</button>
-        <a class="btn" href="{% url 'list_members' list_id %}">{% trans "Cancel" %}</a>
-    </form>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">{% trans 'Confirm Remove Role' %}</h1></div>
+        <div class="panel-body">
+            <p>{% trans 'Are you sure?' %}</p>
+            <form method="post" action="{% url 'remove_role' list_id role address %}">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">{% trans 'Remove' %} {{ address }}</button>
+                <a class="btn btn-default" href="{% url 'list_members' list_id %}">{% trans 'Cancel' %}</a>
+            </form>
+        </div>
+    </div>
+
 {% endblock main %}

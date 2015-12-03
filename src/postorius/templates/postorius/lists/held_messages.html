@@ -8,81 +8,87 @@
 
 {% block main %}
   {% list_nav 'list_held_messages' 'Held Messages' %}
-  {% if held_messages|length > 0 %}
-    <form method="post">
-      {% if form.choices.errors %}
-        {% for error in form.choices.errors %}
-          <div class="alert alert-error">{{ error }}</div>
-        {% endfor %}
+  <div class="panel panel-default">
+    <div class="panel-heading"><h1 class="panel-title">{% trans 'Held Messages' %}</h1></div>
+    <div class="panel-body">
+      {% if held_messages|length > 0 %}
+        <form method="post">
+          {% if form.choices.errors %}
+            {% for error in form.choices.errors %}
+              <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+          {% csrf_token %}
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <td colspan="5">{% trans 'Perform action on selected messages' %}</td>
+                  <td>
+                    <input type="submit" class="btn btn-xs btn-success" name="accept" value="{% trans 'Accept' %}" />
+                    <input type="submit" class="btn btn-xs btn-warning" name="reject" value="{% trans 'Reject' %}" />
+                    <input type="submit" class="btn btn-xs btn-danger" name="discard" value="{% trans 'Discard' %}" />
+                  </td>
+                </tr>
+                <tr>
+                  <th><input type="checkbox" id="all-messages-checkbox" /></th>
+                  <th>{% trans 'Subject' %}</th>
+                  <th>{% trans 'Sender' %}</th>
+                  <th>{% trans 'Reason' %}</th>
+                  <th>{% trans 'Hold Date' %}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for msg in held_messages %}
+                  <tr>
+                    <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
+                    <td>{{ msg.subject }}</td>
+                    <td>{{ msg.sender }}</td>
+                    <td>
+                      {% if msg.reasons %}
+                        {{ msg.reason }}
+                      {% else %}
+                        {% for reason in msg.moderation_reasons %}
+                          <p>{{ reason }}</p>
+                        {% endfor %}
+                      {% endif %}
+                    </td>
+                    <td>{{ msg.hold_date }}</td>
+                    <td>
+                      <a href="#" class="btn btn-xs btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
+                      <a href="{% url 'accept_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-success">{% trans 'Accept' %}</a>
+                      <a href="{% url 'reject_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-warning">{% trans 'Reject' %}</a>
+                      <a href="{% url 'discard_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-danger">{% trans 'Discard' %}</a>
+                      <div class="modal fade held-message-details" id="msg-{{ msg.request_id }}" tabindex="-1" role="dialog">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                              <h4 class="modal-title">{{ msg.subject }}</h4>
+                            </div>
+                            <div class="modal-body">
+                              {{ msg.msg | linebreaks }}
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Close' %}</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </form>
+        {% include 'postorius/_pagination.html' with page=held_messages %}
+      {% else %}
+        <p>{% trans 'There are currently no held messages.' %}</p>
       {% endif %}
-      {% csrf_token %}
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-          <td colspan="5">{% trans 'Perform action on selected messages' %}</td>
-          <td class="mm_action">
-            <input type="submit" class="btn btn-mini btn-success" name="accept" value="{% trans 'Accept' %}" />
-            <input type="submit" class="btn btn-mini btn-danger" name="reject" value="{% trans 'Reject' %}" />
-            <input type="submit" class="btn btn-mini btn-danger" name="discard" value="{% trans 'Discard' %}" />
-          </td>
-        </tr>
-        <tr>
-          <th><input type="checkbox" id="all-messages-checkbox" /></th>
-          <th>{% trans 'Subject' %}</th>
-          <th>{% trans 'Sender' %}</th>
-          <th>{% trans 'Reason' %}</th>
-          <th>{% trans 'Hold Date' %}</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for msg in held_messages %}
-        <tr>
-          <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
-          <td>{{ msg.subject }}</td>
-          <td>{{ msg.sender }}</td>
-          <td>
-            {% if msg.reason %}
-              {{ msg.reason }}
-            {% else %}
-              {% for reason in msg.moderation_reasons %}
-                <p>{{ reason }}</p>
-              {% endfor %}
-            {% endif %}
-          </td>
-          <td>{{ msg.hold_date }}</td>
-
-          <td class="mm_action">
-            <a href="#" class="btn btn-mini btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
-            <a href="{% url 'accept_held_message' list.list_id msg.request_id %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
-            <a href="{% url 'reject_held_message' list.list_id msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
-            <a href="{% url 'discard_held_message' list.list_id msg.request_id %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
-
-            <div class="modal hide fade held-message-details" id="msg-{{ msg.request_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Subject: {{ msg.subject }}</h4>
-                  </div>
-                  <div class="modal-body">
-                    {{ msg.msg | linebreaks }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    </form>
-
-    {% include 'postorius/_pagination.html' with page=held_messages %}
-
-  {% else %}
-    <p>{% trans 'There are currently no held messages.' %}</p>
-  {% endif %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block additionaljs %}

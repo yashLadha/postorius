@@ -1,14 +1,44 @@
 {% extends postorius_base_template %}
 {% load i18n %}
+{% load bootstrap_tags %}
 
 {% block subtitle %}
-{% trans "Create List" as page_title %}{{ page_title }}
+{% trans 'Create List' %}
 {% endblock %}
 
 {% block main %}
-    <h1>{% trans "Create a new List" %} {{ block.super }}</h1> 
-    <form action="{% url 'list_new' %}" method="post" class="well"> {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-success" type="submit">{% trans "Create List" %}</button>
-    </form>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">{% trans 'Mailing Lists' %}</h1></div>
+        <div class="panel-body">
+            <form action="{% url 'list_new' %}" method="post" class="form-horizontal">
+                <legend>{% trans 'Create a new List' %}</legend>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {% if field.errors %}
+                            <div class="row">
+                                <div class="col-md-offset-2 col-md-8 alert alert-danger">{{ field.errors }}</div>
+                            </div>
+                        {% endif %}
+                        <label class="control-label col-md-2" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                        <div class="col-md-8">
+                        {% if field|fieldtype == 'RadioSelect' %}
+                            {% for choice in field %}
+                                <label class="radio-inline">
+                                    {{ choice.tag }}
+                                    {{ choice.choice_label }}
+                                </label>
+                            {% endfor %}
+                        {% else %}
+                            {{ field|add_form_control }}
+                        {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="text-center">
+                    <button class="btn btn-success" type="submit">{% trans 'Create List' %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

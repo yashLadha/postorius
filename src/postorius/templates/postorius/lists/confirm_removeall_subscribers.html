@@ -1,14 +1,18 @@
-{% extends "postorius/base.html" %}
+{% extends postorius_base_template %}
 {% load i18n %}
 {% load nav_helpers %}
 
 {% block main %}
-    <h1>{% trans 'Confirm Removal of All Members' %}</h1>
-    <p>{% trans "Are you sure you want to unsubscribe all members from "  %}{{list_id}}{% trans " ?"%}</p>
-    <hr />
-   <form method="post" action="{% url 'unsubscribe_all' list_id %}">
-          {% csrf_token %}
-        <button class="btn btn-danger" type="submit" >{% trans "Unsubscribe All " %}</button>
-        <a class="btn" href="{% url 'list_members' list_id %}">{% trans "Cancel" %}</a>
-   </form>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">{% trans 'Confirm Removal of All Members' %}</h1></div>
+        <div class="panel-body">
+            <p>{% trans 'Are you sure you want to unsubscribe all members from' %} {{ list_id }}{% trans '?' %}</p>
+            <hr />
+            <form method="post" action="{% url 'unsubscribe_all' list_id %}">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit" >{% trans 'Unsubscribe All' %}</button>
+                <a class="btn btn-default" href="{% url 'mass_removal' list_id %}">{% trans 'Cancel' %}</a>
+            </form>
+        </div>
+    </div>
 {% endblock main %}
