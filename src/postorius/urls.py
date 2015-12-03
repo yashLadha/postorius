@@ -23,6 +23,7 @@ from django.contrib.auth.views import logout as logout_view
 from postorius.views import list as list_views
 from postorius.views import user as user_views
 from postorius.views import domain as domain_views
+from postorius.views import rest as rest_views
 
 
 list_patterns = [
@@ -105,4 +106,6 @@ urlpatterns = [
     url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]+)/$',
         user_views.address_activation_link,
         name='address_activation_link'),
+    url(r'^api/list/(?P<list_id>[^/]+)/held_message/$', rest_views.get_held_message, name='uncomplete_rest_held_message'),
+    url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/$', rest_views.get_held_message, name='rest_held_message'),
 ]

@@ -1,6 +1,7 @@
 {% extends postorius_base_template %}
 {% load i18n %}
 {% load nav_helpers %}
+{% load staticfiles %}
 
 {% block subtitle %}
 {% trans 'Held messages' %} | {{ list.fqdn_listname }}
@@ -55,26 +56,10 @@
                     </td>
                     <td>{{ msg.hold_date }}</td>
                     <td>
-                      <a href="#" class="btn btn-xs btn-info" data-toggle="modal" data-target="#msg-{{ msg.request_id }}">{% trans 'View' %}</a>
+                      <a href="#" class="btn btn-xs btn-info show-modal-btn" data-msgid="{{ msg.request_id }}">{% trans 'View' %}</a>
                       <a href="{% url 'accept_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-success">{% trans 'Accept' %}</a>
                       <a href="{% url 'reject_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-warning">{% trans 'Reject' %}</a>
                       <a href="{% url 'discard_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-danger">{% trans 'Discard' %}</a>
-                      <div class="modal fade held-message-details" id="msg-{{ msg.request_id }}" tabindex="-1" role="dialog">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              <h4 class="modal-title">{{ msg.subject }}</h4>
-                            </div>
-                            <div class="modal-body">
-                              {{ msg.msg | linebreaks }}
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Close' %}</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </td>
                   </tr>
                 {% endfor %}
@@ -83,15 +68,36 @@
           </div>
         </form>
         {% include 'postorius/lib/pagination.html' with page=held_messages %}
-    {% else %}
+        <div class="modal fade" id="held-messages-modal" tabindex="-1" role="dialog" aria-labelledby="mymodal-label" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="mymodal-label">
+                  <div id="msg-title"></div>
+                </h4>
+              </div>
+              <div class="modal-body">
+                  <div id="held-stripped-message"></div>
+                  <div class="hidden" id="held-full-message"></div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn dismiss-modal" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button type="button" class="btn btn-info pull-right" id="toggle-full-message" data-toggle="button" aria-pressed="false" autocomplete="off">
+                  {% trans 'View Full Message' %}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% else %}
         <p>{% trans 'There are currently no held messages.' %}</p>
     {% endif %}
 {% endblock %}
 
 {% block additionaljs %}
+<script src="{% static 'postorius/js/held_messages.js'%}"></script>
 <script>
-$('#all-messages-checkbox').change(function() {
-  $('.message-checkbox').prop('checked', this.checked);
-});
+loadjs("{% url 'uncomplete_rest_held_message' list.list_id %}", "{% trans 'Message could not be retrieved' %}")
 </script>
 {% endblock %}

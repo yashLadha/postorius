@@ -382,7 +382,7 @@ def _perform_action(message_ids, action):
 
 @login_required
 @list_moderator_required
-def list_moderation(request, list_id):
+def list_moderation(request, list_id, held_id=-1):
     mailing_list = utils.get_client().get_list(list_id)
     if request.method == 'POST':
         form = MultipleChoiceForm(request.POST)
