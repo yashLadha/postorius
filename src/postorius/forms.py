@@ -18,8 +18,31 @@
 
 from django import forms
 from django.core.validators import validate_email, URLValidator
+from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
 from postorius.fieldset_forms import FieldsetForm
+
+
+class ListOfStringsField(forms.Field):
+    widget = forms.widgets.Textarea
+
+    def prepare_value(self, value):
+        if isinstance(value, list):
+            value = '\n'.join(value)
+        return value
+
+    def to_python(self, value):
+        "Returns a list of Unicode object."
+        if value.strip() in self.empty_values:
+            return []
+        result = []
+        for line in value.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            result.append(smart_text(line))
+        return result
+
 
 
 class DomainNew(FieldsetForm):
@@ -221,8 +244,7 @@ class MessageAcceptanceForm(forms.Form):
         ("discard", _("Discard (no notification)")),
         ("accept", _("Accept")),
         ("defer", _("Defer")))
-    acceptable_aliases = forms.CharField(
-        widget=forms.Textarea(),
+    acceptable_aliases = ListOfStringsField(
         label=_("Acceptable aliases"),
         required=False,
         help_text=_(
@@ -597,9 +619,8 @@ class Login(FieldsetForm):
 class ListMassSubscription(FieldsetForm):
     """Form fields to masssubscribe users to a list.
     """
-    emails = forms.CharField(
+    emails = ListOfStringsField(
         label=_('Emails to mass subscribe'),
-        widget=forms.Textarea,
     )
 
 
@@ -607,9 +628,8 @@ class ListMassRemoval(FieldsetForm):
 
     """Form fields to remove multiple list users.
     """
-    emails = forms.CharField(
+    emails = ListOfStringsField(
         label=_('Emails to Unsubscribe'),
-        widget=forms.Textarea,
     )
 
     class Meta:

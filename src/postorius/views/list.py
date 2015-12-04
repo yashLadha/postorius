@@ -320,8 +320,7 @@ class ListMassSubscribeView(MailingListView):
         if not form.is_valid():
             messages.error(request, _('Please fill out the form correctly.'))
         else:
-            emails = request.POST['emails'].splitlines()
-            for email in emails:
+            for email in form.cleaned_data['emails']:
                 try:
                     validate_email(email)
                     self.mailing_list.subscribe(
@@ -357,8 +356,7 @@ class ListMassRemovalView(MailingListView):
         if not form.is_valid():
             messages.error(request, _('Please fill out the form correctly.'))
         else:
-            emails = request.POST['emails'].splitlines()
-            for email in emails:
+            for email in form.cleaned_data['emails']:
                 try:
                     validate_email(email)
                     self.mailing_list.unsubscribe(email.lower())
