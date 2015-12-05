@@ -72,13 +72,10 @@ class UserMailmanSettingsView(MailmanUserView):
     @method_decorator(login_required)
     def get(self, request):
         try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            settingsform = UserPreferences(initial=mm_user.preferences)
-        except (MailmanApiError, Mailman404Error):
+            mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
+        except MailmanApiError:
             return utils.render_api_error(request)
-        except Mailman404Error:
-            mm_user = None
-            settingsform = None
+        settingsform = UserPreferences(initial=mm_user.preferences)
         return render_to_response('postorius/user_mailmansettings.html',
                                   {'mm_user': mm_user,
                                    'settingsform': settingsform},
@@ -284,7 +281,7 @@ def user_new(request):
 def user_profile(request, user_email=None):
     utils.set_other_emails(request.user)
     try:
-        mm_user = MailmanUser.objects.get(address=request.user.email)
+        mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
     except MailmanApiError:
         return utils.render_api_error(request)
     return render_to_response('postorius/user_profile.html',
@@ -328,9 +325,9 @@ def _add_address(request, user_email, address):
     # Add an address to a user record in mailman.
     try:
         try:
-            mailman_user = utils.get_client().get_user(user_email)
+            mailman_user = MailmanUser.objects.get(address=user_email)
         except Mailman404Error:
-            mailman_user = utils.get_client().create_user(user_email, '')
+            mailman_user = MailmanUser.objects.create(user_email, '')
         mailman_user.add_address(address)
     except (MailmanApiError, MailmanConnectionError):
         messages.error(request, _('The address could not be added.'))
