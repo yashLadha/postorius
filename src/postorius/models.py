@@ -55,11 +55,11 @@ def create_mailman_user(sender, **kwargs):
             pass
         if autocreate:
             user = kwargs.get('instance')
-            client = get_client()
             try:
-                client.create_user(user.email, None, None)
-            except HTTPError:
+                MailmanUser.objects.create_from_django(user)
+            except (MailmanApiError, HTTPError):
                 pass
+
 
 class MailmanApiError(Exception):
     """Raised if the API is not available.
@@ -89,10 +89,10 @@ class MailmanRestManager(object):
         except MailmanConnectionError as e:
             raise MailmanApiError(e)
 
-    def get(self, **kwargs):
+    def get(self, *args, **kwargs):
         try:
             method = getattr(get_client(), 'get_' + self.resource_name)
-            return method(**kwargs)
+            return method(*args, **kwargs)
         except AttributeError as e:
             raise MailmanApiError(e)
         except HTTPError as e:
@@ -103,20 +103,20 @@ class MailmanRestManager(object):
         except MailmanConnectionError as e:
             raise MailmanApiError(e)
 
-    def get_or_404(self, **kwargs):
+    def get_or_404(self, *args, **kwargs):
         """Similar to `self.get` but raises standard Django 404 error.
         """
         try:
-            return self.get(**kwargs)
+            return self.get(*args, **kwargs)
         except Mailman404Error:
             raise Http404
         except MailmanConnectionError as e:
             raise MailmanApiError(e)
 
-    def create(self, **kwargs):
+    def create(self, *args, **kwargs):
         try:
             method = getattr(get_client(), 'create_' + self.resource_name)
-            return method(**kwargs)
+            return method(*args, **kwargs)
         except AttributeError as e:
             raise MailmanApiError(e)
         except HTTPError as e:
@@ -164,20 +164,36 @@ class MailmanListManager(MailmanRestManager):
         return host_objects
 
 
+class MailmanUserManager(MailmanRestManager):
+
+    def __init__(self):
+        super(MailmanUserManager, self).__init__('user', 'users')
+
+    def create_from_django(self, user):
+        return self.create(user.email, user.get_full_name())
+
+    def get_or_create_from_django(self, user):
+        try:
+            return self.get(address=user.email)
+        except Mailman404Error:
+            return self.create_from_django(user)
+
+
 class MailmanRestModel(object):
     """Simple REST Model class to make REST API calls Django style.
     """
     MailmanApiError = MailmanApiError
     DoesNotExist = Mailman404Error
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        self.args = args
         self.kwargs = kwargs
 
     def save(self):
         """Proxy function for `objects.create`.
         (REST API uses `create`, while Django uses `save`.)
         """
-        self.objects.create(**self.kwargs)
+        self.objects.create(*self.args, **self.kwargs)
 
 
 class Domain(MailmanRestModel):
@@ -195,7 +211,7 @@ class List(MailmanRestModel):
 class MailmanUser(MailmanRestModel):
     """MailmanUser model class.
     """
-    objects = MailmanRestManager('user', 'users')
+    objects = MailmanUserManager()
 
 
 class Member(MailmanRestModel):
