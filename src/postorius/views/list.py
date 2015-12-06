@@ -170,35 +170,16 @@ class ListMemberOptionsView(MailingListView):
             context_instance=RequestContext(request))
 
 
-class ListMetricsView(MailingListView):
-
-    """Shows common list metrics.
-    """
-
-    @method_decorator(login_required)
-    @method_decorator(list_owner_required)
-    def get(self, request, list_id):
-        return render_to_response('postorius/lists/metrics.html',
-                                  {'list': self.mailing_list},
-                                  context_instance=RequestContext(request))
-
-
 class ListSummaryView(MailingListView):
     """Shows common list metrics.
     """
 
     def get(self, request, list_id):
-        if request.user.is_authenticated():
-            user_emails = [request.user.email] + request.user.other_emails
-        else:
-            user_emails = None
-
-        userSubscribed = False
-        subscribed_address = None
         data =  {'list': self.mailing_list,
                  'userSubscribed': False,
                  'subscribed_address': None}
         if request.user.is_authenticated():
+            user_emails = [request.user.email] + request.user.other_emails
             for address in user_emails:
                 try:
                     self.mailing_list.get_member(address)
@@ -212,6 +193,7 @@ class ListSummaryView(MailingListView):
                 user_emails, initial={'email': data['subscribed_address']})
             data['subscribe_form'] = ListSubscribe(user_emails)
         else:
+            user_emails = None
             data['change_subscription_form'] = None
         return render_to_response(
             'postorius/lists/summary.html', data,

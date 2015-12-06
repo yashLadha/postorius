@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/test_list.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Test_list", "fqdn_listname":
@@ -19,63 +19,51 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
-    body: {string: !!python/unicode '{"http_etag": "\"dfd159ec866aff2f484eb6399b59057ba112d3e5\"",
-        "mail-archive": true, "mhonarc": true, "prototype": false}'}
+    body: {string: !!python/unicode '{"http_etag": "\"3dbbbaad592a043938314db0e5249a1ca71d0dc6\"",
+        "mail-archive": true, "mhonarc": true, "prototype": true}'}
+    headers:
+      content-length: ['119']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: mail-archive=False&prototype=True&mhonarc=True
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PUT
+    uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
+  response:
+    body: {string: !!python/unicode '{"http_etag": "\"9f3e82fa9d7dc70277565c9703a90ad3fbeb9a03\"",
+        "mail-archive": false, "mhonarc": true, "prototype": true}'}
     headers:
       content-length: ['120']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: prototype=True&mail-archive=True&mhonarc=True
-    headers:
-      accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PUT'
-    uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
-  response:
-    body: {string: !!python/unicode ''}
-    headers:
-      content-length: ['0']
-    status: {code: 204, message: No Content}
-- request:
-    body: prototype=True&mail-archive=False&mhonarc=True
-    headers:
-      accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PUT'
-    uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
-  response:
-    body: {string: !!python/unicode ''}
-    headers:
-      content-length: ['0']
-    status: {code: 204, message: No Content}
-- request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
-    body: {string: !!python/unicode '{"http_etag": "\"95f97f6e3c57d856b8048a96844ddc64a972f96d\"",
-        "mail-archive": false, "mhonarc": true, "prototype": false}'}
+    body: {string: !!python/unicode '{"http_etag": "\"9f3e82fa9d7dc70277565c9703a90ad3fbeb9a03\"",
+        "mail-archive": false, "mhonarc": true, "prototype": true}'}
     headers:
-      content-length: ['121']
-      content-type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
-  response:
-    body: {string: !!python/unicode '{"http_etag": "\"95f97f6e3c57d856b8048a96844ddc64a972f96d\"",
-        "mail-archive": false, "mhonarc": true, "prototype": false}'}
-    headers:
-      content-length: ['121']
+      content-length: ['120']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 version: 1

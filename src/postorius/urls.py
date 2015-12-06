@@ -35,9 +35,6 @@ per_list_urlpatterns = patterns('postorius.views',
                                 url(r'^members/options/(?P<email>[^/]+)/$',
                                     ListMemberOptionsView.as_view(
                                     ), name='list_member_options'),
-                                url(r'^metrics$',
-                                    ListMetricsView.as_view(
-                                    ), name='list_metrics'),
                                 url(r'^$',
                                     ListSummaryView.as_view(
                                     ), name='list_summary'),
