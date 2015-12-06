@@ -3,8 +3,8 @@ interactions:
     body: mail_host=example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/domains
   response:
     body: {string: !!python/unicode 'Duplicate email host: example.com'}
@@ -16,7 +16,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -31,7 +31,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -46,8 +46,8 @@ interactions:
     body: fqdn_listname=open_list%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -59,7 +59,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Open_list", "fqdn_listname":
@@ -75,7 +75,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -104,11 +104,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Open_list&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=open&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BOpen_list%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -119,8 +119,8 @@ interactions:
     body: fqdn_listname=moderate_subs%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -132,7 +132,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Moderate_subs", "fqdn_listname":
@@ -148,7 +148,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -177,11 +177,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Moderate_subs&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=moderate&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BModerate_subs%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -192,22 +192,22 @@ interactions:
     body: password=&display_name=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/5']
+      location: ['http://localhost:9001/3.0/users/712']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
-    uri: http://localhost:9001/3.0/users/5/addresses
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
+    uri: http://localhost:9001/3.0/users/712/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -218,7 +218,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'POST'
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/addresses/fritz@example.org/verify
   response:
     body: {string: !!python/unicode ''}
@@ -229,7 +229,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/requests
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -242,13 +242,13 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/requests
   response:
     body: {string: !!python/unicode '{"entries": [{"display_name": "", "email": "fritz@example.org",
-        "http_etag": "\"aa0a3a60758fb587bd9b698839c58d23b5dbeac1\"", "list_id": "moderate_subs.example.com",
-        "token": "44cc7158fa32f05de01a09e1140a4b437f28b01f", "token_owner": "moderator",
-        "when": "2005-08-01T07:49:23"}], "http_etag": "\"b6655624de25438f74064513e16b91ee8e74d5b4\"",
+        "http_etag": "\"3d1c95859c703bf3eabe0ee8bd8f0f26c798774e\"", "list_id": "moderate_subs.example.com",
+        "token": "7946b2dea66cf4c977638062e61fede9f846a570", "token_owner": "moderator",
+        "when": "2005-08-01T07:49:23"}], "http_etag": "\"8946d86966536d5b3353df3addf76381053e2a03\"",
         "start": 0, "total_size": 1}'}
     headers:
       content-length: ['368']
@@ -258,9 +258,9 @@ interactions:
     body: action=discard
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
-    uri: http://localhost:9001/3.0/lists/moderate_subs.example.com/requests/44cc7158fa32f05de01a09e1140a4b437f28b01f
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
+    uri: http://localhost:9001/3.0/lists/moderate_subs.example.com/requests/7946b2dea66cf4c977638062e61fede9f846a570
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -270,7 +270,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/open_list@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -281,7 +281,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -292,8 +292,8 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
-    uri: http://localhost:9001/3.0/users/5
+    method: !!python/unicode DELETE
+    uri: http://localhost:9001/3.0/users/712
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -303,8 +303,8 @@ interactions:
     body: mail_host=example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/domains
   response:
     body: {string: !!python/unicode 'Duplicate email host: example.com'}
@@ -316,7 +316,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -331,7 +331,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -346,8 +346,8 @@ interactions:
     body: fqdn_listname=open_list%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -359,7 +359,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Open_list", "fqdn_listname":
@@ -375,7 +375,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -404,11 +404,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Open_list&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=open&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BOpen_list%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -419,8 +419,8 @@ interactions:
     body: fqdn_listname=moderate_subs%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -432,7 +432,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Moderate_subs", "fqdn_listname":
@@ -448,7 +448,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -477,11 +477,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Moderate_subs&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=moderate&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BModerate_subs%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -492,22 +492,22 @@ interactions:
     body: password=&display_name=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/6']
+      location: ['http://localhost:9001/3.0/users/713']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
-    uri: http://localhost:9001/3.0/users/6/addresses
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
+    uri: http://localhost:9001/3.0/users/713/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -518,7 +518,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'POST'
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/addresses/fritz@example.org/verify
   response:
     body: {string: !!python/unicode ''}
@@ -529,7 +529,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/requests
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -542,7 +542,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/requests
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -555,7 +555,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/open_list@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -566,7 +566,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -577,8 +577,8 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
-    uri: http://localhost:9001/3.0/users/6
+    method: !!python/unicode DELETE
+    uri: http://localhost:9001/3.0/users/713
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -588,8 +588,8 @@ interactions:
     body: mail_host=example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/domains
   response:
     body: {string: !!python/unicode 'Duplicate email host: example.com'}
@@ -601,7 +601,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -616,7 +616,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -631,8 +631,8 @@ interactions:
     body: fqdn_listname=open_list%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -644,7 +644,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Open_list", "fqdn_listname":
@@ -660,7 +660,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -689,11 +689,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Open_list&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=open&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BOpen_list%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -704,8 +704,8 @@ interactions:
     body: fqdn_listname=moderate_subs%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -717,7 +717,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Moderate_subs", "fqdn_listname":
@@ -733,7 +733,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -762,11 +762,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Moderate_subs&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=moderate&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BModerate_subs%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -777,22 +777,22 @@ interactions:
     body: password=&display_name=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/7']
+      location: ['http://localhost:9001/3.0/users/714']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
-    uri: http://localhost:9001/3.0/users/7/addresses
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
+    uri: http://localhost:9001/3.0/users/714/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -803,7 +803,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'POST'
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/addresses/fritz@example.org/verify
   response:
     body: {string: !!python/unicode ''}
@@ -814,7 +814,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/requests
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -827,13 +827,13 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/requests
   response:
     body: {string: !!python/unicode '{"entries": [{"display_name": "", "email": "test@example.com",
-        "http_etag": "\"dc4929d089922ed834b6ca55db444af35b0c55ee\"", "list_id": "moderate_subs.example.com",
-        "token": "6a911c419c74c6d5b4721505351f49080650bf18", "token_owner": "moderator",
-        "when": "2005-08-01T07:49:23"}], "http_etag": "\"c72c9da6f9f5fce71fac30dd2722c5810d64e891\"",
+        "http_etag": "\"56a5943001f7b1382170bdd54bf1c76c34b18b06\"", "list_id": "moderate_subs.example.com",
+        "token": "f983ffd56bfabec80fb701b991ce867f16612133", "token_owner": "moderator",
+        "when": "2005-08-01T07:49:23"}], "http_etag": "\"1a78ce4c916cfea39c07335b6c9aaf474132727f\"",
         "start": 0, "total_size": 1}'}
     headers:
       content-length: ['367']
@@ -843,9 +843,9 @@ interactions:
     body: action=discard
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
-    uri: http://localhost:9001/3.0/lists/moderate_subs.example.com/requests/6a911c419c74c6d5b4721505351f49080650bf18
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
+    uri: http://localhost:9001/3.0/lists/moderate_subs.example.com/requests/f983ffd56bfabec80fb701b991ce867f16612133
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -855,7 +855,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/open_list@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -866,7 +866,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -877,8 +877,8 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
-    uri: http://localhost:9001/3.0/users/7
+    method: !!python/unicode DELETE
+    uri: http://localhost:9001/3.0/users/714
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -888,8 +888,8 @@ interactions:
     body: mail_host=example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/domains
   response:
     body: {string: !!python/unicode 'Duplicate email host: example.com'}
@@ -901,7 +901,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -916,7 +916,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -931,8 +931,8 @@ interactions:
     body: fqdn_listname=open_list%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -944,7 +944,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Open_list", "fqdn_listname":
@@ -960,7 +960,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -989,11 +989,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Open_list&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=open&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BOpen_list%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -1004,8 +1004,8 @@ interactions:
     body: fqdn_listname=moderate_subs%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -1017,7 +1017,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Moderate_subs", "fqdn_listname":
@@ -1033,7 +1033,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -1062,11 +1062,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Moderate_subs&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=moderate&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BModerate_subs%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -1077,22 +1077,22 @@ interactions:
     body: password=&display_name=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/8']
+      location: ['http://localhost:9001/3.0/users/715']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
-    uri: http://localhost:9001/3.0/users/8/addresses
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
+    uri: http://localhost:9001/3.0/users/715/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -1103,7 +1103,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'POST'
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/addresses/fritz@example.org/verify
   response:
     body: {string: !!python/unicode ''}
@@ -1114,7 +1114,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/requests
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -1127,7 +1127,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/requests
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -1140,7 +1140,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/open_list@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -1151,7 +1151,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -1162,8 +1162,8 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
-    uri: http://localhost:9001/3.0/users/8
+    method: !!python/unicode DELETE
+    uri: http://localhost:9001/3.0/users/715
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -1173,8 +1173,8 @@ interactions:
     body: mail_host=example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/domains
   response:
     body: {string: !!python/unicode 'Duplicate email host: example.com'}
@@ -1186,7 +1186,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -1201,7 +1201,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"base_url": "http://example.com", "description":
@@ -1216,8 +1216,8 @@ interactions:
     body: fqdn_listname=open_list%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -1229,7 +1229,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Open_list", "fqdn_listname":
@@ -1245,7 +1245,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -1274,11 +1274,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Open_list&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=open&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BOpen_list%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/open_list@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -1289,8 +1289,8 @@ interactions:
     body: fqdn_listname=moderate_subs%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -1302,7 +1302,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Moderate_subs", "fqdn_listname":
@@ -1318,7 +1318,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
@@ -1347,11 +1347,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&autorespond_postings=none&display_name=Moderate_subs&admin_immed_notify=True&convert_html_to_plaintext=False&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&default_member_action=defer&digest_size_threshold=30.0&default_nonmember_action=hold&subscription_policy=moderate&first_strip_reply_to=False&collapse_alternatives=True&admin_notify_mchanges=False&autorespond_owner=none&include_rfc2369_headers=True&autoresponse_postings_text=&reply_to_address=&autoresponse_request_text=&autoresponse_grace_period=90d&filter_content=False&description=&administrivia=True&archive_policy=public&posting_pipeline=default-posting-pipeline&autoresponse_owner_text=&reply_goes_to_list=no_munging&subject_prefix=%5BModerate_subs%5D+&advertised=True&allow_list_posts=True&autorespond_requests=none&send_welcome_message=True
+    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PATCH'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode PATCH
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/config
   response:
     body: {string: !!python/unicode ''}
@@ -1362,22 +1362,22 @@ interactions:
     body: password=&display_name=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/9']
+      location: ['http://localhost:9001/3.0/users/716']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'POST'
-    uri: http://localhost:9001/3.0/users/9/addresses
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
+    uri: http://localhost:9001/3.0/users/716/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -1388,7 +1388,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'POST'
+    method: !!python/unicode POST
     uri: http://localhost:9001/3.0/addresses/fritz@example.org/verify
   response:
     body: {string: !!python/unicode ''}
@@ -1399,7 +1399,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/open_list@example.com/requests
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -1412,7 +1412,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/requests
   response:
     body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
@@ -1425,7 +1425,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/open_list@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -1436,7 +1436,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
+    method: !!python/unicode DELETE
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com
   response:
     body: {string: !!python/unicode ''}
@@ -1447,8 +1447,8 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'DELETE'
-    uri: http://localhost:9001/3.0/users/9
+    method: !!python/unicode DELETE
+    uri: http://localhost:9001/3.0/users/716
   response:
     body: {string: !!python/unicode ''}
     headers:
