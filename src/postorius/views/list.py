@@ -511,8 +511,11 @@ def list_index(request, template='postorius/lists/index.html'):
     choosable_domains = _get_choosable_domains(request)
     return render_to_response(
         template, {
+            'count_options': [10, 25, 50, 100, 200],
             'error': error,
-            'lists': utils.paginate(request, lists, 15),
+            'lists': utils.paginate(request, 
+                lists, 
+                count=request.GET.get('count', 10)),
             'domain_count': len(choosable_domains),
         }, context_instance=RequestContext(request))
 
