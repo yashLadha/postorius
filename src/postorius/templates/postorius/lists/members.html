@@ -1,95 +1,102 @@
 {% extends postorius_base_template %}
 {% load i18n %}
-
-{% block subtitle %}
-{% trans "Members | " as page_title %}{{ page_title|add:list.fqdn_listname}}
-{% endblock %}
-
+{% load bootstrap_tags %}
 {% load nav_helpers %}
 
+{% block subtitle %}
+{% trans 'Members' %} | {{ list.fqdn_listname}}
+{% endblock %}
+
 {% block main %}
-    {% list_nav 'list_members' "List Members" %}
-    <h2>{% trans "Owners" %}</h2>
-
-    {{ owner_form.email.errors }}
-    <form action="{% url 'list_members' list.list_id %}" method="POST" class="form-inline">{% csrf_token %}
-        <label for="id_owner_email">{% trans 'Email Address' %}</label>
-        {{ owner_form.owner_email }}
-        <button type="submit" class="btn">{% trans 'Add Owner' %}</button>
-    </form>
-    <table class="table table-bordered table-striped">
-        <thead>
-    		<tr>
-    			<th>{% trans 'Address' %}</th>
-                <th>&nbsp;</th>
-    		</tr>
-        </thead>
-    	<tbody>
-            {% for member in list.owners %}
-                <tr>
-                    <td>{{ member }}</td>
-                    <td>
-                      <a href="{% url 'remove_role' list.list_id 'owner' member %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a>
-                    </td>
-                </tr>
-            {% endfor %}
-    	</tbody>
-    </table>
-
-    <h2>{% trans "Moderators" %}</h2>
-    {{ moderator_form.email.errors }}
-    <form action="{% url 'list_members' list.list_id %}" method="POST" class="form-inline">{% csrf_token %}
-        <label for="id_moderator_email">{% trans 'Email Address' %}</label>
-        {{ moderator_form.moderator_email }}
-        <button type="submit" class="btn">{% trans 'Add Moderator' %}</button>
-    </form>
-
-    <table class="table table-bordered table-striped">
-        <thead>
-    		<tr>
-    			<th>{% trans 'Address' %}</th>
-                <th>&nbsp;</th>
-    		</tr>
-        </thead>
-    	<tbody>
-            {% for member in list.moderators %}
-                <tr>
-                    <td>{{ member }}</td>
-                    <td>
-                      <a href="{% url 'remove_role' list.list_id 'moderator' member %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a>
-                    </td>
-                </tr>
-            {% endfor %}
-    	</tbody>
-    </table>
-
-    <h2>{% trans "Members" %}</h2>
-    <table class="table table-bordered table-striped">
-        <thead>
-    		<tr>
-    			<th>{% trans 'Address' %}</th>
-    			<th>{% trans 'Role' %}</th>
-                <th>&nbsp;</th>
-    		</tr>
-        </thead>
-    	<tbody>
-	    <form action="{% url 'csv_view' list.list_id %}" method="post" class="well"> {% csrf_token %}
-		     <button type="submit" class="btn">{% trans 'CSV Export' %}</button>
-	    </form>
-
-            {% for member in members %}
-                <tr>
-                    <td> <a href="{% url 'list_member_options' list.list_id member.email %}">
-                        {{ member.email }}</a></td>
-                    <td>{% trans member.role %}</td>
-                    <td>
-                        <a href="{% url 'list_unsubscribe' list.list_id member.email %}" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
-                    </td>
-                </tr>
-            {% endfor %}
-    	</tbody>
-    </table>
-
-    {% include 'postorius/_pagination.html' with page=members %}
-
+    {% list_nav 'list_members' 'List Members' %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">{% trans 'List Members' %}</h1></div>
+        <div class="panel-body">
+            <h2>{% trans 'Owners' %}</h2>
+            <form action="{% url 'list_members' list.list_id %}" method="POST" class="form-inline">
+                {% csrf_token %}
+                {% if owner_form.owner_email.errors %}
+                    <div class="alert alert-danger">{{ owner_form.owner_email.errors }}</div>
+                {% endif %}
+                <label for="id_owner_email">{% trans 'Email Address' %}:</label>
+                {{ owner_form.owner_email|add_form_control }}
+                <button type="submit" class="btn btn-default">{% trans 'Add Owner' %}</button>
+            </form>
+            <br />
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Address' %}</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in list.owners %}
+                            <tr>
+                                <td>{{ member }}</td>
+                                <td><a href="{% url 'remove_role' list.list_id 'owner' member %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <h2>{% trans 'Moderators' %}</h2>
+            <form action="{% url 'list_members' list.list_id %}" method="POST" class="form-inline">
+                {% csrf_token %}
+                {% if moderator_form.moderator_email.errors %}
+                    <div class="alert alert-danger">{{ moderator_form.moderator_email.errors }}</div>
+                {% endif %}
+                <label for="id_moderator_email">{% trans 'Email Address' %}:</label>
+                {{ moderator_form.moderator_email|add_form_control }}
+                <button type="submit" class="btn btn-default">{% trans 'Add Moderator' %}</button>
+            </form>
+            <br />
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Address' %}</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in list.moderators %}
+                            <tr>
+                                <td>{{ member }}</td>
+                                <td><a href="{% url 'remove_role' list.list_id 'moderator' member %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <h2>{% trans 'Members' %}</h2>
+                <form action="{% url 'csv_view' list.list_id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-default">{% trans 'CSV Export' %}</button>
+                </form>
+            <br />
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Address' %}</th>
+                            <th>{% trans 'Role' %}</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                            <tr>
+                                <td><a href="{% url 'list_member_options' list.list_id member.email %}">{{ member.email }}</a></td>
+                                <td>{% trans member.role %}</td>
+                                <td><a href="{% url 'list_unsubscribe' list.list_id member.email %}" class="btn btn-xs btn-danger">{% trans 'Unsubscribe' %}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% include 'postorius/_pagination.html' with page=members %}
+        </div>
+    </div>
 {% endblock main %}

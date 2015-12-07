@@ -1,17 +1,33 @@
 {% extends postorius_base_template %}
 {% load i18n %}
-
-{% block subtitle %}
-{% trans "Mass Subscribe | "%}{{ page_title|add:list.fqdn_listname}}
-{% endblock %}
-
+{% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block main %}
-    {% list_nav 'mass_subscribe' "Mass Subscription" %}
+{% block subtitle %}
+{% trans 'Mass Subscribe' %} | {{ list.fqdn_listname }}
+{% endblock %}
 
-    <form action="{% url 'mass_subscribe' list.list_id %}" method="post" class="well"> {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">{% trans "Subscribe users" %}</button>
-    </form>
+{% block main %}
+    {% list_nav 'mass_subscribe' 'Mass Subscription' %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1 class="panel-title">{% trans 'Mass Subscription' %}</h1></div>
+        <div class="panel-body">
+            <form action="{% url 'mass_subscribe' list.list_id %}" method="post" class="form-horizontal">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    {% if form.emails.errors %}
+                        <div class="alert alert-danger">{{ form.emails.errors }}</div>
+                    {% endif %}
+                    <label class="control-label col-md-2" for="{{ form.emails.id_for_label }}">{{ form.emails.label }}:</label>
+                    <div class="col-md-8">{{ form.emails|add_form_control }}</div>
+                </div>
+                <button class="col-md-offset-2 btn btn-primary" type="submit">{% trans 'Subscribe users' %}</button>
+            </form>
+        </div>
+    </div>
 {% endblock main %}
