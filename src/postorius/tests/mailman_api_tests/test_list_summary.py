@@ -159,3 +159,32 @@ class ListSummaryPageTest(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Held Messages</a>')
         self.assertNotContains(response, 'Delete List</a>')
+
+    @MM_VCR.use_cassette('test_list_summary_metrics_anonymous.yaml')
+    def test_metrics_not_displayed_to_anonymous(self):
+        response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
+        self.assertNotContains(response, 'List metrics')
+
+    @MM_VCR.use_cassette('test_list_summary_metrics_moderator.yaml')
+    def test_list_metrics_not_displayed_to_moderator(self):
+        mlist = self.mmclient.get_list('foo@example.com')
+        mlist.add_moderator('test@example.com')
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
+        self.assertNotContains(response, 'List metrics')
+
+    @MM_VCR.use_cassette('test_list_summary_metrics_owner.yaml')
+    def test_list_metrics_displayed_to_owner(self):
+        mlist = self.mmclient.get_list('foo@example.com')
+        mlist.add_owner('test@example.com')
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
+        self.assertContains(response, 'List metrics')
+
+    @MM_VCR.use_cassette('test_list_summary_metrics_superuser.yaml')
+    def test_list_metrics_displayed_to_superuser(self):
+        mlist = self.mmclient.get_list('foo@example.com')
+        User.objects.create_superuser('testadminuser', 'testadmin@example.com', 'testpass')
+        self.assertTrue(self.client.login(username='testadminuser', password='testpass'))
+        response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
+        self.assertContains(response, 'List metrics')

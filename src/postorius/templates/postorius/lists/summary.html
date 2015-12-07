@@ -19,19 +19,9 @@
             {% if hyperkitty_url %}
                 {% url 'hk_list_overview' list.fqdn_listname as hyperkitty_list_url %}
                 {% blocktrans %}
-                  To see the prior postings to this list, visit
-                  <a href="{{ hyperkitty_list_url }}">the archives</a>.
+                  <p>To see the prior postings to this list, visit
+                  <a href="{{ hyperkitty_list_url }}">the archives</a>.</p>
                 {% endblocktrans %}
-            {% endif %}
-            {% if user.is_authenticated %}
-                {% if user.is_list_owner or user.is_superuser %}
-                  <hr />
-                  <p><label>{% trans 'Created at' %}:</label> {{ list.settings.created_at }}</p>
-                  <p><label>{% trans 'Last post at' %}:</label> {{ list.settings.last_post_at }}</p>
-                  <p><label>{% trans 'Digest last sent at' %}:</label> {{ list.settings.digest_last_sent_at }}</p>
-                  <p><label>{% trans 'Volume' %}:</label> {{ list.settings.volume }}</p>
-                  <hr />
-                {% endif %}
             {% endif %}
             {% trans 'To contact the list owners, use the following email address' %}: <em>{{ list.settings.owner_address }}</em>
             {% if user.is_authenticated %}
@@ -80,6 +70,22 @@
             {% else %}
                 <p>{% trans 'You have to log in to subscribe to this list.' %}</p>
                 <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans 'Log In' %}</a></p>
+            {% endif %}
+            {% if user.is_authenticated %}
+                {% if user.is_list_owner or user.is_superuser %}
+                <hr />
+                <div class="panel panel-default">
+                    <div class="panel-heading">{% trans 'List metrics' %}</div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                          <dt>{% trans 'Created at' %}:</dt><dd>{{ list.settings.created_at }}</dd>
+                          <dt>{% trans 'Last post at' %}:</dt><dd>{{ list.settings.last_post_at }}</dd>
+                          <dt>{% trans 'Digest last sent at' %}:</dt><dd>{{ list.settings.digest_last_sent_at }}</dd>
+                          <dt>{% trans 'Volume' %}:</dt><dd>{{ list.settings.volume }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                {% endif %}
             {% endif %}
         </div>
     </div>
