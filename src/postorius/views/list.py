@@ -44,11 +44,10 @@ from postorius.views.generic import MailingListView
 logger = logging.getLogger(__name__)
 
 
-"""Display all members of a given list.
-"""
 @login_required
 @list_owner_required
 def list_members_view(request, list_id, role=None):
+    """Display all members of a given list."""
     if role not in ['owners', 'moderators', 'subscribers']:
         return redirect('list_members', list_id, 'subscribers')
     mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
@@ -81,6 +80,7 @@ def list_members_view(request, list_id, role=None):
         member_form = MemberForm()
     context = {
         'list': mailing_list,
+        'role': role,
     }
     if role == 'subscribers':
         context['members'] = utils.paginate(
@@ -96,13 +96,11 @@ def list_members_view(request, list_id, role=None):
             context['members'] = mailing_list.owners
             context['page_title'] = _('List Owners')
             context['form_action'] = _('Add Owner')
-            context['role'] = 'owner'
         elif role == 'moderators':
             context['members'] = mailing_list.moderators
             context['page_title'] = _('List Moderators')
             context['empty_error'] = _('List has no Moderators')
             context['form_action'] = _('Add Moderator')
-            context['role'] = 'moderator'
     return render(request, 'postorius/lists/members.html', context)
 
 
@@ -696,23 +694,26 @@ def list_settings(request, list_id=None, visible_section=None,
 @list_owner_required
 def remove_role(request, list_id=None, role=None, address=None,
                 template='postorius/lists/confirm_remove_role.html'):
-    """Removes a list moderator or owner.
-    """
+    """Removes a list moderator or owner."""
     try:
         the_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
 
-    redirect_on_success = redirect('list_members', the_list.list_id, '{}s'.format(role))
+    redirect_on_success = redirect('list_members', the_list.list_id, role)
+    role_singular = role.rstrip('s')
 
-    if role == 'owner':
-        owners = the_list.owners
-        if address not in owners:
-            messages.error(request, _('The user %s is not an owner') % address)
-            return redirect('list_members', the_list.list_id, 'owners')
-        if len(owners) == 1:
+    roster = getattr(the_list, role)
+    if address not in roster:
+        messages.error(request,
+            _('The user %(email)s is not in the %(role)s group',
+            email=address, role=role))
+        return redirect('list_members', the_list.list_id, role)
+
+    if role == 'owners':
+        if len(roster) == 1:
             messages.error(request, _('Removing the last owner is impossible'))
-            return redirect('list_members', the_list.list_id, 'owners')
+            return redirect('list_members', the_list.list_id, role)
         # the user may not have a other_emails property if it's a superuser
         user_addresses = set([request.user.email]) | \
             set(getattr(request.user, 'other_emails', []))
@@ -720,21 +721,18 @@ def remove_role(request, list_id=None, role=None, address=None,
             # The user is removing themselves, redirect to the list info page
             # because they won't have access to the members page anyway.
             redirect_on_success = redirect('list_summary', the_list.list_id)
-    elif role == 'moderator':
-        if address not in the_list.moderators:
-            messages.error(request, _('The user %s is not a moderator') % address)
-            return redirect('list_members', the_list.list_id, 'moderators')
+
     if request.method == 'POST':
         try:
-            the_list.remove_role(role, address)
+            the_list.remove_role(role_singular, address)
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
-            messages.error(request, _('The %(role)s could not be removed: %(msg)s') %
-                           {'role':role, 'msg': e.msg})
-            return redirect('list_members', the_list.list_id, '{}s'.format(role))
-        messages.success(request, _('The user %(address)s has been removed as %(role)s.') %
-                         {'address': address, 'role': role})
+            messages.error(request, _('The user could not be removed: %(msg)s',
+                           msg=e.msg))
+            return redirect('list_members', the_list.list_id, role)
+        messages.success(request, _('The user %(address)s has been removed from the %(role)s group.',
+                         address=address, role=role))
         return redirect_on_success
     return render_to_response(template,
                               {'role': role, 'address': address,
@@ -796,7 +794,7 @@ def remove_all_subscribers(request, list_id):
             except Exception as e:
                 messages.error(request, e)
         return render_to_response('postorius/lists/confirm_removeall_subscribers.html',
-                                 {'list_id': mlist.list_id},
+                                 {'list': mlist},
                                  context_instance=RequestContext(request))
     except MailmanApiError:
         return utils.render_api_error(request)

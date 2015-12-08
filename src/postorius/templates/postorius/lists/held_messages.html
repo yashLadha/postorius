@@ -7,11 +7,10 @@
 {% endblock %}
 
 {% block main %}
-  {% list_nav 'list_held_messages' 'Held Messages' %}
-  <div class="panel panel-default">
-    <div class="panel-heading"><h1 class="panel-title">{% trans 'Held Messages' %}</h1></div>
-    <div class="panel-body">
-      {% if held_messages|length > 0 %}
+
+    {% list_nav 'list_held_messages' 'Held Messages' %}
+
+    {% if held_messages|length > 0 %}
         <form method="post">
           {% if form.choices.errors %}
             {% for error in form.choices.errors %}
@@ -84,11 +83,9 @@
           </div>
         </form>
         {% include 'postorius/_pagination.html' with page=held_messages %}
-      {% else %}
+    {% else %}
         <p>{% trans 'There are currently no held messages.' %}</p>
-      {% endif %}
-    </div>
-  </div>
+    {% endif %}
 {% endblock %}
 
 {% block additionaljs %}

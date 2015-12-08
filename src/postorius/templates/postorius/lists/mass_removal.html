@@ -4,31 +4,32 @@
 {% load bootstrap_tags %}
 
 {% block main %}
+
     {% list_nav 'mass_removal' 'Mass Removal' %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">{% trans 'Mass Removal' %}</h1></div>
-        <div class="panel-body">
-            <form action="{% url 'mass_removal' list.list_id %}" method="post" class="form-horizontal">
-                {% csrf_token %}
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-                <div class="form-group">
-                    {% if form.emails.errors %}
-                        <div class="alert alert-danger">
-                            {{ form.emails.errors }}
-                        </div>
-                    {% endif %}
-                    <label class="control-label col-md-2" for="{{ form.emails.id_for_label }}">{{ form.emails.label }}:</label>
-                    <div class="col-md-8">{{ form.emails|add_form_control }}</div>
+
+    <form action="{% url 'mass_removal' list.list_id %}" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+        <div class="form-group {% if form.emails.errors %}has-error{% endif %}">
+            {% if form.emails.errors %}
+                <div class="alert alert-danger">
+                    {{ form.emails.errors }}
                 </div>
-                <hr />
-                <button class="col-md-offset-2 btn btn-warning" type="submit">{% trans 'Unsubscribe users' %}</button>
-                <a href="{% url 'unsubscribe_all' list.list_id %}" class="btn btn-danger col-md-offset-5">{% trans 'Unsubscribe All' %}</a>
-            </form>
+            {% endif %}
+            <label class="control-label col-md-2" for="{{ form.emails.id_for_label }}">{{ form.emails.label }}</label>
+            <div class="col-md-8">{{ form.emails|add_form_control }}</div>
         </div>
-    </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-8">
+                <button class="btn btn-warning" type="submit">{% trans 'Unsubscribe users' %}</button>
+                <a href="{% url 'unsubscribe_all' list.list_id %}" class="btn btn-danger pull-right">
+                    {% trans 'Unsubscribe All' %}</a>
+            </div>
+        </div>
+    </form>
 
 {% endblock main %}

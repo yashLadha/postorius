@@ -24,22 +24,18 @@ register = template.Library()
 
 
 @register.inclusion_tag('postorius/menu/list_nav.html', takes_context=True)
-def list_nav(context, current, title=None):
-    if title is None:
-        title = ''
+def list_nav(context, current, title='', subtitle=''):
     return dict(list=context['list'],
                 current=current,
                 user=context['request'].user,
-                title=title)
+                title=title, subtitle=subtitle)
 
 
 @register.inclusion_tag('postorius/menu/user_nav.html', takes_context=True)
-def user_nav(context, current, title=None):
-    if title is None:
-        title = ''
+def user_nav(context, current, title='', subtitle=''):
     return dict(current=current,
                 user=context['request'].user,
-                title=title)
+                title=title, subtitle=subtitle)
 
 
 @register.simple_tag

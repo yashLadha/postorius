@@ -1,5 +1,14 @@
 {% load i18n %}
 {% load nav_helpers %}
+
+<ol class="breadcrumb">
+    <li><a href="{% url 'list_index' %}">{% trans 'Lists' %}</a></li>
+    <li><a href="{% url 'list_summary' list.list_id %}">{{ list.fqdn_listname }}</a></li>
+    {% if title %}
+    <li class="active">{{ title }}</li>
+    {% endif %}
+</ol>
+
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -9,7 +18,6 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand">{{ list.fqdn_listname }}</a>
         </div>
         <div class="collapse navbar-collapse" id="settings-nav">
             {% if user.is_authenticated  %}
@@ -41,3 +49,11 @@
         </div>
     </div>
 </nav>
+
+<div class="page-header">
+    {% if current == 'list_summary' %}
+        <h1>{{ list.display_name }} <small>{{ list.fqdn_listname }}</small></h1>
+    {% else %}
+        <h2>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h2>
+    {% endif %}
+</div>

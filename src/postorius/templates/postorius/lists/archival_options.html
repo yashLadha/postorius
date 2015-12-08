@@ -8,23 +8,21 @@
 {% load nav_helpers %}
 
 {% block main %}
-    {% if message %}<p class="alert">{{ message }}</p>{% endif %}
+
     {% list_nav 'list_archival_options' 'Archivers' %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">{% trans 'Archivers' %}</h1></div>
-        <div class="panel-body">
-            <form action="{% url 'list_archival_options' list.list_id %}" method="POST">
-                {% csrf_token %}
-                {% for choice in form.archivers %}
-                    <div class="col-md-offset-2 checkbox">
-                        <label>
-                            {{ choice }} {{ choice.label }}
-                        </label>
-                    </div>
-                {% endfor %}
-                <button class="col-md-offset-2 btn btn-primary" type="submit">{% trans 'Save Archivers' %}</button>
-            </form>
+
+    <form action="{% url 'list_archival_options' list.list_id %}" method="POST">
+        {% csrf_token %}
+        {% for choice in form.archivers %}
+            <div class="checkbox">
+                <label>
+                    {{ choice }} {{ choice.label }}
+                </label>
+            </div>
+        {% endfor %}
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">{% trans 'Save Archivers' %}</button>
         </div>
-    </div>
+    </form>
 
 {% endblock %}

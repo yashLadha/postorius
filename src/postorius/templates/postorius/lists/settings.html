@@ -8,47 +8,47 @@
 {% endblock %}
 
 {% block main %}
-    {% list_nav 'list_settings' 'Settings' %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">{% trans 'List Settings' %}</h1></div>
-        <div class="panel-body">
-            <ul class="nav nav-tabs">
-                {% for section in section_names %}
-                <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}">{{ section.1 }}</a></li>
-                {% endfor %}
-            </ul>
-            <br>
-            <form action="{% url 'list_settings' list_id=list.list_id visible_section=visible_section %}" method="post" class="form-horizontal list_settings">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="form-group">
-                        {% if field.errors %}
-                            <div class="alert alert-danger">{{ field.errors }}</div>
-                        {% endif %}
-                        <label class="control-label col-md-2" for="{{ field.id_for_label }}">
-                            {{ field.label }}:
+
+    {% list_nav 'list_settings' 'List Settings' %}
+
+    <ul class="nav nav-tabs">
+        {% for section in section_names %}
+        <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}">{{ section.1 }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <form action="{% url 'list_settings' list_id=list.list_id visible_section=visible_section %}" method="post" class="form-horizontal list_settings">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group {% if field.errors %}has-errors{% endif %}">
+                {% if field.errors %}
+                    <div class="alert alert-danger">{{ field.errors }}</div>
+                {% endif %}
+                <label class="control-label col-md-3" for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+                <div class="col-md-8">
+                {% if field|fieldtype == 'RadioSelect' %}
+                    {% for choice in field %}
+                        <label class="radio-inline">
+                            {{ choice.tag }}
+                            {{ choice.choice_label }}
                         </label>
-                        <div class="col-md-8">
-                        {% if field|fieldtype == 'RadioSelect' %}
-                            {% for choice in field %}
-                                <label class="radio-inline">
-                                    {{ choice.tag }}
-                                    {{ choice.choice_label }}
-                                </label>
-                            {% endfor %}
-                        {% else %}
-                            {{ field|add_form_control }}
-                        {% endif %}
-                        </div>
-                        <div class="row">
-                        <span id="help-{{ field.label }}" class="col-md-offset-2 col-md-8 help-block">
-                            {{ field.help_text }}
-                        </span>
-                            </div>
-                    </div>
-                {% endfor %}
-                <button class="col-md-offset-2 btn btn-primary btn-success" type="submit">{% trans 'Save changes' %}</button>
-            </form>
+                    {% endfor %}
+                {% else %}
+                    {{ field|add_form_control }}
+                {% endif %}
+                </div>
+                <p id="help-{{ field.id_for_label }}" class="col-md-offset-3 col-md-8 help-block">
+                    {{ field.help_text }}
+                </p>
+            </div>
+        {% endfor %}
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-8">
+                <button class="btn btn-primary" type="submit">{% trans 'Save changes' %}</button>
+            </div>
         </div>
-    </div>
+    </form>
+
 {% endblock %}

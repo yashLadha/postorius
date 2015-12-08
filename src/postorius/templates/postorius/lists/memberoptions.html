@@ -8,53 +8,47 @@
 {% endblock %}
 
 {% block main %}
-    {% list_nav 'list_members' 'Member Options' %}
+
+    {% list_nav 'list_members' 'Member options' mm_member.email %}
+
     {% if not user.is_superuser and not user.is_list_owner %}
         <h1>{% trans 'No Preferences Available' %}</h1>
         <p>{% trans 'You are not the owner for this list' %}</p>
     {% else %}
-        <div class="panel panel-default">
-            <div class="panel-heading"><h1 class="panel-title">{% trans 'Preferences for Member' %} {{ mm_member.email }}</h1></div>
-            <div class="panel-body">
-                <form  action="" method="post" >
-                    {% csrf_token %}
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped" border="2">
-                            <thead>
-                                <tr>
-                                    <th class="col-md-10">{% trans 'Preference' %}</th>
-                                    <th class="col-md-2">{% trans 'Setting' %} </th>
-                                </tr>
-                            </thead >
-                           {% for field in settingsform %}
-                           <tr>
-                                <td>
-                                    <p>{{ field.label_tag }}</p>
-                                    <span id="help-{{ field.label }}" class="help-block">
-                                        {{ field.help_text }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    {% if field|fieldtype == 'RadioSelect' %}
-                                        {% for choice in field %}
-                                            <label class="radio-inline">
-                                                {{ choice.tag }}
-                                                {{ choice.choice_label }}
-                                            </label>
-                                        {% endfor %}
-                                    {% else %}
-                                        {{ field|add_form_control }}
-                                    {% endif %}
-                                </td>
-                           </tr>
-                           {% endfor %}
-                        </table>
+        <form action="{% url 'list_member_options' list.list_id mm_member.email %}" method="post" class="form-horizontal">
+            {% csrf_token %}
+            {% for field in settingsform %}
+                <div class="form-group {% if field.errors %}has-errors{% endif %}">
+                    {% if field.errors %}
+                        <div class="alert alert-danger">{{ field.errors }}</div>
+                    {% endif %}
+                    <label class="control-label col-md-3" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    <div class="col-md-8">
+                    {% if field|fieldtype == 'RadioSelect' %}
+                        {% for choice in field %}
+                            <label class="radio-inline">
+                                {{ choice.tag }}
+                                {{ choice.choice_label }}
+                            </label>
+                        {% endfor %}
+                        </td>
+                    {% else %}
+                        {{ field|add_form_control }}
+                    {% endif %}
                     </div>
-                    <div class="text-center">
-                        <button class="btn btn-success" type="submit">{% trans 'Save' %}</button>
-                    </div>
-                </form>
+                    <p id="help-{{ field.id_for_label }}" class="col-md-offset-3 col-md-8 help-block">
+                        {{ field.help_text }}
+                    </p>
+                </div>
+           {% endfor %}
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-8">
+                    <button class="btn btn-primary" type="submit">{% trans 'Save changes' %}</button>
+                </div>
             </div>
-        </div>
+        </form>
+
     {% endif %}
 {% endblock main %}

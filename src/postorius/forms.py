@@ -256,7 +256,7 @@ class MessageAcceptanceForm(forms.Form):
             'in the process.'))
     default_member_action = forms.ChoiceField(
         widget=forms.RadioSelect(),
-        label=_('Default action to take when a member posts to the list:'),
+        label=_('Default action to take when a member posts to the list'),
         error_messages={
             'required': _("Please choose a default member action.")},
         required=True,
@@ -275,7 +275,7 @@ class MessageAcceptanceForm(forms.Form):
     default_nonmember_action = forms.ChoiceField(
         widget=forms.RadioSelect(),
         label=_('Default action to take when a non-member posts to the'
-                'list:'),
+                'list'),
         error_messages={
             'required': _("Please choose a default non-member action.")},
         required=True,
