@@ -100,7 +100,7 @@ urlpatterns = patterns(
         name='user_subscriptions'),
     url(r'^accounts/per-address-preferences/$',
         UserAddressPreferencesView.as_view(), name='user_address_preferences'),
-    url(r'^accounts/per-subscription-preferences/$',
+    url(r'^accounts/per-subscription-preferences/$', # if this URL changes, update Mailman's Member.options_url
         UserSubscriptionPreferencesView.as_view(
         ), name='user_subscription_preferences'),
     url(r'^accounts/mailmansettings/$',

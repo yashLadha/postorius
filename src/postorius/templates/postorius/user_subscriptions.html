@@ -8,33 +8,29 @@
 {% endblock %}
 
 {% block main %}
-    {% user_nav 'subscriptions' %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">{% trans 'List Subscriptions' %}</h1></div>
-        <div class="panel-body">
-            <p>{% trans 'You are subscribed to the following mailing lists' %}:</p>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>{% trans 'List Name' %}</th>
-                            <th>{% trans 'Subscription Address' %}</th>
-                            <th>{% trans 'Role' %}</th>
-                            <th>{% trans 'Delivery Mode' %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for subscription in memberships %}
-                            <tr>
-                                <td>{{ subscription.mlist }}</td>
-                                <td>{{ subscription.address }}</td>
-                                <td>{{ subscription.role }}</td>
-                                <td>{{ subscription.preferences.delivery_mode }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+
+    {% user_nav 'subscriptions' 'List Subscriptions' %}
+
+    <p>{% trans 'You are subscribed to the following mailing lists:' %}</p>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>{% trans 'List Name' %}</th>
+                    <th>{% trans 'Subscription Address' %}</th>
+                    <th>{% trans 'Delivery Mode' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subscription in memberships %}
+                    <tr>
+                        <td>{{ subscription.list_id }}</td>
+                        <td>{{ subscription.address }}</td>
+                        <td>{{ subscription.preferences.delivery_mode }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
 {% endblock main %}

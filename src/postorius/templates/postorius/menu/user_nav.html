@@ -1,6 +1,13 @@
 {% load i18n %}
 {% load nav_helpers %}
 
+<ol class="breadcrumb">
+    <li><a href="{% url 'user_profile' %}">{% trans 'Profile' %}</a></li>
+    {% if title %}
+    <li class="active">{{ title }}</li>
+    {% endif %}
+</ol>
+
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -10,7 +17,6 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand">{% trans 'Settings' %}</a>
         </div>
         <div class="collapse navbar-collapse" id="settings-nav">
             <ul class="nav navbar-nav">
@@ -23,3 +29,10 @@
     </div>
 </nav>
 
+<div class="page-header">
+    {% if current == 'user_profile' %}
+        <h1>{% trans 'User Profile' %} <small>{{ user }}</small></h1>
+    {% else %}
+        <h2>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h2>
+    {% endif %}
+</div>

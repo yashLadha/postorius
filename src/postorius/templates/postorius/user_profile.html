@@ -7,21 +7,20 @@
 {% endblock %}
 
 {% block main %}
-    {% user_nav 'profile' %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">{% trans 'User Profile' %} - {{ user }}</h1></div>
-        <div class="panel-body">
-            <table class="table table-bordered table-striped">
-                <tbody>
-                    <tr>
-                        <td>{% trans 'Mailman display name' %}</td>
-                        <td>{{ mm_user.display_name }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans 'Username' %}</td>
-                        <td>{{ user.username }}</td>
-                    </tr>
-	<tr>
+
+    {% user_nav 'profile' 'User Profile' %}
+
+    <table class="table table-bordered table-striped">
+        <tbody>
+            <tr>
+                <td>{% trans 'Mailman display name' %}</td>
+                <td>{{ mm_user.display_name }}</td>
+            </tr>
+            <tr>
+                <td>{% trans 'Username' %}</td>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
                 <td>{% trans 'Main email' %}</td>
                 <td>{{ user.email}}</td>
             </tr>
@@ -33,8 +32,7 @@
                     {% endfor %}
                 </ul></td>
             </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+        </tbody>
+    </table>
+
 {% endblock main %}

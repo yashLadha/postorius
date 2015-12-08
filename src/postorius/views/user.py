@@ -139,11 +139,11 @@ class UserSubscriptionPreferencesView(MailmanUserView):
     @method_decorator(login_required)
     def post(self, request):
         try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
+            subscriptions = self._get_memberships()
             formset_class = formset_factory(UserPreferences)
             formset = formset_class(request.POST)
             if formset.is_valid():
-                for form, subscription in zip(formset.forms, mm_user.subscriptions):
+                for form, subscription in zip(formset.forms, subscriptions):
                     preferences = subscription.preferences
                     for key in form.cleaned_data.keys():
                         preferences[key] = form.cleaned_data[key]
@@ -160,16 +160,11 @@ class UserSubscriptionPreferencesView(MailmanUserView):
     @method_decorator(login_required)
     def get(self, request):
         try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            subscriptions = mm_user.subscriptions
-            i = len(subscriptions)
-            member_subscriptions = []
-            for subscription in subscriptions:
-                if subscription.role == "member":
-                    member_subscriptions.append(subscription)
-            Mformset = formset_factory(UserPreferences, extra=i)
+            subscriptions = self._get_memberships()
+            Mformset = formset_factory(
+                UserPreferences, extra=len(subscriptions))
             formset = Mformset()
-            zipped_data = zip(formset.forms, member_subscriptions)
+            zipped_data = zip(formset.forms, subscriptions)
             for form, subscription in zipped_data:
                 form.initial = subscription.preferences
         except MailmanApiError:
@@ -181,9 +176,7 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                 context_instance=RequestContext(request))
         return render_to_response(
             'postorius/user_subscription_preferences.html',
-            {'mm_user': mm_user,
-             'subscriptions': subscriptions,
-             'zipped_data': zipped_data,
+            {'zipped_data': zipped_data,
              'formset': formset},
             context_instance=RequestContext(request))
 

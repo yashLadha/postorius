@@ -9,66 +9,64 @@
 {% endblock %}
 
 {% block main %}
-    {% user_nav 'settings' %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">Subscription Settings</h1></div>
-        <div class="panel-body">
-            <ul class="nav nav-tabs">
-                <li><a href="{% url 'user_mailmansettings' %}">{% trans 'Global Mailman Preferences' %}</a></li>
-                <li class="active"><a href="#">{% trans 'Address Based Preferences' %}</a></li>
-                <li><a href="{% url 'user_subscription_preferences' %}">{% trans 'Subscription Based Preferences' %}</a></li>
-            </ul>
-            {% if nolists %}
-                <div>
-                    <h1>{% trans 'No Preferences Available' %}</h1>
-                </div>
-                <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
-            {% else %}
-                <form action="{% url 'user_address_preferences' %}" method="post" id="address_formset">
-                    {% csrf_token %}
-                    {{ formset.management_form }}
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
-                            {% for form,address in zipped_data %}
-                                {% if forloop.first %}
-                                    <thead>
-                                        <tr>
-                                            <th>{% trans 'Address' %}</th>
-                                            {% for field in form.visible_fields %}
-                                                <th>
-                                                    <label for="{{ field.id_for_label }}"><a data-toggle="tooltip" title="{{ field.help_text }}">{{ field.label }}</a></label>
-                                                </th>
-                                            {% endfor %}
-                                        </tr >
-                                    </thead >
-                                {% endif %}
+
+    {% user_nav 'settings' 'Subscription Settings' %}
+
+    <ul class="nav nav-tabs">
+        <li><a href="{% url 'user_mailmansettings' %}">{% trans 'Global Mailman Preferences' %}</a></li>
+        <li class="active"><a href="#">{% trans 'Address Based Preferences' %}</a></li>
+        <li><a href="{% url 'user_subscription_preferences' %}">{% trans 'Subscription Based Preferences' %}</a></li>
+    </ul>
+
+    {% if nolists %}
+        <h2>{% trans 'No Preferences Available' %}</h2>
+        <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
+    {% else %}
+        <p>{% trans 'Each email address can have specific Mailman preferences.' %}</p>
+        <form action="{% url 'user_address_preferences' %}" method="post" id="address_formset">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    {% for form,address in zipped_data %}
+                        {% if forloop.first %}
+                            <thead>
                                 <tr>
-                                    <td>{{ address }}</td>
-                                        {% for field in form %}
-                                        {% if field|fieldtype == 'RadioSelect' %}
-                                            <td class="text-center">
-                                                {% for choice in field %}
-                                                    <label class="radio-inline">
-                                                        {{ choice.tag }}
-                                                        {{ choice.choice_label }}
-                                                    </label>
-                                                {% endfor %}
-                                            </td>
-                                        {% else %}
-                                            <td>{{ field|add_form_control }}</td>
-                                        {% endif %}
+                                    <th>{% trans 'Address' %}</th>
+                                    {% for field in form.visible_fields %}
+                                        <th>
+                                            <label for="{{ field.id_for_label }}"><a data-toggle="tooltip" title="{{ field.help_text }}">{{ field.label }}</a></label>
+                                        </th>
                                     {% endfor %}
-                                </tr>
+                                </tr >
+                            </thead >
+                        {% endif %}
+                        <tr>
+                            <td>{{ address }}</td>
+                                {% for field in form %}
+                                {% if field|fieldtype == 'RadioSelect' %}
+                                    <td class="text-center">
+                                        {% for choice in field %}
+                                            <label class="radio-inline">
+                                                {{ choice.tag }}
+                                                {{ choice.choice_label }}
+                                            </label>
+                                        {% endfor %}
+                                    </td>
+                                {% else %}
+                                    <td>{{ field|add_form_control }}</td>
+                                {% endif %}
                             {% endfor %}
-                        </table>
-                    </div>
-                    <div class="text-center">
-                        <button class="btn btn-success" type="submit">{% trans 'Save' %}</button>
-                    </div>
-                </form>
-            {% endif %}
-        </div>
-    </div>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">{% trans 'Save' %}</button>
+            </div>
+        </form>
+    {% endif %}
+
 {% endblock main %}
 {% block additionaljs %}
 <script>

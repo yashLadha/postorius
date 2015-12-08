@@ -8,64 +8,55 @@
 {% endblock %}
 
 {% block main %}
-    {% user_nav 'settings' %}
-    <div class="panel panel-default">
-        <div class="panel-heading"><h1 class="panel-title">Subscription Settings</h1></div>
-        <div class="panel-body">
-            <ul class="nav nav-tabs">
-                <li class="active"><a>{% trans 'Global Mailman Preferences' %}</a></li>
-                <li><a href="{% url 'user_address_preferences' %}">{% trans 'Address Based Preferences' %}</a></li>
-                <li><a href="{% url 'user_subscription_preferences' %}">{% trans 'Subscription Based Preferences' %}</a></li>
-            </ul>
-            {% if not mm_user %}
-                <div>
-                    <h1>{% trans 'No Preferences Available' %}</h1>
-                </div>
-                <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
-            {% else %}
-                <form action="{% url 'user_mailmansettings' %}" method="post" >
-                    {% csrf_token %}
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>{% trans 'Preferences' %}</th>
-                                    <th class="text-center">{% trans 'Global' %}</th>
-                                </tr>
-                            </thead >
-                            {% for field in settingsform %}
-                                <tr>
-                                    <td>
-                                        <label for="{{ field.id_for_label }}"><a data-toggle="tooltip" title="{{ field.help_text }}">{{ field.label }}</a></label>
-                                    </td>
-                                    {% if field|fieldtype == 'RadioSelect' %}
-                                        <td class="text-center">
-                                            {% for choice in field %}
-                                                <label class="radio-inline">
-                                                    {{ choice.tag }}
-                                                    {{ choice.choice_label }}
-                                                </label>
-                                            {% endfor %}
-                                        </td>
-                                    {% else %}
-                                        <td><div class="col-md-offset-4 col-md-4">{{ field|add_form_control }}</div></td>
-                                    {% endif %}
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
-                    <div class="text-center">
-                        <button class="btn btn-success" type="submit">{% trans 'Save' %}</button>
-                    </div>
-                </form>
-            {% endif %}
+
+    {% user_nav 'settings' 'Subscription Settings' %}
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a>{% trans 'Global Mailman Preferences' %}</a></li>
+        <li><a href="{% url 'user_address_preferences' %}">{% trans 'Address Based Preferences' %}</a></li>
+        <li><a href="{% url 'user_subscription_preferences' %}">{% trans 'Subscription Based Preferences' %}</a></li>
+    </ul>
+
+    {% if not mm_user %}
+        <div>
+            <h1>{% trans 'No Preferences Available' %}</h1>
         </div>
-    </div>
+        <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
+    {% else %}
+        <form action="{% url 'user_mailmansettings' %}" method="post" class="form-horizontal">
+            {% csrf_token %}
+            {% for field in settingsform %}
+                <div class="form-group {% if field.errors %}has-errors{% endif %}">
+                    {% if field.errors %}
+                        <div class="alert alert-danger">{{ field.errors }}</div>
+                    {% endif %}
+                    <label class="control-label col-md-3" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    <div class="col-md-8">
+                    {% if field|fieldtype == 'RadioSelect' %}
+                        {% for choice in field %}
+                            <label class="radio-inline">
+                                {{ choice.tag }}
+                                {{ choice.choice_label }}
+                            </label>
+                        {% endfor %}
+                        </td>
+                    {% else %}
+                        {{ field|add_form_control }}
+                    {% endif %}
+                    </div>
+                    <p id="help-{{ field.id_for_label }}" class="col-md-offset-3 col-md-8 help-block">
+                        {{ field.help_text }}
+                    </p>
+                </div>
+            {% endfor %}
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-8">
+                    <button class="btn btn-primary" type="submit">{% trans 'Save changes' %}</button>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+
 {% endblock main %}
-{% block additionaljs %}
-<script>
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-</script>
-{% endblock %}

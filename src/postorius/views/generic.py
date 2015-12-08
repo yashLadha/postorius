@@ -101,15 +101,10 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
 
     def _get_memberships(self):
         memberships = []
-        if (self.mm_user):
-            for m in self.mm_user.subscriptions:
-                mlist = m.list_id
-                memberships.append(
-                    dict(
-                        mlist=mlist,
-                        role=m.role,
-                        preferences=m.preferences,
-                        address=m.address))
+        for m in self.mm_user.subscriptions:
+            if m.role != "member":
+                continue
+            memberships.append(m)
         return memberships
 
     def dispatch(self, request, *args, **kwargs):
