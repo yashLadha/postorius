@@ -348,59 +348,44 @@ class ListMassRemovalView(MailingListView):
         return redirect('mass_removal', self.mailing_list.list_id)
 
 
-class ListModerationView(MailingListView):
+def _perform_action(message_ids, action):
+    for message_id in message_ids:
+        action(message_id)
 
-    """Class for moderating held messages"""
-
-    @property
-    def _common_context(self):
-        return {
-            'list': self.mailing_list,
-            'count_options': [25, 50, 100, 200],
-            }
-
-    @staticmethod
-    def _perform_action(message_ids, action):
-        for message_id in message_ids:
-            action(message_id)
-
-    @method_decorator(login_required)
-    @method_decorator(list_moderator_required)
-    def get(self, request, *args, **kwargs):
-        held_messages = utils.paginate(
-            request, self.mailing_list.held,
-            count=request.GET.get('count', 20))
-        context = {
-            'held_messages': held_messages,
-            'form': MultipleChoiceForm(),
-            }
-        context.update(self._common_context)
-        return render(request, 'postorius/lists/held_messages.html', context)
-
-    @method_decorator(list_moderator_required)
-    def post(self, request, *args, **kwargs):
+@login_required
+@list_moderator_required
+def list_moderation(request, list_id):
+    mailing_list = utils.get_client().get_list(list_id)
+    if request.method == 'POST':
         form = MultipleChoiceForm(request.POST)
         if form.is_valid():
             message_ids = form.cleaned_data['choices']
             try:
                 if 'accept' in request.POST:
-                    ListModerationView._perform_action(message_ids, self.mailing_list.accept_message)
+                    _perform_action(message_ids, mailing_list.accept_message)
                     messages.success(request, _('The selected messages were accepted'))
                 elif 'reject' in request.POST:
-                    ListModerationView._perform_action(message_ids, self.mailing_list.reject_message)
+                    _perform_action(message_ids, mailing_list.reject_message)
                     messages.success(request, _('The selected messages were rejected'))
                 elif 'discard' in request.POST:
-                    ListModerationView._perform_action(message_ids, self.mailing_list.discard_message)
+                    _perform_action(message_ids, mailing_list.discard_message)
                     messages.success(request, _('The selected messages were discarded'))
             except MailmanApiError:
                 return utils.render_api_error(request)
             except HTTPError as e:
-                messages.error(request, e.msg)
-            else:
-                return redirect('list_held_messages', self.mailing_list.list_id)
-        context = {'form': form}
-        context.update(self._common_context)
-        return render(request, 'postorius/lists/held_messages.html', context)
+                messages.error(request, _('Message could not be found'))
+    else:
+        form = MultipleChoiceForm()
+    held_messages = utils.paginate(
+        request, mailing_list.held,
+        count=request.GET.get('count', 20))
+    context = {
+        'list': mailing_list,
+        'count_options': [25, 50, 100, 200],
+        'held_messages': held_messages,
+        'form': form,
+        }
+    return render(request, 'postorius/lists/held_messages.html', context)
 
 
 @login_required
