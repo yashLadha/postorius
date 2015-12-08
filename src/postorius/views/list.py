@@ -44,72 +44,66 @@ from postorius.views.generic import MailingListView
 logger = logging.getLogger(__name__)
 
 
-class ListMembersView(MailingListView):
-
-    """Display all members of a given list.
-    """
-
-    @property
-    def _common_context(self):
-        return {
-            'list': self.mailing_list,
-            'count_options': [25, 50, 100, 200],
-            }
-
-    @method_decorator(list_owner_required)
-    def post(self, request, list_id):
-        # FIXME: form usage is wrong here, they should be instantiated only
-        # once or the form errors will be erased.
-        if 'owner_email' in request.POST:
-            owner_form = NewOwnerForm(request.POST)
-            if owner_form.is_valid():
+"""Display all members of a given list.
+"""
+@login_required
+@list_owner_required
+def list_members_view(request, list_id, role=None):
+    if role not in ['owners', 'moderators', 'subscribers']:
+        return redirect('list_members', list_id, 'subscribers')
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+    if request.method == 'POST':
+        if role == 'subscribers':
+            form = MultipleChoiceForm(request.POST)
+            if form.is_valid():
+                members = form.cleaned_data['choices']
+                for member in members:
+                    mailing_list.unsubscribe(member)
+                messages.success(request, _('The selected members have been unsubscribed'))
+        else:
+            member_form = MemberForm(request.POST)
+            if member_form.is_valid():
                 try:
-                    self.mailing_list.add_owner(
-                        owner_form.cleaned_data['owner_email'])
-                    messages.success(
-                        request, _('%s has been added as list owner.'
-                                   % request.POST['owner_email']))
+                    if role == 'moderators':
+                        mailing_list.add_moderator(member_form.cleaned_data['email'])
+                        messages.success(
+                            request, _('%s has been added as list moderator.'
+                                       % member_form.cleaned_data['email']))
+                    elif role == 'owners':
+                        mailing_list.add_owner(member_form.cleaned_data['email'])
+                        messages.success(
+                            request, _('%s has been added as list owner.'
+                                % member_form.cleaned_data['email']))
                 except HTTPError as e:
                     messages.error(request, _(e.msg))
-        if 'moderator_email' in request.POST:
-            moderator_form = NewModeratorForm(request.POST)
-            if moderator_form.is_valid():
-                try:
-                    self.mailing_list.add_moderator(
-                        moderator_form.cleaned_data['moderator_email'])
-                    messages.success(
-                        request, _('%s has been added as list moderator.'
-                                   % request.POST['moderator_email']))
-                except HTTPError as e:
-                    messages.error(request, _(e.msg))
-        owner_form = NewOwnerForm()
-        moderator_form = NewModeratorForm()
-        members = utils.paginate(
-            request, self.mailing_list.get_member_page,
+    else:
+        form = MultipleChoiceForm()
+        member_form = MemberForm()
+    context = {
+        'list': mailing_list,
+    }
+    if role == 'subscribers':
+        context['members'] = utils.paginate(
+            request, mailing_list.get_member_page,
             count=request.GET.get('count', 25),
             paginator_class=utils.MailmanPaginator)
-        context = {
-            'owner_form': owner_form,
-            'moderator_form': moderator_form,
-            'members': members,
-            }
-        context.update(self._common_context)
-        return render(request, 'postorius/lists/members.html', context)
-
-    @method_decorator(login_required)
-    @method_decorator(list_owner_required)
-    def get(self, request, list_id, page=1):
-        members = utils.paginate(
-            request, self.mailing_list.get_member_page,
-            count=request.GET.get('count', 25),
-            paginator_class=utils.MailmanPaginator)
-        context = {
-            'owner_form': NewOwnerForm(),
-            'moderator_form': NewModeratorForm(),
-            'members': members,
-            }
-        context.update(self._common_context)
-        return render(request, 'postorius/lists/members.html', context)
+        context['page_title'] = _('List Subscribers')
+        context['empty_error'] = _('List has no Subscribers')
+        context['count_options'] = [25, 50, 100, 200]
+    else:
+        context['member_form'] = member_form 
+        if role == 'owners':
+            context['members'] = mailing_list.owners
+            context['page_title'] = _('List Owners')
+            context['form_action'] = _('Add Owner')
+            context['role'] = 'owner'
+        elif role == 'moderators':
+            context['members'] = mailing_list.moderators
+            context['page_title'] = _('List Moderators')
+            context['empty_error'] = _('List has no Moderators')
+            context['form_action'] = _('Add Moderator')
+            context['role'] = 'moderator'
+    return render(request, 'postorius/lists/members.html', context)
 
 
 class ListMemberOptionsView(MailingListView):
@@ -120,7 +114,7 @@ class ListMemberOptionsView(MailingListView):
         try:
             client = utils.get_client()
             mm_member = client.get_member(list_id, email)
-            mm_list = client.get_list(list_id)
+            mm_list = List.objects.get_or_404(fqdn_listname=list_id)
             preferences_form = UserPreferences(request.POST)
             if preferences_form.is_valid():
                 preferences = mm_member.preferences
@@ -152,7 +146,7 @@ class ListMemberOptionsView(MailingListView):
         try:
             client = utils.get_client()
             mm_member = client.get_member(list_id, email)
-            mm_list = client.get_list(list_id)
+            mm_list = List.objects.get_or_404(fqdn_listname=list_id)
             settingsform = UserPreferences(initial=mm_member.preferences)
         except MailmanApiError:
             return utils.render_api_error(request)
@@ -378,14 +372,14 @@ class ListModerationView(MailingListView):
             count=request.GET.get('count', 20))
         context = {
             'held_messages': held_messages,
-            'form': HeldMessagesModerationForm(),
+            'form': MultipleChoiceForm(),
             }
         context.update(self._common_context)
         return render(request, 'postorius/lists/held_messages.html', context)
 
     @method_decorator(list_moderator_required)
     def post(self, request, *args, **kwargs):
-        form = HeldMessagesModerationForm(request.POST)
+        form = MultipleChoiceForm(request.POST)
         if form.is_valid():
             message_ids = form.cleaned_data['choices']
             try:
@@ -416,8 +410,7 @@ def csv_view(request, list_id):
     """
     mm_lists = []
     try:
-        client = utils.get_client()
-        mm_lists = client.get_list(list_id)
+        mm_lists = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
 
@@ -617,7 +610,7 @@ def list_subscription_requests(request, list_id):
     """Shows a list of held messages.
     """
     try:
-        m_list = utils.get_client().get_list(list_id)
+        m_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
     return render_to_response('postorius/lists/subscription_requests.html',
@@ -642,7 +635,7 @@ def handle_subscription_request(request, list_id, request_id, action):
         'defer': _('The request has been defered.'),
     }
     try:
-        m_list = utils.get_client().get_list(list_id)
+        m_list = List.objects.get_or_404(fqdn_listname=list_id)
         # Moderate request and add feedback message to session.
         m_list.moderate_request(request_id, action)
         messages.success(request, confirmation_messages[action])
@@ -732,16 +725,16 @@ def remove_role(request, list_id=None, role=None, address=None,
     except MailmanApiError:
         return utils.render_api_error(request)
 
-    redirect_on_success = redirect('list_members', the_list.list_id)
+    redirect_on_success = redirect('list_members', the_list.list_id, '{}s'.format(role))
 
     if role == 'owner':
         owners = the_list.owners
         if address not in owners:
             messages.error(request, _('The user %s is not an owner') % address)
-            return redirect('list_members', the_list.list_id)
+            return redirect('list_members', the_list.list_id, 'owners')
         if len(owners) == 1:
             messages.error(request, _('Removing the last owner is impossible'))
-            return redirect('list_members', the_list.list_id)
+            return redirect('list_members', the_list.list_id, 'owners')
         # the user may not have a other_emails property if it's a superuser
         user_addresses = set([request.user.email]) | \
             set(getattr(request.user, 'other_emails', []))
@@ -752,7 +745,7 @@ def remove_role(request, list_id=None, role=None, address=None,
     elif role == 'moderator':
         if address not in the_list.moderators:
             messages.error(request, _('The user %s is not a moderator') % address)
-            return redirect('list_members', the_list.list_id)
+            return redirect('list_members', the_list.list_id, 'moderators')
     if request.method == 'POST':
         try:
             the_list.remove_role(role, address)
@@ -761,7 +754,7 @@ def remove_role(request, list_id=None, role=None, address=None,
         except HTTPError as e:
             messages.error(request, _('The %(role)s could not be removed: %(msg)s') %
                            {'role':role, 'msg': e.msg})
-            return redirect('list_members', the_list.list_id)
+            return redirect('list_members', the_list.list_id, '{}s'.format(role))
         messages.success(request, _('The user %(address)s has been removed as %(role)s.') %
                          {'address': address, 'role': role})
         return redirect_on_success
@@ -838,7 +831,7 @@ def list_archival_options(request, list_id):
     Activate or deactivate list archivers.
     """
     # Get the list and cache the archivers property.
-    m_list = utils.get_client().get_list(list_id)
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
     archivers = m_list.archivers
 
     # Process form submission.

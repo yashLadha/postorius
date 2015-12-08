@@ -75,7 +75,7 @@ class ListMembersAccessTest(TestCase):
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_if_not_logged_in(self):
-        url = reverse('list_members', args=('foo@example.com', ))
+        url = reverse('list_members', args=('foo@example.com', 'subscribers',))
         response = self.client.get(url)
         if "%40" not in url: # Django < 1.8
             url = quote(url)
@@ -88,28 +88,28 @@ class ListMembersAccessTest(TestCase):
     def test_page_not_accessible_for_unprivileged_users(self):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', )))
+                                           args=('foo@example.com', 'subscribers',)))
         self.assertEqual(response.status_code, 403)
 
     @MM_VCR.use_cassette('list_members_page.yaml')
     def test_not_accessible_for_moderator(self):
         self.client.login(username='testmoderator', password='testpass')
         response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', )))
+                                           args=('foo@example.com', 'subscribers',)))
         self.assertEqual(response.status_code, 403)
 
     @MM_VCR.use_cassette('list_members_page.yaml')
     def test_page_accessible_for_superuser(self):
         self.client.login(username='testsu', password='testpass')
         response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', )))
+                                           args=('foo@example.com', 'subscribers',)))
         self.assertEqual(response.status_code, 200)
 
     @MM_VCR.use_cassette('list_members_page.yaml')
     def test_page_accessible_for_owner(self):
         self.client.login(username='testowner', password='testpass')
         response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', )))
+                                           args=('foo@example.com', 'subscribers',)))
         self.assertEqual(response.status_code, 200)
 
 
@@ -141,8 +141,8 @@ class AddRemoveOwnerTest(TestCase):
     @MM_VCR.use_cassette('test_list_members_owner_add_remove.yaml')
     def test_add_remove_owner(self):
         self.client.post(
-            reverse('list_members', args=('foo@example.com', )),
-            {'owner_email': 'newowner@example.com'})
+            reverse('list_members', args=('foo@example.com', 'owners',)),
+            {'email': 'newowner@example.com'})
         self.assertTrue('newowner@example.com' in self.foo_list.owners)
         self.client.post(
             reverse('remove_role', args=('foo@example.com', 'owner',
@@ -157,8 +157,8 @@ class AddRemoveOwnerTest(TestCase):
         self.su.save()
         # It must still be allowed to create and remove owners
         self.client.post(
-            reverse('list_members', args=('foo@example.com', )),
-            {'owner_email': 'newowner@example.com'})
+            reverse('list_members', args=('foo@example.com', 'owners',)),
+            {'email': 'newowner@example.com'})
         self.assertTrue('newowner@example.com' in self.foo_list.owners)
         response = self.client.post(
             reverse('remove_role', args=('foo@example.com', 'owner',
@@ -219,8 +219,8 @@ class AddModeratorTest(TestCase):
         # login and post new moderator data to url
         self.client.login(username='su', password='pwd')
         self.client.post(
-            reverse('list_members', args=('foo@example.com', )),
-            {'moderator_email': 'newmod@example.com'})
+            reverse('list_members', args=('foo@example.com', 'moderators',)),
+            {'email': 'newmod@example.com'})
         moderators = self.foo_list.moderators
 
     @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')

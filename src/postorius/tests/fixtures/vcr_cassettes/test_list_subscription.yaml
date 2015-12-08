@@ -104,7 +104,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Open_list&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BOpen_list%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=open&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -177,7 +177,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Moderate_subs&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BModerate_subs%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=moderate&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -189,7 +189,7 @@ interactions:
       content-length: ['0']
     status: {code: 204, message: No Content}
 - request:
-    body: password=&display_name=&email=test%40example.com
+    body: display_name=&password=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -199,7 +199,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/712']
+      location: ['http://localhost:9001/3.0/users/823']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
@@ -207,7 +207,7 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
     method: !!python/unicode POST
-    uri: http://localhost:9001/3.0/users/712/addresses
+    uri: http://localhost:9001/3.0/users/823/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -246,9 +246,9 @@ interactions:
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/requests
   response:
     body: {string: !!python/unicode '{"entries": [{"display_name": "", "email": "fritz@example.org",
-        "http_etag": "\"3d1c95859c703bf3eabe0ee8bd8f0f26c798774e\"", "list_id": "moderate_subs.example.com",
-        "token": "7946b2dea66cf4c977638062e61fede9f846a570", "token_owner": "moderator",
-        "when": "2005-08-01T07:49:23"}], "http_etag": "\"8946d86966536d5b3353df3addf76381053e2a03\"",
+        "http_etag": "\"f5709f2b367e757f47ebc2368167ef2fdbb6ca59\"", "list_id": "moderate_subs.example.com",
+        "token": "703ee1a00c3f8bf1f703f4235a851e3051c2c90b", "token_owner": "moderator",
+        "when": "2005-08-01T07:49:23"}], "http_etag": "\"3b6475ea7a9c460c1239d7f3f9a8c7c9dd649095\"",
         "start": 0, "total_size": 1}'}
     headers:
       content-length: ['368']
@@ -260,7 +260,7 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
     method: !!python/unicode POST
-    uri: http://localhost:9001/3.0/lists/moderate_subs.example.com/requests/7946b2dea66cf4c977638062e61fede9f846a570
+    uri: http://localhost:9001/3.0/lists/moderate_subs.example.com/requests/703ee1a00c3f8bf1f703f4235a851e3051c2c90b
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -293,7 +293,7 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/users/712
+    uri: http://localhost:9001/3.0/users/823
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -404,7 +404,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Open_list&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BOpen_list%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=open&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -477,7 +477,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Moderate_subs&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BModerate_subs%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=moderate&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -489,7 +489,7 @@ interactions:
       content-length: ['0']
     status: {code: 204, message: No Content}
 - request:
-    body: password=&display_name=&email=test%40example.com
+    body: display_name=&password=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -499,7 +499,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/713']
+      location: ['http://localhost:9001/3.0/users/824']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
@@ -507,7 +507,7 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
     method: !!python/unicode POST
-    uri: http://localhost:9001/3.0/users/713/addresses
+    uri: http://localhost:9001/3.0/users/824/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -578,7 +578,7 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/users/713
+    uri: http://localhost:9001/3.0/users/824
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -689,7 +689,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Open_list&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BOpen_list%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=open&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -762,7 +762,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Moderate_subs&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BModerate_subs%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=moderate&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -774,7 +774,7 @@ interactions:
       content-length: ['0']
     status: {code: 204, message: No Content}
 - request:
-    body: password=&display_name=&email=test%40example.com
+    body: display_name=&password=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -784,7 +784,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/714']
+      location: ['http://localhost:9001/3.0/users/825']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
@@ -792,7 +792,7 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
     method: !!python/unicode POST
-    uri: http://localhost:9001/3.0/users/714/addresses
+    uri: http://localhost:9001/3.0/users/825/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -831,9 +831,9 @@ interactions:
     uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/requests
   response:
     body: {string: !!python/unicode '{"entries": [{"display_name": "", "email": "test@example.com",
-        "http_etag": "\"56a5943001f7b1382170bdd54bf1c76c34b18b06\"", "list_id": "moderate_subs.example.com",
-        "token": "f983ffd56bfabec80fb701b991ce867f16612133", "token_owner": "moderator",
-        "when": "2005-08-01T07:49:23"}], "http_etag": "\"1a78ce4c916cfea39c07335b6c9aaf474132727f\"",
+        "http_etag": "\"4aa789d66b4f9721377078e051f99b8c12db7907\"", "list_id": "moderate_subs.example.com",
+        "token": "42f39b8dfac96f4112a45039a80eee3395e7fcb9", "token_owner": "moderator",
+        "when": "2005-08-01T07:49:23"}], "http_etag": "\"5e38e151250be9f6c28b82ddd0f2e360a45eefd9\"",
         "start": 0, "total_size": 1}'}
     headers:
       content-length: ['367']
@@ -845,7 +845,7 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
     method: !!python/unicode POST
-    uri: http://localhost:9001/3.0/lists/moderate_subs.example.com/requests/f983ffd56bfabec80fb701b991ce867f16612133
+    uri: http://localhost:9001/3.0/lists/moderate_subs.example.com/requests/42f39b8dfac96f4112a45039a80eee3395e7fcb9
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -878,7 +878,7 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/users/714
+    uri: http://localhost:9001/3.0/users/825
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -989,7 +989,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Open_list&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BOpen_list%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=open&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -1062,7 +1062,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Moderate_subs&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BModerate_subs%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=moderate&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -1074,7 +1074,7 @@ interactions:
       content-length: ['0']
     status: {code: 204, message: No Content}
 - request:
-    body: password=&display_name=&email=test%40example.com
+    body: display_name=&password=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -1084,7 +1084,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/715']
+      location: ['http://localhost:9001/3.0/users/826']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
@@ -1092,7 +1092,7 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
     method: !!python/unicode POST
-    uri: http://localhost:9001/3.0/users/715/addresses
+    uri: http://localhost:9001/3.0/users/826/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -1163,7 +1163,7 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/users/715
+    uri: http://localhost:9001/3.0/users/826
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -1274,7 +1274,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Open_list&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BOpen_list%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=open
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Open_list&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BOpen_list%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=open&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -1347,7 +1347,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: anonymous_list=False&allow_list_posts=True&advertised=True&description=&digest_size_threshold=30.0&autorespond_postings=none&send_welcome_message=True&autoresponse_postings_text=&autorespond_owner=none&include_rfc2369_headers=True&welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&collapse_alternatives=True&filter_content=False&first_strip_reply_to=False&reply_to_address=&display_name=Moderate_subs&posting_pipeline=default-posting-pipeline&reply_goes_to_list=no_munging&admin_notify_mchanges=False&autoresponse_grace_period=90d&autorespond_requests=none&autoresponse_request_text=&admin_immed_notify=True&subject_prefix=%5BModerate_subs%5D+&administrivia=True&convert_html_to_plaintext=False&archive_policy=public&default_nonmember_action=hold&default_member_action=defer&autoresponse_owner_text=&subscription_policy=moderate
+    body: welcome_message_uri=mailman%3A%2F%2F%2Fwelcome.txt&display_name=Moderate_subs&include_rfc2369_headers=True&collapse_alternatives=True&anonymous_list=False&default_member_action=defer&reply_goes_to_list=no_munging&autorespond_requests=none&posting_pipeline=default-posting-pipeline&advertised=True&autorespond_owner=none&admin_notify_mchanges=False&archive_policy=public&default_nonmember_action=hold&autoresponse_postings_text=&autoresponse_request_text=&filter_content=False&subject_prefix=%5BModerate_subs%5D+&digest_size_threshold=30.0&autorespond_postings=none&autoresponse_owner_text=&reply_to_address=&autoresponse_grace_period=90d&administrivia=True&subscription_policy=moderate&allow_list_posts=True&description=&send_welcome_message=True&admin_immed_notify=True&convert_html_to_plaintext=False&first_strip_reply_to=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -1359,7 +1359,7 @@ interactions:
       content-length: ['0']
     status: {code: 204, message: No Content}
 - request:
-    body: password=&display_name=&email=test%40example.com
+    body: display_name=&password=&email=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -1369,7 +1369,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/users/716']
+      location: ['http://localhost:9001/3.0/users/827']
     status: {code: 201, message: Created}
 - request:
     body: email=fritz%40example.org
@@ -1377,7 +1377,7 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
     method: !!python/unicode POST
-    uri: http://localhost:9001/3.0/users/716/addresses
+    uri: http://localhost:9001/3.0/users/827/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -1448,7 +1448,7 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/users/716
+    uri: http://localhost:9001/3.0/users/827
   response:
     body: {string: !!python/unicode ''}
     headers:

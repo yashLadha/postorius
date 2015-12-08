@@ -71,7 +71,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: subscriber=owner%40example.com&role=owner&list_id=foo.example.com
+    body: role=owner&list_id=foo.example.com&subscriber=owner%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -81,10 +81,10 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1062']
+      location: ['http://localhost:9001/3.0/members/1211']
     status: {code: 201, message: Created}
 - request:
-    body: subscriber=moderator%40example.com&role=moderator&list_id=foo.example.com
+    body: role=moderator&list_id=foo.example.com&subscriber=moderator%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -94,7 +94,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1063']
+      location: ['http://localhost:9001/3.0/members/1212']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -179,7 +179,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: subscriber=owner%40example.com&role=owner&list_id=foo.example.com
+    body: role=owner&list_id=foo.example.com&subscriber=owner%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -189,10 +189,10 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1064']
+      location: ['http://localhost:9001/3.0/members/1213']
     status: {code: 201, message: Created}
 - request:
-    body: subscriber=moderator%40example.com&role=moderator&list_id=foo.example.com
+    body: role=moderator&list_id=foo.example.com&subscriber=moderator%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -202,7 +202,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1065']
+      location: ['http://localhost:9001/3.0/members/1214']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -287,7 +287,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: subscriber=owner%40example.com&role=owner&list_id=foo.example.com
+    body: role=owner&list_id=foo.example.com&subscriber=owner%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -297,10 +297,10 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1066']
+      location: ['http://localhost:9001/3.0/members/1215']
     status: {code: 201, message: Created}
 - request:
-    body: subscriber=moderator%40example.com&role=moderator&list_id=foo.example.com
+    body: role=moderator&list_id=foo.example.com&subscriber=moderator%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -310,7 +310,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1067']
+      location: ['http://localhost:9001/3.0/members/1216']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -395,7 +395,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: subscriber=owner%40example.com&role=owner&list_id=foo.example.com
+    body: role=owner&list_id=foo.example.com&subscriber=owner%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -405,10 +405,10 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1068']
+      location: ['http://localhost:9001/3.0/members/1217']
     status: {code: 201, message: Created}
 - request:
-    body: subscriber=moderator%40example.com&role=moderator&list_id=foo.example.com
+    body: role=moderator&list_id=foo.example.com&subscriber=moderator%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -418,7 +418,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1069']
+      location: ['http://localhost:9001/3.0/members/1218']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -455,30 +455,13 @@ interactions:
     uri: http://localhost:9001/3.0/lists/foo.example.com/roster/owner
   response:
     body: {string: !!python/unicode '{"entries": [{"address": "http://localhost:9001/3.0/addresses/owner@example.com",
-        "delivery_mode": "regular", "email": "owner@example.com", "http_etag": "\"2e2caefd97aec00836f21b3ba6233dbde0652443\"",
-        "list_id": "foo.example.com", "member_id": 1068, "role": "owner", "self_link":
-        "http://localhost:9001/3.0/members/1068", "user": "http://localhost:9001/3.0/users/721"}],
-        "http_etag": "\"b7bac46940cd4396c235766b4e0965a5565567e4\"", "start": 0, "total_size":
+        "delivery_mode": "regular", "email": "owner@example.com", "http_etag": "\"1add52760423b1948a511cd6eca07ad20f748dca\"",
+        "list_id": "foo.example.com", "member_id": 1217, "role": "owner", "self_link":
+        "http://localhost:9001/3.0/members/1217", "user": "http://localhost:9001/3.0/users/832"}],
+        "http_etag": "\"67eeb0135bc4bce4705d422e6ace819d75b4a044\"", "start": 0, "total_size":
         1}'}
     headers:
       content-length: ['460']
-      content-type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
-    uri: http://localhost:9001/3.0/lists/foo.example.com/roster/moderator
-  response:
-    body: {string: !!python/unicode '{"entries": [{"address": "http://localhost:9001/3.0/addresses/moderator@example.com",
-        "delivery_mode": "regular", "email": "moderator@example.com", "http_etag":
-        "\"9a9d1568f1cca82aceb8ac008100e82b50b53a2b\"", "list_id": "foo.example.com",
-        "member_id": 1069, "role": "moderator", "self_link": "http://localhost:9001/3.0/members/1069",
-        "user": "http://localhost:9001/3.0/users/722"}], "http_etag": "\"fd63413c7ef0962da0a1b1727d5aa2597f5583a6\"",
-        "start": 0, "total_size": 1}'}
-    headers:
-      content-length: ['472']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
@@ -564,7 +547,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: subscriber=owner%40example.com&role=owner&list_id=foo.example.com
+    body: role=owner&list_id=foo.example.com&subscriber=owner%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -574,10 +557,10 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1070']
+      location: ['http://localhost:9001/3.0/members/1219']
     status: {code: 201, message: Created}
 - request:
-    body: subscriber=moderator%40example.com&role=moderator&list_id=foo.example.com
+    body: role=moderator&list_id=foo.example.com&subscriber=moderator%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
@@ -587,23 +570,8 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/1071']
+      location: ['http://localhost:9001/3.0/members/1220']
     status: {code: 201, message: Created}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
-    uri: http://localhost:9001/3.0/lists/foo@example.com
-  response:
-    body: {string: !!python/unicode '{"display_name": "Foo", "fqdn_listname": "foo@example.com",
-        "http_etag": "\"698a819bbb6b902096a8c5543cc7fac2328960d5\"", "list_id": "foo.example.com",
-        "list_name": "foo", "mail_host": "example.com", "member_count": 0, "self_link":
-        "http://localhost:9001/3.0/lists/foo.example.com", "volume": 1}'}
-    headers:
-      content-length: ['294']
-      content-type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
 - request:
     body: null
     headers:
