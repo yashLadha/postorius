@@ -137,9 +137,10 @@ class AddRemoveOwnerTest(TestCase):
 
     @MM_VCR.use_cassette('test_list_members_owner_add_remove.yaml')
     def test_add_remove_owner(self):
-        self.client.post(
-            reverse('list_members', args=('foo@example.com', 'owners',)),
+        response = self.client.post(
+            reverse('list_members', args=('foo@example.com', 'owner',)),
             {'email': 'newowner@example.com'})
+        self.assertEqual(response.status_code, 200)
         self.assertTrue('newowner@example.com' in self.foo_list.owners)
         self.client.post(
             reverse('remove_role', args=('foo@example.com', 'owner',
@@ -153,9 +154,10 @@ class AddRemoveOwnerTest(TestCase):
         self.su.is_superuser = False
         self.su.save()
         # It must still be allowed to create and remove owners
-        self.client.post(
-            reverse('list_members', args=('foo@example.com', 'owners',)),
+        response = self.client.post(
+            reverse('list_members', args=('foo@example.com', 'owner',)),
             {'email': 'newowner@example.com'})
+        self.assertEqual(response.status_code, 200)
         self.assertTrue('newowner@example.com' in self.foo_list.owners)
         response = self.client.post(
             reverse('remove_role', args=('foo@example.com', 'owner',
@@ -214,9 +216,10 @@ class AddModeratorTest(TestCase):
             'su', 'su@example.com', 'pwd')
         # login and post new moderator data to url
         self.client.login(username='su', password='pwd')
-        self.client.post(
-            reverse('list_members', args=('foo@example.com', 'moderators',)),
+        response = self.client.post(
+            reverse('list_members', args=('foo@example.com', 'moderator',)),
             {'email': 'newmod@example.com'})
+        self.assertEqual(response.status_code, 200)
         moderators = self.foo_list.moderators
 
     @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')

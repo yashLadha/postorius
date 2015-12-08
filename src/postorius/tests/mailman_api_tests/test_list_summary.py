@@ -70,8 +70,7 @@ class ListSummaryPageTest(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['list'].fqdn_listname,
                          'foo@example.com')
-        self.assertTrue('<h1>' in response.content)
-        self.assertTrue('<form ' not in response.content)
+        self.assertNotContains(response, '<form ')
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_in(self):
@@ -80,8 +79,8 @@ class ListSummaryPageTest(SimpleTestCase):
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('<form ' in response.content)
-        self.assertTrue('Subscribe' in response.content)
+        self.assertContains(response, '<form ')
+        self.assertContains(response, 'Subscribe')
 
     @MM_VCR.use_cassette('test_change_subscription-2.yaml')
     def test_list_summary_shows_all_addresses(self):
