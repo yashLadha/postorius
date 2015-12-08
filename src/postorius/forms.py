@@ -54,12 +54,16 @@ class DomainNew(FieldsetForm):
         label=_('Mail Host'),
         error_messages={'required': _('Please enter a domain name'),
                         'invalid': _('Please enter a valid domain name.')},
-        required=True)
+        required=True,
+        help_text=_('Example: domain.org'),
+        )
     web_host = forms.CharField(
         label=_('Web Host'),
         error_messages={'required': _('Please enter a host name'),
                         'invalid': _('Please enter a valid host name.')},
-        required=True)
+        required=True,
+        help_text=_('Example: http://www.domain.org'),
+        )
     description = forms.CharField(
         label=_('Description'),
         required=False)

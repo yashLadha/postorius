@@ -7,38 +7,31 @@
 {% endblock %}
 
 {% block main %}
-<div class="panel panel-default">
-    <div class="panel-heading"><h1 class="panel-title">{% trans 'Domains' %}</h1></div>
-    <div class="panel-body">
-        <form action="{% url 'domain_new' %}" method="post" class="form-horizontal">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            <legend>{% trans 'Add a new Domain' %}</legend>
-            <div class="form-group">
-                {% if form.mail_host.errors %}
-                    <div class="alert alert-danger">{{ form.mail_host.errors }}</div>
-                {% endif %}
-                <label class="col-md-2 control-label" for="id_mail_host">{% trans 'Mail Host' %}:</label>
-                <div class="col-md-5">{{ form.mail_host|add_form_control }}</div>
-                <p class="help-block"><strong>{% trans 'Example' %}:</strong> domain.org</p>
-            </div>
-            <div class="form-group">
-                {% if form.web_host.errors %}
-                    <div class="alert alert-danger">{{ form.web_host.errors }}</div>
-                {% endif %}
-                <label class="col-md-2 control-label" for="id_web_host">{% trans 'Web Host' %}:</label>
-                <div class="col-md-5">{{ form.web_host|add_form_control }}</div>
-                <p class="help-block"><strong>{% trans 'Example' %}:</strong> http://www.domain.org</p>
-            </div>
-            <div class="form-group">
-                {% if form.description.errors %}
-                    <div class="alert alert-danger">{{ form.description.errors }}</div>
-                {% endif %}
-                <label class="col-md-2 control-label" for="id_description">{% trans 'Description' %}:</label>
-                <div class="col-md-5">{{ form.description|add_form_control }}</div>
-            </div>
-            <button class="col-md-offset-2 btn btn-success btn-primary" type="submit">{% trans 'Create Domain' %}</button>
-        </form>
+
+    <div class="page-header">
+        <h2>{% trans 'Add a new Domain' %}</h2>
     </div>
-</div>
+
+    <form action="{% url 'domain_new' %}" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                {% if field.errors %}
+                    <div class="alert alert-danger">{{ field.errors }}</div>
+                {% endif %}
+                <label class="col-md-2 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <div class="col-md-5">{{ field|add_form_control }}</div>
+                <p id="help-{{ field.id_for_label }}" class="col-md-3 help-block">
+                    {{ field.help_text }}
+                </p>
+            </div>
+        {% endfor %}
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-8">
+                <button class="btn btn-primary" type="submit">{% trans 'Create Domain' %}</button>
+            </div>
+        </div>
+    </form>
+
 {% endblock main %}
