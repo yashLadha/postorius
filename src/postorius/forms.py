@@ -95,20 +95,9 @@ class DomainNew(FieldsetForm):
                    "description"]]
 
 
-class NewOwnerForm(forms.Form):
-
-    """Add a list owner."""
-    owner_email = forms.EmailField(
-        label=_('Email Address'),
-        error_messages={
-            'required': _('Please enter an email adddress.'),
-            'invalid': _('Please enter a valid email adddress.')})
-
-
-class NewModeratorForm(forms.Form):
-
-    """Add a list moderator."""
-    moderator_email = forms.EmailField(
+class MemberForm(forms.Form):
+    """Assing a role to the member"""
+    email = forms.EmailField(
         label=_('Email Address'),
         error_messages={
             'required': _('Please enter an email adddress.'),
@@ -853,18 +842,18 @@ class ChangeSubscriptionForm(forms.Form):
             choices=((address, address) for address in user_emails))
 
 
-class HeldMessagesModerationForm(forms.Form):
+class MultipleChoiceForm(forms.Form):
 
-    class HeldMessageMultipleChoiceField(forms.MultipleChoiceField):
+    class MultipleChoiceField(forms.MultipleChoiceField):
 
         def validate(self, value):
             pass
 
-    choices = HeldMessageMultipleChoiceField(
+    choices = MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
     )
 
     def clean_choices(self):
         if len(self.cleaned_data['choices']) < 1:
-            raise forms.ValidationError(_('Please select at least one message to perform an action'))
+            raise forms.ValidationError(_('Make at least one selection'))
         return self.cleaned_data['choices']

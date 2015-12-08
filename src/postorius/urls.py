@@ -29,12 +29,11 @@ from postorius.views.generic import *
 per_list_urlpatterns = patterns('postorius.views',
                                 url(r'^csv_view/$',
                                     'csv_view', name='csv_view'),
-                                url(r'^members/$',
-                                    ListMembersView.as_view(
-                                    ), name='list_members'),
                                 url(r'^members/options/(?P<email>[^/]+)/$',
                                     ListMemberOptionsView.as_view(
                                     ), name='list_member_options'),
+                                url(r'^members/(?P<role>\w+)/$',
+                                    'list_members_view', name='list_members'),
                                 url(r'^$',
                                     ListSummaryView.as_view(
                                     ), name='list_summary'),
