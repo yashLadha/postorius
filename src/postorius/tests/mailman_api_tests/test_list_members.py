@@ -73,7 +73,7 @@ class ListMembersAccessTest(TestCase):
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_if_not_logged_in(self):
-        url = reverse('list_members', args=('foo@example.com', 'subscribers',))
+        url = reverse('list_members', args=('foo@example.com', 'subscriber',))
         response = self.client.get(url)
         if "%40" not in url: # Django < 1.8
             url = quote(url)
@@ -86,28 +86,28 @@ class ListMembersAccessTest(TestCase):
     def test_page_not_accessible_for_unprivileged_users(self):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', 'subscribers',)))
+                                           args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 403)
 
     @MM_VCR.use_cassette('list_members_page.yaml')
     def test_not_accessible_for_moderator(self):
         self.client.login(username='testmoderator', password='testpass')
         response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', 'subscribers',)))
+                                           args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 403)
 
     @MM_VCR.use_cassette('list_members_page.yaml')
     def test_page_accessible_for_superuser(self):
         self.client.login(username='testsu', password='testpass')
         response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', 'subscribers',)))
+                                           args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 200)
 
     @MM_VCR.use_cassette('list_members_page.yaml')
     def test_page_accessible_for_owner(self):
         self.client.login(username='testowner', password='testpass')
         response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', 'subscribers',)))
+                                           args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 200)
 
 

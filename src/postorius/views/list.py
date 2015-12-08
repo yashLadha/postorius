@@ -48,11 +48,11 @@ logger = logging.getLogger(__name__)
 @list_owner_required
 def list_members_view(request, list_id, role=None):
     """Display all members of a given list."""
-    if role not in ['owners', 'moderators', 'subscribers']:
-        return redirect('list_members', list_id, 'subscribers')
+    if role not in ['owner', 'moderator', 'subscriber']:
+        return redirect('list_members', list_id, 'subscriber')
     mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
     if request.method == 'POST':
-        if role == 'subscribers':
+        if role == 'subscriber':
             form = MultipleChoiceForm(request.POST)
             if form.is_valid():
                 members = form.cleaned_data['choices']
@@ -63,16 +63,10 @@ def list_members_view(request, list_id, role=None):
             member_form = MemberForm(request.POST)
             if member_form.is_valid():
                 try:
-                    if role == 'moderators':
-                        mailing_list.add_moderator(member_form.cleaned_data['email'])
-                        messages.success(
-                            request, _('%s has been added as list moderator.'
-                                       % member_form.cleaned_data['email']))
-                    elif role == 'owners':
-                        mailing_list.add_owner(member_form.cleaned_data['email'])
-                        messages.success(
-                            request, _('%s has been added as list owner.'
-                                % member_form.cleaned_data['email']))
+                    getattr(mailing_list, 'add_%s' % role)(member_form.cleaned_data['email'])
+                    messages.success(
+                        request, _('%(email)s has been added with the role %(role)s.')
+                        % {'email': member_form.cleaned_data['email'], 'role': role})
                 except HTTPError as e:
                     messages.error(request, _(e.msg))
     else:
@@ -82,7 +76,7 @@ def list_members_view(request, list_id, role=None):
         'list': mailing_list,
         'role': role,
     }
-    if role == 'subscribers':
+    if role == 'subscriber':
         context['members'] = utils.paginate(
             request, mailing_list.get_member_page,
             count=request.GET.get('count', 25),
@@ -92,11 +86,11 @@ def list_members_view(request, list_id, role=None):
         context['count_options'] = [25, 50, 100, 200]
     else:
         context['member_form'] = member_form 
-        if role == 'owners':
+        if role == 'owner':
             context['members'] = mailing_list.owners
             context['page_title'] = _('List Owners')
             context['form_action'] = _('Add Owner')
-        elif role == 'moderators':
+        elif role == 'moderator':
             context['members'] = mailing_list.moderators
             context['page_title'] = _('List Moderators')
             context['empty_error'] = _('List has no Moderators')
@@ -191,6 +185,7 @@ class ListSummaryView(MailingListView):
             'postorius/lists/summary.html', data,
             context_instance=RequestContext(request))
 
+
 class ChangeSubscriptionView(MailingListView):
     """Change mailing list subscription
     """
@@ -224,6 +219,7 @@ class ChangeSubscriptionView(MailingListView):
         except HTTPError as e:
             messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
+
 
 class ListSubscribeView(MailingListView):
     """
@@ -701,16 +697,15 @@ def remove_role(request, list_id=None, role=None, address=None,
         return utils.render_api_error(request)
 
     redirect_on_success = redirect('list_members', the_list.list_id, role)
-    role_singular = role.rstrip('s')
 
-    roster = getattr(the_list, role)
+    roster = getattr(the_list, '{}s'.format(role))
     if address not in roster:
         messages.error(request,
-            _('The user %(email)s is not in the %(role)s group',
-            email=address, role=role))
+            _('The user %(email)s is not in the %(role)s group')
+            % {'email': address, 'role': role})
         return redirect('list_members', the_list.list_id, role)
 
-    if role == 'owners':
+    if role == 'owner':
         if len(roster) == 1:
             messages.error(request, _('Removing the last owner is impossible'))
             return redirect('list_members', the_list.list_id, role)
@@ -724,15 +719,16 @@ def remove_role(request, list_id=None, role=None, address=None,
 
     if request.method == 'POST':
         try:
-            the_list.remove_role(role_singular, address)
+            the_list.remove_role(role, address)
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
-            messages.error(request, _('The user could not be removed: %(msg)s',
-                           msg=e.msg))
+            messages.error(
+                request, _('The user could not be removed: %(msg)s')
+                % {'msg': e.msg})
             return redirect('list_members', the_list.list_id, role)
-        messages.success(request, _('The user %(address)s has been removed from the %(role)s group.',
-                         address=address, role=role))
+        messages.success(request, _('The user %(address)s has been removed from the %(role)s group.')
+                         % {'address': address, 'role': role})
         return redirect_on_success
     return render_to_response(template,
                               {'role': role, 'address': address,

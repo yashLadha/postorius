@@ -11,8 +11,8 @@
 
     {% list_nav 'list_members' page_title %}
 
-    {% if role != 'subscribers' %}
-        <form action="{% url 'list_members_view' list.list_id role %}" method="post" class="form-inline">
+    {% if role != 'subscriber' %}
+        <form action="{% url 'list_members' list.list_id role %}" method="post" class="form-inline">
             {% csrf_token %}
             <div class="form-group {% if member_form.email.errors %}has-error{% endif %}">
                 {% if member_form.email.errors %}
@@ -25,7 +25,7 @@
         </form>
     {% endif %}
 
-    {% if role == 'subscribers' %}
+    {% if role == 'subscriber' %}
         <div class="row">
             <div class="col-md-2">
                 <a href="{% url 'unsubscribe_all' list.list_id %}" class="btn btn-danger">{% trans 'Unsubscribe all' %}</a>
@@ -39,7 +39,7 @@
     {% endif %}
 
     {% if members|length > 0 %}
-        <form action="{% url 'list_members_view' list.list_id role %}" method="post">
+        <form action="{% url 'list_members' list.list_id role %}" method="post">
             {% csrf_token %}
             {% if form.choices.errors %}
                 <div class="alert alert-danger">{{ form.choices.errors }}</div>
@@ -48,12 +48,12 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            {% if role == 'subscribers' %}
+                            {% if role == 'subscriber' %}
                                 <th><input type="checkbox" id="all-members-checkbox"/></th>
                             {% endif %}
                             <th>{% trans 'Address' %}</th>
                             <th>
-                              {% if role == 'subscribers' %}
+                              {% if role == 'subscriber' %}
                                   <input type="submit" class="btn btn-xs btn-warning" value="{% trans 'Remove selected' %}" />
                               {% endif %}
                             </th>
@@ -62,7 +62,7 @@
                     <tbody>
                         {% for member in members %}
                             <tr>
-                                {% if role == 'subscribers' %}
+                                {% if role == 'subscriber' %}
                                   <td><input type="checkbox" class="member-checkbox" name="choices" id="id_choices_{{ forloop.counter0 }}" value="{{ member.email }}" /></td>
                                     <td><a href="{% url 'list_member_options' list.list_id member.email %}">{{ member.email }}</a></td>
                                     <td><a href="{% url 'list_unsubscribe' list.list_id member.email %}" class="btn btn-xs btn-danger">{% trans 'Unsubscribe' %}</a></td>
@@ -76,7 +76,7 @@
                 </table>
             </div>
         </form>
-        {% if role == 'subscribers' %}
+        {% if role == 'subscriber' %}
             {% include 'postorius/_pagination.html' with page=members %}
         {% endif %}
     {% else %}

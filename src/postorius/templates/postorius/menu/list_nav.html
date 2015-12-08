@@ -29,14 +29,12 @@
                     {% endif %}
                     {% if user.is_superuser or user.is_list_owner %}
                         <li class="{% nav_active_class current 'list_members' %} dropdown">
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Memebers' %}<b class="caret"></b></a>
-                          <ul class="dropdown-menu">
-                        <li><a href="{% url 'list_members' list.list_id 'subscribers' %}">{% trans 'Subscribers' %}</a></li>
-                        <li><a href="{% url 'list_members' list.list_id 'owners' %}">{% trans 'Owners' %}</a></li>
-                        <li><a href="{% url 'list_members' list.list_id 'moderators' %}">{% trans 'Moderators' %}</a></li>
-
-                          </ul>
-
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Members' %}<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                              <li><a href="{% url 'list_members' list.list_id 'owner' %}">{% trans 'Owners' %}</a></li>
+                              <li><a href="{% url 'list_members' list.list_id 'moderator' %}">{% trans 'Moderators' %}</a></li>
+                              <li><a href="{% url 'list_members' list.list_id 'subscriber' %}">{% trans 'Subscribers' %}</a></li>
+                            </ul>
                         </li>
                         <li class="{% nav_active_class current 'list_settings' %}"><a href="{% url 'list_settings' list.list_id %}">{% trans 'Settings' %}</a></li>
                         <li class="{% nav_active_class current 'mass_subscribe' %}"><a href="{% url 'mass_subscribe' list.list_id %}">{% trans 'Mass Subscribe' %}</a></li>
