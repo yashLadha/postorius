@@ -285,39 +285,32 @@ class ListUnsubscribeView(MailingListView):
         return redirect('list_summary', self.mailing_list.list_id)
 
 
-class ListMassSubscribeView(MailingListView):
-    """Mass subscription."""
-
-    @method_decorator(login_required)
-    @method_decorator(list_owner_required)
-    def get(self, request, *args, **kwargs):
-        form = ListMassSubscription()
-        return render_to_response('postorius/lists/mass_subscribe.html',
-                                  {'form': form, 'list': self.mailing_list},
-                                  context_instance=RequestContext(request))
-
-    @method_decorator(list_owner_required)
-    def post(self, request, *args, **kwargs):
+@login_required
+@list_owner_required
+def list_mass_subscribe(request, list_id):
+    mailing_list = utils.get_client().get_list(list_id)
+    if request.method == 'POST':
         form = ListMassSubscription(request.POST)
-        if not form.is_valid():
-            messages.error(request, _('Please fill out the form correctly.'))
-        else:
+        if form.is_valid():
             for email in form.cleaned_data['emails']:
                 try:
                     validate_email(email)
-                    self.mailing_list.subscribe(
-                        address=email, pre_verified=True, pre_confirmed=True,
-                        pre_approved=True)
+                    mailing_list.subscribe(
+                        address=email, pre_verified=True, pre_confirmed=True, pre_approved=True)
                     messages.success(request,
                                      _('The address %(address)s has been subscribed to %(list)s.') %
-                                     {'address':email, 'list': self.mailing_list.fqdn_listname})
+                                     {'address':email, 'list': mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except HTTPError as e:
                     messages.error(request, e)
                 except ValidationError:
                     messages.error(request, _('The email address %s is not valid.') % email)
-        return redirect('mass_subscribe', self.mailing_list.list_id)
+    else:
+        form = ListMassSubscription()
+    return render_to_response('postorius/lists/mass_subscribe.html',
+                              {'form': form, 'list': mailing_list},
+                              context_instance=RequestContext(request))
 
 
 class ListMassRemovalView(MailingListView):

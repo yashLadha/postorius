@@ -54,8 +54,7 @@ per_list_urlpatterns = patterns('postorius.views',
                                     'handle_subscription_request',
                                     name='handle_subscription_request'),
                                 url(r'^mass_subscribe/$',
-                                    ListMassSubscribeView.as_view(
-                                    ), name='mass_subscribe'),
+                                    'list_mass_subscribe', name='mass_subscribe'),
                                 url(r'^mass_removal/$',
                                     ListMassRemovalView.as_view(
                                     ), name='mass_removal'),
