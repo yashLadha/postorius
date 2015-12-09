@@ -1,52 +1,33 @@
 {% load i18n %}
 {% load nav_helpers %}
 
-<ol class="breadcrumb">
-    <li><a href="{% url 'list_index' %}">{% trans 'Lists' %}</a></li>
-    <li><a href="{% url 'list_summary' list.list_id %}">{{ list.fqdn_listname }}</a></li>
-    {% if title %}
-    <li class="active">{{ title }}</li>
+{% if user.is_authenticated  %}
+<ul class="nav nav-pills">
+    <li role="presentation" class="{% nav_active_class current 'list_summary' %}"><a href="{% url 'list_summary' list.list_id %}">{% trans 'Info' %}</a></li>
+    {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
+        <li role="presentation" class="{% nav_active_class current 'list_subscription_requests' %}"><a href="{% url 'list_subscription_requests' list.list_id %}">{% trans 'Subscription requests' %}</a></li>
+        <li role="presentation" class="{% nav_active_class current 'list_held_messages' %}"><a href="{% url 'list_held_messages' list.list_id %}">{% trans 'Held messages' %}</a></li>
     {% endif %}
-</ol>
-
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#settings-nav" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse" id="settings-nav">
-            {% if user.is_authenticated  %}
-                <ul class="nav navbar-nav">
-                    <li class="{% nav_active_class current 'list_summary' %}"><a href="{% url 'list_summary' list.list_id %}">{% trans 'Info' %}</a></li>
-                    {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
-                        <li class="{% nav_active_class current 'list_subscription_requests' %}"><a href="{% url 'list_subscription_requests' list.list_id %}">{% trans 'Subscription Requests' %}</a></li>
-                        <li class="{% nav_active_class current 'list_held_messages' %}"><a href="{% url 'list_held_messages' list.list_id %}">{% trans 'Held Messages' %}</a></li>
-                    {% endif %}
-                    {% if user.is_superuser or user.is_list_owner %}
-                        <li class="{% nav_active_class current 'list_members' %} dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Members' %}<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                              <li><a href="{% url 'list_members' list.list_id 'owner' %}">{% trans 'Owners' %}</a></li>
-                              <li><a href="{% url 'list_members' list.list_id 'moderator' %}">{% trans 'Moderators' %}</a></li>
-                              <li><a href="{% url 'list_members' list.list_id 'subscriber' %}">{% trans 'Subscribers' %}</a></li>
-                            </ul>
-                        </li>
-                        <li class="{% nav_active_class current 'list_settings' %}"><a href="{% url 'list_settings' list.list_id %}">{% trans 'Settings' %}</a></li>
-                        <li class="{% nav_active_class current 'mass_subscribe' %}"><a href="{% url 'mass_subscribe' list.list_id %}">{% trans 'Mass Subscribe' %}</a></li>
-                        <li class="{% nav_active_class current 'mass_removal' %}"><a href="{% url 'mass_removal' list.list_id %}">{% trans 'Mass Removal' %}</a></li>
-                        <li class="{% nav_active_class current 'list_archival_options' %}"><a href="{% url 'list_archival_options' list.list_id %}">{% trans 'Archivers' %}</a></li>
-                        <li class="{% nav_active_class current 'list_delete' %}"><a href="{% url 'list_delete' list.list_id %}">{% trans 'Delete List' %}</a></li>
-                    {% endif %}
-                </ul>
-            {% endif %}
-        </div>
-    </div>
-</nav>
+    {% if user.is_superuser or user.is_list_owner %}
+        <li role="presentation" class="{% nav_active_class current 'list_members' %} dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"s
+               role="button" aria-haspopup="true" aria-expanded="false">
+                {% trans 'Members' %}<span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'list_members' list.list_id 'owner' %}">{% trans 'Owners' %}</a></li>
+              <li><a href="{% url 'list_members' list.list_id 'moderator' %}">{% trans 'Moderators' %}</a></li>
+              <li><a href="{% url 'list_members' list.list_id 'subscriber' %}">{% trans 'Subscribers' %}</a></li>
+            </ul>
+        </li>
+        <li role="presentation" class="{% nav_active_class current 'list_settings' %}"><a href="{% url 'list_settings' list.list_id %}">{% trans 'Settings' %}</a></li>
+        <li role="presentation" class="{% nav_active_class current 'mass_subscribe' %}"><a href="{% url 'mass_subscribe' list.list_id %}">{% trans 'Mass subscribe' %}</a></li>
+        <li role="presentation" class="{% nav_active_class current 'mass_removal' %}"><a href="{% url 'mass_removal' list.list_id %}">{% trans 'Mass removal' %}</a></li>
+        <li class="{% nav_active_class current 'list_archival_options' %}"><a href="{% url 'list_archival_options' list.list_id %}">{% trans 'Archivers' %}</a></li>
+        <li role="presentation" class="{% nav_active_class current 'list_delete' %}"><a href="{% url 'list_delete' list.list_id %}">{% trans 'Delete list' %}</a></li>
+    {% endif %}
+</ul>
+{% endif %}
 
 <div class="page-header">
     {% if current == 'list_summary' %}

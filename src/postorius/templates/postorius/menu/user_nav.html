@@ -1,35 +1,12 @@
 {% load i18n %}
 {% load nav_helpers %}
 
-<!--
-<ol class="breadcrumb">
-    <li><a href="{% url 'user_profile' %}">{% trans 'Profile' %}</a></li>
-    {% if title %}
-    <li class="active">{{ title }}</li>
-    {% endif %}
-</ol>
--->
-
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#settings-nav" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse" id="settings-nav">
-            <ul class="nav navbar-nav">
-                <li class="{% nav_active_class current 'profile' %}"><a href="{% url 'user_profile' %}">{% trans 'Profile' %}</a></li>
-                <li class="{% nav_active_class current 'settings' %}"><a href="{% url 'user_mailmansettings' %}">{% trans 'Subscription Settings' %}</a></li>
-                <li class="{% nav_active_class current 'subscriptions' %}"><a href="{% url 'user_subscriptions' %}">{% trans 'Subscriptions' %}</a></li>
-                <li class="{% nav_active_class current 'add_email' %}"><a href="{% url 'address_activation' %}">{% trans 'Add Email Address' %}</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<ul class="nav nav-pills">
+    <li role="presentation" class="{% nav_active_class current 'profile' %}"><a href="{% url 'user_profile' %}">{% trans 'Profile' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'settings' %}"><a href="{% url 'user_mailmansettings' %}">{% trans 'Subscription settings' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'subscriptions' %}"><a href="{% url 'user_subscriptions' %}">{% trans 'Subscriptions' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'add_email' %}"><a href="{% url 'address_activation' %}">{% trans 'Add email address' %}</a></li>
+</ul>
 
 <div class="page-header">
     {% if current == 'user_profile' %}
