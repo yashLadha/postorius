@@ -4,12 +4,18 @@
 {% load nav_helpers %}
 
 {% block subtitle %}
-{{ page_title }} | {{ list.fqdn_listname}}
+{% trans 'List members' %} | {{ list.fqdn_listname}}
 {% endblock %}
 
 {% block main %}
 
-    {% list_nav 'list_members' page_title %}
+    {% list_nav 'list_members' 'List members' role|capfirst|add:'s' %}
+
+    <ul class="nav nav-tabs margin-bottom">
+        <li {% if role == 'owner' %}class="active"{% endif %}><a href="{% url 'list_members' list.list_id 'owner' %}">{% trans 'Owners' %}</a></li>
+        <li {% if role == 'moderator' %}class="active"{% endif %}><a href="{% url 'list_members' list.list_id 'moderator' %}">{% trans 'Moderators' %}</a></li>
+        <li {% if role == 'subscriber' %}class="active"{% endif %}><a href="{% url 'list_members' list.list_id 'subscriber' %}">{% trans 'Subscribers' %}</a></li>
+    </ul>
 
     {% if role != 'subscriber' %}
         <form action="{% url 'list_members' list.list_id role %}" method="post" class="form-inline margin-bottom">
