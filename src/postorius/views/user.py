@@ -224,52 +224,6 @@ class AddressActivationView(TemplateView):
                                   context_instance=RequestContext(request))
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def user_index(request, page=1, template='postorius/users/index.html'):
-    """Show a table of all users.
-    """
-    page = int(page)
-    error = None
-    try:
-        mm_user_page = utils.get_client().get_user_page(25, page)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    return render_to_response(
-        template,
-        {'error': error,
-         'mm_user_page': mm_user_page,
-         'mm_user_page_nr': page,
-         'mm_user_page_previous_nr': page - 1,
-         'mm_user_page_next_nr': page + 1,
-         'mm_user_page_show_next': len(mm_user_page) >= 25},
-        context_instance=RequestContext(request))
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def user_new(request):
-    message = None
-    if request.method == 'POST':
-        form = UserNew(request.POST)
-        if form.is_valid():
-            user = MailmanUser(display_name=form.cleaned_data['display_name'],
-                               email=form.cleaned_data['email'],
-                               password=form.cleaned_data['password'])
-            try:
-                user.save()
-            except MailmanApiError:
-                return utils.render_api_error(request)
-            except HTTPError as e:
-                messages.error(request, e)
-            else:
-                messages.success(request, _("New User registered"))
-            return redirect("user_index")
-    else:
-        form = UserNew()
-    return render_to_response('postorius/users/new.html',
-                              {'form': form, 'message': message},
-                              context_instance=RequestContext(request))
-
-
 @login_required()
 def user_profile(request, user_email=None):
     utils.set_other_emails(request.user)
@@ -279,38 +233,6 @@ def user_profile(request, user_email=None):
         return utils.render_api_error(request)
     return render_to_response('postorius/user_profile.html',
                               {'mm_user': mm_user},
-                              context_instance=RequestContext(request))
-
-
-@login_required
-def user_tasks(request):
-    return render_to_response('postorius/user_tasks.html',
-                              context_instance=RequestContext(request))
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def user_delete(request, user_id,
-                template='postorius/users/user_confirm_delete.html'):
-    """ Deletes a user upon confirmation.
-    """
-    try:
-        mm_user = MailmanUser.objects.get_or_404(address=user_id)
-        email_id = mm_user.addresses[0]
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except IndexError:
-        email_id = ''
-    if request.method == 'POST':
-        try:
-            mm_user.delete()
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError as e:
-            messages.error(request, _('The user could not be deleted: %s') % e.msg)
-            return redirect('user_index')
-        messages.success(request, _('The user %s has been deleted.') % email_id)
-        return redirect('user_index')
-    return render_to_response(template, {'user_id': user_id, 'email_id': email_id},
                               context_instance=RequestContext(request))
 
 
