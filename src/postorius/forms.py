@@ -224,11 +224,11 @@ class MessageAcceptanceForm(forms.Form):
     List messages acceptance settings.
     """
     action_choices = (
-        ("hold", _("Hold for moderator")),
+        ("hold", _("Hold for moderation")),
         ("reject", _("Reject (with notification)")),
         ("discard", _("Discard (no notification)")),
-        ("accept", _("Accept")),
-        ("defer", _("Defer")))
+        ("accept", _("Accept immediately (bypass other rules)")),
+        ("defer", _("Default processing")))
     acceptable_aliases = ListOfStringsField(
         label=_("Acceptable aliases"),
         required=False,
