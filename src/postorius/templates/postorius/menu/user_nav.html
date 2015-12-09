@@ -1,12 +1,14 @@
 {% load i18n %}
 {% load nav_helpers %}
 
+<!--
 <ol class="breadcrumb">
     <li><a href="{% url 'user_profile' %}">{% trans 'Profile' %}</a></li>
     {% if title %}
     <li class="active">{{ title }}</li>
     {% endif %}
 </ol>
+-->
 
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -33,6 +35,6 @@
     {% if current == 'user_profile' %}
         <h1>{% trans 'User Profile' %} <small>{{ user }}</small></h1>
     {% else %}
-        <h2>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h2>
+        <h3>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h3>
     {% endif %}
 </div>

@@ -77,6 +77,7 @@ def list_members_view(request, list_id, role=None):
         'role': role,
     }
     if role == 'subscriber':
+        context['page_title'] = _('List subscribers')
         context['members'] = utils.paginate(
             request, mailing_list.get_member_page,
             count=request.GET.get('count', 25),
@@ -86,12 +87,14 @@ def list_members_view(request, list_id, role=None):
     else:
         context['member_form'] = member_form
         if role == 'owner':
+            context['page_title'] = _('List owners')
             context['members'] = mailing_list.owners
-            context['form_action'] = _('Add Owner')
+            context['form_action'] = _('Add owner')
         elif role == 'moderator':
+            context['page_title'] = _('List moderators')
             context['members'] = mailing_list.moderators
-            context['empty_error'] = _('List has no Moderators')
-            context['form_action'] = _('Add Moderator')
+            context['empty_error'] = _('List has no moderators')
+            context['form_action'] = _('Add moderator')
     return render(request, 'postorius/lists/members.html', context)
 
 
