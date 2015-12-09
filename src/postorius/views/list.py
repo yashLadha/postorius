@@ -457,7 +457,7 @@ def list_new(request, template='postorius/lists/new.html'):
                               context_instance=RequestContext(request))
 
 
-def list_index(request, template='postorius/lists/index.html'):
+def list_index(request, template='postorius/index.html'):
     """Show a table of all public mailing lists.
     """
     if request.method == 'POST':

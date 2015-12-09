@@ -76,7 +76,7 @@ class UserMailmanSettingsView(MailmanUserView):
         except MailmanApiError:
             return utils.render_api_error(request)
         settingsform = UserPreferences(initial=mm_user.preferences)
-        return render_to_response('postorius/user_mailmansettings.html',
+        return render_to_response('postorius/user/mailman_settings.html',
                                   {'mm_user': mm_user,
                                    'settingsform': settingsform},
                                   context_instance=RequestContext(request))
@@ -121,10 +121,10 @@ class UserAddressPreferencesView(MailmanUserView):
             return utils.render_api_error(request)
         except Mailman404Error:
             return render_to_response(
-                'postorius/user_address_preferences.html',
+                'postorius/user/address_preferences.html',
                 {'nolists': 'true'},
                 context_instance=RequestContext(request))
-        return render_to_response('postorius/user_address_preferences.html',
+        return render_to_response('postorius/user/address_preferences.html',
                                   {'mm_user': mm_user,
                                    'addresses': addresses,
                                    'helperform': helperform,
@@ -171,11 +171,11 @@ class UserSubscriptionPreferencesView(MailmanUserView):
             return utils.render_api_error(request)
         except Mailman404Error:
             return render_to_response(
-                'postorius/user_subscription_preferences.html',
+                'postorius/user/subscription_preferences.html',
                 {'nolists': 'true'},
                 context_instance=RequestContext(request))
         return render_to_response(
-            'postorius/user_subscription_preferences.html',
+            'postorius/user/subscription_preferences.html',
             {'zipped_data': zipped_data,
              'formset': formset},
             context_instance=RequestContext(request))
@@ -188,7 +188,7 @@ class UserSubscriptionsView(MailmanUserView):
 
     def get(self, request):
         memberships = self._get_memberships()
-        return render_to_response('postorius/user_subscriptions.html',
+        return render_to_response('postorius/user/subscriptions.html',
                                   {'memberships': memberships},
                                   context_instance=RequestContext(request))
 
@@ -202,7 +202,7 @@ class AddressActivationView(TemplateView):
     @method_decorator(login_required)
     def get(self, request):
         form = AddressActivationForm(initial={'user_email': request.user.email})
-        return render_to_response('postorius/user_address_activation.html',
+        return render_to_response('postorius/user/address_activation.html',
                                   {'form': form},
                                   context_instance=RequestContext(request))
 
@@ -217,9 +217,9 @@ class AddressActivationView(TemplateView):
             except SMTPException:
                 messages.error(request, _('The email confirmation message could not be sent. %s')
                                % profile.activation_key)
-            return render_to_response('postorius/user_address_activation_sent.html',
+            return render_to_response('postorius/user/address_activation_sent.html',
                                       context_instance=RequestContext(request))
-        return render_to_response('postorius/user_address_activation.html',
+        return render_to_response('postorius/user/address_activation.html',
                                   {'form': form},
                                   context_instance=RequestContext(request))
 
@@ -231,7 +231,7 @@ def user_profile(request, user_email=None):
         mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response('postorius/user_profile.html',
+    return render_to_response('postorius/user/profile.html',
                               {'mm_user': mm_user},
                               context_instance=RequestContext(request))
 

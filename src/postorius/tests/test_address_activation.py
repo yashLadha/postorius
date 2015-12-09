@@ -81,8 +81,8 @@ class TestAddressActivationView(TestCase):
     def test_view_renders_correct_template(self):
         # The view should render the user_address_activation template.
         response = self.client.get(reverse('address_activation'))
-        self.assertTrue('postorius/user_address_activation.html'
-                        in [t.name for t in response.templates])
+        self.assertIn('postorius/user/address_activation.html',
+                      [t.name for t in response.templates])
 
     def test_post_invalid_form_shows_error_msg(self):
         # Entering an invalid email address should render an error message.
@@ -99,8 +99,8 @@ class TestAddressActivationView(TestCase):
                                     'email': 'new_address@example.org',
                                     'user_email': self.user.email})
         self.assertEqual(mock_send_confirmation_link.call_count, 1)
-        self.assertTrue('postorius/user_address_activation_sent.html'
-                        in [t.name for t in response.templates])
+        self.assertIn('postorius/user/address_activation_sent.html',
+                      [t.name for t in response.templates])
 
 
 class TestAddressConfirmationProfile(TestCase):

@@ -287,7 +287,7 @@ class AddressConfirmationProfile(models.Model):
 
         The following settings are recognized:
 
-            >>> EMAIL_CONFIRMATION_TEMPLATE = 'postorius/address_confirmation_message.txt'
+            >>> EMAIL_CONFIRMATION_TEMPLATE = 'postorius/user/address_confirmation_message.txt'
             >>> EMAIL_CONFIRMATION_FROM = 'postmaster@list.org'
             >>> EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
 
@@ -306,7 +306,7 @@ class AddressConfirmationProfile(models.Model):
         if not template_path:
             template_path = getattr(settings,
                                     'EMAIL_CONFIRMATION_TEMPLATE',
-                                    'postorius/address_confirmation_message.txt')
+                                    'postorius/user/address_confirmation_message.txt')
         # Create a template context (if there is none) containing
         # the activation_link and the host_url.
         if not template_context:

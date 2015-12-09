@@ -53,7 +53,7 @@ def domain_index(request):
         existing_domains = Domain.objects.all()
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response('postorius/domain_index.html',
+    return render_to_response('postorius/domain/index.html',
                               {'domains': existing_domains},
                               context_instance=RequestContext(request))
 
@@ -80,7 +80,7 @@ def domain_new(request):
             return redirect("domain_index")
     else:
         form = DomainNew()
-    return render_to_response('postorius/domain_new.html',
+    return render_to_response('postorius/domain/new.html',
                               {'form': form, 'message': message},
                               context_instance=RequestContext(request))
 
@@ -101,6 +101,6 @@ def domain_delete(request, domain):
             return redirect("domain_index")
     submit_url = reverse('domain_delete',
                          kwargs={'domain': domain})
-    return render_to_response('postorius/domain_confirm_delete.html',
+    return render_to_response('postorius/domain/confirm_delete.html',
                               {'domain': domain, 'submit_url': submit_url},
                               context_instance=RequestContext(request))
