@@ -57,7 +57,7 @@ class DomainNew(FieldsetForm):
         required=True,
         help_text=_('Example: domain.org'),
         )
-    web_host = forms.CharField(
+    web_host = forms.URLField(
         label=_('Web Host'),
         error_messages={'required': _('Please enter a host name'),
                         'invalid': _('Please enter a valid host name.')},
@@ -75,14 +75,6 @@ class DomainNew(FieldsetForm):
         except:
             raise forms.ValidationError(_("Please enter a valid domain name"))
         return mail_host
-
-    def clean_web_host(self):
-        web_host = self.cleaned_data['web_host']
-        try:
-            URLValidator()(web_host)
-        except:
-            raise forms.ValidationError(_("Please enter a valid domain name"))
-        return web_host
 
     class Meta:
 
