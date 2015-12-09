@@ -105,7 +105,7 @@ class ListSummaryPageTest(SimpleTestCase):
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Change Subscription' in response.content)
+        self.assertTrue('Change subscription' in response.content)
         self.assertTrue('Unsubscribe' in response.content)
 
     @MM_VCR.use_cassette('test_list_summary_owner.yaml')

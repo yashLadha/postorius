@@ -17,7 +17,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from django.core.validators import validate_email, URLValidator
+from django.core.validators import validate_email
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
 from postorius.fieldset_forms import FieldsetForm

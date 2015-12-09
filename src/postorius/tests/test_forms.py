@@ -45,7 +45,7 @@ class DomainNewTest(TestCase):
     def test_form_fields_webhost_invalid(self):
         form = DomainNew({
             'mail_host': 'mailman.most-desirable.org',
-            'web_host': 'mailman.most-desirable.org',
+            'web_host': 'most-desirable',
             'description': 'The Most Desirable organization',
             'contact_address': 'contact@mailman.most-desirable.org',
         })

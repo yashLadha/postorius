@@ -105,7 +105,7 @@ urlpatterns = patterns(
     url(r'^accounts/mailmansettings/$',
         UserMailmanSettingsView.as_view(),
         name='user_mailmansettings'),
-    # /settings/
+    # /domains/
     url(r'^domains/$', 'domain_index', name='domain_index'),
     url(r'^domains/new/$', 'domain_new', name='domain_new'),
     url(r'^domains/(?P<domain>[^/]+)/delete$',

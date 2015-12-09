@@ -18,5 +18,5 @@
 
 from postorius.views.api import *
 from postorius.views.list import *
-from postorius.views.settings import *
+from postorius.views.domain import *
 from postorius.views.user import *
