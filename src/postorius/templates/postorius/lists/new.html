@@ -13,32 +13,7 @@
     </div>
 
     <form action="{% url 'list_new' %}" method="post" class="form-horizontal">
-        {% csrf_token %}
-        {% for field in form %}
-            <div class="form-group {% if field.errors %}has-error{% endif %}">
-                {% if field.errors %}
-                    <div class="alert alert-danger">{{ field.errors }}</div>
-                {% endif %}
-                <label class="control-label col-md-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                <div class="col-md-8">
-                {% if field|fieldtype == 'RadioSelect' %}
-                    {% for choice in field %}
-                        <label class="radio-inline">
-                            {{ choice.tag }}
-                            {{ choice.choice_label }}
-                        </label>
-                    {% endfor %}
-                {% else %}
-                    {{ field|add_form_control }}
-                {% endif %}
-                </div>
-            </div>
-        {% endfor %}
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-8">
-                <button class="btn btn-primary" type="submit">{% trans 'Create List' %}</button>
-            </div>
-        </div>
+        {% render_form_horizontal form 2 8 'Create list' %}
     </form>
 
 {% endblock %}

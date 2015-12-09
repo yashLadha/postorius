@@ -16,38 +16,7 @@
         <p>{% trans 'You are not the owner for this list' %}</p>
     {% else %}
         <form action="{% url 'list_member_options' list.list_id mm_member.email %}" method="post" class="form-horizontal">
-            {% csrf_token %}
-            {% for field in settingsform %}
-                <div class="form-group {% if field.errors %}has-errors{% endif %}">
-                    {% if field.errors %}
-                        <div class="alert alert-danger">{{ field.errors }}</div>
-                    {% endif %}
-                    <label class="control-label col-md-3" for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                    </label>
-                    <div class="col-md-8">
-                    {% if field|fieldtype == 'RadioSelect' %}
-                        {% for choice in field %}
-                            <label class="radio-inline">
-                                {{ choice.tag }}
-                                {{ choice.choice_label }}
-                            </label>
-                        {% endfor %}
-                        </td>
-                    {% else %}
-                        {{ field|add_form_control }}
-                    {% endif %}
-                    </div>
-                    <p id="help-{{ field.id_for_label }}" class="col-md-offset-3 col-md-8 help-block">
-                        {{ field.help_text }}
-                    </p>
-                </div>
-           {% endfor %}
-            <div class="form-group">
-                <div class="col-md-offset-3 col-md-8">
-                    <button class="btn btn-primary" type="submit">{% trans 'Save changes' %}</button>
-                </div>
-            </div>
+            {% render_form_horizontal settingsform 3 8 'Save changes' %}
         </form>
 
     {% endif %}

@@ -8,21 +8,7 @@
     {% list_nav 'mass_removal' 'Mass Removal' %}
 
     <form action="{% url 'mass_removal' list.list_id %}" method="post" class="form-horizontal">
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {{ form.non_field_errors }}
-            </div>
-        {% endif %}
-        <div class="form-group {% if form.emails.errors %}has-error{% endif %}">
-            {% if form.emails.errors %}
-                <div class="alert alert-danger">
-                    {{ form.emails.errors }}
-                </div>
-            {% endif %}
-            <label class="control-label col-md-2" for="{{ form.emails.id_for_label }}">{{ form.emails.label }}</label>
-            <div class="col-md-8">{{ form.emails|add_form_control }}</div>
-        </div>
+        {% render_form_horizontal form 2 8 %}
         <div class="form-group">
             <div class="col-md-offset-2 col-md-8">
                 <button class="btn btn-warning" type="submit">{% trans 'Unsubscribe users' %}</button>

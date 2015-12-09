@@ -35,24 +35,7 @@
                 {% trans 'You are subscribed to this list with the following address:' %} <em>{{ subscribed_address }}</em>
             </p>
             <form action="{% url 'change_subscription' list.list_id %}" method="post" class="form-horizontal">
-                {% csrf_token %}
-                {% if change_subscription_form.non_field_errors %}
-                    <div class="alert alert-danger">{{ change_subscription_form.non_field_errors }}</div>
-                {% endif %}
-                {% for field in change_subscription_form %}
-                    <div class="form-group {% if field.errors %}has-error{% endif %}">
-                        {% if field.errors %}
-                            <div class="alert alert-danger">{{ field.errors }}</div>
-                        {% endif %}
-                        <label class="control-label col-md-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        <div class="col-md-8">{{ field|add_form_control }}</div>
-                    </div>
-                {% endfor %}
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-8">
-                        <input class="btn btn-primary" type="submit" value="{% trans 'Change Subscription' %}">
-                    </div>
-                </div>
+                {% render_form_horizontal change_subscription_form 2 8 'Change subscription' %}
             </form>
             <p class="col-md-offset-2">
                 <a href="{% url 'list_unsubscribe' list.list_id subscribed_address %}" class="btn btn-danger">
@@ -62,24 +45,7 @@
         {% else %}
             <h2>{% trans 'Subscribe to this list' %}</h2>
             <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="form-horizontal">
-                {% csrf_token %}
-                {% if subscribe_form.non_field_errors %}
-                    <div class="alert alert-danger">{{ subscribe_form.non_field_errors }}</div>
-                {% endif %}
-                {% for field in subscribe_form %}
-                    <div class="form-group {% if field.errors %}has-error{% endif %}">
-                        {% if field.errors %}
-                            <div class="alert alert-danger">{{ field.errors }}</div>
-                        {% endif %}
-                        <label class="control-label col-md-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        <div class="col-md-8">{{ field|add_form_control }}</div>
-                    </div>
-                {% endfor %}
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-8">
-                        <input class="btn btn-primary" type="submit" value="{% trans 'Subscribe' %}" />
-                    </div>
-                </div>
+                {% render_form_horizontal subscribe_form 2 8 'Subscribe' %}
             </form>
         {% endif %}
     {% else %}

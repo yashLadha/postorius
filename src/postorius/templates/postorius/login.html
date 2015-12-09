@@ -17,28 +17,7 @@
     <div class="row">
         <div class="col-md-6">
             <form action="" method="post" class="well form-horizontal">
-                {% csrf_token %}
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
-                {% endif %}
-                {% for field in form %}
-                    {% if field.errors %}
-                        <div class="alert alert-danger">{{ field.errors }}</div>
-                    {% endif %}
-                    <div class="form-group">
-                        <label class="control-label col-md-4" for="{{ field.label.id_for_label }}">
-                            {{ field.label }}
-                        </label>
-                        <div class="col-md-8">
-                            {{ field|add_form_control }}
-                        </div>
-                    </div>
-                {% endfor %}
-                <div class="form-group">
-                    <div class="col-md-offset-4 col-md-8">
-                        <button class="btn btn-primary" type="submit">{% trans 'Log in' %}</button>
-                    </div>
-                </div>
+                {% render_form_horizontal form 4 8 'Log in' %}
             </form>
         </div>
         <div class="col-md-6 text-center persona-login">

@@ -4,32 +4,15 @@
 {% load nav_helpers %}
 
 {% block subtitle %}
-{% trans 'Add Email' %} | {{ user.username }}
+{% trans 'Add email' %} | {{ user.username }}
 {% endblock %}
 
 {% block main %}
 
-    {% user_nav 'add_email' 'Add Email Address' %}
+    {% user_nav 'add_email' 'Add email address' %}
 
     <form class="form-horizontal" action="{% url 'address_activation' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group {% if form.email.errors %}has-errors{% endif %}">
-            {% if form.email.errors %}
-                <div class="alert alert-danger">{{ form.email.errors }}</div>
-            {% endif %}
-            <label class="control-label col-md-2" for="{{ form.email.id_for_label }}">
-                {{ form.email.label }}
-            </label>
-            <div class="col-md-5">
-                {{ form.email|add_form_control }}
-            </div>
-        </div>
-        {{ form.user_email }}
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-5">
-                <button class="btn btn-primary" type="submit">{% trans 'Add Email Address' %}</button>
-            </div>
-        </div>
+        {% render_form_horizontal form 2 5 'Add email address' %}
     </form>
 
 {% endblock main %}
