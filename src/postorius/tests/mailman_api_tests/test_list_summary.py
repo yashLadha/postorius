@@ -117,7 +117,7 @@ class ListSummaryPageTest(SimpleTestCase):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
-        self.assertContains(response, 'Delete List</a>')
+        self.assertContains(response, 'Delete list</a>')
 
     @MM_VCR.use_cassette('test_list_summary_moderator.yaml')
     def test_list_summary_moderator(self):
@@ -128,8 +128,8 @@ class ListSummaryPageTest(SimpleTestCase):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
-        self.assertContains(response, 'Held Messages</a>')
-        self.assertNotContains(response, 'Delete List</a>')
+        self.assertContains(response, 'Held messages</a>')
+        self.assertNotContains(response, 'Delete list</a>')
 
     @MM_VCR.use_cassette('test_list_summary_secondary_owner.yaml')
     def test_list_summary_is_admin_secondary_owner(self):
@@ -142,7 +142,7 @@ class ListSummaryPageTest(SimpleTestCase):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
-        self.assertContains(response, 'Delete List</a>')
+        self.assertContains(response, 'Delete list</a>')
 
     @MM_VCR.use_cassette('test_list_summary_secondary_moderator.yaml')
     def test_list_summary_is_admin_secondary_moderator(self):
@@ -156,8 +156,8 @@ class ListSummaryPageTest(SimpleTestCase):
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Held Messages</a>')
-        self.assertNotContains(response, 'Delete List</a>')
+        self.assertContains(response, 'Held messages</a>')
+        self.assertNotContains(response, 'Delete list</a>')
 
     @MM_VCR.use_cassette('test_list_summary_metrics_anonymous.yaml')
     def test_metrics_not_displayed_to_anonymous(self):
