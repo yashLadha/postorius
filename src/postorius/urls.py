@@ -20,101 +20,73 @@ from django.conf.urls import *
 from django.contrib.auth.views import login as login_view
 from django.contrib.auth.views import logout as logout_view
 
-from postorius.views import *
+from postorius.views import list as list_views
+from postorius.views import user as user_views
+from postorius.views import domain as domain_views
 
 
-per_list_urlpatterns = patterns('postorius.views',
-                                url(r'^csv_view/$',
-                                    'csv_view', name='csv_view'),
-                                url(r'^members/options/(?P<email>[^/]+)/$',
-                                    list_member_options,
-                                    name='list_member_options'),
-                                url(r'^members/(?P<role>\w+)/$',
-                                    'list_members_view', name='list_members'),
-                                url(r'^$',
-                                    ListSummaryView.as_view(
-                                    ), name='list_summary'),
-                                url(r'^subscribe$',
-                                    ListSubscribeView.as_view(
-                                    ), name='list_subscribe'),
-                                url(r'^change_subscription$',
-                                    ChangeSubscriptionView.as_view(),
-                                    name='change_subscription'),
-                                url(r'^unsubscribe/(?P<email>[^/]+)$',
-                                    ListUnsubscribeView.as_view(
-                                    ), name='list_unsubscribe'),
-                                url(r'^subscription_requests$',
-                                    'list_subscription_requests',
-                                    name='list_subscription_requests'),
-                                url(r'^handle_subscription_request/(?P<request_id>[^/]+)/(?P<action>[accept|reject|discard|defer]+)$',
-                                    'handle_subscription_request',
-                                    name='handle_subscription_request'),
-                                url(r'^mass_subscribe/$',
-                                    'list_mass_subscribe', name='mass_subscribe'),
-                                url(r'^mass_removal/$',
-                                    ListMassRemovalView.as_view(
-                                    ), name='mass_removal'),
-                                url(r'^bans/$',
-                                    'list_bans', name='list_bans'),
-                                url(r'^delete$',
-                                    'list_delete', name='list_delete'),
-                                url(r'^held_messages/(?P<msg_id>[^/]+)/'
-                                    'accept$', 'accept_held_message',
-                                    name='accept_held_message'),
-                                url(r'^held_messages/(?P<msg_id>[^/]+)/'
-                                    'discard$', 'discard_held_message',
-                                    name='discard_held_message'),
-                                url(r'^held_messages/(?P<msg_id>[^/]+)/'
-                                    'defer$', 'defer_held_message',
-                                    name='defer_held_message'),
-                                url(r'^held_messages/(?P<msg_id>[^/]+)/'
-                                    'reject$', 'reject_held_message',
-                                    name='reject_held_message'),
-                                url(r'^held_messages$',
-                                    'list_moderation',
-                                    name='list_held_messages'),
-                                url(r'^remove/(?P<role>[^/]+)/'
-                                    '(?P<address>[^/]+)',
-                                    'remove_role', name='remove_role'),
-                                url(r'^settings/(?P<visible_section>[^/]+)?$',
-                                    'list_settings',
-                                    name='list_settings'),
-                                url(r'^unsubscribe_all$',
-                                    'remove_all_subscribers', name='unsubscribe_all'),
-                                )
+list_patterns = [
+    url(r'^csv_view/$', list_views.csv_view, name='csv_view'),
+    url(r'^members/options/(?P<email>[^/]+)/$', list_views.list_member_options,
+        name='list_member_options'),
+    url(r'^members/(?P<role>\w+)/$', list_views.list_members_view, name='list_members'),
+    url(r'^$', list_views.ListSummaryView.as_view(), name='list_summary'),
+    url(r'^subscribe$', list_views.ListSubscribeView.as_view(), name='list_subscribe'),
+    url(r'^change_subscription$', list_views.ChangeSubscriptionView.as_view(),
+        name='change_subscription'),
+    url(r'^unsubscribe/(?P<email>[^/]+)$', list_views.ListUnsubscribeView.as_view(),
+        name='list_unsubscribe'),
+    url(r'^subscription_requests$', list_views.list_subscription_requests,
+        name='list_subscription_requests'),
+    url(r'^handle_subscription_request/(?P<request_id>[^/]+)/(?P<action>[accept|reject|discard|defer]+)$',
+        list_views.handle_subscription_request, name='handle_subscription_request'),
+    url(r'^mass_subscribe/$', list_views.list_mass_subscribe, name='mass_subscribe'),
+    url(r'^mass_removal/$', list_views.ListMassRemovalView.as_view(), name='mass_removal'),
+    url(r'^delete$', list_views.list_delete, name='list_delete'),
+    url(r'^held_messages/(?P<msg_id>[^/]+)/accept$', list_views.accept_held_message,
+        name='accept_held_message'),
+    url(r'^held_messages/(?P<msg_id>[^/]+)/discard$', list_views.discard_held_message,
+        name='discard_held_message'),
+    url(r'^held_messages/(?P<msg_id>[^/]+)/defer$', list_views.defer_held_message,
+        name='defer_held_message'),
+    url(r'^held_messages/(?P<msg_id>[^/]+)/reject$', list_views.reject_held_message,
+        name='reject_held_message'),
+    url(r'^held_messages$', list_views.list_moderation, name='list_held_messages'),
+    url(r'^bans/$', list_views.list_bans, name='list_bans'),
+    url(r'^remove/(?P<role>[^/]+)/(?P<address>[^/]+)', list_views.remove_role, name='remove_role'),
+    url(r'^settings/(?P<visible_section>[^/]+)?$', list_views.list_settings, name='list_settings'),
+    url(r'^unsubscribe_all$', list_views.remove_all_subscribers, name='unsubscribe_all'),
+]
 
-urlpatterns = patterns(
-    'postorius.views',
-    (r'^$', 'list_index'),
-    # /account/
+urlpatterns = [
+    url(r'^$', list_views.list_index),
     url(r'^accounts/login/$', login_view,
         {"template_name": "postorius/login.html"}, name='user_login'),
     url(r'^accounts/logout/$', logout_view, name='user_logout'),
-    url(r'^accounts/profile/$', 'user_profile', name='user_profile'),
-    url(r'^accounts/subscriptions/$', UserSubscriptionsView.as_view(),
+    url(r'^accounts/profile/$', user_views.user_profile, name='user_profile'),
+    url(r'^accounts/subscriptions/$', user_views.UserSubscriptionsView.as_view(),
         name='user_subscriptions'),
-    url(r'^accounts/per-address-preferences/$',
-        UserAddressPreferencesView.as_view(), name='user_address_preferences'),
-    url(r'^accounts/per-subscription-preferences/$', # if this URL changes, update Mailman's Member.options_url
-        UserSubscriptionPreferencesView.as_view(
-        ), name='user_subscription_preferences'),
-    url(r'^accounts/mailmansettings/$',
-        UserMailmanSettingsView.as_view(),
+    url(r'^accounts/per-address-preferences/$', user_views.UserAddressPreferencesView.as_view(),
+        name='user_address_preferences'),
+    # if this URL changes, update Mailman's Member.options_url
+    url(r'^accounts/per-subscription-preferences/$',
+        user_views.UserSubscriptionPreferencesView.as_view(),
+        name='user_subscription_preferences'),
+    url(r'^accounts/mailmansettings/$', user_views.UserMailmanSettingsView.as_view(),
         name='user_mailmansettings'),
-    url(r'^accounts/list-options/(?P<list_id>[^/]+)/$', user_list_options,
+    url(r'^accounts/list-options/(?P<list_id>[^/]+)/$', user_views.user_list_options,
         name='user_list_options'),
     # /domains/
-    url(r'^domains/$', 'domain_index', name='domain_index'),
-    url(r'^domains/new/$', 'domain_new', name='domain_new'),
-    url(r'^domains/(?P<domain>[^/]+)/delete$',
-        'domain_delete', name='domain_delete'),
+    url(r'^domains/$', domain_views.domain_index, name='domain_index'),
+    url(r'^domains/new/$', domain_views.domain_new, name='domain_new'),
+    url(r'^domains/(?P<domain>[^/]+)/delete$', domain_views.domain_delete, name='domain_delete'),
     # /lists/
-    url(r'^lists/$', 'list_index', name='list_index'),
-    url(r'^lists/new/$', 'list_new', name='list_new'),
-    url(r'^lists/(?P<list_id>[^/]+)/', include(per_list_urlpatterns)),
-    url(r'^users/address_activation/$',
-        AddressActivationView.as_view(),
+    url(r'^lists/$', list_views.list_index, name='list_index'),
+    url(r'^lists/new/$', list_views.list_new, name='list_new'),
+    url(r'^lists/(?P<list_id>[^/]+)/', include(list_patterns)),
+    url(r'^users/address_activation/$', user_views.AddressActivationView.as_view(),
         name='address_activation'),
     url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]{40})/$',
-        'address_activation_link', name='address_activation_link'),
-)
+        user_views.address_activation_link,
+        name='address_activation_link'),
+]
