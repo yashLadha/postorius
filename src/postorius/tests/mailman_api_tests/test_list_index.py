@@ -18,7 +18,7 @@
 import logging
 
 from django.core.urlresolvers import reverse
-from django.test import Client, SimpleTestCase
+from django.test import Client, TestCase
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -33,7 +33,7 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-class ListIndexPageTest(SimpleTestCase):
+class ListIndexPageTest(TestCase):
     """Tests for the list index page."""
 
     @MM_VCR.use_cassette('test_list_index.yaml')

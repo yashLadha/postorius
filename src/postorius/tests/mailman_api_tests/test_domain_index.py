@@ -18,7 +18,7 @@
 import logging
 
 from django.core.urlresolvers import reverse
-from django.test import Client, SimpleTestCase
+from django.test import Client, TestCase
 from django.contrib.auth.models import User
 try:
     from urllib2 import HTTPError
@@ -34,7 +34,7 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-class DomainIndexPageTest(SimpleTestCase):
+class DomainIndexPageTest(TestCase):
     """Tests for the list index page."""
 
     @MM_VCR.use_cassette('test_domain_index.yaml')

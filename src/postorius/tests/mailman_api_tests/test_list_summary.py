@@ -19,7 +19,7 @@ import logging
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.test import Client, SimpleTestCase
+from django.test import Client, TestCase
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -34,7 +34,7 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-class ListSummaryPageTest(SimpleTestCase):
+class ListSummaryPageTest(TestCase):
     """Tests for the list summary page.
 
     Tests accessiblity and existince of the submit form depending on

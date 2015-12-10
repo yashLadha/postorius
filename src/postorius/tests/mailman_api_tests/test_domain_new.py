@@ -21,7 +21,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import resolve_url
-from django.test import Client, SimpleTestCase
+from django.test import Client, TestCase
 
 try:
     from urllib2 import HTTPError
@@ -37,7 +37,7 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-class DomainCreationTest(SimpleTestCase):
+class DomainCreationTest(TestCase):
     """Tests for the new list page."""
 
     @MM_VCR.use_cassette('test_domain_creation.yaml')
