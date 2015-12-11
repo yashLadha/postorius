@@ -17,13 +17,10 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.conf import settings
-from django.shortcuts import render_to_response, redirect
-from django.template import Context, loader, RequestContext
-from django.views.generic import TemplateView, View
 
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
+from django.views.generic import TemplateView
+
+from postorius.models import List, MailmanUser, MailmanApiError, Mailman404Error
 from postorius import utils
 
 

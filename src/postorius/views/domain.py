@@ -17,31 +17,17 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import json
-
-
-from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.decorators import (login_required,
-                                            permission_required,
-                                            user_passes_test)
-from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
-                                       SetPasswordForm, PasswordChangeForm)
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
-from django.template import Context, loader, RequestContext
-from django.utils.decorators import method_decorator
+from django.template import RequestContext
 from django.utils.translation import gettext as _
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 from postorius import utils
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
 from postorius.forms import *
 from postorius.auth.decorators import *
 

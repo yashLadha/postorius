@@ -44,7 +44,6 @@ class ListOfStringsField(forms.Field):
         return result
 
 
-
 class DomainNew(FieldsetForm):
 
     """
