@@ -8,6 +8,7 @@ var loadjs = function(rest_url, error_message) {
       url: rest_url + msgid,
       success: function(data) {
         $('#msg-title').html(data.subject);
+        $('.modal-footer form input[name="msgid"]').attr('value', msgid);
         $('#held-stripped-message').html(data.stripped_msg.replace(/\n/g, "<br />"));
         $('#held-full-message').html(data.msg.replace(/\n/g, "<br />"));
         $('#held-messages-modal').modal('show');

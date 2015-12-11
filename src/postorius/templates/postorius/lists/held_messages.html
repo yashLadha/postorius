@@ -23,11 +23,13 @@
             <table class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <td colspan="5">{% trans 'Perform action on selected messages' %}</td>
-                  <td>
-                    <input type="submit" class="btn btn-xs btn-success" name="accept" value="{% trans 'Accept' %}" />
-                    <input type="submit" class="btn btn-xs btn-warning" name="reject" value="{% trans 'Reject' %}" />
-                    <input type="submit" class="btn btn-xs btn-danger" name="discard" value="{% trans 'Discard' %}" />
+                  <td colspan="5">
+                    <div class="col-md-8">{% trans 'Perform action on selected messages' %}</div>
+                    <div class="col-md-4 text-right">
+                    <input type="submit" class="btn btn-sm btn-success" name="accept" value="{% trans 'Accept' %}" />
+                    <input type="submit" class="btn btn-sm btn-warning" name="reject" value="{% trans 'Reject' %}" />
+                    <input type="submit" class="btn btn-sm btn-danger" name="discard" value="{% trans 'Discard' %}" />
+                    </div>
                   </td>
                 </tr>
                 <tr>
@@ -36,14 +38,14 @@
                   <th>{% trans 'Sender' %}</th>
                   <th>{% trans 'Reason' %}</th>
                   <th>{% trans 'Hold Date' %}</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {% for msg in held_messages %}
                   <tr>
                     <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
-                    <td>{{ msg.subject }}</td>
+                    <td><a href="#" class="show-modal-btn" data-msgid="{{ msg.request_id }}">{{ msg.subject }}</a>
+</td>
                     <td>{{ msg.sender }}</td>
                     <td>
                       {% if msg.reasons %}
@@ -55,12 +57,6 @@
                       {% endif %}
                     </td>
                     <td>{{ msg.hold_date }}</td>
-                    <td>
-                      <a href="#" class="btn btn-xs btn-info show-modal-btn" data-msgid="{{ msg.request_id }}">{% trans 'View' %}</a>
-                      <a href="{% url 'accept_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-success">{% trans 'Accept' %}</a>
-                      <a href="{% url 'reject_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-warning">{% trans 'Reject' %}</a>
-                      <a href="{% url 'discard_held_message' list.list_id msg.request_id %}" class="btn btn-xs btn-danger">{% trans 'Discard' %}</a>
-                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -82,10 +78,21 @@
                   <div class="hidden" id="held-full-message"></div>
               </div>
               <div class="modal-footer">
-                <button class="btn dismiss-modal" data-dismiss="modal" aria-hidden="true">Close</button>
-                <button type="button" class="btn btn-info pull-right" id="toggle-full-message" data-toggle="button" aria-pressed="false" autocomplete="off">
-                  {% trans 'View Full Message' %}
-                </button>
+                <div class="col-md-6 text-left">
+                  <form action="{% url 'moderate_held_message' list.list_id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="msgid" />
+                    <input type="submit" class="btn btn-success" name="accept" value="{% trans 'Accept' %}" />
+                    <input type="submit" class="btn btn-warning" name="reject" value="{% trans 'Reject' %}" />
+                    <input type="submit" class="btn btn-danger" name="discard" value="{% trans 'Discard' %}" />
+                  </form>
+                </div>
+                <div class="col-md-6"> 
+                    <button class="btn dismiss-modal" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button type="button" class="btn btn-info pull-right" id="toggle-full-message" data-toggle="button" aria-pressed="false" autocomplete="off">
+                      {% trans 'View Full Message' %}
+                    </button>
+                </div>
               </div>
             </div>
           </div>

@@ -421,6 +421,28 @@ def list_moderation(request, list_id, held_id=-1):
 
 
 @login_required
+@list_moderator_required
+def moderate_held_message(request, list_id):
+    if request.method != 'POST':
+        return HttpReponseNotAllowed(['POST',])
+    msg_id = request.POST['msgid']
+    try:
+        mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+        if 'accept' in request.POST:
+            mailing_list.accept_message(msg_id)
+            messages.success(request, _('The message was accepted'))
+        elif 'reject' in request.POST:
+            mailing_list.reject_message(msg_id)
+            messages.success(request, _('The message was rejected'))
+        elif 'discard' in request.POST:
+            mailing_list.discard_message(msg_id)
+            messages.success(request, _('The message was discarded'))
+    except MailmanApiError:
+        return utils.render_api_error(request)
+
+    return redirect('list_held_messages', list_id)
+
+@login_required
 @list_owner_required
 def csv_view(request, list_id):
     """Export all the subscriber in csv
@@ -540,74 +562,6 @@ def list_delete(request, list_id):
         return render(request, 'postorius/lists/confirm_delete.html',
                       {'submit_url': submit_url, 'cancel_url': cancel_url,
                        'list': the_list})
-
-
-@login_required
-@list_moderator_required
-def accept_held_message(request, list_id, msg_id):
-    """Accepts a held message.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-        the_list.accept_message(msg_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError as e:
-        messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, _('The message has been accepted.'))
-    return redirect('list_held_messages', the_list.list_id)
-
-
-@login_required
-@list_moderator_required
-def discard_held_message(request, list_id, msg_id):
-    """Discards a held message.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-        the_list.discard_message(msg_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError as e:
-        messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, _('The message has been discarded.'))
-    return redirect('list_held_messages', the_list.list_id)
-
-
-@login_required
-@list_moderator_required
-def defer_held_message(request, list_id, msg_id):
-    """Defers a held message for a later decision.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-        the_list.defer_message(msg_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError as e:
-        messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, _('The message has been deferred.'))
-    return redirect('list_held_messages', the_list.list_id)
-
-
-@login_required
-@list_moderator_required
-def reject_held_message(request, list_id, msg_id):
-    """Rejects a held message.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-        the_list.reject_message(msg_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError as e:
-        messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, _('The message has been rejected.'))
-    return redirect('list_held_messages', the_list.list_id)
 
 
 @login_required
