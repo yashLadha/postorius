@@ -447,8 +447,6 @@ def list_new(request, template='postorius/lists/new.html'):
                 return render_to_response(
                     'postorius/errors/generic.html',
                     {'error': e}, context_instance=RequestContext(request))
-            else:
-                messages.success(_("New List created"))
     else:
         choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains,
