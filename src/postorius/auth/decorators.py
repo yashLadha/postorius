@@ -47,7 +47,7 @@ def basic_auth_login(fn):
 
 def list_owner_required(fn):
     """Check if the logged in user is the list owner of the given list.
-    Assumes that the request object is the first arg and that fqdn_listname
+    Assumes that the request object is the first arg and that list_id
     is present in kwargs.
     """
     def wrapper(*args, **kwargs):

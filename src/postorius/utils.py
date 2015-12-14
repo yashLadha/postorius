@@ -99,6 +99,8 @@ def paginate(request, collection, count=20, paginator_class=Paginator):
 
 def set_other_emails(user):
     from postorius.models import MailmanUser, MailmanApiError, Mailman404Error
+    if hasattr(user, 'other_emails'):
+        return
     user.other_emails = []
     if not user.is_authenticated():
         return

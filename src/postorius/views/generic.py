@@ -39,7 +39,7 @@ class MailingListView(TemplateView, MailmanClientMixin):
     """A generic view for everything based on a mailman.client
     list object.
 
-    Sets self.mailing_list to list object if fqdn_listname in **kwargs.
+    Sets self.mailing_list to list object if list_id is in **kwargs.
     """
 
     def _get_list(self, list_id, page):

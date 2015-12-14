@@ -97,62 +97,42 @@ def list_members_view(request, list_id, role=None):
     return render(request, 'postorius/lists/members.html', context)
 
 
-class ListMemberOptionsView(MailingListView):
-    '''View the preferences for a single member of a mailing list'''
-
-    @method_decorator(list_owner_required)
-    def post(self, request, list_id, email):
-        try:
-            client = utils.get_client()
-            mm_member = client.get_member(list_id, email)
-            mm_list = List.objects.get_or_404(fqdn_listname=list_id)
-            preferences_form = UserPreferences(request.POST)
-            if preferences_form.is_valid():
-                preferences = mm_member.preferences
-                for key in preferences_form.fields.keys():
-                    preferences[key] = preferences_form.cleaned_data[key]
-                preferences.save()
-                messages.success(request, _("The member's preferences have been updated."))
+@login_required
+@list_owner_required
+def list_member_options(request, list_id, email):
+    template_name = 'postorius/lists/memberoptions.html'
+    client = utils.get_client()
+    mm_list = List.objects.get_or_404(fqdn_listname=list_id)
+    try:
+        mm_member = client.get_member(list_id, email)
+        member_prefs = mm_member.preferences
+    except Mailman404Error:
+        return render(request, template_name, {'nolists': 'true'})
+    if request.method == 'POST':
+        preferences_form = UserPreferences(
+            request.POST, initial=member_prefs)
+        if preferences_form.is_valid():
+            if not preferences_form.has_changed():
+                messages.info(request,
+                    _("No change to the member's preferences."))
+                return redirect('list_member_options', list_id, email)
+            for key in preferences_form.fields.keys():
+                member_prefs[key] = preferences_form.cleaned_data[key]
+            try:
+                member_prefs.save()
+            except HTTPError as e:
+                messages.error(request, e.msg)
             else:
-                messages.error(request, _('Something went wrong.'))
-
-            # this is a bit silly, since we already have the preferences,
-            # but I want to be sure we don't show stale data.
-            settingsform = UserPreferences(initial=mm_member.preferences)
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError as e:
-            messages.error(request, e.msg)
-        return render_to_response(
-            'postorius/lists/memberoptions.html',
-            {'mm_member': mm_member,
-             'list': mm_list,
-             'settingsform': settingsform,
-             },
-            context_instance=RequestContext(request))
-
-    @method_decorator(login_required)
-    @method_decorator(list_owner_required)
-    def get(self, request, list_id, email):
-        try:
-            client = utils.get_client()
-            mm_member = client.get_member(list_id, email)
-            mm_list = List.objects.get_or_404(fqdn_listname=list_id)
-            settingsform = UserPreferences(initial=mm_member.preferences)
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except Mailman404Error:
-            return render_to_response(
-                'postorius/lists/memberoptions.html',
-                {'nolists': 'true'},
-                context_instance=RequestContext(request))
-        return render_to_response(
-            'postorius/lists/memberoptions.html',
-            {'mm_member': mm_member,
-             'list': mm_list,
-             'settingsform': settingsform,
-             },
-            context_instance=RequestContext(request))
+                messages.success(request,
+                    _("The member's preferences have been updated."))
+                return redirect('list_member_options', list_id, email)
+    else:
+        preferences_form = UserPreferences(initial=member_prefs)
+    return render(request, template_name, {
+        'mm_member': mm_member,
+        'list': mm_list,
+        'preferences_form': preferences_form,
+        })
 
 
 class ListSummaryView(MailingListView):
