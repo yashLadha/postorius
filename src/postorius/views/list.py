@@ -108,30 +108,56 @@ def list_member_options(request, list_id, email):
         member_prefs = mm_member.preferences
     except Mailman404Error:
         return render(request, template_name, {'nolists': 'true'})
+    initial_moderation = dict([
+        (key, getattr(mm_member, key)) for key in MemberModeration.base_fields
+        ])
     if request.method == 'POST':
-        preferences_form = UserPreferences(
-            request.POST, initial=member_prefs)
-        if preferences_form.is_valid():
-            if not preferences_form.has_changed():
-                messages.info(request,
-                    _("No change to the member's preferences."))
-                return redirect('list_member_options', list_id, email)
-            for key in preferences_form.fields.keys():
-                member_prefs[key] = preferences_form.cleaned_data[key]
-            try:
-                member_prefs.save()
-            except HTTPError as e:
-                messages.error(request, e.msg)
-            else:
-                messages.success(request,
-                    _("The member's preferences have been updated."))
-                return redirect('list_member_options', list_id, email)
+        if request.POST.get("formname") == 'preferences':
+            moderation_form = MemberModeration(initial=initial_moderation)
+            preferences_form = UserPreferences(
+                request.POST, initial=member_prefs)
+            if preferences_form.is_valid():
+                if not preferences_form.has_changed():
+                    messages.info(request,
+                        _("No change to the member's preferences."))
+                    return redirect('list_member_options', list_id, email)
+                for key in preferences_form.fields.keys():
+                    member_prefs[key] = preferences_form.cleaned_data[key]
+                try:
+                    member_prefs.save()
+                except HTTPError as e:
+                    messages.error(request, e.msg)
+                else:
+                    messages.success(request,
+                        _("The member's preferences have been updated."))
+                    return redirect('list_member_options', list_id, email)
+        elif request.POST.get("formname") == 'moderation':
+            preferences_form = UserPreferences(initial=member_prefs)
+            moderation_form = MemberModeration(
+                request.POST, initial=initial_moderation)
+            if moderation_form.is_valid():
+                if not moderation_form.has_changed():
+                    messages.info(request,
+                        _("No change to the member's moderation."))
+                    return redirect('list_member_options', list_id, email)
+                for key in moderation_form.fields.keys():
+                    setattr(mm_member, key, moderation_form.cleaned_data[key])
+                try:
+                    mm_member.save()
+                except HTTPError as e:
+                    messages.error(request, e.msg)
+                else:
+                    messages.success(request,
+                        _("The member's moderation settings have been updated."))
+                    return redirect('list_member_options', list_id, email)
     else:
         preferences_form = UserPreferences(initial=member_prefs)
+        moderation_form = MemberModeration(initial=initial_moderation)
     return render(request, template_name, {
         'mm_member': mm_member,
         'list': mm_list,
         'preferences_form': preferences_form,
+        'moderation_form': moderation_form,
         })
 
 

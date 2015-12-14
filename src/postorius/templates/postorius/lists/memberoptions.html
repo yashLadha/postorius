@@ -17,7 +17,17 @@
     {% else %}
         <form action="{% url 'list_member_options' list.list_id mm_member.email %}" method="post" class="form-horizontal">
             {% render_form_horizontal preferences_form 3 8 'Save changes' %}
+            <input type="hidden" name="formname" value="preferences" />
         </form>
+        <div class="panel panel-default">
+            <div class="panel-heading">Administration options</div>
+            <div class="panel-body">
+                <form action="{% url 'list_member_options' list.list_id mm_member.email %}" method="post" class="form-horizontal">
+                    {% render_form_horizontal moderation_form 3 8 'Save changes' %}
+                    <input type="hidden" name="formname" value="moderation" />
+                </form>
+            </div>
+        </div>
 
     {% endif %}
 {% endblock main %}

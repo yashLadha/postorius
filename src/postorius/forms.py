@@ -23,6 +23,15 @@ from django.utils.translation import ugettext_lazy as _
 from postorius.fieldset_forms import FieldsetForm
 
 
+ACTION_CHOICES = (
+    ("hold", _("Hold for moderation")),
+    ("reject", _("Reject (with notification)")),
+    ("discard", _("Discard (no notification)")),
+    ("accept", _("Accept immediately (bypass other rules)")),
+    ("defer", _("Default processing")),
+    )
+
+
 class ListOfStringsField(forms.Field):
     widget = forms.widgets.Textarea
 
@@ -222,12 +231,6 @@ class MessageAcceptanceForm(forms.Form):
     """
     List messages acceptance settings.
     """
-    action_choices = (
-        ("hold", _("Hold for moderation")),
-        ("reject", _("Reject (with notification)")),
-        ("discard", _("Discard (no notification)")),
-        ("accept", _("Accept immediately (bypass other rules)")),
-        ("defer", _("Default processing")))
     acceptable_aliases = ListOfStringsField(
         label=_("Acceptable aliases"),
         required=False,
@@ -255,18 +258,19 @@ class MessageAcceptanceForm(forms.Form):
         error_messages={
             'required': _("Please choose a default member action.")},
         required=True,
-        choices=action_choices,
+        choices=ACTION_CHOICES,
         help_text=_(
             'Default action to take when a member posts to the list. '
             'Hold -- This holds the message for approval by the list '
-            'moderators.'
+            'moderators. '
             'Reject -- this automatically rejects the message by sending a '
             'bounce notice to the post\'s author. The text of the bounce '
             'notice can be configured by you. '
             'Discard -- this simply discards the message, with no notice '
             'sent to the post\'s author. '
-            'Accept --accepts any postings to the list by default. '
-            'Defer -- Defers any postings to the list by default. '))
+            'Accept -- accepts any postings without any further checks. '
+            'Defer -- default processing, run additional checks and accept '
+            'the message. '))
     default_nonmember_action = forms.ChoiceField(
         widget=forms.RadioSelect(),
         label=_('Default action to take when a non-member posts to the'
@@ -274,7 +278,7 @@ class MessageAcceptanceForm(forms.Form):
         error_messages={
             'required': _("Please choose a default non-member action.")},
         required=True,
-        choices=action_choices,
+        choices=ACTION_CHOICES,
         help_text=_(
             'When a post from a non-member is received, the message\'s sender '
             'is matched against the list of explicitly accepted, held, '
@@ -706,6 +710,31 @@ class UserPreferences(FieldsetForm):
         layout = [["User Preferences", "acknowledge_posts", "hide_address",
                    "receive_list_copy", "receive_own_postings",
                    "delivery_mode", "delivery_status"]]
+
+
+class MemberModeration(FieldsetForm):
+    """
+    Form handling the member's moderation_action.
+    """
+    moderation_action = forms.ChoiceField(
+        widget=forms.Select(),
+        label=_('Moderation'),
+        error_messages={
+            'required': _("Please choose a moderation action.")},
+        required=True,
+        choices=ACTION_CHOICES,
+        help_text=_(
+            'Default action to take when this member posts to the list. '
+            'Hold -- This holds the message for approval by the list '
+            'moderators. '
+            'Reject -- this automatically rejects the message by sending a '
+            'bounce notice to the post\'s author. The text of the bounce '
+            'notice can be configured by you. '
+            'Discard -- this simply discards the message, with no notice '
+            'sent to the post\'s author. '
+            'Accept -- accepts any postings without any further checks. '
+            'Defer -- default processing, run additional checks and accept '
+            'the message. '))
 
 
 class UserNew(FieldsetForm):
