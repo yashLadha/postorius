@@ -4,21 +4,21 @@
 {% load nav_helpers %}
 
 {% block subtitle %}
-{% trans 'Subscription Preferences' %} | {{ user.username }}
+{% trans 'Subscription preferences' %} | {{ user.username }}
 {% endblock %}
 
 {% block main %}
 
-    {% user_nav 'settings' 'Subscription Settings' %}
+    {% user_nav 'settings' 'Subscription settings' %}
 
     <ul class="nav nav-tabs margin-bottom">
-     <li> <a href="{% url 'user_mailmansettings' %}">{% trans 'Global Mailman Preferences' %}</a></li>
-     <li> <a href="{% url 'user_address_preferences' %}">{% trans 'Address Based Preferences' %}</a></li>
-     <li class="active"><a href="#">{% trans 'Subscription Based Preferences' %}</a></li>
+     <li> <a href="{% url 'user_mailmansettings' %}">{% trans 'Global Mailman preferences' %}</a></li>
+     <li> <a href="{% url 'user_address_preferences' %}">{% trans 'Address-based preferences' %}</a></li>
+     <li class="active"><a href="#">{% trans 'Subscription-based preferences' %}</a></li>
     </ul>
     {% if nolists %}
       <div>
-          <h1>{% trans 'No Preferences Available' %}</h1>
+          <h1>{% trans 'No preferences available' %}</h1>
       </div>
       <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
     {% else %}
