@@ -20,6 +20,10 @@
 Authentication and authorization-related utilities.
 """
 
+from django.utils import six
+from postorius.utils import set_other_emails
+from postorius.models import List
+
 def user_is_in_list_roster(user, mailing_list, roster):
     if not user.is_authenticated():
         return False
@@ -32,7 +36,7 @@ def user_is_in_list_roster(user, mailing_list, roster):
 
 
 def set_user_access_props(user, mlist):
-    if not isinstance(mlist, List):
+    if isinstance(mlist, six.string_types):
         mlist = List.objects.get_or_404(mlist)
     if not hasattr(user, 'is_list_owner'):
         user.is_list_owner = user_is_in_list_roster(

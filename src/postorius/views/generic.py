@@ -52,7 +52,7 @@ class MailingListView(TemplateView, MailmanClientMixin):
             self.mailing_list = self._get_list(kwargs['list_id'],
                                                int(kwargs.get('page', 1)))
             utils.set_other_emails(request.user)
-            set_user_access_props(request.user)
+            set_user_access_props(request.user, self.mailing_list)
         # set the template
         if 'template' in kwargs:
             self.template = kwargs['template']
