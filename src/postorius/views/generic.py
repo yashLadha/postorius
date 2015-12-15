@@ -22,6 +22,7 @@ from django.views.generic import TemplateView
 
 from postorius.models import List, MailmanUser, MailmanApiError, Mailman404Error
 from postorius import utils
+from postorius.auth.utils import set_user_access_props
 
 
 class MailmanClientMixin(object):
@@ -48,16 +49,10 @@ class MailingListView(TemplateView, MailmanClientMixin):
     def dispatch(self, request, *args, **kwargs):
         # get the list object.
         if 'list_id' in kwargs:
-            try:
-                self.mailing_list = self._get_list(kwargs['list_id'],
-                                                   int(kwargs.get('page', 1)))
-            except MailmanApiError:
-                return utils.render_api_error(request)
+            self.mailing_list = self._get_list(kwargs['list_id'],
+                                               int(kwargs.get('page', 1)))
             utils.set_other_emails(request.user)
-            request.user.is_list_owner = utils.user_is_in_list_roster(
-                request.user, self.mailing_list, "owners")
-            request.user.is_list_moderator = utils.user_is_in_list_roster(
-                request.user, self.mailing_list, "moderators")
+            set_user_access_props(request.user)
         # set the template
         if 'template' in kwargs:
             self.template = kwargs['template']

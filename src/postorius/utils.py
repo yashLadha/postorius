@@ -115,13 +115,3 @@ def set_other_emails(user):
         return
     if user.email in user.other_emails:
         user.other_emails.remove(user.email)
-
-def user_is_in_list_roster(user, mailing_list, roster):
-    if not user.is_authenticated():
-        return False
-    if not hasattr(user, 'other_emails'):
-        set_other_emails(user)
-    addresses = set([user.email]) | set(user.other_emails)
-    if addresses & set(getattr(mailing_list, roster)):
-        return True # At least one address is in the roster
-    return False

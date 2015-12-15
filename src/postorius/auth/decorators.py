@@ -23,7 +23,8 @@ from django.core.exceptions import PermissionDenied
 
 from postorius.models import (Domain, List, Member, MailmanUser,
                               MailmanApiError, Mailman404Error)
-from postorius.utils import user_is_in_list_roster
+
+from .utils import set_user_access_props
 
 
 def basic_auth_login(fn):
@@ -57,9 +58,7 @@ def list_owner_required(fn):
             raise PermissionDenied
         if user.is_superuser:
             return fn(*args, **kwargs)
-        if not hasattr(user, 'is_list_owner'):
-            mlist = List.objects.get_or_404(fqdn_listname=list_id)
-            user.is_list_owner = user_is_in_list_roster(user, mlist, "owners")
+        set_user_access_props(user, list_id)
         if user.is_list_owner:
             return fn(*args, **kwargs)
         else:
@@ -79,15 +78,7 @@ def list_moderator_required(fn):
             raise PermissionDenied
         if user.is_superuser:
             return fn(*args, **kwargs)
-        if (not hasattr(user, 'is_list_owner')
-            or not hasattr(user, 'is_list_moderator')):
-            mlist = List.objects.get_or_404(fqdn_listname=list_id)
-            if not hasattr(user, 'is_list_owner'):
-                user.is_list_owner = user_is_in_list_roster(
-                    user, mlist, "owners")
-            if not hasattr(user, 'is_list_moderator'):
-                user.is_list_moderator = user_is_in_list_roster(
-                    user, mlist, "moderators")
+        set_user_access_props(user, list_id)
         if user.is_list_owner or user.is_list_moderator:
             return fn(*args, **kwargs)
         else:
