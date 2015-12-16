@@ -77,9 +77,17 @@ def list_members_view(request, list_id, role=None):
     }
     if role == 'subscriber':
         context['page_title'] = _('List subscribers')
+        if request.GET.get('q'):
+            query = context['query'] = request.GET['q']
+            if "*" not in query:
+                query = '*{}*'.format(query)
+            # Proxy the find_members method to insert the query
+            method = lambda count, page:  mailing_list.find_members(
+                query, count=count, page=page)
+        else:
+            method = mailing_list.get_member_page
         context['members'] = utils.paginate(
-            request, mailing_list.get_member_page,
-            count=request.GET.get('count', 25),
+            request, method, count=request.GET.get('count', 25),
             paginator_class=utils.MailmanPaginator)
         context['empty_error'] = _('List has no Subscribers')
         context['count_options'] = [25, 50, 100, 200]
