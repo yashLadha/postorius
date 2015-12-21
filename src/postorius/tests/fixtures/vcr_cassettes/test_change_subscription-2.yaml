@@ -15,15 +15,15 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: list_id=foo.example.com&display_name=None&subscriber=test%40example.com
+    body: display_name=None&list_id=foo.example.com&subscriber=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
     method: !!python/unicode 'POST'
     uri: http://localhost:9001/3.0/members
   response:
-    body: {string: !!python/unicode '{"http_etag": "\"0c768e345f844860cca7d460c3894e7155032582\"",
-        "token": "8cae432078e4ea1c3e4a01dba7d77e870ef72348", "token_owner": "subscriber"}'}
+    body: {string: !!python/unicode '{"http_etag": "\"5ef4b8c02a16638dd9a0b137836fc2e28cfcebce\"",
+        "token": "ba628db5bfe76e0c13963cecc062cf6ac1a9f89e", "token_owner": "subscriber"}'}
     headers:
       content-length: ['143']
       content-type: [application/json; charset=utf-8]
@@ -113,36 +113,6 @@ interactions:
         "start": 0, "total_size": 2}'}
     headers:
       content-length: ['759']
-      content-type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/addresses/anotheremail@example.com
-  response:
-    body: {string: !!python/unicode '{"email": "anotheremail@example.com", "http_etag":
-        "\"f9869a7a3dd79521370b25fccfc997d4d91b122d\"", "original_email": "anotheremail@example.com",
-        "registered_on": "2005-08-01T07:49:23", "self_link": "http://localhost:9001/3.0/addresses/anotheremail@example.com",
-        "user": "http://localhost:9001/3.0/users/19", "verified_on": "2005-08-01T07:49:23"}'}
-    headers:
-      content-length: ['345']
-      content-type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/addresses/test@example.com
-  response:
-    body: {string: !!python/unicode '{"display_name": "None", "email": "test@example.com",
-        "http_etag": "\"7e8d41ee53a45beef7f77b7a5209c25bce352646\"", "original_email":
-        "test@example.com", "registered_on": "2005-08-01T07:49:23", "self_link": "http://localhost:9001/3.0/addresses/test@example.com",
-        "user": "http://localhost:9001/3.0/users/19"}'}
-    headers:
-      content-length: ['307']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:

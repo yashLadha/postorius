@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: password=None&display_name=&email=test%40example.com
+    body: email=test%40example.com&password=None
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
@@ -28,7 +28,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: list_id=foo.example.com&subscriber=test%40example.com&role=owner
+    body: list_id=foo.example.com&role=owner&subscriber=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
@@ -63,8 +63,8 @@ interactions:
     uri: http://localhost:9001/3.0/users/test@example.com
   response:
     body: {string: !!python/unicode '{"created_on": "2005-08-01T07:49:23", "http_etag":
-        "\"c5a32a8d4de390f96b760b8936ca26554c4cd555\"", "is_server_owner": false,
-        "password": "$6$rounds=611392$VWmg3MZFQbBP/63H$J5DWZ50qiU8HM7YIQd9uHuLOXnzh7Dd1y4AtwLqQjgAYrUlahgoJPD1aeu9bsLd3NntkhfjZXtzubSLqVdEaE0",
+        "\"4069f0666f269c69537d6ad2ece8e3eaec6882b3\"", "is_server_owner": false,
+        "password": "$6$rounds=671105$BC4rSNHWy/JkJfj8$HcwNXekuZ462tp5hnP3hVVtNVvyzn8JCcTynIJjDHIqV.62XlQlhMRPh7J/3AOOevu8PME9oJmRM1i/.XYa8x0",
         "self_link": "http://localhost:9001/3.0/users/18", "user_id": 18}'}
     headers:
       content-length: ['326']
@@ -84,21 +84,6 @@ interactions:
         "start": 0, "total_size": 1}'}
     headers:
       content-length: ['388']
-      content-type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/addresses/test@example.com
-  response:
-    body: {string: !!python/unicode '{"email": "test@example.com", "http_etag": "\"c15852aab181b68acbd442056b76d5dd8a6daa16\"",
-        "original_email": "test@example.com", "registered_on": "2005-08-01T07:49:23",
-        "self_link": "http://localhost:9001/3.0/addresses/test@example.com", "user":
-        "http://localhost:9001/3.0/users/18"}'}
-    headers:
-      content-length: ['283']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:

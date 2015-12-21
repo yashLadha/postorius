@@ -29,11 +29,11 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: mhonarc=True&prototype=True&mail-archive=True
+    body: mail-archive=True
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PUT'
+    method: !!python/unicode 'PATCH'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
     body: {string: !!python/unicode ''}
@@ -41,11 +41,24 @@ interactions:
       content-length: ['0']
     status: {code: 204, message: No Content}
 - request:
-    body: mhonarc=False&prototype=True&mail-archive=True
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
+  response:
+    body: {string: !!python/unicode '{"http_etag": "\"3dbbbaad592a043938314db0e5249a1ca71d0dc6\"",
+        "mail-archive": true, "mhonarc": true, "prototype": true}'}
+    headers:
+      content-length: ['119']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: prototype=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PUT'
+    method: !!python/unicode 'PATCH'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
     body: {string: !!python/unicode ''}
@@ -53,11 +66,24 @@ interactions:
       content-length: ['0']
     status: {code: 204, message: No Content}
 - request:
-    body: mhonarc=False&prototype=False&mail-archive=True
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
+  response:
+    body: {string: !!python/unicode '{"http_etag": "\"dfd159ec866aff2f484eb6399b59057ba112d3e5\"",
+        "mail-archive": true, "mhonarc": true, "prototype": false}'}
+    headers:
+      content-length: ['120']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: mhonarc=False
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
-    method: !!python/unicode 'PUT'
+    method: !!python/unicode 'PATCH'
     uri: http://localhost:9001/3.0/lists/test_list.example.com/archivers
   response:
     body: {string: !!python/unicode ''}

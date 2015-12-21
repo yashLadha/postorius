@@ -15,7 +15,7 @@ interactions:
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
-    body: pre_verified=True&list_id=foo.example.com&display_name=None&subscriber=test%40example.com&pre_confirmed=True
+    body: display_name=None&list_id=foo.example.com&pre_confirmed=True&pre_verified=True&subscriber=test%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
@@ -72,21 +72,6 @@ interactions:
         1}'}
     headers:
       content-length: ['450']
-      content-type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/addresses/test@example.com
-  response:
-    body: {string: !!python/unicode '{"display_name": "None", "email": "test@example.com",
-        "http_etag": "\"a12067f833c53eafe6bfb670bdb75d061a0230c1\"", "original_email":
-        "test@example.com", "registered_on": "2005-08-01T07:49:23", "self_link": "http://localhost:9001/3.0/addresses/test@example.com",
-        "user": "http://localhost:9001/3.0/users/12", "verified_on": "2005-08-01T07:49:23"}'}
-    headers:
-      content-length: ['345']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
