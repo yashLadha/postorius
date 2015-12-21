@@ -16,9 +16,9 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import vcr
 
 from django.conf import settings
+from mailmanclient.testing.vcr_helpers import get_vcr
 
 
 TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -31,15 +31,7 @@ VCR_RECORD_MODE = os.environ.get(
     'POSTORIUS_VCR_RECORD_MODE',
     getattr(settings, 'VCR_RECORD_MODE', 'once'))
 
-def filter_response_headers(response):
-    for header in ('date', 'server'):
-        if header in response['headers']:
-            del response['headers'][header]
-    return response
-
-MM_VCR = vcr.VCR(
+MM_VCR = get_vcr(
     cassette_library_dir=os.path.join(FIXTURES_DIR, 'vcr_cassettes'),
     record_mode=VCR_RECORD_MODE,
-    filter_headers=['authorization', 'user-agent', 'date'],
-    before_record_response=filter_response_headers,
     )
