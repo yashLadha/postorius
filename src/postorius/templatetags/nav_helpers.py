@@ -38,11 +38,6 @@ def user_nav(context, current, title='', subtitle=''):
                 title=title, subtitle=subtitle)
 
 
-@register.simple_tag
-def page_url(view_name, *args, **kwargs):
-    return reverse(view_name, *args, **kwargs)
-
-
 @register.simple_tag(takes_context=True)
 def nav_active_class(context, current, view_name):
     if current == view_name:

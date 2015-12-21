@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from postorius.views.api import *
 from postorius.views.list import *
 from postorius.views.domain import *
 from postorius.views.user import *

@@ -737,42 +737,6 @@ class MemberModeration(FieldsetForm):
             'the message. '))
 
 
-class UserNew(FieldsetForm):
-
-    """
-    Form field to add a new user
-    """
-    display_name = forms.CharField(
-        label=_('User Name'),
-        required=True,
-        error_messages={'required': _('Please enter a display name.'),
-                        'invalid': _('Please enter a valid display name.')})
-    email = forms.EmailField(
-        label=_("User's email address"),
-        error_messages={
-            'required': _("Please enter the user's email address.")},
-        required=True)
-    password = forms.CharField(
-        label=_('Password'),
-        required=True,
-        error_messages={'required': _('Please enter a password.')},
-        widget=forms.PasswordInput(render_value=False))
-    password_repeat = forms.CharField(
-        label=_('Repeat password'),
-        required=True,
-        error_messages={'required': _('Please repeat the password.')},
-        widget=forms.PasswordInput(render_value=False))
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        password = cleaned_data.get("password")
-        password_repeat = cleaned_data.get("password_repeat")
-        if password != password_repeat:
-            raise forms.ValidationError(_('Passwords must be identical.'))
-
-        return cleaned_data
-
-
 class UserSettings(FieldsetForm):
 
     """Form handling the user settings.
