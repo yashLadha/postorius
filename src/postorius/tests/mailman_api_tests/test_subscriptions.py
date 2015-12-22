@@ -40,11 +40,7 @@ class TestSubscription(TestCase):
 
     @MM_VCR.use_cassette('test_list_subscription.yaml')
     def setUp(self):
-        mm_client = get_client()
-        try:
-            self.domain = mm_client.create_domain('example.com')
-        except HTTPError:
-            self.domain = mm_client.get_domain('example.com')
+        self.domain = get_client().create_domain('example.com')
         self.open_list = self.domain.create_list('open_list')
         # Set subscription policy to open
         settings = self.open_list.settings
@@ -72,6 +68,7 @@ class TestSubscription(TestCase):
         self.open_list.delete()
         self.mod_list.delete()
         self.mm_user.delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('test_list_subscription_open_primary.yaml')
     def test_subscribe_open(self):

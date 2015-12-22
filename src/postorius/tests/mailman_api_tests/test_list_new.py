@@ -45,10 +45,7 @@ class ListCreationTest(SimpleTestCase):
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')
-        try:
-            self.domain = get_client().create_domain('example.com')
-        except HTTPError:
-            self.domain = get_client().get_domain('example.com')
+        self.domain = get_client().create_domain('example.com')
 
     @MM_VCR.use_cassette('test_list_creation.yaml')
     def tearDown(self):
@@ -56,6 +53,7 @@ class ListCreationTest(SimpleTestCase):
         self.superuser.delete()
         for mlist in get_client().lists:
             mlist.delete()
+        get_client().delete_domain('example.com')
 
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')

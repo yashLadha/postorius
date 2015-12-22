@@ -38,10 +38,7 @@ class ListIndexPageTest(SimpleTestCase):
 
     @MM_VCR.use_cassette('test_list_index.yaml')
     def setUp(self):
-        try:
-            self.domain = get_client().create_domain('example.com')
-        except HTTPError:
-            self.domain = get_client().get_domain('example.com')
+        self.domain = get_client().create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.bar_list = self.domain.create_list('bar')
 
@@ -49,6 +46,7 @@ class ListIndexPageTest(SimpleTestCase):
     def tearDown(self):
         for mlist in get_client().lists:
             mlist.delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('test_list_index.yaml')
     def test_list_index_contains_the_lists(self):
