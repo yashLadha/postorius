@@ -42,6 +42,12 @@
                     {% trans 'Unsubscribe' %} {{ subscribed_address }}
                 </a>
             </p>
+            {% url 'user_list_options' list.list_id as user_list_options_url %}
+            {% blocktrans %}
+            <p>
+              You can manage your subscription <a href="{{ user_list_options_url }}">here</a>
+            </p>
+            {% endblocktrans %}
         {% else %}
             <h2>{% trans 'Subscribe to this list' %}</h2>
             <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="form-horizontal">

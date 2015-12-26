@@ -102,6 +102,8 @@ urlpatterns = patterns(
     url(r'^accounts/mailmansettings/$',
         UserMailmanSettingsView.as_view(),
         name='user_mailmansettings'),
+    url(r'^accounts/list-options/(?P<list_id>[^/]+)/$', user_list_options,
+        name='user_list_options'),
     # /domains/
     url(r'^domains/$', 'domain_index', name='domain_index'),
     url(r'^domains/new/$', 'domain_new', name='domain_new'),
