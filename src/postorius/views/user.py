@@ -177,7 +177,7 @@ class UserSubscriptionsView(MailmanUserView):
 
     """Shows the subscriptions of a user.
     """
-
+    @method_decorator(login_required)
     def get(self, request):
         memberships = self._get_memberships()
         return render_to_response('postorius/user/subscriptions.html',
