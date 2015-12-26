@@ -129,6 +129,7 @@ class UserAddressPreferencesView(MailmanUserView):
 
 @login_required
 def user_list_options(request, list_id):
+    utils.set_other_emails(request.user)
     mlist = List.objects.get_or_404(fqdn_listname=list_id)
     mm_user = MailmanUser.objects.get(address=request.user.email)
     subscription = None
@@ -150,9 +151,11 @@ def user_list_options(request, list_id):
             messages.error(request, _('Something went wrong.'))
     else:
         form = UserPreferences(initial=subscription.preferences)
+    user_emails = [request.user.email] + request.user.other_emails
+    subscription_form = ChangeSubscriptionForm(user_emails, initial={'email': subscription.email})
     return render_to_response('postorius/user/list_options.html',
-            {'form': form, 'list': mlist,}, context_instance=RequestContext(request))
-            
+            {'form': form, 'list': mlist, 'change_subscription_form': subscription_form}, context_instance=RequestContext(request))
+
 
 class UserSubscriptionPreferencesView(MailmanUserView):
     """The logged-in user's subscription-based Mailman Preferences."""
