@@ -37,40 +37,44 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-class ListCreationTest(SimpleTestCase):
+class DomainCreationTest(SimpleTestCase):
     """Tests for the new list page."""
 
-    @MM_VCR.use_cassette('test_list_creation.yaml')
+    @MM_VCR.use_cassette('test_domain_creation.yaml')
     def setUp(self):
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')
-        self.domain = get_client().create_domain('example.com')
 
     @MM_VCR.use_cassette('test_list_creation.yaml')
     def tearDown(self):
         self.user.delete()
         self.superuser.delete()
-        for mlist in get_client().lists:
-            mlist.delete()
-        get_client().delete_domain('example.com')
+        try:
+            get_client().delete_domain('example.com')
+        except HTTPError:
+            pass
 
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
-        response = self.client.get(reverse('list_new'))
+        response = self.client.get(reverse('domain_new'))
         expected = 'http://testserver%s?next=%s' % (
-            resolve_url(settings.LOGIN_URL), reverse('list_new'))
+            resolve_url(settings.LOGIN_URL), reverse('domain_new'))
         self.assertEqual(response['location'], expected)
 
     @MM_VCR.use_cassette('test_list_creation.yaml')
-    def test_new_list_created_with_owner(self):
+    def test_new_domain_created_with_owner(self):
         self.client.login(username='su', password='pwd')
-        post_data = {'listname': 'a_new_list',
-                     'mail_host': 'example.com',
-                     'list_owner': 'owner@example.com',
-                     'advertised': 'True',
-                     'description': 'A new list.'}
-        self.client.post(reverse('list_new'), post_data)
-        a_new_list = get_client().get_list('a_new_list@example.com')
-        self.assertEqual(a_new_list.fqdn_listname, u'a_new_list@example.com')
-        self.assertEqual(a_new_list.owners, [u'owner@example.com'])
+        post_data = {'mail_host': 'example.com',
+                     'web_host': 'http://example.com',
+                     'description': 'A new Domain.'}
+        response = self.client.post(reverse('domain_new'), post_data, follow=True)
+        
+        self.assertContains(response, 'New Domain registered')
+        self.assertRedirects(response, reverse('domain_index'))
+
+        a_new_domain  = get_client().get_domain('example.com')
+        self.assertEqual(a_new_domain.mail_host, u'example.com')
+        self.assertEqual(a_new_domain.base_url, u'http://example.com')
+        self.assertEqual(a_new_domain.owners[0]['user_id'],
+                get_client().get_user('su@example.com').user_id)

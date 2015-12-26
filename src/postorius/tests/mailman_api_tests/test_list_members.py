@@ -44,14 +44,8 @@ class ListMembersAccessTest(TestCase):
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def setUp(self):
-        try:
-            self.domain = get_client().create_domain('example.com')
-        except HTTPError:
-            self.domain = get_client().get_domain('example.com')
-        try:
-            self.foo_list = self.domain.create_list('foo')
-        except HTTPError:
-            self.foo_list = get_client().get_list('foo.example.com')
+        self.domain = get_client().create_domain('example.com')
+        self.foo_list = self.domain.create_list('foo')
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'testpass')
         self.superuser = User.objects.create_superuser(
@@ -70,6 +64,7 @@ class ListMembersAccessTest(TestCase):
         self.superuser.delete()
         self.owner.delete()
         self.moderator.delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_if_not_logged_in(self):
@@ -120,10 +115,7 @@ class AddRemoveOwnerTest(TestCase):
     @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def setUp(self):
         self.mm_client = get_client()
-        try:
-            self.domain = self.mm_client.create_domain('example.com')
-        except HTTPError:
-            self.domain = self.mm_client.get_domain('example.com')
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.su = User.objects.create_superuser(
             'su', 'su@example.com', 'pwd')
@@ -134,6 +126,7 @@ class AddRemoveOwnerTest(TestCase):
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('test_list_members_owner_add_remove.yaml')
     def test_add_remove_owner(self):
@@ -207,10 +200,7 @@ class AddModeratorTest(TestCase):
 
     @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')
     def setUp(self):
-        try:
-            self.domain = get_client().create_domain('example.com')
-        except HTTPError:
-            self.domain = get_client().get_domain('example.com')
+        self.domain = get_client().create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.su = User.objects.create_superuser(
             'su', 'su@example.com', 'pwd')
@@ -226,6 +216,7 @@ class AddModeratorTest(TestCase):
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('test_list_members_new_moderator_added.yaml')
     def test_new_moderator_added(self):

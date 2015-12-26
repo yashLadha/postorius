@@ -40,10 +40,7 @@ class ModelTest(SimpleTestCase):
     @MM_VCR.use_cassette('test_model.yaml')
     def setUp(self):
         self.mmclient = get_client()
-        try:
-            self.domain = get_client().create_domain('example.com')
-        except HTTPError:
-            self.domain = get_client().get_domain('example.com')
+        self.domain = get_client().create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
 
     @MM_VCR.use_cassette('test_model.yaml')
@@ -53,6 +50,7 @@ class ModelTest(SimpleTestCase):
         for user in self.mmclient.users:
             user.delete()
         User.objects.all().delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('test_model-2.yaml')
     def test_mailman_user_not_created_when_flag_is_off(self):

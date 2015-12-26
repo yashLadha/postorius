@@ -50,10 +50,7 @@ class ArchivalOptionsAccessTest(TestCase):
     @MM_VCR.use_cassette('archival_options.yaml')
     def setUp(self):
         # Create domain `example.com` in Mailman
-        try:
-            example_com = get_client().create_domain('example.com')
-        except HTTPError:
-            example_com = get_client().get_domain('example.com')
+        example_com = get_client().create_domain('example.com')
         self.m_list = example_com.create_list('test_list')
         self.test_user = User.objects.create_user(
             'test_user', 'test_user@example.com', 'pwd')
@@ -65,6 +62,7 @@ class ArchivalOptionsAccessTest(TestCase):
         self.test_user.delete()
         self.test_superuser.delete()
         self.m_list.delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('archival_options.yaml')
     def test_no_access_for_unauthenticated_user(self):
@@ -86,10 +84,7 @@ class ArchivalOptions(TestCase):
     @MM_VCR.use_cassette('test_list_archival_options.yaml')
     def setUp(self):
         # Create domain `example.com` in Mailman.
-        try:
-            example_com = get_client().create_domain('example.com')
-        except HTTPError:
-            example_com = get_client().get_domain('example.com')
+        example_com = get_client().create_domain('example.com')
         self.m_list = example_com.create_list('test_list')
         self.test_user = User.objects.create_user(
             'test_user', 'test_user@example.com', 'pwd')
@@ -103,6 +98,7 @@ class ArchivalOptions(TestCase):
         self.test_user.delete()
         self.test_superuser.delete()
         self.m_list.delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('test_list_archival_options.yaml')
     def test_context_contains_list_archivers(self):

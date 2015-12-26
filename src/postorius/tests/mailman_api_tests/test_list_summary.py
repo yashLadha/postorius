@@ -44,10 +44,7 @@ class ListSummaryPageTest(SimpleTestCase):
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def setUp(self):
         self.mmclient = get_client()
-        try:
-            domain = self.mmclient.create_domain('example.com')
-        except HTTPError:
-            domain = self.mmclient.get_domain('example.com')
+        domain = self.mmclient.create_domain('example.com')
         self.foo_list = domain.create_list('foo')
         try:
             User.objects.create_user('testuser', 'test@example.com', 'testpass')
@@ -61,6 +58,7 @@ class ListSummaryPageTest(SimpleTestCase):
         for user in self.mmclient.users:
             user.delete()
         User.objects.all().delete()
+        get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_out(self):
