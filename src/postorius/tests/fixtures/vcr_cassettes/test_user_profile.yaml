@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/les@example.org
+  response:
+    body: {string: !!python/unicode 404 Not Found}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/les@example.org
+  response:
+    body: {string: !!python/unicode 404 Not Found}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 404, message: Not Found}
+- request:
+    body: email=les%40example.org
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
+    method: !!python/unicode POST
+    uri: http://localhost:9001/3.0/users
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-length: ['0']
+      location: ['http://localhost:9001/3.0/users/1451']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/1451
+  response:
+    body: {string: !!python/unicode '{"created_on": "2005-08-01T07:49:23", "http_etag":
+        "\"7f0e2871d4ead957a7f7f769b89db3022e125c2f\"", "is_server_owner": false,
+        "password": "$6$rounds=659880$kv17MUSggWvVN6o6$diOO43oPa2u/cwg7BRaSXja8UsEtxoRo.Djn.bD88VJ/br8NOLlSs.SYV48UOw424xYiJ.2hxd8K1x2I2HHxR1",
+        "self_link": "http://localhost:9001/3.0/users/1451", "user_id": 1451}'}
+    headers:
+      content-length: ['330']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+version: 1
