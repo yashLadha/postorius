@@ -15,7 +15,7 @@ from mock import patch, call
 from postorius.forms import AddressActivationForm
 from postorius.models import AddressConfirmationProfile
 from postorius import views
-from postorius.views.user import AddressActivationView, address_activation_link
+from postorius.views.user import address_activation_link
 
 
 class TestAddressActivationForm(TestCase):
@@ -46,61 +46,6 @@ class TestAddressActivationForm(TestCase):
         }
         form = AddressActivationForm(data)
         self.assertFalse(form.is_valid())
-
-
-class TestAddressActivationView(TestCase):
-    """
-    Tests to make sure the view is properly connected, renders the form
-    correctly and starts the actual address activation process if a valid
-    form is submitted.
-    """
-
-    def setUp(self):
-        # We create a new user and log that user in.
-        # We don't use Client().login because it triggers the browserid dance.
-        self.user = User.objects.create_user(
-            username='les', email='les@example.org', password='secret')
-        self.client.post(reverse('user_login'),
-                         {'username': 'les', 'password': 'secret'})
-
-    def tearDown(self):
-        # Log out and delete user.
-        self.client.logout()
-        self.user.delete()
-
-    def test_view_is_connected(self):
-        # The view should be connected in the url configuration.
-        response = self.client.get(reverse('address_activation'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_view_contains_form(self):
-        # The view context should contain a form.
-        response = self.client.get(reverse('address_activation'))
-        self.assertTrue('form' in response.context)
-
-    def test_view_renders_correct_template(self):
-        # The view should render the user_address_activation template.
-        response = self.client.get(reverse('address_activation'))
-        self.assertIn('postorius/user/address_activation.html',
-                      [t.name for t in response.templates])
-
-    def test_post_invalid_form_shows_error_msg(self):
-        # Entering an invalid email address should render an error message.
-        response = self.client.post(reverse('address_activation'), {
-                                    'email': 'invalid_email',
-                                    'user_email': self.user.email})
-        self.assertTrue('Enter a valid email address.' in response.content)
-
-    @patch.object(AddressConfirmationProfile, 'send_confirmation_link')
-    def test_post_valid_form_renders_success_template(
-            self, mock_send_confirmation_link):
-        # Entering a valid email should render the activation_sent template.
-        response = self.client.post(reverse('address_activation'), {
-                                    'email': 'new_address@example.org',
-                                    'user_email': self.user.email})
-        self.assertEqual(mock_send_confirmation_link.call_count, 1)
-        self.assertIn('postorius/user/address_activation_sent.html',
-                      [t.name for t in response.templates])
 
 
 class TestAddressConfirmationProfile(TestCase):
