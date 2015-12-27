@@ -38,6 +38,8 @@ from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailmanUserView
 from smtplib import SMTPException
+import errno
+from socket import error as socket_error
 
 
 class UserMailmanSettingsView(MailmanUserView):
@@ -221,32 +223,6 @@ def user_subscriptions(request):
         {'memberships': memberships})
 
 
-class AddressActivationView(TemplateView):
-    """
-    Starts the process of adding additional email addresses to a mailman user
-    record. Forms are processes and email notifications are sent accordingly.
-    """
-
-    @method_decorator(login_required)
-    def get(self, request):
-        form = AddressActivationForm(initial={'user_email': request.user.email})
-        return render(request, 'postorius/user/address_activation.html', {'form': form})
-
-    @method_decorator(login_required)
-    def post(self, request):
-        form = AddressActivationForm(request.POST)
-        if form.is_valid():
-            profile = AddressConfirmationProfile.objects.create_profile(
-                email=form.cleaned_data['email'], user=request.user)
-            try:
-                profile.send_confirmation_link(request)
-            except SMTPException:
-                messages.error(request, _('The email confirmation message could not be sent. %s')
-                               % profile.activation_key)
-            return render(request, 'postorius/user/address_activation_sent.html')
-        return render(request, 'postorius/user/address_activation.html', {'form': form})
-
-
 @login_required()
 def user_profile(request, user_email=None):
     utils.set_other_emails(request.user)
@@ -254,7 +230,25 @@ def user_profile(request, user_email=None):
         mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render(request, 'postorius/user/profile.html', {'mm_user': mm_user})
+    if request.method == 'POST':
+        form = AddressActivationForm(request.POST)
+        if form.is_valid():
+            profile = AddressConfirmationProfile.objects.create_profile(
+                email=form.cleaned_data['email'], user=request.user)
+            try:
+                profile.send_confirmation_link(request)
+                messages.success(request, 
+                        _('Please follow the instructions sent via email to confirm the address'))
+            except (SMTPException, socket_error) as serr:
+                if not isinstance(serr, SMTPException) and serr.errno != errno.ECONNREFUSED:
+                    raise serr
+                profile.delete()
+                messages.error(request, 
+                        _('Currently emails can not be added, please try again later'))
+    else:
+        form = AddressActivationForm(initial={'user_email': request.user.email})
+    return render(request, 'postorius/user/profile.html',
+                  {'mm_user': mm_user, 'form': form}, context_instance=RequestContext(request))
 
 
 def _add_address(request, user_email, address):
