@@ -310,9 +310,8 @@ class AddressConfirmationProfile(models.Model):
         # Create a template context (if there is none) containing
         # the activation_link and the host_url.
         if not template_context:
-            template_context = Context(
-                {'activation_link': activation_link,
-                 'host_url': request.build_absolute_uri("/")})
+            template_context = {'activation_link': activation_link,
+                    'host_url': request.build_absolute_uri("/")}
         email_subject = getattr(
             settings, 'EMAIL_CONFIRMATION_SUBJECT', u'Confirmation needed')
         try:
