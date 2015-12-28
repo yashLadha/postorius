@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import resolve_url
 from django.test import Client, TestCase
+from django.test.utils import override_settings
 
 try:
     from urllib2 import HTTPError
@@ -35,7 +36,6 @@ from postorius.tests import MM_VCR
 logger = logging.getLogger(__name__)
 vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
-
 
 class ListCreationTest(TestCase):
     """Tests for the new list page."""
@@ -55,12 +55,12 @@ class ListCreationTest(TestCase):
             mlist.delete()
         get_client().delete_domain('example.com')
 
+    @override_settings(ROOT_URLCONF='testing.urls')
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
         response = self.client.get(reverse('list_new'))
-        expected = 'http://testserver%s?next=%s' % (
-            resolve_url(settings.LOGIN_URL), reverse('list_new'))
-        self.assertEqual(response['location'], expected)
+        self.assertRedirects(response, '{}?next={}'.format(resolve_url(settings.LOGIN_URL),
+            reverse('list_new')))
 
     @MM_VCR.use_cassette('test_list_creation.yaml')
     def test_new_list_created_with_owner(self):

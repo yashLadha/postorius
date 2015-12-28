@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import resolve_url
 from django.test import Client, TestCase
+from django.test.utils import override_settings
 
 try:
     from urllib2 import HTTPError
@@ -55,12 +56,12 @@ class DomainCreationTest(TestCase):
         except HTTPError:
             pass
 
+    @override_settings(ROOT_URLCONF='testing.urls')
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
         response = self.client.get(reverse('domain_new'))
-        expected = 'http://testserver%s?next=%s' % (
-            resolve_url(settings.LOGIN_URL), reverse('domain_new'))
-        self.assertEqual(response['location'], expected)
+        self.assertRedirects(response, '{}?next={}'.format(resolve_url(settings.LOGIN_URL),
+            reverse('domain_new')))
 
     @MM_VCR.use_cassette('test_list_creation.yaml')
     def test_new_domain_created_with_owner(self):
