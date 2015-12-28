@@ -34,7 +34,7 @@ from django.dispatch import receiver
 from django.db import models
 from django.http import Http404
 from django.template import Context
-from django.template.loader import get_template
+from django.template.loader import render_to_string
 from mailmanclient import MailmanConnectionError
 from postorius.utils import get_client
 try:
@@ -326,7 +326,6 @@ class AddressConfirmationProfile(models.Model):
             except AttributeError:
                 raise ImproperlyConfigured
 
-        send_mail(email_subject,
-                  get_template(template_path).render(template_context),
+        send_mail(email_subject, render_to_string(template_path, template_context),
                   sender_address,
                   [self.email])
