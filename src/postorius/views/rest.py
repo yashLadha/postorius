@@ -22,6 +22,7 @@ import sys
 from email.Header import decode_header
 from base64 import b64decode
 from email.Parser import Parser as EmailParser
+from email.parser import HeaderParser
 from email.utils import parseaddr
 from StringIO import StringIO
 
@@ -57,6 +58,7 @@ def parse_attachment(message_part, counter):
 def parse(content):
     p = EmailParser()
     msgobj = p.parsestr(content)
+    header_parser = HeaderParser()
     if msgobj['Subject'] is not None:
         decodefrag = decode_header(msgobj['Subject'])
         subj_fragments = []
@@ -99,12 +101,17 @@ def parse(content):
                 ).encode('utf8','replace')
             else:
                 html += part.get_payload(decode=True)
+    headers = []
+    headers_dict = header_parser.parsestr(content)
+    for key in headers_dict.keys():
+        headers += ['{}: {}'.format(key, headers_dict[key])]
     return {
         'subject' : subject,
         'body' : body,
         'html' : html,
         'from' : parseaddr(msgobj.get('From'))[1],
         'to' : parseaddr(msgobj.get('To'))[1],
+        'headers': '\n'.join(headers),
         #'attachments': attachments,
     }
 
@@ -118,7 +125,8 @@ def get_held_message(request, list_id, held_id=-1):
         raise Http404(_('Message does not exist'))
 
     held_message = List.objects.get_or_404(fqdn_listname=list_id).get_held_message(held_id)
-
+    if 'raw' in request.GET:
+        return HttpResponse(held_message.msg, content_type='text/plain')
     response_data = dict()
     response_data['sender'] = held_message.sender
     try:
@@ -127,9 +135,8 @@ def get_held_message(request, list_id, held_id=-1):
         pass
     response_data['moderation_reasons'] = held_message.moderation_reasons
     response_data['hold_date'] = held_message.hold_date
-    response_data['msg'] = held_message.msg
-    response_data['stripped_msg'] = parse(held_message.msg)
+    response_data['msg'] = parse(held_message.msg)
     response_data['msgid'] = held_message.request_id
     response_data['subject'] = held_message.subject
 
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    return HttpResponse(json.dumps(response_data), content_type='application/json')

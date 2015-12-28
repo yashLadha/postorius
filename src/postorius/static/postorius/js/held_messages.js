@@ -7,10 +7,20 @@ var loadjs = function(rest_url, error_message) {
     $.ajax({
       url: rest_url + msgid,
       success: function(data) {
-        $('#msg-title').html(data.subject);
+        $('#message-source-btn').attr('href', rest_url + msgid + '?raw')
+        $('#message-title').html(data.msg.subject);
         $('.modal-footer form input[name="msgid"]').attr('value', msgid);
-        $('#held-stripped-message').html(data.stripped_msg.body.replace(/\n/g, "<br />"));
-        $('#held-full-message').html(data.msg.replace(/\n/g, "<br />"));
+        if (data.msg.body) {
+          $('#held-message-content').text(data.msg.body);
+        }
+        else if (data.msg.html) {
+          $('#held-message-content').text(data.msg.html);
+        } else {
+          $('#held-message-content').html('<p>Message content could not be extracted</p>');
+        }
+        $('#held-message-content').html($('#held-message-content').html().replace(/\n/g, "<br />"));
+        $('#held-message-headers').text(data.msg.headers);
+        $('#held-message-headers').html($('#held-message-headers').html().replace(/\n/g, "<br />") + '<hr />');
         $('#held-messages-modal').modal('show');
       },
       error : function() {
@@ -23,19 +33,16 @@ var loadjs = function(rest_url, error_message) {
       }});
     return false;
   });
-  $('#toggle-full-message').click(function() {
+  $('#toggle-headers').click(function() {
     if ($(this).hasClass('active')) {
-      $('#held-stripped-message').removeClass('hidden');
-      $('#held-full-message').addClass('hidden');
+      $('#held-message-headers').addClass('hidden');
     } else {
-      $('#held-stripped-message').addClass('hidden');
-      $('#held-full-message').removeClass('hidden');
+      $('#held-message-headers').removeClass('hidden');
     }
   });
   $('#held-messages-modal').on('hidden.bs.modal', function() {
-    $('#held-stripped-message').removeClass('hidden');
-    $('#held-full-message').addClass('hidden');
-    $('#msg-title').html('');
-    $('#toggle-full-message').removeClass('active');
+    $('#held-message-headers').addClass('hidden');
+    $('#message-title').html('');
+    $('#toggle-headers').removeClass('active');
   });
 }

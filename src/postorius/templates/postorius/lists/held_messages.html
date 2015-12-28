@@ -70,12 +70,12 @@
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="mymodal-label">
-                  <div id="msg-title"></div>
+                  <div id="message-title"></div>
                 </h4>
               </div>
               <div class="modal-body">
-                  <div id="held-stripped-message"></div>
-                  <div class="hidden" id="held-full-message"></div>
+                  <div class="hidden" id="held-message-headers"></div>
+                  <div id="held-message-content"></div>
               </div>
               <div class="modal-footer">
                 <div class="col-md-6 text-left">
@@ -88,9 +88,9 @@
                   </form>
                 </div>
                 <div class="col-md-6"> 
-                    <button class="btn dismiss-modal" data-dismiss="modal" aria-hidden="true">Close</button>
-                    <button type="button" class="btn btn-info pull-right" id="toggle-full-message" data-toggle="button" aria-pressed="false" autocomplete="off">
-                      {% trans 'View Full Message' %}
+                    <a href="#" target="_blank" id="message-source-btn" class="btn btn-default">Show Source</a>
+                    <button type="button" class="btn btn-info pull-right" id="toggle-headers" data-toggle="button" aria-pressed="false" autocomplete="off">
+                      {% trans 'Show Headers' %}
                     </button>
                 </div>
               </div>
