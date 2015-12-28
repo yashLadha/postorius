@@ -19,7 +19,7 @@ import logging
 
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 from mailmanclient import Client
 from django.utils.translation import gettext as _
@@ -38,10 +38,8 @@ def render_api_error(request):
     """Renders an error template.
     Use if MailmanApiError is catched.
     """
-    return render_to_response(
-        'postorius/errors/generic.html',
-        {'error': _('Mailman REST API not available. Please start Mailman core.')},
-        context_instance=RequestContext(request))
+    return render(request, 'postorius/errors/generic.html',
+        {'error': _('Mailman REST API not available. Please start Mailman core.')})
 
 
 

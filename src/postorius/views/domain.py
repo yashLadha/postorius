@@ -20,7 +20,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.utils.translation import gettext as _
 try:
@@ -39,9 +39,7 @@ def domain_index(request):
         existing_domains = Domain.objects.all()
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response('postorius/domain/index.html',
-                              {'domains': existing_domains},
-                              context_instance=RequestContext(request))
+    return render(request, 'postorius/domain/index.html', {'domains': existing_domains})
 
 
 @login_required
@@ -66,9 +64,7 @@ def domain_new(request):
             return redirect("domain_index")
     else:
         form = DomainNew()
-    return render_to_response('postorius/domain/new.html',
-                              {'form': form, 'message': message},
-                              context_instance=RequestContext(request))
+    return render(request, 'postorius/domain/new.html', {'form': form, 'message': message})
 
 
 def domain_delete(request, domain):
@@ -87,6 +83,5 @@ def domain_delete(request, domain):
             return redirect("domain_index")
     submit_url = reverse('domain_delete',
                          kwargs={'domain': domain})
-    return render_to_response('postorius/domain/confirm_delete.html',
-                              {'domain': domain, 'submit_url': submit_url},
-                              context_instance=RequestContext(request))
+    return render(request, 'postorius/domain/confirm_delete.html',
+            {'domain': domain, 'submit_url': submit_url})

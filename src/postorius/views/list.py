@@ -24,7 +24,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
@@ -192,9 +192,8 @@ class ListSummaryView(MailingListView):
             data['subscribe_form'] = ListSubscribe(user_emails)
         else:
             user_emails = None
-        return render_to_response(
-            'postorius/lists/summary.html', data,
-            context_instance=RequestContext(request))
+            data['change_subscription_form'] = None
+        return render(request, 'postorius/lists/summary.html', data)
 
 
 class ChangeSubscriptionView(MailingListView):
@@ -456,15 +455,12 @@ def list_new(request, template='postorius/lists/new.html'):
                                 list_id=mailing_list.list_id)
             # TODO catch correct Error class:
             except HTTPError as e:
-                return render_to_response(
-                    'postorius/errors/generic.html',
-                    {'error': e}, context_instance=RequestContext(request))
+                return render(request, 'postorius/errors/generic.html', {'error': e})
     else:
         choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains,
                        initial={'list_owner': request.user.email})
-    return render_to_response(template, {'form': form},
-                              context_instance=RequestContext(request))
+    return render(request, template, {'form': form})
 
 
 def list_index(request, template='postorius/index.html'):
@@ -484,15 +480,10 @@ def list_index(request, template='postorius/index.html'):
     except MailmanApiError:
         return utils.render_api_error(request)
     choosable_domains = _get_choosable_domains(request)
-    return render_to_response(
-        template, {
-            'count_options': [10, 25, 50, 100, 200],
-            'error': error,
-            'lists': utils.paginate(request, 
-                lists, 
-                count=request.GET.get('count', 10)),
-            'domain_count': len(choosable_domains),
-        }, context_instance=RequestContext(request))
+    return render(request, template,
+            {'count_options': [10, 25, 50, 100, 200], 'error': error,
+            'lists': utils.paginate(request, lists, count=request.GET.get('count', 10)),
+            'domain_count': len(choosable_domains)})
 
 
 @login_required
@@ -511,11 +502,8 @@ def list_delete(request, list_id):
         submit_url = reverse('list_delete',
                              kwargs={'list_id': list_id})
         cancel_url = reverse('list_index',)
-        return render_to_response(
-            'postorius/lists/confirm_delete.html',
-            {'submit_url': submit_url, 'cancel_url': cancel_url,
-             'list': the_list},
-            context_instance=RequestContext(request))
+        return render(request, 'postorius/lists/confirm_delete.html',
+                {'submit_url': submit_url, 'cancel_url': cancel_url, 'list': the_list})
 
 
 @login_required
@@ -595,9 +583,7 @@ def list_subscription_requests(request, list_id):
         m_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response('postorius/lists/subscription_requests.html',
-                              {'list': m_list},
-                              context_instance=RequestContext(request))
+    return render(request, 'postorius/lists/subscription_requests.html',{'list': m_list})
 
 
 @login_required
@@ -699,7 +685,6 @@ def list_settings(request, list_id=None, visible_section=None,
         'visible_section': visible_section,
         })
 
-
 @login_required
 @list_owner_required
 def remove_role(request, list_id=None, role=None, address=None,
@@ -744,10 +729,8 @@ def remove_role(request, list_id=None, role=None, address=None,
         messages.success(request, _('The user %(address)s has been removed from the %(role)s group.')
                          % {'address': address, 'role': role})
         return redirect_on_success
-    return render_to_response(template,
-                              {'role': role, 'address': address,
-                               'list_id': the_list.list_id},
-                              context_instance=RequestContext(request))
+    return render(request, template,
+            {'role': role, 'address': address, 'list_id': the_list.list_id})
 
 
 @login_required
@@ -769,9 +752,8 @@ def remove_all_subscribers(request, list_id):
                 return redirect('list_members', mlist.list_id)
             except Exception as e:
                 messages.error(request, e)
-        return render_to_response('postorius/lists/confirm_removeall_subscribers.html',
-                                 {'list': mlist},
-                                 context_instance=RequestContext(request))
+        return render(request, 'postorius/lists/confirm_removeall_subscribers.html',
+                {'list': mlist})
     except MailmanApiError:
         return utils.render_api_error(request)
 

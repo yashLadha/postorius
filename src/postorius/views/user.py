@@ -20,7 +20,7 @@
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,user_passes_test)
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import redirect, render
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
@@ -70,10 +70,8 @@ class UserMailmanSettingsView(MailmanUserView):
         except MailmanApiError:
             return utils.render_api_error(request)
         settingsform = UserPreferences(initial=mm_user.preferences)
-        return render_to_response('postorius/user/mailman_settings.html',
-                                  {'mm_user': mm_user,
-                                   'settingsform': settingsform},
-                                  context_instance=RequestContext(request))
+        return render(request, 'postorius/user/mailman_settings.html',
+                {'mm_user': mm_user, 'settingsform': settingsform})
 
 
 class UserAddressPreferencesView(MailmanUserView):
@@ -114,17 +112,10 @@ class UserAddressPreferencesView(MailmanUserView):
         except MailmanApiError:
             return utils.render_api_error(request)
         except Mailman404Error:
-            return render_to_response(
-                'postorius/user/address_preferences.html',
-                {'nolists': 'true'},
-                context_instance=RequestContext(request))
-        return render_to_response('postorius/user/address_preferences.html',
-                                  {'mm_user': mm_user,
-                                   'addresses': addresses,
-                                   'helperform': helperform,
-                                   'formset': formset,
-                                   'zipped_data': zipped_data},
-                                  context_instance=RequestContext(request))
+            return render(request, 'postorius/user/address_preferences.html', {'nolists': 'true'})
+        return render(request, 'postorius/user/address_preferences.html',
+                {'mm_user': mm_user, 'addresses': addresses, 'helperform': helperform,
+                 'formset': formset, 'zipped_data': zipped_data})
 
 
 @login_required
@@ -194,15 +185,10 @@ class UserSubscriptionPreferencesView(MailmanUserView):
         except MailmanApiError:
             return utils.render_api_error(request)
         except Mailman404Error:
-            return render_to_response(
-                'postorius/user/subscription_preferences.html',
-                {'nolists': 'true'},
-                context_instance=RequestContext(request))
-        return render_to_response(
-            'postorius/user/subscription_preferences.html',
-            {'zipped_data': zipped_data,
-             'formset': formset},
-            context_instance=RequestContext(request))
+            return render(request, 'postorius/user/subscription_preferences.html',
+                    {'nolists': 'true'})
+        return render(request, 'postorius/user/subscription_preferences.html',
+                {'zipped_data': zipped_data, 'formset': formset})
 
 
 class UserSubscriptionsView(MailmanUserView):
@@ -212,9 +198,7 @@ class UserSubscriptionsView(MailmanUserView):
     @method_decorator(login_required)
     def get(self, request):
         memberships = self._get_memberships()
-        return render_to_response('postorius/user/subscriptions.html',
-                                  {'memberships': memberships},
-                                  context_instance=RequestContext(request))
+        return render(request, 'postorius/user/subscriptions.html', {'memberships': memberships})
 
 
 class AddressActivationView(TemplateView):
@@ -226,9 +210,7 @@ class AddressActivationView(TemplateView):
     @method_decorator(login_required)
     def get(self, request):
         form = AddressActivationForm(initial={'user_email': request.user.email})
-        return render_to_response('postorius/user/address_activation.html',
-                                  {'form': form},
-                                  context_instance=RequestContext(request))
+        return render(request, 'postorius/user/address_activation.html', {'form': form})
 
     @method_decorator(login_required)
     def post(self, request):
@@ -241,11 +223,8 @@ class AddressActivationView(TemplateView):
             except SMTPException:
                 messages.error(request, _('The email confirmation message could not be sent. %s')
                                % profile.activation_key)
-            return render_to_response('postorius/user/address_activation_sent.html',
-                                      context_instance=RequestContext(request))
-        return render_to_response('postorius/user/address_activation.html',
-                                  {'form': form},
-                                  context_instance=RequestContext(request))
+            return render(request, 'postorius/user/address_activation_sent.html')
+        return render(request, 'postorius/user/address_activation.html', {'form': form})
 
 
 @login_required()
@@ -255,9 +234,7 @@ def user_profile(request, user_email=None):
         mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render_to_response('postorius/user/profile.html',
-                              {'mm_user': mm_user},
-                              context_instance=RequestContext(request))
+    return render(request, 'postorius/user/profile.html', {'mm_user': mm_user})
 
 
 def _add_address(request, user_email, address):
