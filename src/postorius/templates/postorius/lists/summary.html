@@ -9,9 +9,7 @@
 
 {% block main %}
 
-    {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
-        {% list_nav 'list_summary' 'Summary' %}
-    {% endif %}
+    {% list_nav 'list_summary' 'Summary' %}
 
     <p>{{ list.settings.description }}</p>
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
@@ -28,16 +26,19 @@
     <hr />
 
     {# Subscription #}
-    <h4>{% trans 'Subscription' %}</h4>
     {% if user.is_authenticated %}
         {% if userSubscribed %}
+            <h2>{% trans 'Subscription' %}</h2>
             <p>
                 {% trans 'You are subscribed to this list with the following address:' %} <em>{{ subscribed_address }}</em>
             </p>
-            <form action="{% url 'change_subscription' list.list_id %}" method="post" class="form-horizontal">
-                {% render_form_horizontal change_subscription_form 2 8 'Change subscription' %}
-            </form>
-            <p class="col-md-offset-2">
+            {% url 'user_list_options' list.list_id as user_list_options_url %}
+            {% blocktrans %}
+            <p>
+              You can manage your subscription <a href="{{ user_list_options_url }}">here</a>
+            </p>
+            {% endblocktrans %}
+            <p>
                 <a href="{% url 'list_unsubscribe' list.list_id subscribed_address %}" class="btn btn-danger">
                     {% trans 'Unsubscribe' %} {{ subscribed_address }}
                 </a>
@@ -49,7 +50,7 @@
             </form>
         {% endif %}
     {% else %}
-        <p>{% trans 'You have to log in to subscribe to this list.' %}</p>
+        <p>{% trans 'If you want to subscribe to this list, you have to log in first.' %}</p>
         <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans 'Log In' %}</a></p>
     {% endif %}
 

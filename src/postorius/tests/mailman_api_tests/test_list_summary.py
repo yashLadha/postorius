@@ -94,7 +94,7 @@ class ListSummaryPageTest(SimpleTestCase):
         self.assertTrue('anotheremail@example.com' in response.content)
 
     @MM_VCR.use_cassette('test_change_subscription.yaml')
-    def test_change_subscription(self):
+    def test_unsubscribe_button_is_available(self):
         mlist = self.mmclient.get_list('foo@example.com')
         mlist.subscribe('test@example.com',
                         pre_verified=True,
@@ -103,7 +103,6 @@ class ListSummaryPageTest(SimpleTestCase):
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Change subscription' in response.content)
         self.assertTrue('Unsubscribe' in response.content)
 
     @MM_VCR.use_cassette('test_list_summary_owner.yaml')

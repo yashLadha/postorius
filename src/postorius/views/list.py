@@ -180,12 +180,9 @@ class ListSummaryView(MailingListView):
                     data['userSubscribed'] = True
                     data['subscribed_address'] = address
                     break # no need to test more addresses
-            data['change_subscription_form'] = ChangeSubscriptionForm(
-                user_emails, initial={'email': data['subscribed_address']})
             data['subscribe_form'] = ListSubscribe(user_emails)
         else:
             user_emails = None
-            data['change_subscription_form'] = None
         return render_to_response(
             'postorius/lists/summary.html', data,
             context_instance=RequestContext(request))

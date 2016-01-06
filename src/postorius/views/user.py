@@ -25,6 +25,8 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
+from django.http import Http404
+
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -123,6 +125,36 @@ class UserAddressPreferencesView(MailmanUserView):
                                    'formset': formset,
                                    'zipped_data': zipped_data},
                                   context_instance=RequestContext(request))
+
+
+@login_required
+def user_list_options(request, list_id):
+    utils.set_other_emails(request.user)
+    mlist = List.objects.get_or_404(fqdn_listname=list_id)
+    mm_user = MailmanUser.objects.get(address=request.user.email)
+    subscription = None
+    for s in mm_user.subscriptions:
+        if s.role == 'member' and s.list_id == list_id:
+            subscription = s
+            break
+    if not subscription:
+        raise Http404(_('Subscription does not exist'))
+    preferences = subscription.preferences
+    if request.method == 'POST':
+        form = UserPreferences(request.POST)
+        if form.is_valid():
+            for key in form.cleaned_data.keys():
+                preferences[key] = form.cleaned_data[key]
+            preferences.save()
+            messages.success(request, _('Your preferences have been updated.'))
+        else:
+            messages.error(request, _('Something went wrong.'))
+    else:
+        form = UserPreferences(initial=subscription.preferences)
+    user_emails = [request.user.email] + request.user.other_emails
+    subscription_form = ChangeSubscriptionForm(user_emails, initial={'email': subscription.email})
+    return render_to_response('postorius/user/list_options.html',
+            {'form': form, 'list': mlist, 'change_subscription_form': subscription_form}, context_instance=RequestContext(request))
 
 
 class UserSubscriptionPreferencesView(MailmanUserView):
