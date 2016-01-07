@@ -51,7 +51,7 @@
         {% endif %}
     {% else %}
         <p>{% trans 'If you want to subscribe to this list, you have to log in first.' %}</p>
-        <p><a href="{% url 'user_login' %}"class="btn btn-primary">{% trans 'Log In' %}</a></p>
+        <p><a href="{{ login_url }}?next={{ next|default:request.path|urlencode }}" class="btn btn-primary">{% trans 'Log In' %}</a></p>
     {% endif %}
 
     {# List metrics #}
