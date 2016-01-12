@@ -239,6 +239,7 @@ def user_profile(request, user_email=None):
                 profile.send_confirmation_link(request)
                 messages.success(request, 
                         _('Please follow the instructions sent via email to confirm the address'))
+                return redirect('user_profile')
             except (SMTPException, socket_error) as serr:
                 if not isinstance(serr, SMTPException) and serr.errno != errno.ECONNREFUSED:
                     raise serr
