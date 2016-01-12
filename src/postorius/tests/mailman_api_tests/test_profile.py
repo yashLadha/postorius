@@ -78,10 +78,20 @@ class TestAddressActivationView(TestCase):
         # Entering a valid email should render the activation_sent template.
         response = self.client.post(reverse('user_profile'), {
                                     'email': 'new_address@example.org',
+                                    'user_email': self.user.email}, follow=True)
+        self.assertEqual(mock_send_confirmation_link.call_count, 1)
+        self.assertContains(response, 'Please follow the instructions sent via email to confirm the address')
+
+    @MM_VCR.use_cassette('test_user_profile.yaml')
+    @patch.object(AddressConfirmationProfile, 'send_confirmation_link')
+    def test_post_valid_form_redirects_on_success(
+            self, mock_send_confirmation_link):
+        # Entering a valid email should render the activation_sent template.
+        response = self.client.post(reverse('user_profile'), {
+                                    'email': 'new_address@example.org',
                                     'user_email': self.user.email})
         self.assertEqual(mock_send_confirmation_link.call_count, 1)
-        self.assertContains(response,
-                'Please follow the instructions sent via email to confirm the address')
+        self.assertRedirects(response, reverse('user_profile'))
 
     @patch.object(AddressConfirmationProfile, 'send_confirmation_link',
                          side_effect=SMTPException())
