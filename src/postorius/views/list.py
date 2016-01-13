@@ -366,8 +366,9 @@ def list_moderation(request, list_id):
     else:
         form = MultipleChoiceForm()
     held_messages = utils.paginate(
-        request, mailing_list.held,
-        count=request.GET.get('count', 20))
+        request, mailing_list.get_held_page,
+        count=request.GET.get('count', 20),
+        paginator_class=utils.MailmanPaginator)
     context = {
         'list': mailing_list,
         'count_options': [25, 50, 100, 200],
