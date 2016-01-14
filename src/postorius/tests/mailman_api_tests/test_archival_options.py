@@ -26,6 +26,7 @@ __metaclass__ = type
 import mock
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
@@ -68,10 +69,11 @@ class ArchivalOptionsAccessTest(TestCase):
     def test_no_access_for_unauthenticated_user(self):
         response = self.client.get(reverse('list_archival_options',
                                    args=('test_list.example.com', )))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse(settings.LOGIN_URL), response['location'])
 
     @MM_VCR.use_cassette('archival_options.yaml')
-    def test_no_access_for_unauthenticated_user(self):
+    def test_access_for_superuser(self):
         self.client.login(username=self.test_superuser.username,
                           password='pwd')
         response = self.client.get(reverse('list_archival_options',
