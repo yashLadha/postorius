@@ -838,3 +838,49 @@ def list_archival_options(request, list_id):
                                'form': form,
                                'archivers': archivers},
                               context_instance=RequestContext(request))
+
+
+@login_required
+@list_owner_required
+def list_bans(request, list_id):
+    """
+    Ban or unban email addresses.
+    """
+    # Get the list and cache the archivers property.
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
+    ban_list = m_list.bans
+
+    # Process form submission.
+    if request.method == 'POST':
+        if 'add' in request.POST:
+            addban_form = ListAddBanForm(request.POST)
+            if addban_form.is_valid():
+                try:
+                    ban_list.add(addban_form.cleaned_data['email'])
+                    messages.success(
+                        request, _('The email {} has been banned.'.format(
+                        addban_form.cleaned_data['email'])))
+                except HTTPError as e:
+                    messages.error(
+                        request, _('An error occured: %s') % e.reason)
+                except ValueError as e:
+                    messages.error(request, _('Invalid data: %s') % e)
+                return redirect('list_bans', list_id)
+        elif 'del' in request.POST:
+            try:
+                ban_list.remove(request.POST['email'])
+                messages.success(
+                    request, _('The email {} has been un-banned.'.format(
+                    request.POST['email'])))
+            except HTTPError as e:
+                messages.error(request, _('An error occured: %s') % e.reason)
+            except ValueError as e:
+                messages.error(request, _('Invalid data: %s') % e)
+            return redirect('list_bans', list_id)
+            addban_form = ListAddBanForm()
+    else:
+        addban_form = ListAddBanForm()
+    return render(request, 'postorius/lists/bans.html', {
+         'list': m_list,
+         'addban_form': addban_form,
+         })

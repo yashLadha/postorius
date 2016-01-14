@@ -629,6 +629,18 @@ class ListMassRemoval(FieldsetForm):
         layout = [["Mass Removal", "emails"]]
 
 
+class ListAddBanForm(forms.Form):
+    """Ban an email address for a list."""
+    email = forms.CharField(
+        label=_('Add ban'),
+        help_text=_(
+            'You can ban a single email address or use a regular expression '
+            'to match similar email addresses.'),
+        error_messages={
+            'required': _('Please enter an email adddress.'),
+            'invalid': _('Please enter a valid email adddress.')})
+
+
 class UserPreferences(FieldsetForm):
 
     """
