@@ -20,7 +20,16 @@ from django import forms
 from django.core.validators import validate_email
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import User
+
 from postorius.fieldset_forms import FieldsetForm
+from postorius.models import AddressConfirmationProfile
+from postorius import utils
+
+try:
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.error import HTTPError
 
 
 ACTION_CHOICES = (
@@ -754,16 +763,34 @@ class MemberModeration(FieldsetForm):
 
 class AddressActivationForm(forms.Form):
     email = forms.EmailField()
-    user_email = forms.EmailField(widget=forms.HiddenInput)
 
-    def clean(self):
-        cleaned_data = super(AddressActivationForm, self).clean()
-        email = cleaned_data.get('email')
-        user_email = cleaned_data.get('user_email')
-        if email == user_email:
-            raise forms.ValidationError(_('Please provide a different email '
-                                          'address than your own.'))
-        return cleaned_data
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        
+        # Check if the address belongs to someone else
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError(_('This email is in use.'
+                                          'Please choose another or contact the administrator'),
+                                          'error')
+        # Check if there is a pending ConfirmationProfile
+        found_confirmation_profile = False
+        for profile in AddressConfirmationProfile.objects.filter(email=email):
+            if profile.is_expired:
+                profile.delete()
+            else:
+                found_confirmation_profile = True
+        
+        if found_confirmation_profile:
+            raise forms.ValidationError(_('An Activation email has been sent to that address,'
+                                          ' use this email or contact the administrator'), 'error')
+        # Check if the email is attached to a user in Mailman
+        try:
+            utils.get_client().get_user(email)
+            raise forms.ValidationError(_('This email already belongs to a user'), 'error')
+        except HTTPError:
+            pass
+        return email
+
 
 class ChangeSubscriptionForm(forms.Form):
     email = forms.ChoiceField()
