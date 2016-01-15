@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-
+import logging
 from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 from django.contrib.messages.storage.fallback import FallbackStorage
@@ -10,41 +10,80 @@ from django.core import mail
 from django.test.client import Client, RequestFactory
 from django.test.utils import override_settings
 from django.test import TestCase
-from mock import patch, call
+from mock import patch, call, Mock
 
 from postorius.forms import AddressActivationForm
 from postorius.models import AddressConfirmationProfile
 from postorius import views
 from postorius.views.user import address_activation_link
+from postorius.tests import MM_VCR
+from postorius.utils import get_client
 
+
+vcr_log = logging.getLogger('vcr')
+vcr_log.setLevel(logging.WARNING)
 
 class TestAddressActivationForm(TestCase):
     """
     Test the activation form.
     """
 
+    @MM_VCR.use_cassette('test_address_activation.yaml')
+    def setUp(self):
+        # Create a user and profile.
+        self.user = User.objects.create_user('testuser', 'les@example.org', 'testpass')
+        self.profile = AddressConfirmationProfile.objects.create_profile('les2@example.org',
+                                                                         self.user)
+        self.expired = AddressConfirmationProfile.objects.create_profile('expired@example.org',
+                                                                         self.user)
+        self.expired.created -= timedelta(weeks=100)
+        self.expired.save()
+        domain = get_client().create_domain('example.com')
+        self.foo_list = domain.create_list('foo')
+        self.foo_list.subscribe('subscribed@example.org')
+
+    @MM_VCR.use_cassette('test_address_activation.yaml')
+    def tearDown(self):
+        self.profile.delete()
+        self.expired.delete()
+        self.user.delete()
+        self.foo_list.delete()
+        get_client().delete_domain('example.com')
+
+    @MM_VCR.use_cassette('test_address_activation.yaml')
     def test_valid_email_is_valid(self):
-        data = {
-            'email': 'les@example.org',
-            'user_email': 'me@example.org',
-        }
-        form = AddressActivationForm(data)
+        form = AddressActivationForm({'email': 'very_new_email@example.org',})
         self.assertTrue(form.is_valid())
 
-    def test_identical_emails_are_invalid(self):
-        data = {
-            'email': 'les@example.org',
-            'user_email': 'les@example.org',
-        }
-        form = AddressActivationForm(data)
+    def test_email_used_by_django_auth_is_invalid(self):
+        """
+        No need for cassette becuase we should check mailman last since it's the most expensive
+        """
+        form = AddressActivationForm({'email': 'les@example.org',})
         self.assertFalse(form.is_valid())
 
     def test_invalid_email_is_not_valid(self):
-        data = {
-            'email': 'les@example',
-            'user_email': 'me@example.org',
-        }
-        form = AddressActivationForm(data)
+        """
+        No need for cassette becuase we should check mailman last since it's the most expensive
+        """
+        form = AddressActivationForm({'email': 'les@example',})
+        self.assertFalse(form.is_valid())
+
+    def test_email_used_by_confirmation_profile_is_invalid(self):
+        """
+        No need for cassette becuase we should check mailman last since it's the most expensive
+        """
+        form = AddressActivationForm({'email': 'les2@example.org',})
+        self.assertFalse(form.is_valid())
+
+    @MM_VCR.use_cassette('test_address_activation.yaml')
+    def test_email_used_by_expired_confirmation_profile_is_valid(self):
+        form = AddressActivationForm({'email': 'expired@example.org',})
+        self.assertTrue(form.is_valid())
+
+    @MM_VCR.use_cassette('test_address_activation.yaml')
+    def test_email_used_by_mailman_is_invalid(self):
+        form = AddressActivationForm({'email': 'subscribed@example.org',})
         self.assertFalse(form.is_valid())
 
 
