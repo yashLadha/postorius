@@ -32,10 +32,10 @@ class TestAddressActivationForm(TestCase):
     def setUp(self):
         # Create a user and profile.
         self.user = User.objects.create_user('testuser', 'les@example.org', 'testpass')
-        self.profile = AddressConfirmationProfile.objects.create_profile('les2@example.org',
-                                                                         self.user)
-        self.expired = AddressConfirmationProfile.objects.create_profile('expired@example.org',
-                                                                         self.user)
+        self.profile = AddressConfirmationProfile.objects.create(email='les2@example.org',
+                                                                         user=self.user)
+        self.expired = AddressConfirmationProfile.objects.create(email='expired@example.org',
+                                                                         user=self.user)
         self.expired.created -= timedelta(weeks=100)
         self.expired.save()
         self.mm_user = get_client().create_user('subscribed@example.org', 'password')
@@ -84,8 +84,8 @@ class TestAddressConfirmationProfile(TestCase):
         self.user = User.objects.create_user(
             username=u'ler_mm', email=u'ler@mailman.mostdesirable.org',
             password=u'pwd')
-        self.profile = AddressConfirmationProfile.objects.create_profile(
-            u'les@example.org', self.user)
+        self.profile = AddressConfirmationProfile.objects.create(email=u'les@example.org',
+                                                                 user=self.user)
         # Create a test request object
         self.request = RequestFactory().get('/')
 
@@ -97,19 +97,8 @@ class TestAddressConfirmationProfile(TestCase):
     def test_profile_creation(self):
         # Profile is created and has all necessary properties.
         self.assertEqual(self.profile.email, u'les@example.org')
-        self.assertEqual(len(self.profile.activation_key), 40)
+        self.assertEqual(len(self.profile.activation_key), 32)
         self.assertTrue(type(self.profile.created), datetime)
-
-    def test_no_duplicate_profiles(self):
-        # Creating a new profile returns an existing updated record
-        # (if one exists), instead of creating a new one.
-        new_profile = AddressConfirmationProfile.objects.create_profile(
-            u'les@example.org',
-            User.objects.create(email=u'ler@mailman.mostdesirable.org'))
-        self.assertEqual(new_profile.user, self.profile.user)
-        self.assertEqual(new_profile.email, self.profile.email)
-        self.assertNotEqual(new_profile.created, self.profile.created)
-        self.assertNotEqual(new_profile.activation_key, self.profile.activation_key)
 
     def test_unicode_representation(self):
         # Correct unicode representation?
@@ -130,6 +119,13 @@ class TestAddressConfirmationProfile(TestCase):
         self.profile.created = now - delta
         self.assertTrue(self.profile.is_expired)
 
+    def test_profile_is_updated_on_save(self):
+        key = self.profile.activation_key
+        created = self.profile.created
+        self.profile.save()
+        self.assertNotEqual(self.profile.activation_key, key)
+        self.assertNotEqual(self.profile.created, created)
+
     @override_settings(
         EMAIL_CONFIRMATION_EXPIRATION_DELTA=timedelta(hours=5))
     def test_profile_not_expired(self):
@@ -145,9 +141,6 @@ class TestAddressConfirmationProfile(TestCase):
         EMAIL_CONFIRMATION_FROM='mailman@mostdesirable.org')
     def test_confirmation_link(self):
         # The profile obj can send out a confirmation email.
-        # set the activation key to a fixed string for testing
-        self.profile.activation_key = \
-            '6323fba0097781fdb887cfc37a1122ee7c8bb0b0'
         # Simulate a VirtualHost with a different name
         self.request.META["HTTP_HOST"] = "another-virtualhost"
         # Now send the email
@@ -169,10 +162,7 @@ class TestAddressActivationLinkSuccess(TestCase):
         self.user = User.objects.create_user(
             username='ler', email=u'ler@example.org',
             password='pwd')
-        self.profile = AddressConfirmationProfile.objects.create_profile(
-            u'les@example.org', self.user)
-        self.profile.activation_key = \
-            u'6323fba0097781fdb887cfc37a1122ee7c8bb0b0'
+        self.profile = AddressConfirmationProfile.objects.create(email=u'les@example.org', user=self.user)
         self.profile.save()
 
     def tearDown(self):
@@ -185,12 +175,12 @@ class TestAddressActivationLinkSuccess(TestCase):
         # to the user.
         request = RequestFactory().get(reverse(
             'address_activation_link', kwargs={
-            'activation_key': '6323fba0097781fdb887cfc37a1122ee7c8bb0b0'}))
+            'activation_key': self.profile.activation_key}))
         setattr(request, 'session', 'session')
         messages = FallbackStorage(request)
         setattr(request, '_messages', messages)
         address_activation_link(
-            request, '6323fba0097781fdb887cfc37a1122ee7c8bb0b0')
+            request, self.profile.activation_key)
         expected_calls = [call(request, u'ler@example.org',
                          u'les@example.org')]
         self.assertEqual(_add_address_mock.mock_calls, expected_calls)

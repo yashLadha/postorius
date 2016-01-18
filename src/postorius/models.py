@@ -20,7 +20,7 @@ from __future__ import (
 
 
 import random
-import hashlib
+import uuid
 import logging
 
 from datetime import datetime, timedelta
@@ -220,47 +220,19 @@ class Member(MailmanRestModel):
     objects = MailmanRestManager('member', 'members')
 
 
-class AddressConfirmationProfileManager(models.Manager):
-    """
-    Manager class for AddressConfirmationProfile.
-    """
-
-    def create_profile(self, email, user):
-        # Create or update a profile
-        # Guarantee an email bytestr type that can be fed to hashlib.
-        email_str = email
-        if isinstance(email_str, unicode):
-            email_str = email_str.encode('utf-8')
-        activation_key = hashlib.sha1(
-            str(random.random())+email_str).hexdigest()
-        # Make now tz naive (we don't care about the timezone)
-        now = datetime.now().replace(tzinfo=None)
-        # Either update an existing profile record for the given email address
-        try:
-            profile = self.get(email=email)
-            profile.activation_key = activation_key
-            profile.created = now
-            profile.save()
-        # ... or create a new one.
-        except AddressConfirmationProfile.DoesNotExist:
-            profile = self.create(email=email,
-                                  activation_key=activation_key,
-                                  user=user,
-                                  created=now)
-        return profile
-
-
 class AddressConfirmationProfile(models.Model):
     """
     Profile model for temporarily storing an activation key to register
     an email address.
     """
-    email = models.EmailField()
-    activation_key = models.CharField(max_length=40)
+    email = models.EmailField(unique=True)
+    activation_key = models.CharField(max_length=32, unique=True)
     created = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User)
 
-    objects = AddressConfirmationProfileManager()
+    def save(self, *args, **kwargs):
+        self.activation_key = uuid.uuid4().hex
+        super(AddressConfirmationProfile, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'Address Confirmation Profile for {0}'.format(self.email)
