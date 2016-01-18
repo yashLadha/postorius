@@ -29,6 +29,7 @@ from django.template import RequestContext
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.http import Http404
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -654,37 +655,38 @@ def list_settings(request, list_id=None, visible_section=None,
     <param> is optional / is used to differ in between section and option might
     result in using //option
     """
-    message = ""
     if visible_section is None:
         visible_section = 'list_identity'
-    form_class = SETTINGS_FORMS.get(visible_section)
+    try:
+        form_class = SETTINGS_FORMS[visible_section]
+    except KeyError:
+        raise Http404('No such settings section')
     try:
         m_list = List.objects.get_or_404(fqdn_listname=list_id)
         list_settings = m_list.settings
     except (MailmanApiError, HTTPError):
         return utils.render_api_error(request)
     # List settings are grouped an processed in different forms.
-    if form_class:
-        if request.method == 'POST':
-            form = form_class(request.POST)
-            if form.is_valid():
-                try:
-                    for key in form.fields.keys():
-                        list_settings[key] = form.cleaned_data[key]
-                    list_settings.save()
-                    messages.success(request, _('The settings have been updated.'))
-                except HTTPError as e:
-                    messages.error(request, _('An error occured: %s') % e.reason)
-        else:
-            form = form_class(initial=list_settings)
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            try:
+                for key in form.fields.keys():
+                    list_settings[key] = form.cleaned_data[key]
+                list_settings.save()
+                messages.success(request, _('The settings have been updated.'))
+            except HTTPError as e:
+                messages.error(request, _('An error occured: %s') % e.reason)
+            return redirect('list_settings', m_list.list_id, visible_section)
+    else:
+        form = form_class(initial=list_settings)
 
-    return render_to_response(template,
-                              {'form': form,
-                               'section_names': SETTINGS_SECTION_NAMES,
-                               'message': message,
-                               'list': m_list,
-                               'visible_section': visible_section},
-                              context_instance=RequestContext(request))
+    return render(request, template, {
+        'form': form,
+        'section_names': SETTINGS_SECTION_NAMES,
+        'list': m_list,
+        'visible_section': visible_section,
+        })
 
 
 @login_required
