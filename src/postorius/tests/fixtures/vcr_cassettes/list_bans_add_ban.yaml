@@ -65,6 +65,22 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/lists/test_list.example.com/bans
+  response:
+    body: {string: !!python/unicode '{"entries": [{"email": "banned@example.com",
+        "http_etag": "\"f97c7e71d9d67fe90f1f8d98429c3fa6a5c76f3d\"", "list_id": "test_list.example.com",
+        "self_link": "http://localhost:9001/3.0/lists/test_list.example.com/bans/banned@example.com"}],
+        "http_etag": "\"3f2107d752512a58b966f626957a8a21f2280abd\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['327']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/test_list.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Test_list", "fqdn_listname":

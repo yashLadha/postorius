@@ -81,9 +81,6 @@ per_list_urlpatterns = patterns('postorius.views',
                                     name='list_settings'),
                                 url(r'^unsubscribe_all$',
                                     'remove_all_subscribers', name='unsubscribe_all'),
-                                url(r'^archival_options$',
-                                    'list_archival_options',
-                                    name='list_archival_options'),
                                 )
 
 urlpatterns = patterns(

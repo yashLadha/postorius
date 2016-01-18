@@ -119,7 +119,7 @@ class ListSettingsTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
     @MM_VCR.use_cassette('list_settings_archiving.yaml')
-    def test_archiving(self):
+    def test_archiving_policy(self):
         self.assertEqual(self.foo_list.settings['archive_policy'], 'public')
         self.client.login(username='testsu', password='testpass')
         url = reverse('list_settings', args=('foo.example.com', 'archiving'))
@@ -136,3 +136,25 @@ class ListSettingsTest(TestCase):
         # Get a new list object to avoid caching
         m_list = List.objects.get(fqdn_listname='foo.example.com')
         self.assertEqual(m_list.settings['archive_policy'], 'private')
+
+    @MM_VCR.use_cassette('list_settings_archivers.yaml')
+    def test_archivers(self):
+        self.assertEqual(dict(self.foo_list.archivers),
+            {'mhonarc': True, 'prototype': True, 'mail-archive': True})
+        self.client.login(username='testsu', password='testpass')
+        url = reverse('list_settings', args=('foo.example.com', 'archiving'))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["form"].initial['archivers'],
+            ['mail-archive', 'mhonarc', 'prototype'])
+        response = self.client.post(url,
+            {'archive_policy': 'public', 'archivers': ['prototype']})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], 'http://testserver' + url)
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        # Get a new list object to avoid caching
+        m_list = List.objects.get(fqdn_listname='foo.example.com')
+        self.assertEqual(dict(m_list.archivers),
+            {'mhonarc': False, 'prototype': True, 'mail-archive': False})

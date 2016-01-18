@@ -636,7 +636,7 @@ SETTINGS_FORMS = {
     'alter_messages': AlterMessagesForm,
     'digest': DigestSettingsForm,
     'message_acceptance': MessageAcceptanceForm,
-    'archiving': ArchivePolicySettingsForm,
+    'archiving': ArchiveSettingsForm,
     'subscription_policy': ListSubscriptionPolicyForm,
 }
 
@@ -668,18 +668,21 @@ def list_settings(request, list_id=None, visible_section=None,
         return utils.render_api_error(request)
     # List settings are grouped an processed in different forms.
     if request.method == 'POST':
-        form = form_class(request.POST)
+        form = form_class(request.POST, mlist=m_list)
         if form.is_valid():
             try:
                 for key in form.fields.keys():
-                    list_settings[key] = form.cleaned_data[key]
+                    if key in form_class.mlist_properties:
+                        setattr(m_list, key, form.cleaned_data[key])
+                    else:
+                        list_settings[key] = form.cleaned_data[key]
                 list_settings.save()
                 messages.success(request, _('The settings have been updated.'))
             except HTTPError as e:
                 messages.error(request, _('An error occured: %s') % e.reason)
             return redirect('list_settings', m_list.list_id, visible_section)
     else:
-        form = form_class(initial=list_settings)
+        form = form_class(initial=dict(list_settings), mlist=m_list)
 
     return render(request, template, {
         'form': form,
@@ -739,40 +742,6 @@ def remove_role(request, list_id=None, role=None, address=None,
                               context_instance=RequestContext(request))
 
 
-def _add_archival_messages(to_activate, to_disable, after_submission,
-                           request):
-    """
-    Add feedback messages to session, depending on previously set archivers.
-    """
-    # There are archivers to enable.
-    if len(to_activate) > 0:
-        # If the archiver shows up in the data set *after* the update,
-        # we can show a success message.
-        activation_postponed = []
-        activation_success = []
-        for archiver in to_activate:
-            if after_submission[archiver] is True:
-                activation_success.append(archiver)
-            else:
-                activation_postponed.append(archiver)
-        # If archivers couldn't be updated, show a message:
-        if len(activation_postponed) > 0:
-            messages.warning(request,
-                             _('Some archivers could not be enabled, probably '
-                               'because they are not enabled in the Mailman '
-                               'configuration. They will be enabled for '
-                               'this list, if the archiver is enabled in the '
-                               'Mailman configuration. %s.') %
-                               ', '.join(activation_postponed))
-        if len(activation_success) > 0:
-            messages.success(request, _('You activated new archivers for this list: %s') %
-                             ', '.join(activation_success))
-    # There are archivers to disable.
-    if len(to_disable) > 0:
-        messages.success(request, _('You disabled the following archivers: %s') %
-                         ', '.join(to_disable))
-
-
 @login_required
 @list_owner_required
 def remove_all_subscribers(request, list_id):
@@ -797,49 +766,6 @@ def remove_all_subscribers(request, list_id):
                                  context_instance=RequestContext(request))
     except MailmanApiError:
         return utils.render_api_error(request)
-
-
-@login_required
-@list_owner_required
-def list_archival_options(request, list_id):
-    """
-    Activate or deactivate list archivers.
-    """
-    # Get the list and cache the archivers property.
-    m_list = List.objects.get_or_404(fqdn_listname=list_id)
-    archivers = m_list.archivers
-
-    # Process form submission.
-    if request.method == 'POST':
-        current = [key for key in archivers.keys() if archivers[key]]
-        posted = request.POST.getlist('archivers')
-
-        # These should be activated
-        to_activate = [arc for arc in posted if arc not in current]
-        for arc in to_activate:
-            archivers[arc] = True
-        # These should be disabled
-        to_disable = [arc for arc in current if arc not in posted and
-                      arc in current]
-        for arc in to_disable:
-            archivers[arc] = False
-
-        # Re-cache list of archivers after update.
-        archivers = m_list.archivers
-
-        # Show success/error messages.
-        _add_archival_messages(to_activate, to_disable, archivers, request)
-
-    # Instantiate form with current archiver data.
-    initial = {'archivers': [key for key in archivers.keys()
-                             if archivers[key] is True]}
-    form = ListArchiverForm(initial=initial, archivers=archivers)
-
-    return render_to_response('postorius/lists/archival_options.html',
-                              {'list': m_list,
-                               'form': form,
-                               'archivers': archivers},
-                              context_instance=RequestContext(request))
 
 
 @login_required
