@@ -1,11 +1,14 @@
 {% load i18n %}
+{% load pagination %}
 
 {% if page.paginator.num_pages > 1 %}
 <nav class="text-center">
     {% if page.paginator.num_pages > 10 %}
     <ul class="pager">
         {% if page.has_previous %}
-            <li class="col-md-4 text-right"><a href="?page={{ page.previous_page_number }}&amp;count={{ page.paginator.per_page }}">&larr; {% trans 'Previous' %}</a></li>
+            <li class="col-md-4 text-right">
+                <a href="?{% add_to_query_string page=page.previous_page_number count=page.paginator.per_page %}">&larr; {% trans 'Previous' %}</a>
+            </li>
         {% else %}
             <li class="disabled col-md-4 text-right"><span>&larr; {% trans 'Previous' %}</span></li>
         {% endif %}
@@ -23,11 +26,17 @@
                 {% endfor %}
                 </select>
             </label>
-              <input type="hidden" name="count" value="{{ page.paginator.per_page }}" />
+            {% for key, value in request.GET.items %}
+                {% if key != 'page' %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}" />
+                {% endif %}
+            {% endfor %}
             </form>
         </li>
         {% if page.has_next %}
-            <li class="col-md-4 text-left"><a href="?page={{ page.next_page_number }}&amp;count={{ page.paginator.per_page }}">{% trans 'Next' %} &rarr;</a></li>
+            <li class="col-md-4 text-left">
+                <a href="?{% add_to_query_string page=page.next_page_number count=page.paginator.per_page %}">{% trans 'Next' %} &rarr;</a>
+            </li>
         {% else %}
             <li class="disabled col-md-4 text-left"><span>{% trans 'Next' %} &rarr;</span></li>
         {% endif %}
@@ -35,7 +44,9 @@
     {% else %}
         <ul class="pagination">
         {% if page.has_previous %}
-            <li><a href="?page={{ page.previous_page_number }}&amp;count={{ page.paginator.per_page }}">&laquo;</a></li>
+            <li>
+                <a href="?{% add_to_query_string page=page.previous_page_number count=page.paginator.per_page %}">&laquo;</a>
+            </li>
         {% else %}
             <li class="disabled"><span>&laquo;</span></li>
         {% endif %}
@@ -43,11 +54,11 @@
                 {% if page.number == pagenum %}
                 <li class="active"><span>{{ pagenum }}</span></li>
                 {% else %}
-                <li><a href="?page={{ pagenum }}&amp;count={{ page.paginator.per_page }}">{{ pagenum }}</a></li>
+                <li><a href="?{% add_to_query_string page=pagenum count=page.paginator.per_page %}">{{ pagenum }}</a></li>
                 {% endif %}
             {% endfor %}
         {% if page.has_next %}
-            <li><a href="?page={{ page.next_page_number }}&amp;count={{ page.paginator.per_page }}">&raquo;</a></li>
+            <li><a href="?{% add_to_query_string page=page.next_page_number count=page.paginator.per_page %}">&raquo;</a></li>
         {% else %}
             <li class="disabled"><span>&raquo;</span></li>
         {% endif %}
@@ -55,7 +66,11 @@
     {% endif %}
     <form action="{{ request.path }}" method="get" class="form-inline">
         <p class="text-center">
-            <input type="hidden" name="page" value="{{ page.number }}" />
+            {% for key, value in request.GET.items %}
+                {% if key != 'count' %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}" />
+                {% endif %}
+            {% endfor %}
             {% trans 'Results per page:' %}
             <select name="count" class="form-control input-sm">
                 {% for count in count_options %}

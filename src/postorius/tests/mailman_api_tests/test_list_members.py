@@ -221,3 +221,63 @@ class AddModeratorTest(TestCase):
     @MM_VCR.use_cassette('test_list_members_new_moderator_added.yaml')
     def test_new_moderator_added(self):
         self.assertTrue(u'newmod@example.com' in self.foo_list.moderators)
+
+
+class ListMembersTest(TestCase):
+    """Test the list members page.
+    """
+
+    @MM_VCR.use_cassette('list_members.yaml')
+    def setUp(self):
+        try:
+            self.domain = get_client().create_domain('example.com')
+        except HTTPError:
+            self.domain = get_client().get_domain('example.com')
+        try:
+            self.foo_list = self.domain.create_list('foo')
+        except HTTPError:
+            self.foo_list = get_client().get_list('foo.example.com')
+        self.superuser = User.objects.create_superuser(
+            'testsu', 'su@example.com', 'testpass')
+
+    @MM_VCR.use_cassette('list_members.yaml')
+    def tearDown(self):
+        self.foo_list.delete()
+        self.superuser.delete()
+
+    @MM_VCR.use_cassette('list_members_show_members_page.yaml')
+    def test_show_members_page(self):
+        self.client.login(username='testsu', password='testpass')
+        member_1 = self.foo_list.subscribe('member-1@example.com',
+            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        member_2 = self.foo_list.subscribe('member-2@example.com',
+            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        response = self.client.get(reverse(
+            'list_members', args=['foo@example.com', 'subscriber']))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['members']), 2)
+        self.assertEqual(response.context['members'].paginator.count, 2)
+        self.assertContains(response, member_1.email)
+        self.assertContains(response, member_2.email)
+
+    @MM_VCR.use_cassette('list_members_search_members.yaml')
+    def test_search_members_1(self):
+        self.client.login(username='testsu', password='testpass')
+        member_1 = self.foo_list.subscribe('member-1@example.com',
+            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        member_2 = self.foo_list.subscribe('member-2@example.com',
+            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        response = self.client.get(reverse(
+            'list_members', args=['foo@example.com', 'subscriber']),
+            {'q': 'example.com'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['members']), 2)
+        self.assertContains(response, member_1.email)
+        self.assertContains(response, member_2.email)
+        response = self.client.get(reverse(
+            'list_members', args=['foo@example.com', 'subscriber']),
+            {'q': 'member-1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['members']), 1)
+        self.assertContains(response, member_1.email)
+        self.assertNotContains(response, member_2.email)

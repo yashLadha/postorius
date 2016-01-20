@@ -27,10 +27,17 @@
 
     {% if role == 'subscriber' %}
         <div class="row margin-bottom">
-            <div class="col-md-2">
-                <a href="{% url 'unsubscribe_all' list.list_id %}" class="btn btn-danger">{% trans 'Unsubscribe all' %}</a>
+            <div class="col-md-6">
+                <form action="{% url 'list_members' list.list_id role %}" method="get" class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="q" value="{{ query }}" class="form-control" autofocus placeholder="{% trans 'Search members...' %}" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                        </span>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-2 col-md-offset-8 text-right">
+            <div class="col-md-6 text-right">
                 <a href="{% url 'csv_view' list.list_id %}" class="btn btn-default">
                    {% trans 'CSV Export' %}
                 </a>
@@ -77,6 +84,9 @@
             </div>
         </form>
         {% if role == 'subscriber' %}
+            <div class="margin-bottom">
+                <a href="{% url 'unsubscribe_all' list.list_id %}" class="btn btn-danger">{% trans 'Unsubscribe all' %}</a>
+            </div>
             {% include 'postorius/lib/pagination.html' with page=members %}
         {% endif %}
     {% else %}
