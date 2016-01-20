@@ -29,6 +29,7 @@ from django.template import RequestContext
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.http import Http404
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -635,7 +636,7 @@ SETTINGS_FORMS = {
     'alter_messages': AlterMessagesForm,
     'digest': DigestSettingsForm,
     'message_acceptance': MessageAcceptanceForm,
-    'archiving': ArchivePolicySettingsForm,
+    'archiving': ArchiveSettingsForm,
     'subscription_policy': ListSubscriptionPolicyForm,
 }
 
@@ -654,37 +655,41 @@ def list_settings(request, list_id=None, visible_section=None,
     <param> is optional / is used to differ in between section and option might
     result in using //option
     """
-    message = ""
     if visible_section is None:
         visible_section = 'list_identity'
-    form_class = SETTINGS_FORMS.get(visible_section)
+    try:
+        form_class = SETTINGS_FORMS[visible_section]
+    except KeyError:
+        raise Http404('No such settings section')
     try:
         m_list = List.objects.get_or_404(fqdn_listname=list_id)
         list_settings = m_list.settings
     except (MailmanApiError, HTTPError):
         return utils.render_api_error(request)
     # List settings are grouped an processed in different forms.
-    if form_class:
-        if request.method == 'POST':
-            form = form_class(request.POST)
-            if form.is_valid():
-                try:
-                    for key in form.fields.keys():
+    if request.method == 'POST':
+        form = form_class(request.POST, mlist=m_list)
+        if form.is_valid():
+            try:
+                for key in form.fields.keys():
+                    if key in form_class.mlist_properties:
+                        setattr(m_list, key, form.cleaned_data[key])
+                    else:
                         list_settings[key] = form.cleaned_data[key]
-                    list_settings.save()
-                    messages.success(request, _('The settings have been updated.'))
-                except HTTPError as e:
-                    messages.error(request, _('An error occured: %s') % e.reason)
-        else:
-            form = form_class(initial=list_settings)
+                list_settings.save()
+                messages.success(request, _('The settings have been updated.'))
+            except HTTPError as e:
+                messages.error(request, _('An error occured: %s') % e.reason)
+            return redirect('list_settings', m_list.list_id, visible_section)
+    else:
+        form = form_class(initial=dict(list_settings), mlist=m_list)
 
-    return render_to_response(template,
-                              {'form': form,
-                               'section_names': SETTINGS_SECTION_NAMES,
-                               'message': message,
-                               'list': m_list,
-                               'visible_section': visible_section},
-                              context_instance=RequestContext(request))
+    return render(request, template, {
+        'form': form,
+        'section_names': SETTINGS_SECTION_NAMES,
+        'list': m_list,
+        'visible_section': visible_section,
+        })
 
 
 @login_required
@@ -737,40 +742,6 @@ def remove_role(request, list_id=None, role=None, address=None,
                               context_instance=RequestContext(request))
 
 
-def _add_archival_messages(to_activate, to_disable, after_submission,
-                           request):
-    """
-    Add feedback messages to session, depending on previously set archivers.
-    """
-    # There are archivers to enable.
-    if len(to_activate) > 0:
-        # If the archiver shows up in the data set *after* the update,
-        # we can show a success message.
-        activation_postponed = []
-        activation_success = []
-        for archiver in to_activate:
-            if after_submission[archiver] is True:
-                activation_success.append(archiver)
-            else:
-                activation_postponed.append(archiver)
-        # If archivers couldn't be updated, show a message:
-        if len(activation_postponed) > 0:
-            messages.warning(request,
-                             _('Some archivers could not be enabled, probably '
-                               'because they are not enabled in the Mailman '
-                               'configuration. They will be enabled for '
-                               'this list, if the archiver is enabled in the '
-                               'Mailman configuration. %s.') %
-                               ', '.join(activation_postponed))
-        if len(activation_success) > 0:
-            messages.success(request, _('You activated new archivers for this list: %s') %
-                             ', '.join(activation_success))
-    # There are archivers to disable.
-    if len(to_disable) > 0:
-        messages.success(request, _('You disabled the following archivers: %s') %
-                         ', '.join(to_disable))
-
-
 @login_required
 @list_owner_required
 def remove_all_subscribers(request, list_id):
@@ -799,42 +770,45 @@ def remove_all_subscribers(request, list_id):
 
 @login_required
 @list_owner_required
-def list_archival_options(request, list_id):
+def list_bans(request, list_id):
     """
-    Activate or deactivate list archivers.
+    Ban or unban email addresses.
     """
     # Get the list and cache the archivers property.
     m_list = List.objects.get_or_404(fqdn_listname=list_id)
-    archivers = m_list.archivers
+    ban_list = m_list.bans
 
     # Process form submission.
     if request.method == 'POST':
-        current = [key for key in archivers.keys() if archivers[key]]
-        posted = request.POST.getlist('archivers')
-
-        # These should be activated
-        to_activate = [arc for arc in posted if arc not in current]
-        for arc in to_activate:
-            archivers[arc] = True
-        # These should be disabled
-        to_disable = [arc for arc in current if arc not in posted and
-                      arc in current]
-        for arc in to_disable:
-            archivers[arc] = False
-
-        # Re-cache list of archivers after update.
-        archivers = m_list.archivers
-
-        # Show success/error messages.
-        _add_archival_messages(to_activate, to_disable, archivers, request)
-
-    # Instantiate form with current archiver data.
-    initial = {'archivers': [key for key in archivers.keys()
-                             if archivers[key] is True]}
-    form = ListArchiverForm(initial=initial, archivers=archivers)
-
-    return render_to_response('postorius/lists/archival_options.html',
-                              {'list': m_list,
-                               'form': form,
-                               'archivers': archivers},
-                              context_instance=RequestContext(request))
+        if 'add' in request.POST:
+            addban_form = ListAddBanForm(request.POST)
+            if addban_form.is_valid():
+                try:
+                    ban_list.add(addban_form.cleaned_data['email'])
+                    messages.success(
+                        request, _('The email {} has been banned.'.format(
+                        addban_form.cleaned_data['email'])))
+                except HTTPError as e:
+                    messages.error(
+                        request, _('An error occured: %s') % e.reason)
+                except ValueError as e:
+                    messages.error(request, _('Invalid data: %s') % e)
+                return redirect('list_bans', list_id)
+        elif 'del' in request.POST:
+            try:
+                ban_list.remove(request.POST['email'])
+                messages.success(
+                    request, _('The email {} has been un-banned.'.format(
+                    request.POST['email'])))
+            except HTTPError as e:
+                messages.error(request, _('An error occured: %s') % e.reason)
+            except ValueError as e:
+                messages.error(request, _('Invalid data: %s') % e)
+            return redirect('list_bans', list_id)
+            addban_form = ListAddBanForm()
+    else:
+        addban_form = ListAddBanForm()
+    return render(request, 'postorius/lists/bans.html', {
+         'list': m_list,
+         'addban_form': addban_form,
+         })

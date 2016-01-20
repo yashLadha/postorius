@@ -210,24 +210,78 @@ class ListUnsubscribe(FieldsetForm):
             'invalid': _('Please enter a valid email address.')})
 
 
-class ArchivePolicySettingsForm(forms.Form):
+class ListSettingsForm(forms.Form):
+    """
+    Base class for list settings forms.
+    """
+    mlist_properties = []
+
+    def __init__(self, *args, **kwargs):
+        self._mlist = kwargs.pop('mlist')
+        super(ListSettingsForm, self).__init__(*args, **kwargs)
+
+
+SUBSCRIPTION_POLICY_CHOICES = (
+    ('', _('Please Choose')),
+    ('open', _('Open')),
+    ('confirm', _('Confirm')),
+    ('moderate', _('Moderate')),
+    ('confirm_then_moderate', _('Confirm, then moderate')),
+)
+
+
+class ListSubscriptionPolicyForm(ListSettingsForm):
+    """
+    List subscription policy settings.
+    """
+    subscription_policy = forms.ChoiceField(
+        label=_('Subscription Policy'),
+        choices=SUBSCRIPTION_POLICY_CHOICES,
+        help_text=_('Set the subscription policy.'))
+
+
+class ArchiveSettingsForm(ListSettingsForm):
     """
     Set the general archive policy.
     """
+    mlist_properties = ['archivers']
+
     archive_policy_choices = (
-        ("public", _("Public Archives")),
-        ("private", _("Private Archives")),
+        ("public", _("Public archives")),
+        ("private", _("Private archives")),
         ("never", _("Do not archive this list")),
     )
+
     archive_policy = forms.ChoiceField(
         choices=archive_policy_choices,
         widget=forms.RadioSelect,
-        label=_('Archive Policy'),
+        label=_('Archive policy'),
         help_text=_('Policy for archiving messages for this list'),
     )
 
+    archivers = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        label=_('Active archivers'),
+        required=False) # May be empty if no archivers are desired.
 
-class MessageAcceptanceForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ArchiveSettingsForm, self).__init__(*args, **kwargs)
+        self.fields['archivers'].choices = sorted(
+            [(key, key) for key in sorted(self._mlist.archivers.keys())])
+        if self.initial:
+            self.initial['archivers'] = [
+                key for key in sorted(self._mlist.archivers.keys())
+                if self._mlist.archivers[key] is True]
+
+    def clean_archivers(self):
+        result = {}
+        for archiver, ignore_ in self.fields['archivers'].choices:
+            result[archiver] = archiver in self.cleaned_data['archivers']
+        self.cleaned_data['archivers'] = result
+        return result
+
+
+class MessageAcceptanceForm(ListSettingsForm):
     """
     List messages acceptance settings.
     """
@@ -286,7 +340,7 @@ class MessageAcceptanceForm(forms.Form):
             'If no match is found, then this action is taken.'))
 
 
-class DigestSettingsForm(forms.Form):
+class DigestSettingsForm(ListSettingsForm):
     """
     List digest settings.
     """
@@ -295,7 +349,7 @@ class DigestSettingsForm(forms.Form):
         help_text=_('How big in Kb should a digest be before it gets sent out?'))
 
 
-class AlterMessagesForm(forms.Form):
+class AlterMessagesForm(ListSettingsForm):
     """
     Alter messages list settings.
     """
@@ -422,7 +476,7 @@ class AlterMessagesForm(forms.Form):
         help_text=_('Type of pipeline you want to use for this mailing list'))
 
 
-class ListAutomaticResponsesForm(forms.Form):
+class ListAutomaticResponsesForm(ListSettingsForm):
     """
     List settings for automatic responses.
     """
@@ -508,7 +562,7 @@ class ListAutomaticResponsesForm(forms.Form):
         help_text=_('Should administrator get notices of subscribes and unsubscribes?'))
 
 
-class ListIdentityForm(forms.Form):
+class ListIdentityForm(ListSettingsForm):
     """
     List identity settings.
     """
@@ -544,25 +598,6 @@ class ListIdentityForm(forms.Form):
     subject_prefix = forms.CharField(
         label=_('Subject prefix'),
     )
-
-
-SUBSCRIPTION_POLICY_CHOICES = (
-    ('', _('Please Choose')),
-    ('open', _('Open')),
-    ('confirm', _('Confirm')),
-    ('moderate', _('Moderate')),
-    ('confirm_then_moderate', _('Confirm, then moderate')),
-)
-
-
-class ListSubscriptionPolicyForm(forms.Form):
-    """
-    List subscription policy settings.
-    """
-    subscription_policy = forms.ChoiceField(
-        label=_('Subscription Policy'),
-        choices=SUBSCRIPTION_POLICY_CHOICES,
-        help_text=_('Set the subscription policy.'))
 
 
 class ListArchiverForm(forms.Form):
@@ -627,6 +662,18 @@ class ListMassRemoval(FieldsetForm):
         included in each.
         """
         layout = [["Mass Removal", "emails"]]
+
+
+class ListAddBanForm(forms.Form):
+    """Ban an email address for a list."""
+    email = forms.CharField(
+        label=_('Add ban'),
+        help_text=_(
+            'You can ban a single email address or use a regular expression '
+            'to match similar email addresses.'),
+        error_messages={
+            'required': _('Please enter an email adddress.'),
+            'invalid': _('Please enter a valid email adddress.')})
 
 
 class UserPreferences(FieldsetForm):

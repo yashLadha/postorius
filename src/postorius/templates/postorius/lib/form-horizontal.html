@@ -24,6 +24,14 @@
                         {{ choice.choice_label }}
                     </label>
                 {% endfor %}
+            {% elif field|fieldtype == 'CheckboxSelectMultiple' %}
+                {% for choice in field %}
+                    <div class="checkbox">
+                        <label>
+                            {{ choice }} {{ choice.label }}
+                        </label>
+                    </div>
+                {% endfor %}
             {% else %}
                 {{ field|add_form_control }}
             {% endif %}
