@@ -198,18 +198,6 @@ class ListSubscribe(FieldsetForm):
                                         for address in user_emails)
 
 
-class ListUnsubscribe(FieldsetForm):
-
-    """Form fields to leave an existing list.
-    """
-    email = forms.EmailField(
-        label=_('Your email address'),
-        widget=forms.HiddenInput(),
-        error_messages={
-            'required': _('Please enter an email address.'),
-            'invalid': _('Please enter a valid email address.')})
-
-
 class ListSettingsForm(forms.Form):
     """
     Base class for list settings forms.
@@ -614,31 +602,6 @@ class ListArchiverForm(forms.Form):
             [(key, key) for key in archivers.keys()])
 
 
-class Login(FieldsetForm):
-
-    """Form fields to let the user log in.
-    """
-    user = forms.EmailField(
-        label=_('Email address'),
-        error_messages={'required': _('Please enter an email address.'),
-                        'invalid': _('Please enter a valid email address.')},
-        required=True)
-    password = forms.CharField(
-        label=_('Password'),
-        widget=forms.PasswordInput,
-        error_messages={'required': _('Please enter your password.'),
-                        'invalid': _('Please enter a valid password.')},
-        required=True)
-
-    class Meta:
-
-        """
-        Class to define the name of the fieldsets and what should be
-        included in each.
-        """
-        layout = [["Login", "user", "password"]]
-
-
 class ListMassSubscription(FieldsetForm):
     """Form fields to masssubscribe users to a list.
     """
@@ -782,74 +745,6 @@ class MemberModeration(FieldsetForm):
             'Accept -- accepts any postings without any further checks. '
             'Defer -- default processing, run additional checks and accept '
             'the message. '))
-
-
-class UserSettings(FieldsetForm):
-
-    """Form handling the user settings.
-    """
-
-    def __init__(self, address_choices, *args, **kwargs):
-        """
-        Initialize the user settings with a field 'address' where
-        the values are set dynamically in the view.
-        """
-        super(UserSettings, self).__init__(*args, **kwargs)
-        self.fields['address'] = forms.ChoiceField(
-            choices=(address_choices),
-            widget=forms.Select(),
-            error_messages={'required': _("Please choose an address.")},
-            required=True,
-            label=_('Default email address'))
-
-    id = forms.IntegerField(
-        label=_('ID'),
-        initial=9,
-        widget=forms.HiddenInput(),
-        required=False,
-        error_messages={
-            'invalid': _('Please provide an integer ID.')})
-    mailing_list = forms.CharField(
-        label=_('Mailing list'),
-        widget=forms.HiddenInput(),
-        required=False)
-    display_name = forms.CharField(
-        label=_('Display name'),
-        required=False)
-    preferred_language = forms.ChoiceField(
-        label=_('Default/Preferred language'),
-        widget=forms.Select(),
-        error_messages={
-            'required': _("Please choose a language.")},
-        required=False,
-        choices=(
-            ("", _("Please choose")),
-            ("English (USA)", "English (USA)")))
-    password = forms.CharField(
-        label=_('Change password'),
-        widget=forms.PasswordInput,
-        required=False,
-        error_messages={'required': _('Please enter your password.'),
-                        'invalid': _('Please enter a valid password.')})
-    conf_password = forms.CharField(
-        label=_('Confirm password'),
-        widget=forms.PasswordInput,
-        required=False,
-        error_messages={'required': _('Please enter your password.'),
-                        'invalid': _('Please enter a valid password.')})
-
-    class Meta:
-
-        """
-        Class to define the name of the fieldsets and what should be
-        included in each.
-        """
-        layout = [["User settings", "display_name", "password",
-                   "conf_password", "preferred_language", "address"]]
-
-
-class ListDeleteForm(forms.Form):
-    list_name = forms.EmailField(widget=forms.HiddenInput())
 
 
 class AddressActivationForm(forms.Form):
