@@ -94,6 +94,7 @@ def list_members_view(request, list_id, role=None):
             paginator_class=utils.MailmanPaginator)
         context['empty_error'] = _('List has no Subscribers')
         context['count_options'] = [25, 50, 100, 200]
+        context['form'] = form
     else:
         context['member_form'] = member_form
         if role == 'owner':
@@ -272,8 +273,8 @@ class ListUnsubscribeView(MailingListView):
     """Unsubscribe from a mailing list."""
 
     @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        email = kwargs['email']
+    def post(self, request, *args, **kwargs):
+        email = request.POST['email']
         try:
             self.mailing_list.unsubscribe(email)
             messages.success(request, _('%s has been unsubscribed from this list.') % email)
