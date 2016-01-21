@@ -106,7 +106,7 @@ class UserAddressPreferencesView(MailmanUserView):
             helperform = UserPreferences()
             mm_user = MailmanUser.objects.get(address=request.user.email)
             addresses = mm_user.addresses
-            AFormset = formset_factory(UserPreferences, extra=len(addresses._addresses))
+            AFormset = formset_factory(UserPreferences, extra=len(addresses))
             formset = AFormset()
             zipped_data = zip(formset.forms, addresses)
             for form, address in zipped_data:
