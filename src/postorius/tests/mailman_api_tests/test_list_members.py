@@ -22,7 +22,6 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now
 from django.test import Client, TestCase
-from django.test.utils import override_settings
 from six.moves.urllib_error import HTTPError
 from six.moves.urllib_parse import quote
 
@@ -68,7 +67,6 @@ class ListMembersAccessTest(TestCase):
         get_client().delete_domain('example.com')
 
     @MM_VCR.use_cassette('list_members_access.yaml')
-    @override_settings(ROOT_URLCONF='testing.urls')
     def test_page_not_accessible_if_not_logged_in(self):
         url = reverse('list_members', args=('foo@example.com', 'subscriber',))
         response = self.client.get(url)

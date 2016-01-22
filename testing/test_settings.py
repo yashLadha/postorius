@@ -132,7 +132,7 @@ MIDDLEWARE_CLASSES = (
 
 # Set `postorius.urls` as main url config if postorius
 # is the only app you want to serve.
-ROOT_URLCONF = 'postorius.urls'
+ROOT_URLCONF = 'testing.urls'
 
 TEMPLATE_DIRS = (
     # uncomment if you like to overwrite the default templates:

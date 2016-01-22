@@ -78,10 +78,7 @@ class ListSettingsTest(TestCase):
         expected_redirect = 'http://testserver%s?next=%s' % (
             reverse(settings.LOGIN_URL), url)
 
-        # TODO Fix when dropping persona
-        #self.assertRedirects(response, '{}?next={}'.format(reverse(settings.LOGIN_URL), url))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(response['location'], expected_redirect)
+        self.assertRedirects(response, '{}?next={}'.format(reverse(settings.LOGIN_URL), url))
 
     @MM_VCR.use_cassette('list_settings_access.yaml')
     def test_page_not_accessible_if_not_logged_in(self):
