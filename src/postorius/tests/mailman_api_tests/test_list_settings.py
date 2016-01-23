@@ -137,13 +137,12 @@ class ListSettingsTest(TestCase):
     @MM_VCR.use_cassette('list_settings_archivers.yaml')
     def test_archivers(self):
         self.assertEqual(dict(self.foo_list.archivers),
-            {'mhonarc': True, 'prototype': True, 'mail-archive': True})
+            {'mhonarc': False, 'prototype': False, 'mail-archive': False})
         self.client.login(username='testsu', password='testpass')
         url = reverse('list_settings', args=('foo.example.com', 'archiving'))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["form"].initial['archivers'],
-            ['mail-archive', 'mhonarc', 'prototype'])
+        self.assertEqual(response.context["form"].initial['archivers'], [])
         response = self.client.post(url,
             {'archive_policy': 'public', 'archivers': ['prototype']})
         self.assertRedirects(response, url)
