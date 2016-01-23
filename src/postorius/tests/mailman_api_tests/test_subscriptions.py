@@ -68,7 +68,7 @@ class TestSubscription(TestCase):
         self.open_list.delete()
         self.mod_list.delete()
         self.mm_user.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('test_list_subscription_open_primary.yaml')
     def test_subscribe_open(self):

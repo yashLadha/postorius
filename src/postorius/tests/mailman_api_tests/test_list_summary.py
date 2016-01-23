@@ -44,12 +44,9 @@ class ListSummaryPageTest(TestCase):
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def setUp(self):
         self.mmclient = get_client()
-        domain = self.mmclient.create_domain('example.com')
-        self.foo_list = domain.create_list('foo')
-        try:
-            User.objects.create_user('testuser', 'test@example.com', 'testpass')
-        except IntegrityError:
-            pass
+        self.domain = self.mmclient.create_domain('example.com')
+        self.foo_list = self.domain.create_list('foo')
+        User.objects.create_user('testuser', 'test@example.com', 'testpass')
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def tearDown(self):
@@ -58,7 +55,7 @@ class ListSummaryPageTest(TestCase):
         for user in self.mmclient.users:
             user.delete()
         User.objects.all().delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_out(self):

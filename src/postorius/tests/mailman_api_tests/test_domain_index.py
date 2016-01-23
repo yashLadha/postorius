@@ -63,7 +63,7 @@ class DomainIndexPageTest(TestCase):
         self.superuser.delete()
         self.owner.delete()
         self.moderator.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('test_domain_index.yaml')
     def test_domain_index_not_accessible_to_public(self):

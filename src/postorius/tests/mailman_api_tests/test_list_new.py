@@ -52,7 +52,7 @@ class ListCreationTest(TestCase):
         self.superuser.delete()
         for mlist in get_client().lists:
             mlist.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')

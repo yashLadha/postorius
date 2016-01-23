@@ -69,7 +69,7 @@ class ListSettingsTest(TestCase):
         self.superuser.delete()
         self.owner.delete()
         self.moderator.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     def _check_redirect_login(self, url):
         response = self.client.get(url)

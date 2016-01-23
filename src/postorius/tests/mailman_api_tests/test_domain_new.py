@@ -77,3 +77,4 @@ class DomainCreationTest(TestCase):
         self.assertEqual(a_new_domain.base_url, u'http://example.com')
         self.assertEqual(a_new_domain.owners[0]['user_id'],
                 get_client().get_user('su@example.com').user_id)
+        a_new_domain.delete()

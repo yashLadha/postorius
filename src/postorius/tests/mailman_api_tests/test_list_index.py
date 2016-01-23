@@ -46,7 +46,7 @@ class ListIndexPageTest(TestCase):
     def tearDown(self):
         for mlist in get_client().lists:
             mlist.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('test_list_index.yaml')
     def test_list_index_contains_the_lists(self):

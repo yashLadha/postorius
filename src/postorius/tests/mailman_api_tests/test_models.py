@@ -50,7 +50,7 @@ class ModelTest(TestCase):
         for user in self.mmclient.users:
             user.delete()
         User.objects.all().delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('test_model-2.yaml')
     def test_mailman_user_not_created_when_flag_is_off(self):

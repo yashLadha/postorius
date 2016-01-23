@@ -46,8 +46,8 @@ class ListBansTest(TestCase):
     @MM_VCR.use_cassette('list_bans.yaml')
     def setUp(self):
         # Create domain `example.com` in Mailman
-        example_com = get_client().create_domain('example.com')
-        self.m_list = example_com.create_list('test_list')
+        self.domain = get_client().create_domain('example.com')
+        self.m_list = self.domain.create_list('test_list')
         self.test_user = User.objects.create_user(
             'test_user', 'test_user@example.com', 'pwd')
         self.test_superuser = User.objects.create_superuser(
@@ -60,7 +60,7 @@ class ListBansTest(TestCase):
         self.test_user.delete()
         self.test_superuser.delete()
         self.m_list.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('list_bans.yaml')
     def test_login_redirect_for_anonymous(self):

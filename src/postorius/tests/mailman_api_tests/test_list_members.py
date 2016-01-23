@@ -64,7 +64,7 @@ class ListMembersAccessTest(TestCase):
         self.superuser.delete()
         self.owner.delete()
         self.moderator.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_if_not_logged_in(self):
@@ -123,7 +123,7 @@ class AddRemoveOwnerTest(TestCase):
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('test_list_members_owner_add_remove.yaml')
     def test_add_remove_owner(self):
@@ -213,7 +213,7 @@ class AddModeratorTest(TestCase):
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
-        get_client().delete_domain('example.com')
+        self.domain.delete()
 
     @MM_VCR.use_cassette('test_list_members_new_moderator_added.yaml')
     def test_new_moderator_added(self):
@@ -226,14 +226,8 @@ class ListMembersTest(TestCase):
 
     @MM_VCR.use_cassette('list_members.yaml')
     def setUp(self):
-        try:
-            self.domain = get_client().create_domain('example.com')
-        except HTTPError:
-            self.domain = get_client().get_domain('example.com')
-        try:
-            self.foo_list = self.domain.create_list('foo')
-        except HTTPError:
-            self.foo_list = get_client().get_list('foo.example.com')
+        self.domain = get_client().create_domain('example.com')
+        self.foo_list = self.domain.create_list('foo')
         self.superuser = User.objects.create_superuser(
             'testsu', 'su@example.com', 'testpass')
 
@@ -241,6 +235,7 @@ class ListMembersTest(TestCase):
     def tearDown(self):
         self.foo_list.delete()
         self.superuser.delete()
+        self.domain.delete()
 
     @MM_VCR.use_cassette('list_members_show_members_page.yaml')
     def test_show_members_page(self):
