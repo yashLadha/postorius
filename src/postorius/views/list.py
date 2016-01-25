@@ -192,7 +192,6 @@ class ListSummaryView(MailingListView):
             data['subscribe_form'] = ListSubscribe(user_emails)
         else:
             user_emails = None
-            data['change_subscription_form'] = None
         return render(request, 'postorius/lists/summary.html', data)
 
 
