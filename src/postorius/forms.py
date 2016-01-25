@@ -225,7 +225,12 @@ class ListSubscriptionPolicyForm(ListSettingsForm):
     subscription_policy = forms.ChoiceField(
         label=_('Subscription Policy'),
         choices=SUBSCRIPTION_POLICY_CHOICES,
-        help_text=_('Set the subscription policy.'))
+        help_text=_('Open: Subscriptions are added automatically\n'
+                    'Confirm: Subscribers need to confirm the subscription '
+                    'using an email sent to them\n'
+                    'Moderate: Moderators will have to authorize each subscription manually.\n'
+                    'Confirm then Moderate: First subscribers have to confirm, then a moderator '
+                    'needs to authorize.'))
 
 
 class ArchiveSettingsForm(ListSettingsForm):
@@ -302,17 +307,17 @@ class MessageAcceptanceForm(ListSettingsForm):
         required=True,
         choices=ACTION_CHOICES,
         help_text=_(
-            'Default action to take when a member posts to the list. '
-            'Hold -- This holds the message for approval by the list '
-            'moderators. '
-            'Reject -- this automatically rejects the message by sending a '
+            'Default action to take when a member posts to the list.\n'
+            'Hold: This holds the message for approval by the list '
+            'moderators.\n'
+            'Reject: this automatically rejects the message by sending a '
             'bounce notice to the post\'s author. The text of the bounce '
-            'notice can be configured by you. '
-            'Discard -- this simply discards the message, with no notice '
-            'sent to the post\'s author. '
-            'Accept -- accepts any postings without any further checks. '
-            'Defer -- default processing, run additional checks and accept '
-            'the message. '))
+            'notice can be configured by you.\n'
+            'Discard: this simply discards the message, with no notice '
+            'sent to the post\'s author.\n'
+            'Accept: accepts any postings without any further checks.\n'
+            'Defer: default processing, run additional checks and accept '
+            'the message.'))
     default_nonmember_action = forms.ChoiceField(
         widget=forms.RadioSelect(),
         label=_('Default action to take when a non-member posts to the'
