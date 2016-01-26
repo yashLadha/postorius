@@ -47,12 +47,15 @@ class UserMailmanSettingsView(MailmanUserView):
     def post(self, request):
         try:
             mm_user = MailmanUser.objects.get(address=request.user.email)
-            global_preferences_form = UserPreferences(request.POST)
-            if global_preferences_form.is_valid():
+            form = UserPreferences(request.POST)
+            if form.is_valid():
                 preferences = mm_user.preferences
-                for key in global_preferences_form.fields.keys():
-                    preferences[
-                        key] = global_preferences_form.cleaned_data[key]
+                for key in form.fields.keys():
+                    if form.cleaned_data[key] is not None:
+                        # None: nothing set yet. Remember to remove this test
+                        # when Mailman accepts None as a "reset to default"
+                        # value.
+                        preferences[key] = form.cleaned_data[key]
                 preferences.save()
                 messages.success(request, _('Your preferences have been updated.'))
             else:
@@ -87,7 +90,11 @@ class UserAddressPreferencesView(MailmanUserView):
                 for form, address in zip(formset.forms, mm_user.addresses):
                     preferences = address.preferences
                     for key in form.fields.keys():
-                        preferences[key] = form.cleaned_data[key]
+                        if form.cleaned_data[key] is not None:
+                            # None: nothing set yet. Remember to remove this test
+                            # when Mailman accepts None as a "reset to default"
+                            # value.
+                            preferences[key] = form.cleaned_data[key]
                     preferences.save()
                 messages.success(request, _('Your preferences have been updated.'))
             else:
@@ -135,17 +142,23 @@ def user_list_options(request, list_id):
         form = UserPreferences(request.POST)
         if form.is_valid():
             for key in form.cleaned_data.keys():
-                preferences[key] = form.cleaned_data[key]
+                if form.cleaned_data[key] is not None:
+                    # None: nothing set yet. Remember to remove this test
+                    # when Mailman accepts None as a "reset to default"
+                    # value.
+                    preferences[key] = form.cleaned_data[key]
             preferences.save()
             messages.success(request, _('Your preferences have been updated.'))
+            return redirect("user_list_options", list_id)
         else:
             messages.error(request, _('Something went wrong.'))
     else:
         form = UserPreferences(initial=subscription.preferences)
     user_emails = [request.user.email] + request.user.other_emails
     subscription_form = ChangeSubscriptionForm(user_emails, initial={'email': subscription.email})
-    return render_to_response('postorius/user/list_options.html',
-            {'form': form, 'list': mlist, 'change_subscription_form': subscription_form}, context_instance=RequestContext(request))
+    return render(request, 'postorius/user/list_options.html',
+            {'form': form, 'list': mlist,
+             'change_subscription_form': subscription_form})
 
 
 class UserSubscriptionPreferencesView(MailmanUserView):
@@ -161,7 +174,11 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                 for form, subscription in zip(formset.forms, subscriptions):
                     preferences = subscription.preferences
                     for key in form.cleaned_data.keys():
-                        preferences[key] = form.cleaned_data[key]
+                        if form.cleaned_data[key] is not None:
+                            # None: nothing set yet. Remember to remove this test
+                            # when Mailman accepts None as a "reset to default"
+                            # value.
+                            preferences[key] = form.cleaned_data[key]
                     preferences.save()
                 messages.success(request, _('Your preferences have been updated.'))
             else:
