@@ -25,10 +25,11 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.test.utils import override_settings
 from mock import patch
 from six.moves.urllib_parse import quote
 
-from postorius.models import MailmanUser
+from postorius.models import MailmanUser, Mailman404Error
 from postorius.tests import MM_VCR
 from postorius.utils import get_client
 
@@ -123,3 +124,17 @@ class MailmanUserTest(TestCase):
                 })
                 response = self.client.post(url, post_data)
                 self.assertEqual(response.status_code, 302)
+
+    @MM_VCR.use_cassette('mailman_user_subscriptions_no_mm_user.yaml')
+    @override_settings(AUTOCREATE_MAILMAN_USER=False)
+    def test_subscriptions_no_mailman_user(self):
+        # Existing Django users without a corresponding Mailman user must not
+        # cause views to crash.
+        user = User.objects.create_user(
+            'old-user', 'old-user@example.com', 'testpass')
+        self.client.login(username='old-user', password='testpass')
+        self.assertRaises(Mailman404Error, MailmanUser.objects.get, address=user.email)
+        response = self.client.get(reverse('user_subscriptions'))
+        self.assertEqual(response.status_code, 200)
+        # The Mailman user must have been created
+        self.assertIsNotNone(MailmanUser.objects.get(address=user.email))

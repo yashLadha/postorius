@@ -208,14 +208,17 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                 {'zipped_data': zipped_data, 'formset': formset})
 
 
-class UserSubscriptionsView(MailmanUserView):
-
-    """Shows the subscriptions of a user.
-    """
-    @method_decorator(login_required)
-    def get(self, request):
-        memberships = self._get_memberships()
-        return render(request, 'postorius/user/subscriptions.html', {'memberships': memberships})
+@login_required
+def user_subscriptions(request):
+    """Shows the subscriptions of a user."""
+    utils.set_other_emails(request.user)
+    try:
+        mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
+    except MailmanApiError:
+        return utils.render_api_error(request)
+    memberships = [m for m in mm_user.subscriptions if m.role == 'member']
+    return render(request, 'postorius/user/subscriptions.html',
+        {'memberships': memberships})
 
 
 class AddressActivationView(TemplateView):
