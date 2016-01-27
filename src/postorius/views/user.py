@@ -237,14 +237,14 @@ def user_profile(request, user_email=None):
                 email=form.cleaned_data['email'], user=request.user)
             try:
                 profile.send_confirmation_link(request)
-                messages.success(request, 
+                messages.success(request,
                         _('Please follow the instructions sent via email to confirm the address'))
                 return redirect('user_profile')
             except (SMTPException, socket_error) as serr:
                 if not isinstance(serr, SMTPException) and serr.errno != errno.ECONNREFUSED:
                     raise serr
                 profile.delete()
-                messages.error(request, 
+                messages.error(request,
                         _('Currently emails can not be added, please try again later'))
     else:
         form = AddressActivationForm(initial={'user_email': request.user.email})

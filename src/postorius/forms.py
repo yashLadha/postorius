@@ -766,7 +766,7 @@ class AddressActivationForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        
+
         # Check if the address belongs to someone else
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(_('This email is in use.'
@@ -779,7 +779,7 @@ class AddressActivationForm(forms.Form):
                 profile.delete()
             else:
                 found_confirmation_profile = True
-        
+
         if found_confirmation_profile:
             raise forms.ValidationError(_('An Activation email has been sent to that address,'
                                           ' use this email or contact the administrator'), 'error')
