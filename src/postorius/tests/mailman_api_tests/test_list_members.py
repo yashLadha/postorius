@@ -127,10 +127,9 @@ class AddRemoveOwnerTest(TestCase):
 
     @MM_VCR.use_cassette('test_list_members_owner_add_remove.yaml')
     def test_add_remove_owner(self):
-        response = self.client.post(
-            reverse('list_members', args=('foo@example.com', 'owner',)),
-            {'email': 'newowner@example.com'})
-        self.assertEqual(response.status_code, 200)
+        url = reverse('list_members', args=('foo@example.com', 'owner',))
+        response = self.client.post(url, {'email': 'newowner@example.com'})
+        self.assertRedirects(response, url)
         self.assertTrue('newowner@example.com' in self.foo_list.owners)
         self.client.post(
             reverse('remove_role', args=('foo@example.com', 'owner',
@@ -144,10 +143,9 @@ class AddRemoveOwnerTest(TestCase):
         self.su.is_superuser = False
         self.su.save()
         # It must still be allowed to create and remove owners
-        response = self.client.post(
-            reverse('list_members', args=('foo@example.com', 'owner',)),
-            {'email': 'newowner@example.com'})
-        self.assertEqual(response.status_code, 200)
+        url = reverse('list_members', args=('foo@example.com', 'owner',))
+        response = self.client.post(url, {'email': 'newowner@example.com'})
+        self.assertRedirects(response, url)
         self.assertTrue('newowner@example.com' in self.foo_list.owners)
         response = self.client.post(
             reverse('remove_role', args=('foo@example.com', 'owner',
@@ -203,10 +201,9 @@ class AddModeratorTest(TestCase):
             'su', 'su@example.com', 'pwd')
         # login and post new moderator data to url
         self.client.login(username='su', password='pwd')
-        response = self.client.post(
-            reverse('list_members', args=('foo@example.com', 'moderator',)),
-            {'email': 'newmod@example.com'})
-        self.assertEqual(response.status_code, 200)
+        url = reverse('list_members', args=('foo@example.com', 'moderator',))
+        response = self.client.post(url, {'email': 'newmod@example.com'})
+        self.assertRedirects(response, url)
         moderators = self.foo_list.moderators
 
     @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')

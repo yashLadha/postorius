@@ -59,6 +59,7 @@ def list_members_view(request, list_id, role=None):
                 for member in members:
                     mailing_list.unsubscribe(member)
                 messages.success(request, _('The selected members have been unsubscribed'))
+                return redirect('list_members', list_id, role)
         else:
             member_form = MemberForm(request.POST)
             if member_form.is_valid():
@@ -67,6 +68,7 @@ def list_members_view(request, list_id, role=None):
                     messages.success(
                         request, _('%(email)s has been added with the role %(role)s.')
                         % {'email': member_form.cleaned_data['email'], 'role': role})
+                    return redirect('list_members', list_id, role)
                 except HTTPError as e:
                     messages.error(request, _(e.msg))
     else:
