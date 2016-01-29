@@ -45,7 +45,6 @@ def domain_index(request):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def domain_new(request):
-    message = None
     if request.method == 'POST':
         form = DomainNew(request.POST)
         if form.is_valid():
@@ -64,8 +63,7 @@ def domain_new(request):
             return redirect("domain_index")
     else:
         form = DomainNew()
-    return render(request, 'postorius/domain/new.html',
-                  {'form': form, 'message': message})
+    return render(request, 'postorius/domain/new.html', {'form': form,})
 
 
 @login_required
