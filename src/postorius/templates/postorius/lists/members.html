@@ -28,7 +28,7 @@
     {% if role == 'subscriber' %}
         <div class="row margin-bottom">
             <div class="col-md-6">
-                <form action="{% url 'list_members' list.list_id role %}" method="get" class="form-inline">
+                <form action="" method="get" class="form-inline">
                     <div class="input-group">
                         <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Search members...' %}" />
                         <span class="input-group-btn">
@@ -49,7 +49,7 @@
 
     {% if members|length > 0 %}
         {% if role == 'subscriber' %}
-            <form action="{% url 'list_members' list.list_id role %}" method="post" id="unsubscribe-form">
+            <form action="" method="post" id="unsubscribe-form">
             {% csrf_token %}
             <input type="submit" class="hidden" />
             {% if form.choices.errors %}
