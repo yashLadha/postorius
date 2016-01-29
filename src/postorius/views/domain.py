@@ -84,6 +84,4 @@ def domain_delete(request, domain):
             messages.error(request,
                            _('The domain could not be deleted: %s' % e.msg))
             return redirect("domain_index")
-    submit_url = reverse('domain_delete', kwargs={'domain': domain})
-    return render(request, 'postorius/domain/confirm_delete.html',
-                  {'domain': domain, 'submit_url': submit_url})
+    return render(request, 'postorius/domain/confirm_delete.html', {'domain': domain,})
