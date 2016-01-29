@@ -39,9 +39,11 @@
             </p>
             {% endblocktrans %}
             <p>
-                <a href="{% url 'list_unsubscribe' list.list_id subscribed_address %}" class="btn btn-danger">
-                    {% trans 'Unsubscribe' %} {{ subscribed_address }}
-                </a>
+                <form method="post" action="{% url 'list_unsubscribe' list.list_id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="email" value="{{ subscribed_address }}" />
+                    <button type="submit" class="btn btn-danger">{% trans 'Unsubscribe' %}</button>
+                </form>
             </p>
         {% else %}
             <h2>{% trans 'Subscribe to this list' %}</h2>

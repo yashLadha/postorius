@@ -94,6 +94,7 @@ def list_members_view(request, list_id, role=None):
             paginator_class=utils.MailmanPaginator)
         context['empty_error'] = _('List has no Subscribers')
         context['count_options'] = [25, 50, 100, 200]
+        context['form'] = form
     else:
         context['member_form'] = member_form
         if role == 'owner':
@@ -272,8 +273,8 @@ class ListUnsubscribeView(MailingListView):
     """Unsubscribe from a mailing list."""
 
     @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        email = kwargs['email']
+    def post(self, request, *args, **kwargs):
+        email = request.POST['email']
         try:
             self.mailing_list.unsubscribe(email)
             messages.success(request, _('%s has been unsubscribed from this list.') % email)
@@ -307,9 +308,9 @@ def list_mass_subscribe(request, list_id):
                     messages.error(request, _('The email address %s is not valid.') % email)
     else:
         form = ListMassSubscription()
-    return render_to_response('postorius/lists/mass_subscribe.html',
-                              {'form': form, 'list': mailing_list},
-                              context_instance=RequestContext(request))
+    return render(request, 'postorius/lists/mass_subscribe.html',
+                  {'form': form, 'list': mailing_list},
+                  context_instance=RequestContext(request))
 
 
 class ListMassRemovalView(MailingListView):
@@ -320,9 +321,9 @@ class ListMassRemovalView(MailingListView):
     @method_decorator(list_owner_required)
     def get(self, request, *args, **kwargs):
         form = ListMassRemoval()
-        return render_to_response('postorius/lists/mass_removal.html',
-                                  {'form': form, 'list': self.mailing_list},
-                                  context_instance=RequestContext(request))
+        return render(request, 'postorius/lists/mass_removal.html',
+                      {'form': form, 'list': self.mailing_list},
+                      context_instance=RequestContext(request))
 
     @method_decorator(list_owner_required)
     def post(self, request, *args, **kwargs):
