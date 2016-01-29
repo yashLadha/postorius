@@ -308,9 +308,9 @@ def list_mass_subscribe(request, list_id):
                     messages.error(request, _('The email address %s is not valid.') % email)
     else:
         form = ListMassSubscription()
-    return render_to_response('postorius/lists/mass_subscribe.html',
-                              {'form': form, 'list': mailing_list},
-                              context_instance=RequestContext(request))
+    return render(request, 'postorius/lists/mass_subscribe.html',
+                  {'form': form, 'list': mailing_list},
+                  context_instance=RequestContext(request))
 
 
 class ListMassRemovalView(MailingListView):
@@ -321,9 +321,9 @@ class ListMassRemovalView(MailingListView):
     @method_decorator(list_owner_required)
     def get(self, request, *args, **kwargs):
         form = ListMassRemoval()
-        return render_to_response('postorius/lists/mass_removal.html',
-                                  {'form': form, 'list': self.mailing_list},
-                                  context_instance=RequestContext(request))
+        return render(request, 'postorius/lists/mass_removal.html',
+                      {'form': form, 'list': self.mailing_list},
+                      context_instance=RequestContext(request))
 
     @method_decorator(list_owner_required)
     def post(self, request, *args, **kwargs):
