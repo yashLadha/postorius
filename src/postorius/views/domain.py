@@ -67,6 +67,8 @@ def domain_new(request):
     return render(request, 'postorius/domain/new.html', {'form': form, 'message': message})
 
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def domain_delete(request, domain):
     """Deletes a domain but asks for confirmation first.
     """
