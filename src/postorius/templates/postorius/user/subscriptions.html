@@ -10,27 +10,29 @@
 {% block main %}
 
     {% user_nav 'subscriptions' 'List Subscriptions' %}
-
-    <p>{% trans 'You are subscribed to the following mailing lists:' %}</p>
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>{% trans 'List Name' %}</th>
-                    <th>{% trans 'Subscription Address' %}</th>
-                    <th>{% trans 'Delivery Mode' %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for subscription in memberships %}
+    {% if memberships %}
+        <p>{% trans 'You are subscribed to the following mailing lists:' %}</p>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
                     <tr>
-                        <td><a href="{% url 'list_summary' subscription.list_id %}">{{ subscription.list_id }}</a></td>
-                        <td>{{ subscription.address }}</td>
-                        <td>{{ subscription.preferences.delivery_mode }}</td>
+                        <th>{% trans 'List Name' %}</th>
+                        <th>{% trans 'Subscription Address' %}</th>
+                        <th>{% trans 'Delivery Mode' %}</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
+                </thead>
+                <tbody>
+                    {% for subscription in memberships %}
+                        <tr>
+                            <td><a href="{% url 'list_summary' subscription.list_id %}">{{ subscription.list_id }}</a></td>
+                            <td>{{ subscription.address }}</td>
+                            <td>{{ subscription.preferences.delivery_mode }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>{% trans 'You are not yet subscribed to any lists.' %}</p>
+    {% endif %}
 {% endblock main %}
