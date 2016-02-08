@@ -1,22 +1,37 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2016 by the Free Software Foundation, Inc.
+#
+# This file is part of Postorius.
+#
+# Postorius is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option)
+# any later version.
+# Postorius is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import logging
 from datetime import datetime, timedelta
+from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.test.client import Client, RequestFactory
 from django.test.utils import override_settings
 from django.test import TestCase
-from mock import patch, call, Mock
 
 from postorius.forms import AddressActivationForm
 from postorius.models import AddressConfirmationProfile
-from postorius import views
-from postorius.views.user import address_activation_link
 from postorius.tests import MM_VCR
+from postorius.tests.utils import get_flash_messages
 from postorius.utils import get_client
 
 
@@ -28,7 +43,7 @@ class TestAddressActivationForm(TestCase):
     Test the activation form.
     """
 
-    @MM_VCR.use_cassette('test_address_activation.yaml')
+    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def setUp(self):
         # Create a user and profile.
         self.user = User.objects.create_user('testuser', 'les@example.org', 'testpass')
@@ -40,34 +55,34 @@ class TestAddressActivationForm(TestCase):
         self.expired.save()
         self.mm_user = get_client().create_user('subscribed@example.org', 'password')
 
-    @MM_VCR.use_cassette('test_address_activation.yaml')
+    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def tearDown(self):
         self.profile.delete()
         self.expired.delete()
         self.user.delete()
         self.mm_user.delete()
 
-    @MM_VCR.use_cassette('test_address_activation.yaml')
+    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def test_valid_email_is_valid(self):
         form = AddressActivationForm({'email': 'very_new_email@example.org',})
         self.assertTrue(form.is_valid())
 
     def test_email_used_by_django_auth_is_invalid(self):
-        # No need for cassette becuase we should check mailman last since it's the most expensive
+        # No need for cassette because we should check mailman last since it's the most expensive
         form = AddressActivationForm({'email': 'les@example.org',})
         self.assertFalse(form.is_valid())
 
     def test_invalid_email_is_not_valid(self):
-        # No need for cassette becuase we should check mailman last since it's the most expensive
+        # No need for cassette because we should check mailman last since it's the most expensive
         form = AddressActivationForm({'email': 'les@example',})
         self.assertFalse(form.is_valid())
 
-    @MM_VCR.use_cassette('test_address_activation.yaml')
+    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def test_email_used_by_expired_confirmation_profile_is_valid(self):
         form = AddressActivationForm({'email': 'expired@example.org',})
         self.assertTrue(form.is_valid())
 
-    @MM_VCR.use_cassette('test_address_activation.yaml')
+    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def test_email_used_by_mailman_is_invalid(self):
         form = AddressActivationForm({'email': 'subscribed@example.org',})
         self.assertFalse(form.is_valid())
@@ -157,30 +172,35 @@ class TestAddressActivationLinkSuccess(TestCase):
     not expired.
     """
 
+    @MM_VCR.use_cassette('test_address_activation_link.yaml')
     def setUp(self):
-        # Set up a profile with a predictable key
         self.user = User.objects.create_user(
             username='ler', email=u'ler@example.org',
             password='pwd')
+        self.mm_user = get_client().create_user('ler@example.org', None)
         self.profile = AddressConfirmationProfile.objects.create(email=u'les@example.org', user=self.user)
         self.profile.save()
 
+    @MM_VCR.use_cassette('test_address_activation_link.yaml')
     def tearDown(self):
         self.profile.delete()
         self.user.delete()
+        self.mm_user.delete()
 
-    @patch.object(views.user, '_add_address')
-    def test_mailman(self, _add_address_mock):
+    @MM_VCR.use_cassette('test_address_activation_link.yaml')
+    def test_add_address(self):
         # An activation key pointing to a valid profile adds the address
         # to the user.
-        request = RequestFactory().get(reverse(
-            'address_activation_link', kwargs={
-            'activation_key': self.profile.activation_key}))
-        setattr(request, 'session', 'session')
-        messages = FallbackStorage(request)
-        setattr(request, '_messages', messages)
-        address_activation_link(
-            request, self.profile.activation_key)
-        expected_calls = [call(request, u'ler@example.org',
-                         u'les@example.org')]
-        self.assertEqual(_add_address_mock.mock_calls, expected_calls)
+        self.client.login(username='ler', password='pwd')
+        url = reverse('address_activation_link',
+                      args=[self.profile.activation_key])
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('user_profile'))
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertEqual(
+            set([a.email for a in self.mm_user.addresses]),
+            set(['ler@example.org', 'les@example.org']))
+        logged_in_user = response.wsgi_request.user
+        self.assertEqual(logged_in_user.other_emails, ['les@example.org'])

@@ -17,9 +17,12 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
+
 from django.forms.formsets import formset_factory
 from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,user_passes_test)
+from django.core.urlresolvers import reverse
 from django.shortcuts import redirect, render
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
@@ -42,6 +45,9 @@ from socket import error as socket_error
 import errno
 import uuid
 import datetime
+
+
+logger = logging.getLogger(__name__)
 
 
 class UserMailmanSettingsView(MailmanUserView):
@@ -263,18 +269,8 @@ def user_profile(request, user_email=None):
                   {'mm_user': mm_user, 'form': form}, context_instance=RequestContext(request))
 
 
-def _add_address(request, user_email, address):
-    # Add an address to a user record in mailman.
-    try:
-        try:
-            mailman_user = MailmanUser.objects.get(address=user_email)
-        except Mailman404Error:
-            mailman_user = MailmanUser.objects.create(user_email, '')
-        mailman_user.add_address(address)
-    except (MailmanApiError, MailmanConnectionError):
-        messages.error(request, _('The address could not be added.'))
 
-
+@login_required()
 def address_activation_link(request, activation_key):
     """
     Checks the given activation_key. If it is valid, the saved address will be
@@ -284,14 +280,31 @@ def address_activation_link(request, activation_key):
     try:
         profile = AddressConfirmationProfile.objects.get(
             activation_key=activation_key)
+        if request.user != profile.user:
+            return redirect('{}?next={}'.format(
+                reverse(settings.LOGIN_URL), request.path))
         if not profile.is_expired:
-            _add_address(request, profile.user.email, profile.email)
-            profile.delete()
+            # Add the address to the user record in Mailman.
+            logger.info("Adding address %s to %s", profile.email, request.user.email)
+            try:
+                try:
+                    mailman_user = MailmanUser.objects.get(address=request.user.email)
+                except Mailman404Error:
+                    mailman_user = MailmanUser.objects.create(request.user.email, '')
+                mm_address = mailman_user.add_address(profile.email)
+                # The address has just been verified.
+                mm_address.verify()
+            except (MailmanApiError, MailmanConnectionError):
+                messages.error(request, _('The address could not be added.'))
+                return
+            # Reset the other_emails cache
+            if hasattr(request.user, 'other_emails'):
+                del request.user.other_emails
+            utils.set_other_emails(request.user)
             messages.success(request, _('The email address has been activated!'))
         else:
-            profile.delete()
             messages.error(request, _('The activation link has expired, please add the email again!'))
-            return redirect('address_activation')
+        profile.delete()
     except AddressConfirmationProfile.DoesNotExist:
         messages.error(request, _('The activation link is invalid'))
-    return redirect('list_index')
+    return redirect('user_profile')
