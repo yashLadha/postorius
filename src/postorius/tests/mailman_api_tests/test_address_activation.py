@@ -56,24 +56,13 @@ class TestAddressActivationForm(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_email_used_by_django_auth_is_invalid(self):
-        """
-        No need for cassette becuase we should check mailman last since it's the most expensive
-        """
+        # No need for cassette becuase we should check mailman last since it's the most expensive
         form = AddressActivationForm({'email': 'les@example.org',})
         self.assertFalse(form.is_valid())
 
     def test_invalid_email_is_not_valid(self):
-        """
-        No need for cassette becuase we should check mailman last since it's the most expensive
-        """
+        # No need for cassette becuase we should check mailman last since it's the most expensive
         form = AddressActivationForm({'email': 'les@example',})
-        self.assertFalse(form.is_valid())
-
-    def test_email_used_by_confirmation_profile_is_invalid(self):
-        """
-        No need for cassette becuase we should check mailman last since it's the most expensive
-        """
-        form = AddressActivationForm({'email': 'les2@example.org',})
         self.assertFalse(form.is_valid())
 
     @MM_VCR.use_cassette('test_address_activation.yaml')
@@ -115,12 +104,15 @@ class TestAddressConfirmationProfile(TestCase):
         self.assertTrue(type(self.profile.created), datetime)
 
     def test_no_duplicate_profiles(self):
-        # Creating a new profile returns an existing record
+        # Creating a new profile returns an existing updated record
         # (if one exists), instead of creating a new one.
         new_profile = AddressConfirmationProfile.objects.create_profile(
             u'les@example.org',
             User.objects.create(email=u'ler@mailman.mostdesirable.org'))
-        self.assertEqual(self.profile, new_profile)
+        self.assertEqual(new_profile.user, self.profile.user)
+        self.assertEqual(new_profile.email, self.profile.email)
+        self.assertNotEqual(new_profile.created, self.profile.created)
+        self.assertNotEqual(new_profile.activation_key, self.profile.activation_key)
 
     def test_unicode_representation(self):
         # Correct unicode representation?

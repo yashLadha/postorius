@@ -257,7 +257,7 @@ class AddressConfirmationProfile(models.Model):
     """
     email = models.EmailField()
     activation_key = models.CharField(max_length=40)
-    created = models.DateTimeField()
+    created = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User)
 
     objects = AddressConfirmationProfileManager()

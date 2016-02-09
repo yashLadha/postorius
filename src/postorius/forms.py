@@ -772,17 +772,7 @@ class AddressActivationForm(forms.Form):
             raise forms.ValidationError(_('This email is in use.'
                                           'Please choose another or contact the administrator'),
                                           'error')
-        # Check if there is a pending ConfirmationProfile
-        found_confirmation_profile = False
-        for profile in AddressConfirmationProfile.objects.filter(email=email):
-            if profile.is_expired:
-                profile.delete()
-            else:
-                found_confirmation_profile = True
 
-        if found_confirmation_profile:
-            raise forms.ValidationError(_('An Activation email has been sent to that address,'
-                                          ' use this email or contact the administrator'), 'error')
         # Check if the email is attached to a user in Mailman
         try:
             utils.get_client().get_user(email)

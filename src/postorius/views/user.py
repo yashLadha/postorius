@@ -38,8 +38,10 @@ from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailmanUserView
 from smtplib import SMTPException
-import errno
 from socket import error as socket_error
+import errno
+import hashlib
+import random
 
 
 class UserMailmanSettingsView(MailmanUserView):
@@ -233,8 +235,11 @@ def user_profile(request, user_email=None):
     if request.method == 'POST':
         form = AddressActivationForm(request.POST)
         if form.is_valid():
-            profile = AddressConfirmationProfile.objects.create_profile(
-                email=form.cleaned_data['email'], user=request.user)
+            email_str = form.cleaned_data['email'].encode('utf-8')
+            activation_key = hashlib.sha1(str(random.random())+email_str).hexdigest()
+            defaults = {'activation_key': activation_key,}
+            profile, created = AddressConfirmationProfile.objects.update_or_create(
+                email=form.cleaned_data['email'], user=request.user, defaults=defaults)
             try:
                 profile.send_confirmation_link(request)
                 messages.success(request,
