@@ -38,17 +38,14 @@ class TestAddressActivationForm(TestCase):
                                                                          self.user)
         self.expired.created -= timedelta(weeks=100)
         self.expired.save()
-        domain = get_client().create_domain('example.com')
-        self.foo_list = domain.create_list('foo')
-        self.foo_list.subscribe('subscribed@example.org')
+        self.mm_user = get_client().create_user('subscribed@example.org', 'password')
 
     @MM_VCR.use_cassette('test_address_activation.yaml')
     def tearDown(self):
         self.profile.delete()
         self.expired.delete()
         self.user.delete()
-        self.foo_list.delete()
-        get_client().delete_domain('example.com')
+        self.mm_user.delete()
 
     @MM_VCR.use_cassette('test_address_activation.yaml')
     def test_valid_email_is_valid(self):
