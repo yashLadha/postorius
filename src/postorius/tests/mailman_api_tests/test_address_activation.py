@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-
+import logging
 from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 from django.contrib.messages.storage.fallback import FallbackStorage
@@ -10,97 +10,67 @@ from django.core import mail
 from django.test.client import Client, RequestFactory
 from django.test.utils import override_settings
 from django.test import TestCase
-from mock import patch, call
+from mock import patch, call, Mock
 
 from postorius.forms import AddressActivationForm
 from postorius.models import AddressConfirmationProfile
 from postorius import views
-from postorius.views.user import AddressActivationView, address_activation_link
+from postorius.views.user import address_activation_link
+from postorius.tests import MM_VCR
+from postorius.utils import get_client
 
+
+vcr_log = logging.getLogger('vcr')
+vcr_log.setLevel(logging.WARNING)
 
 class TestAddressActivationForm(TestCase):
     """
     Test the activation form.
     """
 
+    @MM_VCR.use_cassette('test_address_activation.yaml')
+    def setUp(self):
+        # Create a user and profile.
+        self.user = User.objects.create_user('testuser', 'les@example.org', 'testpass')
+        self.profile = AddressConfirmationProfile.objects.create_profile('les2@example.org',
+                                                                         self.user)
+        self.expired = AddressConfirmationProfile.objects.create_profile('expired@example.org',
+                                                                         self.user)
+        self.expired.created -= timedelta(weeks=100)
+        self.expired.save()
+        self.mm_user = get_client().create_user('subscribed@example.org', 'password')
+
+    @MM_VCR.use_cassette('test_address_activation.yaml')
+    def tearDown(self):
+        self.profile.delete()
+        self.expired.delete()
+        self.user.delete()
+        self.mm_user.delete()
+
+    @MM_VCR.use_cassette('test_address_activation.yaml')
     def test_valid_email_is_valid(self):
-        data = {
-            'email': 'les@example.org',
-            'user_email': 'me@example.org',
-        }
-        form = AddressActivationForm(data)
+        form = AddressActivationForm({'email': 'very_new_email@example.org',})
         self.assertTrue(form.is_valid())
 
-    def test_identical_emails_are_invalid(self):
-        data = {
-            'email': 'les@example.org',
-            'user_email': 'les@example.org',
-        }
-        form = AddressActivationForm(data)
+    def test_email_used_by_django_auth_is_invalid(self):
+        # No need for cassette becuase we should check mailman last since it's the most expensive
+        form = AddressActivationForm({'email': 'les@example.org',})
         self.assertFalse(form.is_valid())
 
     def test_invalid_email_is_not_valid(self):
-        data = {
-            'email': 'les@example',
-            'user_email': 'me@example.org',
-        }
-        form = AddressActivationForm(data)
+        # No need for cassette becuase we should check mailman last since it's the most expensive
+        form = AddressActivationForm({'email': 'les@example',})
         self.assertFalse(form.is_valid())
 
+    @MM_VCR.use_cassette('test_address_activation.yaml')
+    def test_email_used_by_expired_confirmation_profile_is_valid(self):
+        form = AddressActivationForm({'email': 'expired@example.org',})
+        self.assertTrue(form.is_valid())
 
-class TestAddressActivationView(TestCase):
-    """
-    Tests to make sure the view is properly connected, renders the form
-    correctly and starts the actual address activation process if a valid
-    form is submitted.
-    """
-
-    def setUp(self):
-        # We create a new user and log that user in.
-        # We don't use Client().login because it triggers the browserid dance.
-        self.user = User.objects.create_user(
-            username='les', email='les@example.org', password='secret')
-        self.client.post(reverse('user_login'),
-                         {'username': 'les', 'password': 'secret'})
-
-    def tearDown(self):
-        # Log out and delete user.
-        self.client.logout()
-        self.user.delete()
-
-    def test_view_is_connected(self):
-        # The view should be connected in the url configuration.
-        response = self.client.get(reverse('address_activation'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_view_contains_form(self):
-        # The view context should contain a form.
-        response = self.client.get(reverse('address_activation'))
-        self.assertTrue('form' in response.context)
-
-    def test_view_renders_correct_template(self):
-        # The view should render the user_address_activation template.
-        response = self.client.get(reverse('address_activation'))
-        self.assertIn('postorius/user/address_activation.html',
-                      [t.name for t in response.templates])
-
-    def test_post_invalid_form_shows_error_msg(self):
-        # Entering an invalid email address should render an error message.
-        response = self.client.post(reverse('address_activation'), {
-                                    'email': 'invalid_email',
-                                    'user_email': self.user.email})
-        self.assertTrue('Enter a valid email address.' in response.content)
-
-    @patch.object(AddressConfirmationProfile, 'send_confirmation_link')
-    def test_post_valid_form_renders_success_template(
-            self, mock_send_confirmation_link):
-        # Entering a valid email should render the activation_sent template.
-        response = self.client.post(reverse('address_activation'), {
-                                    'email': 'new_address@example.org',
-                                    'user_email': self.user.email})
-        self.assertEqual(mock_send_confirmation_link.call_count, 1)
-        self.assertIn('postorius/user/address_activation_sent.html',
-                      [t.name for t in response.templates])
+    @MM_VCR.use_cassette('test_address_activation.yaml')
+    def test_email_used_by_mailman_is_invalid(self):
+        form = AddressActivationForm({'email': 'subscribed@example.org',})
+        self.assertFalse(form.is_valid())
 
 
 class TestAddressConfirmationProfile(TestCase):
@@ -131,12 +101,15 @@ class TestAddressConfirmationProfile(TestCase):
         self.assertTrue(type(self.profile.created), datetime)
 
     def test_no_duplicate_profiles(self):
-        # Creating a new profile returns an existing record
+        # Creating a new profile returns an existing updated record
         # (if one exists), instead of creating a new one.
         new_profile = AddressConfirmationProfile.objects.create_profile(
             u'les@example.org',
             User.objects.create(email=u'ler@mailman.mostdesirable.org'))
-        self.assertEqual(self.profile, new_profile)
+        self.assertEqual(new_profile.user, self.profile.user)
+        self.assertEqual(new_profile.email, self.profile.email)
+        self.assertNotEqual(new_profile.created, self.profile.created)
+        self.assertNotEqual(new_profile.activation_key, self.profile.activation_key)
 
     def test_unicode_representation(self):
         # Correct unicode representation?
