@@ -42,6 +42,7 @@ from socket import error as socket_error
 import errno
 import hashlib
 import random
+import datetime
 
 
 class UserMailmanSettingsView(MailmanUserView):
@@ -237,9 +238,20 @@ def user_profile(request, user_email=None):
         if form.is_valid():
             email_str = form.cleaned_data['email'].encode('utf-8')
             activation_key = hashlib.sha1(str(random.random())+email_str).hexdigest()
-            defaults = {'activation_key': activation_key,}
-            profile, created = AddressConfirmationProfile.objects.update_or_create(
-                email=form.cleaned_data['email'], user=request.user, defaults=defaults)
+
+            # XXX Use the following when django 1.6 is dropped as a dependency
+            # It is more efficient because it can be done in one database operation
+            #
+            # defaults = {'activation_key': activation_key,}
+            # profile, created = AddressConfirmationProfile.objects.update_or_create(
+            #     email=form.cleaned_data['email'], user=request.user, defaults=defaults)
+            try:
+                profile = AddressConfirmationProfile.objects.get(email=form.cleaned_data['email'], user=request.user)
+                profile.activation_key = activation_key
+                profile.created = datetime.datetime.now()
+                profile.save()
+            except AddressConfirmationProfile.DoesNotExist:
+                profile = AddressConfirmationProfile.objects.create_profile(email=form.cleaned_data['email'], user=request.user)
             try:
                 profile.send_confirmation_link(request)
                 messages.success(request,
