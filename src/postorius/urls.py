@@ -83,7 +83,8 @@ urlpatterns = [
     url(r'^lists/$', list_views.list_index, name='list_index'),
     url(r'^lists/new/$', list_views.list_new, name='list_new'),
     url(r'^lists/(?P<list_id>[^/]+)/', include(list_patterns)),
-    url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]{40})/$',
+    # XXX This can be changed to limit the length of activation keys
+    url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]+)/$',
         user_views.address_activation_link,
         name='address_activation_link'),
 ]
