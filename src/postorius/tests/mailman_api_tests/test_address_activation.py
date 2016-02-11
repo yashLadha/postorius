@@ -202,5 +202,11 @@ class TestAddressActivationLinkSuccess(TestCase):
         self.assertEqual(
             set([a.email for a in self.mm_user.addresses]),
             set(['ler@example.org', 'les@example.org']))
-        logged_in_user = response.wsgi_request.user
-        self.assertEqual(logged_in_user.other_emails, ['les@example.org'])
+        try:
+            logged_in_user = response.wsgi_request.user
+        except AttributeError:
+            # Django 1.6: the wsgi request is not available, ignore this last
+            # assertion.
+            pass
+        else:
+            self.assertEqual(logged_in_user.other_emails, ['les@example.org'])
