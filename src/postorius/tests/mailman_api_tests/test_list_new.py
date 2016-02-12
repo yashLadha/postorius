@@ -14,53 +14,45 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-import time
-import logging
 
-from django.conf import settings
+from __future__ import absolute_import, print_function, unicode_literals
+
+import time
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import resolve_url
-from django.test import Client, TestCase
 
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 
-from postorius.utils import get_client
-from postorius.tests import MM_VCR
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
 
-class ListCreationTest(TestCase):
+class ListCreationTest(ViewTestCase):
     """Tests for the new list page."""
 
-    @MM_VCR.use_cassette('test_list_creation.yaml')
     def setUp(self):
+        super(ListCreationTest, self).setUp()
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')
-        self.domain = get_client().create_domain('example.com')
+        self.domain = self.mm_client.create_domain('example.com')
 
-    @MM_VCR.use_cassette('test_list_creation.yaml')
     def tearDown(self):
         self.user.delete()
         self.superuser.delete()
-        for mlist in get_client().lists:
+        for mlist in self.mm_client.lists:
             mlist.delete()
         self.domain.delete()
 
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
-        response = self.client.get(reverse('list_new'))
-        self.assertRedirects(response, '{}?next={}'.format(resolve_url(settings.LOGIN_URL),
-            reverse('list_new')))
+        self.assertRedirectsToLogin(reverse('list_new'))
 
-    @MM_VCR.use_cassette('test_list_creation.yaml')
     def test_new_list_created_with_owner(self):
         self.client.login(username='su', password='pwd')
         post_data = {'listname': 'a_new_list',
@@ -69,6 +61,6 @@ class ListCreationTest(TestCase):
                      'advertised': 'True',
                      'description': 'A new list.'}
         self.client.post(reverse('list_new'), post_data)
-        a_new_list = get_client().get_list('a_new_list@example.com')
+        a_new_list = self.mm_client.get_list('a_new_list@example.com')
         self.assertEqual(a_new_list.fqdn_listname, u'a_new_list@example.com')
         self.assertEqual(a_new_list.owners, [u'owner@example.com'])

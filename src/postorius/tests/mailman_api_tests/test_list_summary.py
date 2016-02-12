@@ -14,50 +14,41 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-import logging
+
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.test import Client, TestCase
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 
-from postorius.utils import get_client
-from postorius.tests import MM_VCR
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
-
-
-class ListSummaryPageTest(TestCase):
+class ListSummaryPageTest(ViewTestCase):
     """Tests for the list summary page.
 
     Tests accessiblity and existince of the submit form depending on
     login status.
     """
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
     def setUp(self):
-        self.mmclient = get_client()
-        self.domain = self.mmclient.create_domain('example.com')
+        super(ListSummaryPageTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         User.objects.create_user('testuser', 'test@example.com', 'testpass')
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
     def tearDown(self):
-        for mlist in self.mmclient.lists:
+        for mlist in self.mm_client.lists:
             mlist.delete()
-        for user in self.mmclient.users:
+        for user in self.mm_client.users:
             user.delete()
         User.objects.all().delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_out(self):
         # Response must contain list obj but not the form.
         response = self.client.get(reverse('list_summary',
@@ -67,7 +58,6 @@ class ListSummaryPageTest(TestCase):
                          'foo@example.com')
         self.assertNotContains(response, '<form ')
 
-    @MM_VCR.use_cassette('test_list_summary.yaml')
     def test_list_summary_logged_in(self):
         # Response must contain list obj and the form.
         self.client.login(username='testuser', password='testpass')
@@ -77,11 +67,10 @@ class ListSummaryPageTest(TestCase):
         self.assertContains(response, '<form ')
         self.assertContains(response, 'Subscribe')
 
-    @MM_VCR.use_cassette('test_change_subscription-2.yaml')
     def test_list_summary_shows_all_addresses(self):
-        mlist = self.mmclient.get_list('foo@example.com')
+        mlist = self.mm_client.get_list('foo@example.com')
         mlist.subscribe('test@example.com')
-        user = self.mmclient.get_user('test@example.com')
+        user = self.mm_client.get_user('test@example.com')
         address = user.add_address('anotheremail@example.com')
         address.verify()
         self.client.login(username='testuser', password='testpass')
@@ -90,9 +79,8 @@ class ListSummaryPageTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('anotheremail@example.com' in response.content)
 
-    @MM_VCR.use_cassette('test_change_subscription.yaml')
     def test_unsubscribe_button_is_available(self):
-        mlist = self.mmclient.get_list('foo@example.com')
+        mlist = self.mm_client.get_list('foo@example.com')
         mlist.subscribe('test@example.com',
                         pre_verified=True,
                         pre_confirmed=True)
@@ -102,22 +90,20 @@ class ListSummaryPageTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('Unsubscribe' in response.content)
 
-    @MM_VCR.use_cassette('test_list_summary_owner.yaml')
     def test_list_summary_owner(self):
         # Response must contain the administration menu
-        user = self.mmclient.create_user('test@example.com', None)
-        mlist = self.mmclient.get_list('foo@example.com')
+        user = self.mm_client.create_user('test@example.com', None)
+        mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_owner('test@example.com')
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
         self.assertContains(response, 'Delete list</a>')
 
-    @MM_VCR.use_cassette('test_list_summary_moderator.yaml')
     def test_list_summary_moderator(self):
         # Response must contain the administration menu
-        user = self.mmclient.create_user('test@example.com', None)
-        mlist = self.mmclient.get_list('foo@example.com')
+        user = self.mm_client.create_user('test@example.com', None)
+        mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_moderator('test@example.com')
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
@@ -125,26 +111,24 @@ class ListSummaryPageTest(TestCase):
         self.assertContains(response, 'Held messages</a>')
         self.assertNotContains(response, 'Delete list</a>')
 
-    @MM_VCR.use_cassette('test_list_summary_secondary_owner.yaml')
     def test_list_summary_is_admin_secondary_owner(self):
         # Response must contain the administration menu
-        user = self.mmclient.create_user('test@example.com', None)
+        user = self.mm_client.create_user('test@example.com', None)
         address = user.add_address('anotheremail@example.com')
         address.verify()
-        mlist = self.mmclient.get_list('foo@example.com')
+        mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_owner('anotheremail@example.com')
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
         self.assertContains(response, 'Delete list</a>')
 
-    @MM_VCR.use_cassette('test_list_summary_secondary_moderator.yaml')
     def test_list_summary_is_admin_secondary_moderator(self):
         # Response must contain the administration menu
-        user = self.mmclient.create_user('test@example.com', None)
+        user = self.mm_client.create_user('test@example.com', None)
         address = user.add_address('anotheremail@example.com')
         address.verify()
-        mlist = self.mmclient.get_list('foo@example.com')
+        mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_moderator('anotheremail@example.com')
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
@@ -153,30 +137,26 @@ class ListSummaryPageTest(TestCase):
         self.assertContains(response, 'Held messages</a>')
         self.assertNotContains(response, 'Delete list</a>')
 
-    @MM_VCR.use_cassette('test_list_summary_metrics_anonymous.yaml')
     def test_metrics_not_displayed_to_anonymous(self):
         response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
         self.assertNotContains(response, 'List metrics')
 
-    @MM_VCR.use_cassette('test_list_summary_metrics_moderator.yaml')
     def test_list_metrics_not_displayed_to_moderator(self):
-        mlist = self.mmclient.get_list('foo@example.com')
+        mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_moderator('test@example.com')
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
         self.assertNotContains(response, 'List metrics')
 
-    @MM_VCR.use_cassette('test_list_summary_metrics_owner.yaml')
     def test_list_metrics_displayed_to_owner(self):
-        mlist = self.mmclient.get_list('foo@example.com')
+        mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_owner('test@example.com')
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
         self.assertContains(response, 'List metrics')
 
-    @MM_VCR.use_cassette('test_list_summary_metrics_superuser.yaml')
     def test_list_metrics_displayed_to_superuser(self):
-        mlist = self.mmclient.get_list('foo@example.com')
+        mlist = self.mm_client.get_list('foo@example.com')
         User.objects.create_superuser('testadminuser', 'testadmin@example.com', 'testpass')
         self.assertTrue(self.client.login(username='testadminuser', password='testpass'))
         response = self.client.get(reverse('list_summary', args=('foo@example.com',)))

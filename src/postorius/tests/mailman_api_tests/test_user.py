@@ -15,61 +15,48 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Tests for ban lists"""
-
 from __future__ import absolute_import,  print_function, unicode_literals
 
-import logging
-
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase
 from django.test.utils import override_settings
 from mock import patch
 from six.moves.urllib_parse import quote
 
 from postorius.models import MailmanUser, Mailman404Error
-from postorius.tests import MM_VCR
-from postorius.utils import get_client
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
-
-
-class MailmanUserTest(TestCase):
+class MailmanUserTest(ViewTestCase):
     """
     Tests for the mailman user preferences settings page.
     """
 
-    @MM_VCR.use_cassette('mailman_user.yaml')
     def setUp(self):
-        self.domain = get_client().create_domain('example.com')
+        super(MailmanUserTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.user = User.objects.create_user(
             'user', 'user@example.com', 'testpass')
         self.mm_user = MailmanUser.objects.create_from_django(self.user)
 
-    @MM_VCR.use_cassette('mailman_user.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.mm_user.delete()
         self.user.delete()
         self.domain.delete()
 
-    def _check_redirect_login(self, url):
-        response = self.client.get(url)
-        if '%40' not in url: # Django < 1.8
-            url = quote(url)
-        self.assertRedirects(response, '{}?next={}'.format(reverse(settings.LOGIN_URL), url))
+    def test_address_preferences_not_logged_in(self):
+        self.assertRedirectsToLogin(reverse('user_address_preferences'))
 
-    @MM_VCR.use_cassette('mailman_user_access.yaml')
-    def test_page_not_accessible_if_not_logged_in(self):
-        self._check_redirect_login(reverse('user_address_preferences'))
+    def test_subscriptions_not_logged_in(self):
+        self.assertRedirectsToLogin(reverse('user_subscriptions'))
 
-    @MM_VCR.use_cassette('mailman_user_address_prefs.yaml')
+    def test_subscriptions_logged_in(self):
+        self.client.login(username='user', password='testpass')
+        response = self.client.get(reverse('user_subscriptions'))
+        self.assertEquals(response.status_code, 200)
+
     def test_address_based_preferences(self):
         self.client.login(username='user', password='testpass')
         self.mm_user.add_address('user2@example.com')
@@ -81,7 +68,6 @@ class MailmanUserTest(TestCase):
         #self.assertEqual(
         #    response.context["formset"].initial['archive_policy'], 'public')
 
-    @MM_VCR.use_cassette('mailman_user_none_prefs.yaml')
     def test_preferences_none(self):
         # Mailman does not accept None values for boolean preferences. When
         # those preferences are unset, they must be excluded from the POST
@@ -125,7 +111,6 @@ class MailmanUserTest(TestCase):
                 response = self.client.post(url, post_data)
                 self.assertEqual(response.status_code, 302)
 
-    @MM_VCR.use_cassette('mailman_user_subscriptions_no_mm_user.yaml')
     @override_settings(AUTOCREATE_MAILMAN_USER=False)
     def test_subscriptions_no_mailman_user(self):
         # Existing Django users without a corresponding Mailman user must not

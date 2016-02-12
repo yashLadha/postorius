@@ -15,53 +15,43 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
+from __future__ import absolute_import, print_function, unicode_literals
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.test import Client, TestCase
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 
-from postorius.utils import get_client
-from postorius.tests import MM_VCR
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
-
-
-class ModelTest(TestCase):
+class ModelTest(ViewTestCase):
     """Tests for the list index page."""
 
-    @MM_VCR.use_cassette('test_model.yaml')
     def setUp(self):
-        self.mmclient = get_client()
-        self.domain = get_client().create_domain('example.com')
+        super(ModelTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
 
-    @MM_VCR.use_cassette('test_model.yaml')
     def tearDown(self):
-        for mlist in self.mmclient.lists:
+        for mlist in self.mm_client.lists:
             mlist.delete()
-        for user in self.mmclient.users:
+        for user in self.mm_client.users:
             user.delete()
         User.objects.all().delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('test_model-2.yaml')
     def test_mailman_user_not_created_when_flag_is_off(self):
         with self.settings(AUTOCREATE_MAILMAN_USER=False):
             User.objects.create_user('testuser', 'test@example.com', 'testpass')
             with self.assertRaises(HTTPError):
-                self.mmclient.get_user('test@example.com')
+                self.mm_client.get_user('test@example.com')
 
-    @MM_VCR.use_cassette('test_model.yaml')
     def test_mailman_user_created_when_flag_is_on(self):
         with self.settings(AUTOCREATE_MAILMAN_USER=True):
             User.objects.create_user('testuser', 'test@example.com', 'testpass')
-            user = self.mmclient.get_user('test@example.com')
+            user = self.mm_client.get_user('test@example.com')
             self.assertEqual(str(user.addresses[0]), 'test@example.com')

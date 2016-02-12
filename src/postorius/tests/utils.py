@@ -15,9 +15,22 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.test import RequestFactory
-from django.contrib.messages.storage.cookie import CookieStorage
+import logging
+
+from django import VERSION as DJANGO_VERSION
+from django.conf import settings
+from django.contrib import messages
+from django.core.urlresolvers import reverse
+from django.test import RequestFactory, TestCase
 from mock import patch, MagicMock
+from six.moves.urllib_parse import quote
+
+from postorius.utils import get_client
+from postorius.tests import MM_VCR
+
+
+vcr_log = logging.getLogger('vcr')
+vcr_log.setLevel(logging.WARNING)
 
 
 def create_mock_domain(properties=None):
@@ -76,10 +89,51 @@ def create_mock_member(properties=None):
     return mock_object
 
 
-def get_flash_messages(response):
+def get_flash_messages(response, empty=True):
     if "messages" not in response.cookies:
         return []
+    # A RequestFactory will not run the messages middleware, and thus will
+    # not delete the messages after retrieval.
     dummy_request = RequestFactory().get("/")
     dummy_request.COOKIES["messages"] = response.cookies["messages"].value
-    return list(CookieStorage(dummy_request))
+    msgs = list(messages.storage.cookie.CookieStorage(dummy_request))
+    if empty:
+        del response.client.cookies["messages"]
+    return msgs
 get_flash_messages.__test__ = False
+
+
+
+class ViewTestCase(TestCase):
+
+    use_vcr = True
+
+    def setUp(self):
+        self.mm_client = get_client()
+        if self.use_vcr:
+            cm = MM_VCR.use_cassette('.'.join([
+                #self.__class__.__module__.rpartition('.')[2],
+                self.__class__.__name__, self._testMethodName, 'yaml']))
+            self.cassette = cm.__enter__()
+            self.addCleanup(cm.__exit__, None, None, None)
+
+    def assertHasSuccessMessage(self, response):
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        return msgs[0].message
+
+    def assertHasErrorMessage(self, response):
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(msgs[0].level, messages.ERROR, msgs[0].message)
+        return msgs[0].message
+
+    def assertRedirectsToLogin(self, url):
+        response = self.client.get(url)
+        if DJANGO_VERSION >= (1, 8):
+            # Django < 1.8 did not quote "@" signs.
+            url = quote(url)
+        self.assertRedirects(response,
+            '{}?next={}'.format(reverse(settings.LOGIN_URL), url))
+

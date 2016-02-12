@@ -15,36 +15,28 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import absolute_import, print_function, unicode_literals
 
-import logging
 from datetime import datetime, timedelta
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core import mail
-from django.test.client import Client, RequestFactory
+from django.test.client import RequestFactory
 from django.test.utils import override_settings
-from django.test import TestCase
 
 from postorius.forms import AddressActivationForm
 from postorius.models import AddressConfirmationProfile
-from postorius.tests import MM_VCR
-from postorius.tests.utils import get_flash_messages
-from postorius.utils import get_client
+from postorius.tests.utils import ViewTestCase
 
 
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
 
-class TestAddressActivationForm(TestCase):
+class TestAddressActivationForm(ViewTestCase):
     """
     Test the activation form.
     """
 
-    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def setUp(self):
+        super(TestAddressActivationForm, self).setUp()
         # Create a user and profile.
         self.user = User.objects.create_user('testuser', 'les@example.org', 'testpass')
         self.profile = AddressConfirmationProfile.objects.create(email='les2@example.org',
@@ -53,16 +45,14 @@ class TestAddressActivationForm(TestCase):
                                                                          user=self.user)
         self.expired.created -= timedelta(weeks=100)
         self.expired.save()
-        self.mm_user = get_client().create_user('subscribed@example.org', 'password')
+        self.mm_user = self.mm_client.create_user('subscribed@example.org', 'password')
 
-    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def tearDown(self):
         self.profile.delete()
         self.expired.delete()
         self.user.delete()
         self.mm_user.delete()
 
-    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def test_valid_email_is_valid(self):
         form = AddressActivationForm({'email': 'very_new_email@example.org',})
         self.assertTrue(form.is_valid())
@@ -77,24 +67,23 @@ class TestAddressActivationForm(TestCase):
         form = AddressActivationForm({'email': 'les@example',})
         self.assertFalse(form.is_valid())
 
-    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def test_email_used_by_expired_confirmation_profile_is_valid(self):
         form = AddressActivationForm({'email': 'expired@example.org',})
         self.assertTrue(form.is_valid())
 
-    @MM_VCR.use_cassette('test_address_activation_form.yaml')
     def test_email_used_by_mailman_is_invalid(self):
         form = AddressActivationForm({'email': 'subscribed@example.org',})
         self.assertFalse(form.is_valid())
 
 
-class TestAddressConfirmationProfile(TestCase):
+class TestAddressConfirmationProfile(ViewTestCase):
     """
     Test the confirmation of an email address activation (validating token,
     expiration, Mailman API calls etc.).
     """
 
     def setUp(self):
+        super(TestAddressConfirmationProfile, self).setUp()
         # Create a user and profile.
         self.user = User.objects.create_user(
             username=u'ler_mm', email=u'ler@mailman.mostdesirable.org',
@@ -166,28 +155,26 @@ class TestAddressConfirmationProfile(TestCase):
         self.assertIn("another-virtualhost", mail.outbox[0].body)
 
 
-class TestAddressActivationLinkSuccess(TestCase):
+class TestAddressActivationLinkSuccess(ViewTestCase):
     """
     This tests the activation link view if the key is valid and the profile is
     not expired.
     """
 
-    @MM_VCR.use_cassette('test_address_activation_link.yaml')
     def setUp(self):
+        super(TestAddressActivationLinkSuccess, self).setUp()
         self.user = User.objects.create_user(
             username='ler', email=u'ler@example.org',
             password='pwd')
-        self.mm_user = get_client().create_user('ler@example.org', None)
+        self.mm_user = self.mm_client.create_user('ler@example.org', None)
         self.profile = AddressConfirmationProfile.objects.create(email=u'les@example.org', user=self.user)
         self.profile.save()
 
-    @MM_VCR.use_cassette('test_address_activation_link.yaml')
     def tearDown(self):
         self.profile.delete()
         self.user.delete()
         self.mm_user.delete()
 
-    @MM_VCR.use_cassette('test_address_activation_link.yaml')
     def test_add_address(self):
         # An activation key pointing to a valid profile adds the address
         # to the user.
@@ -196,9 +183,7 @@ class TestAddressActivationLinkSuccess(TestCase):
                       args=[self.profile.activation_key])
         response = self.client.get(url)
         self.assertRedirects(response, reverse('user_profile'))
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertHasSuccessMessage(response)
         self.assertEqual(
             set([a.email for a in self.mm_user.addresses]),
             set(['ler@example.org', 'les@example.org']))

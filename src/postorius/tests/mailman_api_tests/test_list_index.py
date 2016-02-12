@@ -15,40 +15,31 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.core.urlresolvers import reverse
-from django.test import Client, TestCase
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 
-from postorius.utils import get_client
-from postorius.tests import MM_VCR
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
-
-
-class ListIndexPageTest(TestCase):
+class ListIndexPageTest(ViewTestCase):
     """Tests for the list index page."""
 
-    @MM_VCR.use_cassette('test_list_index.yaml')
     def setUp(self):
-        self.domain = get_client().create_domain('example.com')
+        super(ListIndexPageTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.bar_list = self.domain.create_list('bar')
 
-    @MM_VCR.use_cassette('test_list_index.yaml')
     def tearDown(self):
-        for mlist in get_client().lists:
+        for mlist in self.mm_client.lists:
             mlist.delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('test_list_index.yaml')
     def test_list_index_contains_the_lists(self):
         # The list index page should contain the lists
         response = self.client.get(reverse('list_index'))

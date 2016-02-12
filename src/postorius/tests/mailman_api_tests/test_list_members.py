@@ -14,37 +14,28 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-import logging
 
-from django.conf import settings
-from django.contrib import messages
+from __future__ import absolute_import, print_function, unicode_literals
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now
-from django.test import Client, TestCase
 from six.moves.urllib_error import HTTPError
 from six.moves.urllib_parse import quote
 
 from postorius.models import MailmanUser, Mailman404Error
-from postorius.tests import MM_VCR
-from postorius.tests.utils import get_flash_messages
-from postorius.utils import get_client
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
-
-
-class ListMembersAccessTest(TestCase):
+class ListMembersAccessTest(ViewTestCase):
     """Tests for the list members page.
 
     Tests permissions and creation of list owners and moderators.
     """
 
-    @MM_VCR.use_cassette('list_members_access.yaml')
     def setUp(self):
-        self.domain = get_client().create_domain('example.com')
+        super(ListMembersAccessTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'testpass')
@@ -57,7 +48,6 @@ class ListMembersAccessTest(TestCase):
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
 
-    @MM_VCR.use_cassette('list_members_access.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.user.delete()
@@ -66,36 +56,28 @@ class ListMembersAccessTest(TestCase):
         self.moderator.delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_if_not_logged_in(self):
         url = reverse('list_members', args=('foo@example.com', 'subscriber',))
-        response = self.client.get(url)
-        if "%40" not in url: # Django < 1.8
-            url = quote(url)
-        self.assertRedirects(response, '{}?next={}'.format(reverse(settings.LOGIN_URL), url))
+        self.assertRedirectsToLogin(url)
 
-    @MM_VCR.use_cassette('list_members_access.yaml')
     def test_page_not_accessible_for_unprivileged_users(self):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_members',
                                            args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 403)
 
-    @MM_VCR.use_cassette('list_members_page.yaml')
     def test_not_accessible_for_moderator(self):
         self.client.login(username='testmoderator', password='testpass')
         response = self.client.get(reverse('list_members',
                                            args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 403)
 
-    @MM_VCR.use_cassette('list_members_page.yaml')
     def test_page_accessible_for_superuser(self):
         self.client.login(username='testsu', password='testpass')
         response = self.client.get(reverse('list_members',
                                            args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 200)
 
-    @MM_VCR.use_cassette('list_members_page.yaml')
     def test_page_accessible_for_owner(self):
         self.client.login(username='testowner', password='testpass')
         response = self.client.get(reverse('list_members',
@@ -103,15 +85,15 @@ class ListMembersAccessTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class AddRemoveOwnerTest(TestCase):
+class AddRemoveOwnerTest(ViewTestCase):
     """Tests for the list members page.
 
     Tests creation of list owners.
     """
 
-    @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def setUp(self):
-        self.mm_client = get_client()
+        super(AddRemoveOwnerTest, self).setUp()
+        self.mm_client = self.mm_client
         self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.su = User.objects.create_superuser(
@@ -119,13 +101,11 @@ class AddRemoveOwnerTest(TestCase):
         self.client.login(username='su', password='pwd')
         self.mm_client.get_list('foo@example.com').add_owner('su@example.com')
 
-    @MM_VCR.use_cassette('test_list_members_owner.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('test_list_members_owner_add_remove.yaml')
     def test_add_remove_owner(self):
         url = reverse('list_members', args=('foo@example.com', 'owner',))
         response = self.client.post(url, {'email': 'newowner@example.com'})
@@ -136,7 +116,6 @@ class AddRemoveOwnerTest(TestCase):
                                          'newowner@example.com')))
         self.assertFalse('newowner@example.com' in self.foo_list.owners)
 
-    @MM_VCR.use_cassette('test_list_members_owner_by_owner.yaml')
     def test_remove_owner_by_owner(self):
         self.assertTrue('su@example.com' in self.foo_list.owners)
         # Make the logged in user a simple list owner
@@ -151,11 +130,8 @@ class AddRemoveOwnerTest(TestCase):
             reverse('remove_role', args=('foo@example.com', 'owner',
                                          'newowner@example.com')))
         self.assertFalse('newowner@example.com' in self.foo_list.owners)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertHasSuccessMessage(response)
 
-    @MM_VCR.use_cassette('test_list_members_owner_self_last.yaml')
     def test_remove_owner_as_owner_self_last(self):
         # It is allowed to remove itself, but only if there's another owner
         # left.
@@ -168,9 +144,7 @@ class AddRemoveOwnerTest(TestCase):
                                          'su@example.com')))
         self.assertFalse('su@example.com' in self.foo_list.owners)
         self.assertEqual(response.status_code, 302)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertHasSuccessMessage(response)
         # But not to remove the last owner
         mm_list.add_owner('su@example.com')
         mm_list.remove_owner('otherowner@example.com')
@@ -181,21 +155,19 @@ class AddRemoveOwnerTest(TestCase):
                                          'su@example.com')))
         self.assertTrue('su@example.com' in self.foo_list.owners)
         self.assertEqual(response.status_code, 302)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 2)
-        self.assertEqual(msgs[1].level, messages.ERROR, msgs[1].message)
+        self.assertHasErrorMessage(response)
 
 
 
-class AddModeratorTest(TestCase):
+class AddModeratorTest(ViewTestCase):
     """Tests for the list members page.
 
     Tests creation of moderators.
     """
 
-    @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')
     def setUp(self):
-        self.domain = get_client().create_domain('example.com')
+        super(AddModeratorTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.su = User.objects.create_superuser(
             'su', 'su@example.com', 'pwd')
@@ -206,35 +178,31 @@ class AddModeratorTest(TestCase):
         self.assertRedirects(response, url)
         moderators = self.foo_list.moderators
 
-    @MM_VCR.use_cassette('test_list_members_add_moderator.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.su.delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('test_list_members_new_moderator_added.yaml')
     def test_new_moderator_added(self):
         self.assertTrue(u'newmod@example.com' in self.foo_list.moderators)
 
 
-class ListMembersTest(TestCase):
+class ListMembersTest(ViewTestCase):
     """Test the list members page.
     """
 
-    @MM_VCR.use_cassette('list_members.yaml')
     def setUp(self):
-        self.domain = get_client().create_domain('example.com')
+        super(ListMembersTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.superuser = User.objects.create_superuser(
             'testsu', 'su@example.com', 'testpass')
 
-    @MM_VCR.use_cassette('list_members.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.superuser.delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('list_members_show_members_page.yaml')
     def test_show_members_page(self):
         self.client.login(username='testsu', password='testpass')
         member_1 = self.foo_list.subscribe('member-1@example.com',
@@ -249,7 +217,6 @@ class ListMembersTest(TestCase):
         self.assertContains(response, member_1.email)
         self.assertContains(response, member_2.email)
 
-    @MM_VCR.use_cassette('list_members_search_members.yaml')
     def test_search_members_1(self):
         self.client.login(username='testsu', password='testpass')
         member_1 = self.foo_list.subscribe('member-1@example.com',

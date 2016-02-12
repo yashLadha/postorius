@@ -15,35 +15,28 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.core.urlresolvers import reverse
-from django.test import Client, TestCase
 from django.contrib.auth.models import User
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 
-from postorius.utils import get_client
-from postorius.tests import MM_VCR
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
-
-
-class DomainIndexPageTest(TestCase):
+class DomainIndexPageTest(ViewTestCase):
     """Tests for the list index page."""
 
-    @MM_VCR.use_cassette('test_domain_index.yaml')
     def setUp(self):
-        self.domain = get_client().create_domain('example.com')
+        super(DomainIndexPageTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         try:
             self.foo_list = self.domain.create_list('foo')
         except HTTPError:
-            self.foo_list = get_client().get_list('foo.example.com')
+            self.foo_list = self.mm_client.get_list('foo.example.com')
 
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'testpass')
@@ -56,7 +49,6 @@ class DomainIndexPageTest(TestCase):
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
 
-    @MM_VCR.use_cassette('test_domain_index.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.user.delete()
@@ -65,34 +57,29 @@ class DomainIndexPageTest(TestCase):
         self.moderator.delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('test_domain_index.yaml')
     def test_domain_index_not_accessible_to_public(self):
         # The list index page should contain the lists
         response = self.client.get(reverse('domain_index'))
         self.assertEqual(response.status_code, 302)
 
-    @MM_VCR.use_cassette('test_domain_index.yaml')
     def test_domain_index_not_accessible_to_unpriveleged_user(self):
         # The list index page should contain the lists
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('domain_index'))
         self.assertEqual(response.status_code, 302)
 
-    @MM_VCR.use_cassette('test_domain_index.yaml')
     def test_domain_index_not_accessible_to_moderators(self):
         # The list index page should contain the lists
         self.client.login(username='testmoderator', password='testpass')
         response = self.client.get(reverse('domain_index'))
         self.assertEqual(response.status_code, 302)
 
-    @MM_VCR.use_cassette('test_domain_index.yaml')
     def test_domain_index_not_accessible_to_owners(self):
         # The list index page should contain the lists
         self.client.login(username='testowner', password='testpass')
         response = self.client.get(reverse('domain_index'))
         self.assertEqual(response.status_code, 302)
 
-    @MM_VCR.use_cassette('test_domain_index.yaml')
     def test_domain_index_contains_the_domains(self):
         # The list index page should contain the lists
         self.client.login(username='testsu', password='testpass')
