@@ -19,37 +19,26 @@
 
 from __future__ import absolute_import,  print_function, unicode_literals
 
-import logging
-
-from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now
-from django.test import Client, TestCase
 from six.moves.urllib_error import HTTPError
 from six.moves.urllib_parse import quote
 
 from postorius.views.list import SETTINGS_FORMS
 from postorius.models import MailmanUser, Mailman404Error, List
-from postorius.tests import MM_VCR
-from postorius.tests.utils import get_flash_messages
-from postorius.utils import get_client
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
 
-
-class ListSettingsTest(TestCase):
+class ListSettingsTest(ViewTestCase):
     """
     Tests for the list settings page.
     """
 
-    @MM_VCR.use_cassette('list_settings.yaml')
     def setUp(self):
-        self.domain = get_client().create_domain('example.com')
+        super(ListSettingsTest, self).setUp()
+        self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'testpass')
@@ -62,7 +51,6 @@ class ListSettingsTest(TestCase):
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
 
-    @MM_VCR.use_cassette('list_settings.yaml')
     def tearDown(self):
         self.foo_list.delete()
         self.user.delete()
@@ -71,20 +59,11 @@ class ListSettingsTest(TestCase):
         self.moderator.delete()
         self.domain.delete()
 
-    def _check_redirect_login(self, url):
-        response = self.client.get(url)
-        if '%40' not in url: # Django < 1.8
-            url = quote(url)
-
-        self.assertRedirects(response, '{}?next={}'.format(reverse(settings.LOGIN_URL), url))
-
-    @MM_VCR.use_cassette('list_settings_access.yaml')
     def test_page_not_accessible_if_not_logged_in(self):
         for section_name in SETTINGS_FORMS:
             url = reverse('list_settings', args=('foo.example.com', section_name))
-            self._check_redirect_login(url)
+            self.assertRedirectsToLogin(url)
 
-    @MM_VCR.use_cassette('list_settings_access.yaml')
     def test_page_not_accessible_for_unprivileged_users(self):
         self.client.login(username='testuser', password='testpass')
         for section_name in SETTINGS_FORMS:
@@ -92,7 +71,6 @@ class ListSettingsTest(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 403)
 
-    @MM_VCR.use_cassette('list_settings_access.yaml')
     def test_not_accessible_for_moderator(self):
         self.client.login(username='testmoderator', password='testpass')
         for section_name in SETTINGS_FORMS:
@@ -100,7 +78,6 @@ class ListSettingsTest(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 403)
 
-    @MM_VCR.use_cassette('list_settings_access.yaml')
     def test_page_accessible_for_owner(self):
         self.client.login(username='testowner', password='testpass')
         for section_name in SETTINGS_FORMS:
@@ -108,7 +85,6 @@ class ListSettingsTest(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
-    @MM_VCR.use_cassette('list_settings_access.yaml')
     def test_page_accessible_for_superuser(self):
         self.client.login(username='testsu', password='testpass')
         for section_name in SETTINGS_FORMS:
@@ -116,7 +92,6 @@ class ListSettingsTest(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
-    @MM_VCR.use_cassette('list_settings_archiving.yaml')
     def test_archiving_policy(self):
         self.assertEqual(self.foo_list.settings['archive_policy'], 'public')
         self.client.login(username='testsu', password='testpass')
@@ -127,14 +102,11 @@ class ListSettingsTest(TestCase):
             response.context["form"].initial['archive_policy'], 'public')
         response = self.client.post(url, {'archive_policy': 'private'})
         self.assertRedirects(response, url)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertHasSuccessMessage(response)
         # Get a new list object to avoid caching
         m_list = List.objects.get(fqdn_listname='foo.example.com')
         self.assertEqual(m_list.settings['archive_policy'], 'private')
 
-    @MM_VCR.use_cassette('list_settings_archivers.yaml')
     def test_archivers(self):
         self.assertEqual(dict(self.foo_list.archivers),
             {'mhonarc': True, 'prototype': True, 'mail-archive': True})
@@ -147,9 +119,7 @@ class ListSettingsTest(TestCase):
         response = self.client.post(url,
             {'archive_policy': 'public', 'archivers': ['prototype']})
         self.assertRedirects(response, url)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertHasSuccessMessage(response)
         # Get a new list object to avoid caching
         m_list = List.objects.get(fqdn_listname='foo.example.com')
         self.assertEqual(dict(m_list.archivers),

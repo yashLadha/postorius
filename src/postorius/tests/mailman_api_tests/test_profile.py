@@ -15,29 +15,22 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.test import Client, TestCase
+from mock import patch
+from smtplib import SMTPException
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 
-from postorius.utils import get_client
-from postorius.tests import MM_VCR
 from postorius.models import AddressConfirmationProfile
-from mock import patch, call
-from smtplib import SMTPException
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
-
-
-class TestAddressActivationView(TestCase):
+class TestProfile(ViewTestCase):
     """
     Tests to make sure the view is properly connected, renders the form
     correctly and starts the actual address activation process if a valid
@@ -45,6 +38,7 @@ class TestAddressActivationView(TestCase):
     """
 
     def setUp(self):
+        super(TestProfile, self).setUp()
         # We create a new user and log that user in.
         # We don't use Client().login because it triggers the browserid dance.
         self.user = User.objects.create_user(
@@ -57,13 +51,11 @@ class TestAddressActivationView(TestCase):
         self.client.logout()
         self.user.delete()
 
-    @MM_VCR.use_cassette('test_user_profile.yaml')
     def test_view_contains_form(self):
         # The view context should contain a form.
         response = self.client.get(reverse('user_profile'))
         self.assertContains(response, 'You can add other addresses to your profile')
 
-    @MM_VCR.use_cassette('test_user_profile.yaml')
     def test_post_invalid_form_shows_error_msg(self):
         # Entering an invalid email address should render an error message.
         response = self.client.post(reverse('user_profile'), {
@@ -71,7 +63,6 @@ class TestAddressActivationView(TestCase):
                                     'user_email': self.user.email})
         self.assertContains(response, 'Enter a valid email address.')
 
-    @MM_VCR.use_cassette('test_user_profile.yaml')
     @patch.object(AddressConfirmationProfile, 'send_confirmation_link')
     def test_post_valid_form_shows_success_message(
             self, mock_send_confirmation_link):
@@ -82,7 +73,6 @@ class TestAddressActivationView(TestCase):
         self.assertEqual(mock_send_confirmation_link.call_count, 1)
         self.assertContains(response, 'Please follow the instructions sent via email to confirm the address')
 
-    @MM_VCR.use_cassette('test_user_profile.yaml')
     @patch.object(AddressConfirmationProfile, 'send_confirmation_link')
     def test_post_valid_form_redirects_on_success(
             self, mock_send_confirmation_link):
@@ -95,7 +85,6 @@ class TestAddressActivationView(TestCase):
 
     @patch.object(AddressConfirmationProfile, 'send_confirmation_link',
                          side_effect=SMTPException())
-    @MM_VCR.use_cassette('test_user_profile.yaml')
     def test_post_form_with_smtp_exception(self, mock_send_confirmation_link):
         # If a smtp exception occurs display error
         response = self.client.post(reverse('user_profile'), {

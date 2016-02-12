@@ -20,33 +20,23 @@
 from __future__ import absolute_import,  print_function, unicode_literals
 
 import mock
-import logging
 
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import Client, RequestFactory, TestCase
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 
-from postorius.tests import MM_VCR
-from postorius.tests.utils import get_flash_messages
-from postorius.utils import get_client
+from postorius.tests.utils import ViewTestCase
 
 
-logger = logging.getLogger(__name__)
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
+class ListBansTest(ViewTestCase):
 
-
-class ListBansTest(TestCase):
-
-    @MM_VCR.use_cassette('list_bans.yaml')
     def setUp(self):
+        super(ListBansTest, self).setUp()
         # Create domain `example.com` in Mailman
-        self.domain = get_client().create_domain('example.com')
+        self.domain = self.mm_client.create_domain('example.com')
         self.m_list = self.domain.create_list('test_list')
         self.test_user = User.objects.create_user(
             'test_user', 'test_user@example.com', 'pwd')
@@ -55,32 +45,27 @@ class ListBansTest(TestCase):
         self.client.login(username="test_superuser", password='pwd')
         self.url = reverse('list_bans', args=['test_list.example.com'])
 
-    @MM_VCR.use_cassette('list_bans.yaml')
     def tearDown(self):
         self.test_user.delete()
         self.test_superuser.delete()
         self.m_list.delete()
         self.domain.delete()
 
-    @MM_VCR.use_cassette('list_bans.yaml')
     def test_login_redirect_for_anonymous(self):
         self.client.logout()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
-    @MM_VCR.use_cassette('list_bans.yaml')
     def test_no_access_for_basic_user(self):
         self.client.logout()
         self.client.login(username="test_user", password='pwd')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
 
-    @MM_VCR.use_cassette('list_bans.yaml')
     def test_access_for_superuser(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-    @MM_VCR.use_cassette('list_bans.yaml')
     def test_context_contains_create_form(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -92,7 +77,6 @@ class ListBansTest(TestCase):
             '<button class="btn btn-primary" type="submit" name="add">'
             'Ban email</button>')
 
-    @MM_VCR.use_cassette('list_bans_delete_forms.yaml')
     def test_context_contains_delete_forms(self):
         banned = ["banned{}@example.com".format(i) for i in range(1,10)]
         for ban in banned:
@@ -106,7 +90,6 @@ class ListBansTest(TestCase):
             '<button class="btn btn-danger btn-xs" type="submit" name="del"',
             count=9)
 
-    @MM_VCR.use_cassette('list_bans_add_ban.yaml')
     def test_add_ban(self):
         response = self.client.post(self.url, {
             'email': 'banned@example.com',
@@ -114,11 +97,8 @@ class ListBansTest(TestCase):
             })
         self.assertRedirects(response, self.url)
         self.assertIn('banned@example.com', self.m_list.bans)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertHasSuccessMessage(response)
 
-    @MM_VCR.use_cassette('list_bans_del_ban.yaml')
     def test_del_ban(self):
         self.m_list.bans.add('banned@example.com')
         self.assertIn('banned@example.com', self.m_list.bans)
@@ -128,11 +108,8 @@ class ListBansTest(TestCase):
             })
         self.assertRedirects(response, self.url)
         self.assertNotIn('banned@example.com', self.m_list.bans)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertHasSuccessMessage(response)
 
-    @MM_VCR.use_cassette('list_bans_del_unknown_ban.yaml')
     def test_del_unknown_ban(self):
         self.assertNotIn('banned@example.com', self.m_list.bans)
         response = self.client.post(self.url, {
@@ -140,12 +117,9 @@ class ListBansTest(TestCase):
             'del': True,
             })
         self.assertRedirects(response, self.url)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.ERROR, msgs[0].message)
-        self.assertIn('is not banned', msgs[0].message)
+        message = self.assertHasErrorMessage(response)
+        self.assertIn('is not banned', message)
 
-    @MM_VCR.use_cassette('list_bans_add_duplicate.yaml')
     def test_add_ban_duplicate(self):
         self.m_list.bans.add('banned@example.com')
         self.assertIn('banned@example.com', self.m_list.bans)
@@ -154,7 +128,5 @@ class ListBansTest(TestCase):
             'add': True,
             })
         self.assertRedirects(response, self.url)
-        msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.ERROR, msgs[0].message)
-        self.assertIn('is already banned', msgs[0].message)
+        message = self.assertHasErrorMessage(response)
+        self.assertIn('is already banned', message)
