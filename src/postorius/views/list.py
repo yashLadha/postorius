@@ -612,7 +612,12 @@ def handle_subscription_request(request, list_id, request_id, action):
     except MailmanApiError:
         return utils.render_api_error(request)
     except HTTPError as e:
-        messages.error(request, _('The request could not be moderated: %s') % e.reason)
+        if e.code == 409:
+            messages.success(request,
+                _('The request was already moderated: %s') % e.reason)
+        else:
+            messages.error(request,
+                _('The request could not be moderated: %s') % e.reason)
     return redirect('list_subscription_requests', m_list.list_id)
 
 

@@ -120,3 +120,35 @@ class TestSubscription(ViewTestCase):
         self.assertRedirects(response,
             reverse('list_summary', args=('moderate_subs.example.com', )))
         self.assertHasSuccessMessage(response)
+
+    def test_subscribe_mod_then_open(self):
+        # The list is moderated when the subscription is requested, then the
+        # list is switched to open.
+        self.client.login(username='testuser', password='pwd')
+        response = self.client.post(
+            reverse('list_subscribe', args=('moderate_subs.example.com', )),
+            {'email': 'test@example.com'})
+        self.assertEqual(len(self.mod_list.members), 0)
+        self.assertEqual(len(self.mod_list.requests), 1)
+        self.assertHasSuccessMessage(response)
+        # Switch the list to 'open'
+        self.mod_list.settings['subscription_policy'] = 'open'
+        self.mod_list.settings.save()
+        self.assertEqual(self.mod_list.settings['subscription_policy'], 'open')
+        # Subscribe the user (they are now allowed to self-subscribe)
+        self.mod_list.subscribe('test@example.com')
+        # Login as the owner to accept the subscription
+        owner = User.objects.create_user(
+            'testowner', 'owner@example.com', 'pwd')
+        self.mod_list.add_owner('owner@example.com')
+        self.client.logout()
+        self.client.login(username='testowner', password='pwd')
+        accept_url = reverse(
+            'handle_subscription_request', args=['moderate_subs.example.com',
+            self.mod_list.requests[0]['token'], 'accept'])
+        response = self.client.get(accept_url)
+        self.assertRedirects(
+            response, reverse('list_subscription_requests',
+            args=['moderate_subs.example.com']))
+        message = self.assertHasSuccessMessage(response)
+        self.assertIn('Already subscribed', message)
