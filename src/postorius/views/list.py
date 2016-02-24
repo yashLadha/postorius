@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
 import csv
 
@@ -24,6 +25,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
 from django.core.urlresolvers import reverse
+from django.forms import formset_factory
 from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.core.exceptions import ValidationError
@@ -808,4 +810,69 @@ def list_bans(request, list_id):
     return render(request, 'postorius/lists/bans.html', {
          'list': m_list,
          'addban_form': addban_form,
+         })
+
+
+@login_required
+@list_owner_required
+def list_header_matches(request, list_id):
+    """
+    View and edit the list's header matches.
+    """
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
+    header_matches = m_list.header_matches
+    HeaderMatchFormset = formset_factory(
+        ListHeaderMatchForm, extra=1, can_delete=True, can_order=True,
+        formset=ListHeaderMatchFormset)
+    initial_data = [
+        dict([
+            (key, getattr(hm, key)) for key in ListHeaderMatchForm.base_fields
+        ]) for hm in header_matches]
+
+    # Process form submission.
+    if request.method == 'POST':
+        formset = HeaderMatchFormset(request.POST, initial=initial_data)
+        if formset.is_valid():
+            if not formset.has_changed():
+                return redirect('list_header_matches', list_id)
+            # Purge the existing header_matches
+            header_matches.clear()
+            # Add the ones in the form
+            def form_order(f):
+                # If ORDER is None (new header match), add it last.
+                return f.cleaned_data.get('ORDER') or len(formset.forms)
+            errors = []
+            for form in sorted(formset, key=form_order):
+                if 'header' not in form.cleaned_data:
+                    # The new header match form was not filled
+                    continue
+                if form.cleaned_data.get('DELETE'):
+                    continue
+                try:
+                    header_matches.add(
+                        header=form.cleaned_data['header'],
+                        pattern=form.cleaned_data['pattern'],
+                        action=form.cleaned_data['action'],
+                        )
+                except HTTPError as e:
+                    errors.append(e)
+            for e in errors:
+                messages.error(
+                    request, _('An error occured: %s') % e.reason)
+            if not errors:
+                messages.success(request,
+                    _('The header matches were successfully modified.'))
+            return redirect('list_header_matches', list_id)
+    else:
+        formset = HeaderMatchFormset(initial=initial_data)
+    # Adapt the last form to create new matches
+    form_new = formset.forms[-1]
+    form_new.fields['header'].widget.attrs['placeholder'] = _('New header')
+    form_new.fields['pattern'].widget.attrs['placeholder'] = _('New pattern')
+    del form_new.fields['ORDER']
+    del form_new.fields['DELETE']
+
+    return render(request, 'postorius/lists/header_matches.html', {
+         'list': m_list,
+         'formset': formset,
          })

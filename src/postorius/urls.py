@@ -52,6 +52,7 @@ list_patterns = [
         name='reject_held_message'),
     url(r'^held_messages$', list_views.list_moderation, name='list_held_messages'),
     url(r'^bans/$', list_views.list_bans, name='list_bans'),
+    url(r'^header-matches/$', list_views.list_header_matches, name='list_header_matches'),
     url(r'^remove/(?P<role>[^/]+)/(?P<address>[^/]+)', list_views.remove_role, name='remove_role'),
     url(r'^settings/(?P<visible_section>[^/]+)?$', list_views.list_settings, name='list_settings'),
     url(r'^unsubscribe_all$', list_views.remove_all_subscribers, name='unsubscribe_all'),

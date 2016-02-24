@@ -129,6 +129,10 @@ class ViewTestCase(TestCase):
         self.assertEqual(msgs[0].level, messages.ERROR, msgs[0].message)
         return msgs[0].message
 
+    def assertHasNoMessage(self, response):
+        msgs = get_flash_messages(response)
+        self.assertEqual(len(msgs), 0)
+
     def assertRedirectsToLogin(self, url):
         response = self.client.get(url)
         self.assertRedirects(response,
