@@ -219,7 +219,6 @@ class ListSettingsForm(forms.Form):
 
 
 SUBSCRIPTION_POLICY_CHOICES = (
-    ('', _('Please Choose')),
     ('open', _('Open')),
     ('confirm', _('Confirm')),
     ('moderate', _('Moderate')),
