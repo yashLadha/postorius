@@ -15,9 +15,8 @@
         <p class="text-right">
             {% if domain_count < 2 %}
                 <a class="btn btn-success" href="{% url 'domain_new' %}">{% trans 'Create New Domain' %}</a>
-            {% endif %}
-            {% if domain_count >= 2 %}
-            <a class="btn btn-success" href="{% url 'list_new' %}">{% trans 'Create New List' %}</a>
+            {% else %}
+                <a class="btn btn-success" href="{% url 'list_new' %}">{% trans 'Create New List' %}</a>
             {% endif %}
         </p>
     {% endif %}

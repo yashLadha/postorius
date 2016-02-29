@@ -436,31 +436,28 @@ def list_new(request, template='postorius/lists/new.html'):
     be logged in to create a new list.
     """
     mailing_list = None
-    if request.method == 'GET':
+    if request.method == 'POST':
         choosable_domains = _get_choosable_domains(request)
-        if len(choosable_domains) > 1:
-            form = ListNew(choosable_domains, request.POST)
-            if form.is_valid():
-                # grab domain
-                domain = Domain.objects.get_or_404(
-                    mail_host=form.cleaned_data['mail_host'])
-                # creating the list
-                try:
-                    mailing_list = domain.create_list(
-                        form.cleaned_data['listname'])
-                    mailing_list.add_owner(form.cleaned_data['list_owner'])
-                    list_settings = mailing_list.settings
-                    list_settings["description"] = form.cleaned_data['description']
-                    list_settings["advertised"] = form.cleaned_data['advertised']
-                    list_settings.save()
-                    messages.success(request, _("List created"))
-                    return redirect("list_summary",
-                                    list_id=mailing_list.list_id)
-                # TODO catch correct Error class:
-                except HTTPError as e:
-                    return render(request, 'postorius/errors/generic.html', {'error': e})
-        else:
-            return redirect("/postorius/domains/new")
+        form = ListNew(choosable_domains, request.POST)
+        if form.is_valid():
+            # grab domain
+            domain = Domain.objects.get_or_404(
+                mail_host=form.cleaned_data['mail_host'])
+            # creating the list
+            try:
+                mailing_list = domain.create_list(
+                    form.cleaned_data['listname'])
+                mailing_list.add_owner(form.cleaned_data['list_owner'])
+                list_settings = mailing_list.settings
+                list_settings["description"] = form.cleaned_data['description']
+                list_settings["advertised"] = form.cleaned_data['advertised']
+                list_settings.save()
+                messages.success(request, _("List created"))
+                return redirect("list_summary",
+                                list_id=mailing_list.list_id)
+            # TODO catch correct Error class:
+            except HTTPError as e:
+                return render(request, 'postorius/errors/generic.html', {'error': e})
     else:
         choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains,
