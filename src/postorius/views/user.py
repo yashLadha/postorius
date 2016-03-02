@@ -241,17 +241,9 @@ def user_profile(request, user_email=None):
     if request.method == 'POST':
         form = AddressActivationForm(request.POST)
         if form.is_valid():
-            # XXX Use the following when django 1.6 is dropped as a dependency
-            # It is more efficient because it can be done in one database operation
-            #
-            # profile, created = AddressConfirmationProfile.objects.update_or_create(
-            #     email=form.cleaned_data['email'], user=request.user, defaults={
-            #     'activation_key': uuid.uuid4().hex})
-            try:
-                profile = AddressConfirmationProfile.objects.get(email=form.cleaned_data['email'], user=request.user)
-                profile.save()
-            except AddressConfirmationProfile.DoesNotExist:
-                profile = AddressConfirmationProfile.objects.create(email=form.cleaned_data['email'], user=request.user)
+            profile, created = AddressConfirmationProfile.objects.update_or_create(
+                email=form.cleaned_data['email'], user=request.user, defaults={
+                'activation_key': uuid.uuid4().hex})
             try:
                 profile.send_confirmation_link(request)
                 messages.success(request,

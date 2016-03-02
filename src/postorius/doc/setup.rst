@@ -73,7 +73,7 @@ Third, prepare the database:
 ::
 
     $ cd postorius_standalone
-    $ python manage.py syncdb
+    $ python manage.py migrate
     $ cd ..
 
 This will create the ``.db file`` (if you ar using SQLite) and will setup all the

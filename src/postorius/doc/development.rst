@@ -43,18 +43,17 @@ dash:
 
     # List all currently configured envs:
     $ tox -l
-    py27-django1.5
-    py27-django1.6
-    py27-django1.7
+    py27-django18
+    py27-django19
 
-    # Test Django 1.7 on Python2.7 only:
-    $ tox -e py27-django1.7
+    # Test Django 1.8 on Python2.7 only:
+    $ tox -e py27-django18
 
     # Run only tests in ``test_address_activation``:
     $ tox -- postorius.tests.test_address_activation
 
     # You get the idea...
-    $ tox -e py27-django1.7 -- postorius.tests.test_address_activation
+    $ tox -e py27-django18 -- postorius.tests.test_address_activation
 
 
 All test modules reside in the ``postorius/src/postorius/tests``

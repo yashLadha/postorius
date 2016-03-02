@@ -19,10 +19,7 @@
 from django.forms import Form
 from django.utils import safestring
 from django.forms.forms import BoundField
-try:
-    from django.forms.utils import ErrorList
-except ImportError:
-    from django.forms.util import ErrorList  # Django 1.6
+from django.forms.utils import ErrorList
 
 
 class FieldsetError(Exception):
