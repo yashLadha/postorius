@@ -77,8 +77,14 @@ Third, prepare the database:
     $ cd ..
 
 This will create the ``.db file`` (if you ar using SQLite) and will setup all the
-necessary db tables. You will also be prompted to create a superuser which
-will act as an admin account for Postorius.
+necessary db tables.
+
+To create a superuser which will act as an admin account for Postorius, run the
+following commands::
+
+    $ cd postorius_standalone
+    $ python manage.py createsuperuser
+    $ cd ..
 
 
 Running the development server

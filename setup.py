@@ -39,7 +39,10 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=['django>=1.8',
-                      'django-browserid',
-                      'mailmanclient']
+    install_requires=[
+        'Django>=1.8',
+        'Django<1.10',
+        'django-browserid',
+        'mailmanclient',
+    ],
 )
