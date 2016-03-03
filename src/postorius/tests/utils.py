@@ -131,9 +131,6 @@ class ViewTestCase(TestCase):
 
     def assertRedirectsToLogin(self, url):
         response = self.client.get(url)
-        if DJANGO_VERSION >= (1, 8):
-            # Django < 1.8 did not quote "@" signs.
-            url = quote(url)
         self.assertRedirects(response,
-            '{}?next={}'.format(reverse(settings.LOGIN_URL), url))
+            '{}?next={}'.format(reverse(settings.LOGIN_URL), quote(url)))
 

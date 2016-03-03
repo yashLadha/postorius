@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -19,7 +19,6 @@
 import postorius
 
 from django.conf.urls import include, url
-from django.conf import settings
 
 urlpatterns = [
     url('', include('django_browserid.urls')),
