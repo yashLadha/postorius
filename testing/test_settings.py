@@ -40,6 +40,13 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost']
 
 
+
+# Mailman API credentials for testing
+MAILMAN_REST_API_URL = 'http://localhost:9001'
+MAILMAN_REST_API_USER = 'restadmin'
+MAILMAN_REST_API_PASS = 'restpass'
+
+
 # Application definition
 
 INSTALLED_APPS = (
@@ -70,7 +77,6 @@ MIDDLEWARE_CLASSES = (
 # is the only app you want to serve.
 ROOT_URLCONF = 'testing.urls'
 
-# List of callables that know how to import templates from various sources.
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -78,7 +84,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
@@ -86,6 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.template.context_processors.csrf',
                 'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'postorius.context_processors.postorius',
             ],
@@ -105,6 +111,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'postorius.db'),
     }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/{{ docs_version }}/topics/i18n/
@@ -126,18 +133,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'django_browserid.auth.BrowserIDBackend',
-)
-
-
-# Mailman API credentials for testing
-MAILMAN_REST_API_URL = 'http://localhost:9001'
-MAILMAN_REST_API_USER = 'restadmin'
-MAILMAN_REST_API_PASS = 'restpass'
-
-
 LOGIN_URL          = 'user_login'
 LOGIN_REDIRECT_URL = 'list_index'
 LOGOUT_URL         = 'user_logout'
@@ -145,6 +140,19 @@ LOGOUT_URL         = 'user_logout'
 def username(email):
     return email.rsplit('@', 1)[0]
 BROWSERID_USERNAME_ALGO = username
+
+
+# Compatibility with Bootstrap 3
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger'
+}
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_browserid.auth.BrowserIDBackend',
+)
 
 
 # Set VCR_RECORD_MODE to 'all' to re-record all API responses.
