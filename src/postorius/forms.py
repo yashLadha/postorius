@@ -41,6 +41,9 @@ ACTION_CHOICES = (
     )
 
 
+# Fields
+
+
 class ListOfStringsField(forms.Field):
     widget = forms.widgets.Textarea
 
@@ -60,6 +63,10 @@ class ListOfStringsField(forms.Field):
                 continue
             result.append(smart_text(line))
         return result
+
+
+
+# Forms
 
 
 class DomainNew(FieldsetForm):
@@ -651,6 +658,53 @@ class ListAddBanForm(forms.Form):
         error_messages={
             'required': _('Please enter an email adddress.'),
             'invalid': _('Please enter a valid email adddress.')})
+
+
+class ListHeaderMatchForm(forms.Form):
+    """Edit a list's header match."""
+
+    HM_ACTION_CHOICES = [
+            (None, _("Default antispam action")) ] + [
+            a for a in ACTION_CHOICES if a[0] != 'defer'
+            ]
+
+    header = forms.CharField(
+        label=_('Header'),
+        help_text=_('Email header to filter on (case-insensitive).'),
+        error_messages={
+            'required': _('Please enter a header.'),
+            'invalid': _('Please enter a valid header.')})
+    pattern = forms.CharField(
+        label=_('Pattern'),
+        help_text=_('Regular expression matching the header\'s value.'),
+        error_messages={
+            'required': _('Please enter a pattern.'),
+            'invalid': _('Please enter a valid pattern.')})
+    action = forms.ChoiceField(
+        label=_('Action'),
+        error_messages={'invalid': _('Please enter a valid action.')},
+        #widget=forms.RadioSelect(),
+        required=False,
+        choices=HM_ACTION_CHOICES,
+        help_text=_('Action to take when a header matches')
+        )
+
+class ListHeaderMatchFormset(forms.BaseFormSet):
+    def clean(self):
+        """Checks that no two header matches have the same order."""
+        if any(self.errors):
+            # Don't bother validating the formset unless each form is valid on its own
+            return
+        orders = []
+        for form in self.forms:
+            try:
+                order = form.cleaned_data['ORDER']
+            except KeyError:
+                continue
+            if order in orders:
+                raise forms.ValidationError("Header matches must have distinct orders.")
+            orders.append(order)
+
 
 
 class UserPreferences(FieldsetForm):
