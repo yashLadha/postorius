@@ -23,9 +23,9 @@ along with mailman.client. If not, see <http://www.gnu.org/licenses/>.
 Requirements
 ============
 
-Postorius requires Python 2.6 or newer and mailman.client,
+Postorius requires Python 2.7 or newer and mailmanclient,
 the official Python bindings for GNU Mailman, it also requires
-django-social-auth.
+django-browserid.
 The minimum Django version is 1.8.
 Postorius needs a running version of GNU Mailman version 3.
 
@@ -42,12 +42,13 @@ Installation
 ============
 
 To install GNU Mailman follow the instructions in the documentation:
-http://packages.python.org/mailman/
+http://mailman.readthedocs.org/
 
-A description how to run Postorius on Django's dev server or using
-Apache/mod_wsgi, can be found in the package documentation:
+A description how to run Postorius on Django's dev server or deploying it 
+using Apache/mod_wsgi or Nginx/uwsig, can be found in the package documentation: 
 
 src/postorius/doc/setup.rst
+src/postorius/doc/deployment.rst
 
 
 Acknowledgements
@@ -56,9 +57,3 @@ Acknowledgements
 Many thanks go out to Anna Senarclens de Grancy and Benedict Stein for
 developing the initial versions of this Django app during the Google Summer of
 Code 2010 and 2011.
-
-
-Icons
-=====
-
-Postorius uses the WPZOOM Developer Icon Set (http://www.wpzoom.com).
