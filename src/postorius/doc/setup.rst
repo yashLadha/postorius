@@ -7,7 +7,7 @@ Installation
     GNU Mailman 3. To install GNU Mailman follow the instructions in the `documentation`_.
 
     If you are looking for an easy way to set up the whole GNU Mailman 3
-    suite (GNU Mailman 3, Postorius, Hyperkitty and mailman.client), check
+    suite (GNU Mailman 3, Postorius, Hyperkitty and mailmanclient), check
     out the `mailman-bundler`_ project on GitLab.
 
 .. _mailman-bundler: https://gitlab.com/mailman/mailman-bundler
@@ -25,13 +25,13 @@ PyPi:
 
 ::
 
-    $ sudo pip install postorius
+    $ pip install postorius
 
 or:
 
 ::
 
-    $ sudo easy_install postorius
+    $ easy_install postorius
 
 
 Latest dev version
@@ -44,7 +44,7 @@ should install Postorius using git:
 
     $ git clone https://gitlab.com/mailman/postorius.git
     $ cd postorius
-    $ sudo python setup.py develop
+    $ python setup.py develop
 
 
 Setup your django project
