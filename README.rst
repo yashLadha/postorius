@@ -5,7 +5,7 @@ Postorius - web ui for GNU Mailman
 Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
 
 The Postorius Django app provides a web user interface to
-access GNU Mailman. 
+access GNU Mailman.
 
 Postorius is free software: you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,7 @@ To install GNU Mailman follow the instructions in the documentation:
 http://packages.python.org/mailman/
 
 A description how to run Postorius on Django's dev server or using
-Apache/mod_wsgi, can be found in the package documentation: 
+Apache/mod_wsgi, can be found in the package documentation:
 
 src/postorius/doc/setup.rst
 
@@ -55,11 +55,10 @@ Acknowledgements
 
 Many thanks go out to Anna Senarclens de Grancy and Benedict Stein for
 developing the initial versions of this Django app during the Google Summer of
-Code 2010 and 2011. 
+Code 2010 and 2011.
 
 
 Icons
 =====
 
 Postorius uses the WPZOOM Developer Icon Set (http://www.wpzoom.com).
-

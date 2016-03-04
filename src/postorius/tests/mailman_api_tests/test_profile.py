@@ -92,4 +92,3 @@ class TestProfile(ViewTestCase):
             'user_email': self.user.email}, follow=True)
         self.assertEqual(mock_send_confirmation_link.call_count, 1)
         self.assertContains(response, 'Currently emails can not be added, please try again later')
-

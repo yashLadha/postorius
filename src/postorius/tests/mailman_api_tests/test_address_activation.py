@@ -29,7 +29,6 @@ from postorius.models import AddressConfirmationProfile
 from postorius.tests.utils import ViewTestCase
 
 
-
 class TestAddressActivationForm(ViewTestCase):
     """
     Test the activation form.

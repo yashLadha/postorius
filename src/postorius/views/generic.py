@@ -17,7 +17,6 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from django.views.generic import TemplateView
 
 from postorius.models import List, MailmanUser, MailmanApiError, Mailman404Error

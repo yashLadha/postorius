@@ -30,7 +30,6 @@ from postorius.models import MailmanUser, Mailman404Error, List
 from postorius.tests.utils import ViewTestCase
 
 
-
 class ListSettingsTest(ViewTestCase):
     """
     Tests for the list settings page.

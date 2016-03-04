@@ -53,11 +53,11 @@ separate help pages.
 * Rework of internal testing
 * Mozilla Persona integration: switch from django-social-auto to django-browserid: Contributed by Abhilash Raj.
 * Fix manage.py mmclient command for non-IPython shells. Contributed by Ankush Sharma (LP: 1428169).
-* Added archiver options: Site-wide enabled archivers can not be enabled 
+* Added archiver options: Site-wide enabled archivers can not be enabled
 on a per-list basis through the web UI.
 * Added functionality to choose or switch subscription addresses. Contributed by Abhilash Raj.
-* Added subscription moderation, pre_verification/_confirmation. 
-* Several style changes. 
+* Added subscription moderation, pre_verification/_confirmation.
+* Several style changes.
 
 
 1.0 beta 1 -- "Year of the Parrot"

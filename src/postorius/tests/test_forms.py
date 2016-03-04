@@ -31,6 +31,7 @@ class UserPreferencesTest(TestCase):
         })
         self.assertTrue(form.is_valid())
 
+
 class DomainNewTest(TestCase):
 
     def test_form_fields_webhost(self):

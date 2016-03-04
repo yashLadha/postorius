@@ -180,9 +180,9 @@ class ListSummaryView(MailingListView):
     """
 
     def get(self, request, list_id):
-        data =  {'list': self.mailing_list,
-                 'userSubscribed': False,
-                 'subscribed_address': None}
+        data = {'list': self.mailing_list,
+                'userSubscribed': False,
+                'subscribed_address': None}
         if request.user.is_authenticated():
             user_emails = [request.user.email] + request.user.other_emails
             for address in user_emails:
@@ -193,7 +193,7 @@ class ListSummaryView(MailingListView):
                 else:
                     data['userSubscribed'] = True
                     data['subscribed_address'] = address
-                    break # no need to test more addresses
+                    break  # no need to test more addresses
             data['subscribe_form'] = ListSubscribe(user_emails)
         else:
             user_emails = None
@@ -217,7 +217,7 @@ class ChangeSubscriptionView(MailingListView):
                 else:
                     userSubscribed = True
                     old_email = address
-                    break # no need to test more addresses
+                    break  # no need to test more addresses
             if form.is_valid():
                 email = form.cleaned_data['email']
                 if old_email == email:
@@ -352,6 +352,7 @@ class ListMassRemovalView(MailingListView):
 def _perform_action(message_ids, action):
     for message_id in message_ids:
         action(message_id)
+
 
 @login_required
 @list_moderator_required
@@ -694,6 +695,7 @@ def list_settings(request, list_id=None, visible_section=None,
         'visible_section': visible_section,
         })
 
+
 @login_required
 @list_owner_required
 def remove_role(request, list_id=None, role=None, address=None,
@@ -838,6 +840,7 @@ def list_header_matches(request, list_id):
             # Purge the existing header_matches
             header_matches.clear()
             # Add the ones in the form
+
             def form_order(f):
                 # If ORDER is None (new header match), add it last.
                 return f.cleaned_data.get('ORDER') or len(formset.forms)

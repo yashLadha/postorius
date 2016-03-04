@@ -79,7 +79,6 @@ class MailmanPaginator(Paginator):
     count = property(_get_count)
 
 
-
 def paginate(request, collection, count=20, paginator_class=Paginator):
     # count is the number of items per page
     paginator = paginator_class(collection, count)

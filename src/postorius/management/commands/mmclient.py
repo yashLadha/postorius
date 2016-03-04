@@ -21,6 +21,7 @@ from django.core.management.base import BaseCommand, CommandError
 from postorius import utils
 from urllib2 import HTTPError
 
+
 class Command(BaseCommand):
     help = """Opens a Python shell with a mailmanclient object named `client`.
 
@@ -30,9 +31,9 @@ Usage example:
     foo = client.get_list('foo@example.org')
     foo.members
     [<Member "les@primus.org">]
-    
+
 A complete list of commands can be found in the mailman.client documentation."""
-    
+
     def handle(self, *args, **options):
         # choose an interpreter
         console = None

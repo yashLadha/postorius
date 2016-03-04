@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.

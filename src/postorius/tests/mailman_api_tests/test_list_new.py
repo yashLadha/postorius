@@ -31,7 +31,6 @@ except ImportError:
 from postorius.tests.utils import ViewTestCase
 
 
-
 class ListCreationTest(ViewTestCase):
     """Tests for the new list page."""
 

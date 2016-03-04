@@ -13,16 +13,16 @@ Git for version control.
 
 .. _GitLab: https://gitlab.com/mailman/postorius
 
-Changes are not made directly in the project's master branch, but in 
+Changes are not made directly in the project's master branch, but in
 feature-related personal branches, which get reviewed and then merged into
-the master branch. 
+the master branch.
 
 An ideal workflow would be like this:
 
-1. File a bug to suggest a new feature or report a bug (or just pick one of 
+1. File a bug to suggest a new feature or report a bug (or just pick one of
    the existing bugs).
 2. Create a new branch with your code changes.
-3. Make a "merge request" to get your code reviewed and merged. 
+3. Make a "merge request" to get your code reviewed and merged.
 
 
 Installing and running the tests
@@ -57,7 +57,7 @@ dash:
 
 
 All test modules reside in the ``postorius/src/postorius/tests``
-directory. Please have a look at the existing examples. 
+directory. Please have a look at the existing examples.
 
 
 Mocking calls to Mailman's REST API
@@ -66,7 +66,7 @@ Mocking calls to Mailman's REST API
 A lot of Postorius' code involves calls to Mailman's REST API (through
 the mailman.client library). Running these tests against a real instance
 of Mailman would be bad practice and slow, so ``vcrpy`` *cassettes* are
-used instead (see the `vcrpy Documentation`_ for details). These files 
+used instead (see the `vcrpy Documentation`_ for details). These files
 contain pre-recorded HTTP responses.
 
 .. _`vcrpy Documentation`: https://github.com/kevin1024/vcrpy
@@ -83,7 +83,7 @@ first start the mailman core, with the API server listening on port
 Postorius source.
 
 .. note::
-    Make sure, you use a fresh mailman.db file. 
+    Make sure, you use a fresh mailman.db file.
 
 Once the core is running, you can record the new cassette file defined
 in your test case by running tox with the `record` test env:
@@ -105,12 +105,12 @@ Three of Django's default User roles are relvant for Postorius:
 - Superuser: Can do everything.
 - AnonymousUser: Can view list index and info pages.
 - Authenticated users: Can view list index and info pages. Can (un)subscribe
-  from lists. 
+  from lists.
 
-Apart from these default roles, there are two others relevant in Postorius: 
+Apart from these default roles, there are two others relevant in Postorius:
 
 - List owners: Can change list settings, moderate messages and delete their
-  lists. 
+  lists.
 - List moderators: Can moderate messages.
 
 There are a number of decorators to protect views from unauthorized users.
@@ -126,8 +126,8 @@ There are a number of decorators to protect views from unauthorized users.
 Accessing the Mailman API
 =========================
 
-Postorius uses mailman.client to connect to Mailman's REST API. In order to 
-directly use the client, ``cd`` to your project folder and execute 
+Postorius uses mailman.client to connect to Mailman's REST API. In order to
+directly use the client, ``cd`` to your project folder and execute
 ``python manage.py mmclient``. This will open a python shell (IPython, if
 that's available) and provide you with a client object connected to to your
 local Mailman API server (it uses the credentials from your settings.py).
@@ -146,10 +146,9 @@ A quick example:
 
     >>> mailman_dev = client.get_list('mailman-developers@python.org')
     >>> print mailman_dev settings
-    {u'description': u'Mailman development', 
+    {u'description': u'Mailman development',
      u'default_nonmember_action': u'hold', ...}
 
 For detailed information how to use mailman.client, check out its documentation_.
 
 .. _documentation: https://gitlab.com/mailman/mailmanclient/blob/master/src/mailmanclient/docs/using.rst
-

@@ -79,10 +79,12 @@ class MailmanUserTest(ViewTestCase):
             'receive_own_postings', 'acknowledge_posts',
             'hide_address', 'receive_list_copy',
             )
-        # Prepare a Preferences subclass that will check the POST data 
+        # Prepare a Preferences subclass that will check the POST data
         import mailmanclient._client
+
         class TestingPrefs(mailmanclient._client.Preferences):
             testcase = self
+
             def save(self):
                 for pref in prefs_with_none:
                     self.testcase.assertNotIn(pref, self._changed_rest_data)
