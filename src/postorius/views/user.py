@@ -21,13 +21,10 @@ import logging
 
 from django.forms.formsets import formset_factory
 from django.contrib import messages
-from django.contrib.auth.decorators import (login_required,user_passes_test)
-from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.views.generic import TemplateView
 from django.http import Http404
 
 try:
@@ -36,7 +33,8 @@ except ImportError:
     from urllib.error import HTTPError
 
 from postorius import utils
-from postorius.models import MailmanConnectionError, AddressConfirmationProfile
+from postorius.models import (MailmanConnectionError, MailmanApiError, List,
+                              AddressConfirmationProfile, MailmanUser)
 from postorius.forms import *
 from postorius.auth.decorators import *
 from postorius.views.generic import MailmanUserView
@@ -44,7 +42,6 @@ from smtplib import SMTPException
 from socket import error as socket_error
 import errno
 import uuid
-import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -258,7 +255,7 @@ def user_profile(request, user_email=None):
     else:
         form = AddressActivationForm(initial={'user_email': request.user.email})
     return render(request, 'postorius/user/profile.html',
-                  {'mm_user': mm_user, 'form': form}, context_instance=RequestContext(request))
+                  {'mm_user': mm_user, 'form': form})
 
 
 

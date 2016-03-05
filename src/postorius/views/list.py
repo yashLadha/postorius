@@ -39,6 +39,7 @@ except ImportError:
 
 from postorius import utils
 from postorius.forms import *
+from postorius.models import Domain, List, MailmanApiError
 from postorius.auth.decorators import *
 from postorius.views.generic import MailingListView
 

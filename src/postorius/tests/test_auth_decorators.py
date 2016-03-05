@@ -22,10 +22,7 @@ from django.test import TestCase
 from mock import patch
 
 from postorius.auth.decorators import (list_owner_required,
-                                       list_moderator_required,
-                                       basic_auth_login)
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
+                                       list_moderator_required)
 from mailmanclient import Client
 
 
@@ -43,7 +40,6 @@ class ListOwnerRequiredTest(TestCase):
     """Tests the list_owner_required auth decorator."""
 
     def setUp(self):
-        from django.test.client import RequestFactory
         from postorius.tests.utils import create_mock_list
         self.request_factory = RequestFactory()
         # create a mock list with members
@@ -109,7 +105,6 @@ class ListModeratorRequiredTest(TestCase):
     """Tests the list_owner_required auth decorator."""
 
     def setUp(self):
-        from django.test.client import RequestFactory
         from postorius.tests.utils import create_mock_list
         self.request_factory = RequestFactory()
         # create a mock list with members

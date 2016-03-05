@@ -15,12 +15,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-try:
-    import setuptools
-except ImportError:
-    import ez_setup
-    ez_setup.use_setuptools()
-
 from setuptools import setup, find_packages
 
 

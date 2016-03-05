@@ -18,13 +18,10 @@
 """Postorius view decorators."""
 
 
-from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth import authenticate, login
 from django.core.exceptions import PermissionDenied
 
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
-
-from .utils import set_user_access_props
+from postorius.auth.utils import set_user_access_props
 
 
 def basic_auth_login(fn):

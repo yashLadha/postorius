@@ -16,10 +16,8 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from postorius import utils
-from urllib2 import HTTPError
 
 class Command(BaseCommand):
     help = """Opens a Python shell with a mailmanclient object named `client`.

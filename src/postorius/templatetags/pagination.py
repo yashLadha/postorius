@@ -17,7 +17,6 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import template
-from django.core.urlresolvers import reverse
 from django.utils.html import conditional_escape
 
 

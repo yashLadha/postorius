@@ -21,10 +21,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from mock import patch
 from smtplib import SMTPException
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
 
 from postorius.models import AddressConfirmationProfile
 from postorius.tests.utils import ViewTestCase
