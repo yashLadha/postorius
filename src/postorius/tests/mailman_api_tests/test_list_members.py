@@ -232,6 +232,6 @@ class ListMembersTest(ViewTestCase):
             {'q': 'not_a_member'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['members']), 0)
-        self.assertNotContains(response, member_2.email)
+        self.assertNotContains(response, member_1.email)
         self.assertNotContains(response, member_2.email)
 
