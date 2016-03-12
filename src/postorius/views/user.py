@@ -232,7 +232,7 @@ def user_subscriptions(request):
 
 
 @login_required()
-def user_profile(request, user_email=None):
+def user_profile(request):
     utils.set_other_emails(request.user)
     try:
         mm_user = MailmanUser.objects.get_or_create_from_django(request.user)

@@ -92,7 +92,7 @@ class ListSummaryPageTest(ViewTestCase):
 
     def test_list_summary_owner(self):
         # Response must contain the administration menu
-        user = self.mm_client.create_user('test@example.com', None)
+        self.mm_client.create_user('test@example.com', None)
         mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_owner('test@example.com')
         self.client.login(username='testuser', password='testpass')
@@ -102,7 +102,7 @@ class ListSummaryPageTest(ViewTestCase):
 
     def test_list_summary_moderator(self):
         # Response must contain the administration menu
-        user = self.mm_client.create_user('test@example.com', None)
+        self.mm_client.create_user('test@example.com', None)
         mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_moderator('test@example.com')
         self.client.login(username='testuser', password='testpass')
@@ -156,8 +156,10 @@ class ListSummaryPageTest(ViewTestCase):
         self.assertContains(response, 'List metrics')
 
     def test_list_metrics_displayed_to_superuser(self):
-        mlist = self.mm_client.get_list('foo@example.com')
-        User.objects.create_superuser('testadminuser', 'testadmin@example.com', 'testpass')
-        self.assertTrue(self.client.login(username='testadminuser', password='testpass'))
-        response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
+        User.objects.create_superuser('testadminuser', 'testadmin@example.com',
+                                      'testpass')
+        self.assertTrue(self.client.login(username='testadminuser',
+                                          password='testpass'))
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com',)))
         self.assertContains(response, 'List metrics')

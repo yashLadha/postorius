@@ -176,7 +176,6 @@ class AddModeratorTest(ViewTestCase):
         url = reverse('list_members', args=('foo@example.com', 'moderator',))
         response = self.client.post(url, {'email': 'newmod@example.com'})
         self.assertRedirects(response, url)
-        moderators = self.foo_list.moderators
 
     def tearDown(self):
         self.foo_list.delete()

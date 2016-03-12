@@ -211,11 +211,10 @@ class ChangeSubscriptionView(MailingListView):
             form = ListSubscribe(user_emails, request.POST)
             for address in user_emails:
                 try:
-                    userMember = self.mailing_list.get_member(address)
+                    self.mailing_list.get_member(address)
                 except ValueError:
                     pass
                 else:
-                    userSubscribed = True
                     old_email = address
                     break # no need to test more addresses
             if form.is_valid():
@@ -373,7 +372,7 @@ def list_moderation(request, list_id):
                     messages.success(request, _('The selected messages were discarded'))
             except MailmanApiError:
                 return utils.render_api_error(request)
-            except HTTPError as e:
+            except HTTPError:
                 messages.error(request, _('Message could not be found'))
     else:
         form = MultipleChoiceForm()
@@ -804,7 +803,6 @@ def list_bans(request, list_id):
             except ValueError as e:
                 messages.error(request, _('Invalid data: %s') % e)
             return redirect('list_bans', list_id)
-            addban_form = ListAddBanForm()
     else:
         addban_form = ListAddBanForm()
     return render(request, 'postorius/lists/bans.html', {
