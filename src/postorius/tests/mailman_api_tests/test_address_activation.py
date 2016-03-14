@@ -55,25 +55,23 @@ class TestAddressActivationForm(ViewTestCase):
         self.mm_user.delete()
 
     def test_valid_email_is_valid(self):
-        form = AddressActivationForm({'email': 'very_new_email@example.org',})
+        form = AddressActivationForm({'email': 'very_new_email@example.org'})
         self.assertTrue(form.is_valid())
 
     def test_email_used_by_django_auth_is_invalid(self):
-        # No need for cassette because we should check mailman last since it's the most expensive
-        form = AddressActivationForm({'email': 'les@example.org',})
+        form = AddressActivationForm({'email': 'les@example.org'})
         self.assertFalse(form.is_valid())
 
     def test_invalid_email_is_not_valid(self):
-        # No need for cassette because we should check mailman last since it's the most expensive
-        form = AddressActivationForm({'email': 'les@example',})
+        form = AddressActivationForm({'email': 'les@example'})
         self.assertFalse(form.is_valid())
 
     def test_email_used_by_expired_confirmation_profile_is_valid(self):
-        form = AddressActivationForm({'email': 'expired@example.org',})
+        form = AddressActivationForm({'email': 'expired@example.org'})
         self.assertTrue(form.is_valid())
 
     def test_email_used_by_mailman_is_invalid(self):
-        form = AddressActivationForm({'email': 'subscribed@example.org',})
+        form = AddressActivationForm({'email': 'subscribed@example.org'})
         self.assertFalse(form.is_valid())
 
 
