@@ -73,8 +73,8 @@ class MailmanUserTest(ViewTestCase):
         # those preferences are unset, they must be excluded from the POST
         # data.
         self.client.login(username='user', password='testpass')
-        self.foo_list.subscribe(self.user.email,
-            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        self.foo_list.subscribe(self.user.email, pre_verified=True,
+                                pre_confirmed=True, pre_approved=True)
         prefs_with_none = (
             'receive_own_postings', 'acknowledge_posts',
             'hide_address', 'receive_list_copy',
@@ -94,11 +94,12 @@ class MailmanUserTest(ViewTestCase):
                     reverse('user_mailmansettings'),
                     reverse('user_list_options', args=[self.foo_list.list_id]),
                     ):
-                response = self.client.post(url,
-                    dict((pref, None) for pref in prefs_with_none))
+                response = self.client.post(
+                        url, dict((pref, None) for pref in prefs_with_none))
                 self.assertEqual(response.status_code, 302)
             # Formsets
-            for url in ('user_address_preferences', 'user_subscription_preferences'):
+            for url in ('user_address_preferences',
+                        'user_subscription_preferences'):
                 url = reverse(url)
                 post_data = dict(
                     ('form-0-%s' % pref, None)
@@ -118,7 +119,8 @@ class MailmanUserTest(ViewTestCase):
         user = User.objects.create_user(
             'old-user', 'old-user@example.com', 'testpass')
         self.client.login(username='old-user', password='testpass')
-        self.assertRaises(Mailman404Error, MailmanUser.objects.get, address=user.email)
+        self.assertRaises(Mailman404Error, MailmanUser.objects.get,
+                          address=user.email)
         response = self.client.get(reverse('user_subscriptions'))
         self.assertEqual(response.status_code, 200)
         # The Mailman user must have been created

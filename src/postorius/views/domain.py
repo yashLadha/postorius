@@ -39,7 +39,8 @@ def domain_index(request):
         existing_domains = Domain.objects.all()
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render(request, 'postorius/domain/index.html', {'domains': existing_domains})
+    return render(request, 'postorius/domain/index.html',
+                  {'domains': existing_domains})
 
 
 @login_required
@@ -64,7 +65,8 @@ def domain_new(request):
             return redirect("domain_index")
     else:
         form = DomainNew()
-    return render(request, 'postorius/domain/new.html', {'form': form, 'message': message})
+    return render(request, 'postorius/domain/new.html',
+                  {'form': form, 'message': message})
 
 
 @login_required
@@ -80,10 +82,9 @@ def domain_delete(request, domain):
                              _('The domain %s has been deleted.' % domain))
             return redirect("domain_index")
         except HTTPError as e:
-            messages.error(request, _('The domain could not be deleted:'
-                                      ' %s' % e.msg))
+            messages.error(request,
+                           _('The domain could not be deleted: %s' % e.msg))
             return redirect("domain_index")
-    submit_url = reverse('domain_delete',
-                         kwargs={'domain': domain})
+    submit_url = reverse('domain_delete', kwargs={'domain': domain})
     return render(request, 'postorius/domain/confirm_delete.html',
-            {'domain': domain, 'submit_url': submit_url})
+                  {'domain': domain, 'submit_url': submit_url})

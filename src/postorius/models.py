@@ -259,7 +259,8 @@ class AddressConfirmationProfile(models.Model):
 
         The following settings are recognized:
 
-            >>> EMAIL_CONFIRMATION_TEMPLATE = 'postorius/user/address_confirmation_message.txt'
+            >>> EMAIL_CONFIRMATION_TEMPLATE = \
+                    'postorius/user/address_confirmation_message.txt'
             >>> EMAIL_CONFIRMATION_FROM = 'postmaster@list.org'
             >>> EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
 
@@ -276,14 +277,14 @@ class AddressConfirmationProfile(models.Model):
         # Detect the right template path, either from the param,
         # the setting or the default
         if not template_path:
-            template_path = getattr(settings,
-                                    'EMAIL_CONFIRMATION_TEMPLATE',
-                                    'postorius/user/address_confirmation_message.txt')
+            template_path = getattr(
+                    settings, 'EMAIL_CONFIRMATION_TEMPLATE',
+                    'postorius/user/address_confirmation_message.txt')
         # Create a template context (if there is none) containing
         # the activation_link and the host_url.
         if not template_context:
             template_context = {'activation_link': activation_link,
-                    'host_url': request.build_absolute_uri("/")}
+                                'host_url': request.build_absolute_uri("/")}
         email_subject = getattr(
             settings, 'EMAIL_CONFIRMATION_SUBJECT', u'Confirmation needed')
         try:
@@ -297,6 +298,7 @@ class AddressConfirmationProfile(models.Model):
             except AttributeError:
                 raise ImproperlyConfigured
 
-        send_mail(email_subject, render_to_string(template_path, template_context),
+        send_mail(email_subject,
+                  render_to_string(template_path, template_context),
                   sender_address,
                   [self.email])

@@ -61,34 +61,39 @@ class ListSettingsTest(ViewTestCase):
 
     def test_page_not_accessible_if_not_logged_in(self):
         for section_name in SETTINGS_FORMS:
-            url = reverse('list_settings', args=('foo.example.com', section_name))
+            url = reverse('list_settings', args=('foo.example.com',
+                                                 section_name))
             self.assertRedirectsToLogin(url)
 
     def test_page_not_accessible_for_unprivileged_users(self):
         self.client.login(username='testuser', password='testpass')
         for section_name in SETTINGS_FORMS:
-            url = reverse('list_settings', args=('foo.example.com', section_name))
+            url = reverse('list_settings', args=('foo.example.com',
+                                                 section_name))
             response = self.client.get(url)
             self.assertEqual(response.status_code, 403)
 
     def test_not_accessible_for_moderator(self):
         self.client.login(username='testmoderator', password='testpass')
         for section_name in SETTINGS_FORMS:
-            url = reverse('list_settings', args=('foo.example.com', section_name))
+            url = reverse('list_settings', args=('foo.example.com',
+                                                 section_name))
             response = self.client.get(url)
             self.assertEqual(response.status_code, 403)
 
     def test_page_accessible_for_owner(self):
         self.client.login(username='testowner', password='testpass')
         for section_name in SETTINGS_FORMS:
-            url = reverse('list_settings', args=('foo.example.com', section_name))
+            url = reverse('list_settings', args=('foo.example.com',
+                                                 section_name))
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
     def test_page_accessible_for_superuser(self):
         self.client.login(username='testsu', password='testpass')
         for section_name in SETTINGS_FORMS:
-            url = reverse('list_settings', args=('foo@example.com', section_name))
+            url = reverse('list_settings', args=('foo@example.com',
+                                                 section_name))
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
@@ -109,18 +114,20 @@ class ListSettingsTest(ViewTestCase):
 
     def test_archivers(self):
         self.assertEqual(dict(self.foo_list.archivers),
-            {'mhonarc': True, 'prototype': True, 'mail-archive': True})
+                         {'mhonarc': True, 'prototype': True,
+                          'mail-archive': True})
         self.client.login(username='testsu', password='testpass')
         url = reverse('list_settings', args=('foo.example.com', 'archiving'))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["form"].initial['archivers'],
                          ['mail-archive', 'mhonarc', 'prototype'])
-        response = self.client.post(url,
-            {'archive_policy': 'public', 'archivers': ['prototype']})
+        response = self.client.post(
+                url, {'archive_policy': 'public', 'archivers': ['prototype']})
         self.assertRedirects(response, url)
         self.assertHasSuccessMessage(response)
         # Get a new list object to avoid caching
         m_list = List.objects.get(fqdn_listname='foo.example.com')
         self.assertEqual(dict(m_list.archivers),
-            {'mhonarc': False, 'prototype': True, 'mail-archive': False})
+                         {'mhonarc': False, 'prototype': True,
+                          'mail-archive': False})

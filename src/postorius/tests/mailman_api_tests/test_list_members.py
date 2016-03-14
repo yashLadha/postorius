@@ -62,26 +62,26 @@ class ListMembersAccessTest(ViewTestCase):
 
     def test_page_not_accessible_for_unprivileged_users(self):
         self.client.login(username='testuser', password='testpass')
-        response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', 'subscriber',)))
+        response = self.client.get(reverse(
+            'list_members', args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 403)
 
     def test_not_accessible_for_moderator(self):
         self.client.login(username='testmoderator', password='testpass')
-        response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', 'subscriber',)))
+        response = self.client.get(reverse(
+            'list_members', args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 403)
 
     def test_page_accessible_for_superuser(self):
         self.client.login(username='testsu', password='testpass')
-        response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', 'subscriber',)))
+        response = self.client.get(reverse(
+            'list_members', args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 200)
 
     def test_page_accessible_for_owner(self):
         self.client.login(username='testowner', password='testpass')
-        response = self.client.get(reverse('list_members',
-                                           args=('foo@example.com', 'subscriber',)))
+        response = self.client.get(reverse(
+            'list_members', args=('foo@example.com', 'subscriber',)))
         self.assertEqual(response.status_code, 200)
 
 
@@ -205,10 +205,12 @@ class ListMembersTest(ViewTestCase):
 
     def test_show_members_page(self):
         self.client.login(username='testsu', password='testpass')
-        member_1 = self.foo_list.subscribe('member-1@example.com',
-            pre_verified=True, pre_confirmed=True, pre_approved=True)
-        member_2 = self.foo_list.subscribe('member-2@example.com',
-            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        member_1 = self.foo_list.subscribe(
+                'member-1@example.com', pre_verified=True, pre_confirmed=True,
+                pre_approved=True)
+        member_2 = self.foo_list.subscribe(
+                'member-2@example.com', pre_verified=True, pre_confirmed=True,
+                pre_approved=True)
         response = self.client.get(reverse(
             'list_members', args=['foo@example.com', 'subscriber']))
         self.assertEqual(response.status_code, 200)
@@ -219,10 +221,12 @@ class ListMembersTest(ViewTestCase):
 
     def test_search_members_1(self):
         self.client.login(username='testsu', password='testpass')
-        member_1 = self.foo_list.subscribe('member-1@example.com',
-            pre_verified=True, pre_confirmed=True, pre_approved=True)
-        member_2 = self.foo_list.subscribe('member-2@example.com',
-            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        member_1 = self.foo_list.subscribe(
+                'member-1@example.com', pre_verified=True, pre_confirmed=True,
+                pre_approved=True)
+        member_2 = self.foo_list.subscribe(
+                'member-2@example.com', pre_verified=True, pre_confirmed=True,
+                pre_approved=True)
         response = self.client.get(reverse(
             'list_members', args=['foo@example.com', 'subscriber']),
             {'q': 'example.com'})

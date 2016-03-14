@@ -16,8 +16,8 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 from django.test import TestCase
 
-from postorius.forms import (ListNew,
-    UserPreferences, DomainNew, ListSubscribe, ChangeSubscriptionForm)
+from postorius.forms import (ListNew, UserPreferences, DomainNew,
+                             ListSubscribe, ChangeSubscriptionForm)
 
 
 class UserPreferencesTest(TestCase):
@@ -55,34 +55,30 @@ class DomainNewTest(TestCase):
 class ListSubscribeTest(TestCase):
     def test_subscribe_works(self):
         user_emails = ['someone@example.com']
-        form = ListSubscribe(user_emails, {
-            'email' : 'someone@example.com',
-            'display_name' : 'Someone',
-        })
+        form = ListSubscribe(user_emails,
+                             {'email': 'someone@example.com',
+                              'display_name': 'Someone'})
         self.assertTrue(form.is_valid())
-
 
     def test_subscribe_fails(self):
         user_emails = ['someone@example.com']
-        form = ListSubscribe(user_emails, {
-            'email' : 'notaemail',
-            'display_name' : 'Someone',
-        })
+        form = ListSubscribe(user_emails,
+                             {'email': 'notaemail',
+                              'display_name': 'Someone'})
         self.assertFalse(form.is_valid())
 
     def test_subscribe_validates_email(self):
         user_emails = ['something']
-        form = ListSubscribe(user_emails, {
-            'email' : 'something',
-            'display_name' : 'Someone',
-        })
+        form = ListSubscribe(user_emails,
+                             {'email': 'something',
+                              'display_name': 'Someone'})
         self.assertFalse(form.is_valid())
+
 
 class ChangeSubscriptionTest(TestCase):
     def test_subscription_changes_only_to_user_addresses(self):
         user_emails = ['one@example.com', 'two@example.com']
-        form = ChangeSubscriptionForm(user_emails,
-                                      {'email': 'abcd@d.com'})
+        form = ChangeSubscriptionForm(user_emails, {'email': 'abcd@d.com'})
         self.assertFalse(form.is_valid())
 
     def test_subscription_works(self):

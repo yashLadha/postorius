@@ -69,8 +69,9 @@ class TestSubscription(ViewTestCase):
             {'email': 'test@example.com'})
         self.assertEqual(len(self.open_list.members), 1)
         self.assertEqual(len(self.open_list.requests), 0)
-        self.assertRedirects(response,
-            reverse('list_summary', args=('open_list.example.com', )))
+        self.assertRedirects(
+                response, reverse('list_summary',
+                                  args=('open_list.example.com', )))
         self.assertHasSuccessMessage(response)
 
     def test_secondary_open(self):
@@ -81,8 +82,9 @@ class TestSubscription(ViewTestCase):
             {'email': 'fritz@example.org'})
         self.assertEqual(len(self.open_list.members), 1)
         self.assertEqual(len(self.open_list.requests), 0)
-        self.assertRedirects(response,
-            reverse('list_summary', args=('open_list.example.com', )))
+        self.assertRedirects(
+                response, reverse('list_summary',
+                                  args=('open_list.example.com', )))
         self.assertHasSuccessMessage(response)
 
     def test_unknown_address(self):
@@ -93,8 +95,9 @@ class TestSubscription(ViewTestCase):
             {'email': 'unknown@example.org'})
         self.assertEqual(len(self.open_list.members), 0)
         self.assertEqual(len(self.open_list.requests), 0)
-        self.assertRedirects(response,
-            reverse('list_summary', args=('open_list.example.com', )))
+        self.assertRedirects(
+                response, reverse('list_summary',
+                                  args=('open_list.example.com', )))
         self.assertHasErrorMessage(response)
 
     def test_subscribe_mod(self):
@@ -105,8 +108,9 @@ class TestSubscription(ViewTestCase):
             {'email': 'test@example.com'})
         self.assertEqual(len(self.mod_list.members), 0)
         self.assertEqual(len(self.mod_list.requests), 1)
-        self.assertRedirects(response,
-            reverse('list_summary', args=('moderate_subs.example.com', )))
+        self.assertRedirects(
+                response, reverse('list_summary',
+                                  args=('moderate_subs.example.com', )))
         self.assertHasSuccessMessage(response)
 
     def test_secondary_mod(self):
@@ -117,8 +121,9 @@ class TestSubscription(ViewTestCase):
             {'email': 'fritz@example.org'})
         self.assertEqual(len(self.mod_list.members), 0)
         self.assertEqual(len(self.mod_list.requests), 1)
-        self.assertRedirects(response,
-            reverse('list_summary', args=('moderate_subs.example.com', )))
+        self.assertRedirects(
+                response, reverse('list_summary',
+                                  args=('moderate_subs.example.com', )))
         self.assertHasSuccessMessage(response)
 
     def test_subscribe_mod_then_open(self):
@@ -144,11 +149,12 @@ class TestSubscription(ViewTestCase):
         self.client.logout()
         self.client.login(username='testowner', password='pwd')
         accept_url = reverse(
-            'handle_subscription_request', args=['moderate_subs.example.com',
-            self.mod_list.requests[0]['token'], 'accept'])
+                'handle_subscription_request',
+                args=['moderate_subs.example.com',
+                      self.mod_list.requests[0]['token'], 'accept'])
         response = self.client.get(accept_url)
-        self.assertRedirects(
-            response, reverse('list_subscription_requests',
-            args=['moderate_subs.example.com']))
+        self.assertRedirects(response,
+                             reverse('list_subscription_requests',
+                                     args=['moderate_subs.example.com']))
         message = self.assertHasSuccessMessage(response)
         self.assertIn('Already subscribed', message)

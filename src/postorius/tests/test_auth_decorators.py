@@ -123,8 +123,8 @@ class ListModeratorRequiredTest(TestCase):
     def test_not_authenticated(self, mock_get_list):
         """Should raise PermissionDenied if user is not authenticated."""
         mock_get_list.return_value = self.mock_list
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
+        request = self.request_factory.get(
+                '/lists/foolist.example.org/settings/')
         request.user = AnonymousUser()
         self.assertRaises(PermissionDenied, dummy_function_mod_req, request,
                           list_id='foolist.example.org')
@@ -133,13 +133,12 @@ class ListModeratorRequiredTest(TestCase):
     def test_superuser(self, mock_get_list):
         """Should call the dummy method, if user is superuser."""
         mock_get_list.return_value = self.mock_list
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_superuser('su2', 'su@sodo.org',
-                                                     'pwd')
-        return_value = dummy_function_mod_req(request,
-                                              list_id=
-                                              'foolist.example.org')
+        request = self.request_factory.get(
+                '/lists/foolist.example.org/settings/')
+        request.user = User.objects.create_superuser(
+                'su2', 'su@sodo.org', 'pwd')
+        return_value = dummy_function_mod_req(
+                request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
 
     @patch.object(Client, 'get_list')
@@ -149,10 +148,10 @@ class ListModeratorRequiredTest(TestCase):
         self.mock_list.moderators = ['geddy@rush.it']
         mock_get_list.return_value = self.mock_list
         # prepare request
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_user('les cl2', 'les@primus.org',
-                                                'pwd')
+        request = self.request_factory.get(
+                '/lists/foolist.example.org/settings/')
+        request.user = User.objects.create_user(
+                'les cl2', 'les@primus.org', 'pwd')
         self.assertRaises(PermissionDenied, dummy_function_mod_req, request,
                           list_id='foolist.example.org')
 
@@ -163,13 +162,12 @@ class ListModeratorRequiredTest(TestCase):
         self.mock_list.owners = ['les@primus.org']
         mock_get_list.return_value = self.mock_list
         # prepare request
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_user('les cl3', 'les@primus.org',
-                                                'pwd')
-        return_value = dummy_function_mod_req(request,
-                                              list_id=
-                                              'foolist.example.org')
+        request = self.request_factory.get(
+                '/lists/foolist.example.org/settings/')
+        request.user = User.objects.create_user(
+                'les cl3', 'les@primus.org', 'pwd')
+        return_value = dummy_function_mod_req(
+                request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
 
     @patch.object(Client, 'get_list')
@@ -179,11 +177,10 @@ class ListModeratorRequiredTest(TestCase):
         self.mock_list.moderators = ['les@primus.org']
         mock_get_list.return_value = self.mock_list
         # prepare request
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_user('les cl4', 'les@primus.org',
-                                                'pwd')
-        return_value = dummy_function_mod_req(request,
-                                              list_id=
-                                              'foolist.example.org')
+        request = self.request_factory.get(
+                '/lists/foolist.example.org/settings/')
+        request.user = User.objects.create_user(
+                'les cl4', 'les@primus.org', 'pwd')
+        return_value = dummy_function_mod_req(
+                request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
