@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import *
+from django.conf.urls import url, include
 from django.contrib.auth.views import login as login_view
 from django.contrib.auth.views import logout as logout_view
 

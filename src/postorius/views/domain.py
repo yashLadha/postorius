@@ -28,8 +28,7 @@ except ImportError:
     from urllib.error import HTTPError
 from postorius import utils
 from postorius.models import Domain
-from postorius.forms import *
-from postorius.auth.decorators import *
+from postorius.forms import DomainNew
 
 
 @login_required

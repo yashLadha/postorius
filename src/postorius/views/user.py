@@ -35,8 +35,7 @@ except ImportError:
 from postorius import utils
 from postorius.models import (MailmanConnectionError, MailmanApiError, List,
                               AddressConfirmationProfile, MailmanUser)
-from postorius.forms import *
-from postorius.auth.decorators import *
+from postorius.forms import UserPreferences, AddressActivationForm
 from postorius.views.generic import MailmanUserView
 from smtplib import SMTPException
 from socket import error as socket_error
