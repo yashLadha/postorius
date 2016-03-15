@@ -139,9 +139,6 @@ class ListHeaderMatchesTest(ViewTestCase):
         }
         response = self.client.post(url, data)
         self.assertRedirects(response, url)
-        #from postorius.tests.utils import get_flash_messages
-        #msgs = get_flash_messages(response)
-        #print([m.message for m in msgs])
         self.assertHasNoMessage(response)
         self.assertEqual(len(self.mlist.header_matches), 0)
 
