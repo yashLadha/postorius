@@ -41,9 +41,6 @@ ACTION_CHOICES = (
     )
 
 
-# Fields
-
-
 class ListOfStringsField(forms.Field):
     widget = forms.widgets.Textarea
 
@@ -63,10 +60,6 @@ class ListOfStringsField(forms.Field):
                 continue
             result.append(smart_text(line))
         return result
-
-
-
-# Forms
 
 
 class DomainNew(FieldsetForm):
@@ -271,7 +264,7 @@ class ArchiveSettingsForm(ListSettingsForm):
     archivers = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         label=_('Active archivers'),
-        required=False) # May be empty if no archivers are desired.
+        required=False)  # May be empty if no archivers are desired.
 
     def __init__(self, *args, **kwargs):
         super(ArchiveSettingsForm, self).__init__(*args, **kwargs)
@@ -399,7 +392,7 @@ class AlterMessagesForm(ListSettingsForm):
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
-        label= _('Include RFC2369 headers'),
+        label=_('Include RFC2369 headers'),
         help_text=_(
             'Yes is highly recommended. RFC 2369 defines a set of List-* '
             'headers that are normally added to every message sent to the '
@@ -704,7 +697,6 @@ class ListHeaderMatchFormset(forms.BaseFormSet):
             if order in orders:
                 raise forms.ValidationError("Header matches must have distinct orders.")
             orders.append(order)
-
 
 
 class UserPreferences(FieldsetForm):

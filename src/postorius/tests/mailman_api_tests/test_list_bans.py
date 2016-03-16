@@ -78,7 +78,7 @@ class ListBansTest(ViewTestCase):
             'Ban email</button>')
 
     def test_context_contains_delete_forms(self):
-        banned = ["banned{}@example.com".format(i) for i in range(1,10)]
+        banned = ['banned{}@example.com'.format(i) for i in range(1, 10)]
         for ban in banned:
             self.m_list.bans.add(ban)
         response = self.client.get(self.url)

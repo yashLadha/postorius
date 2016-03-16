@@ -103,7 +103,6 @@ def get_flash_messages(response, empty=True):
 get_flash_messages.__test__ = False
 
 
-
 class ViewTestCase(TestCase):
 
     use_vcr = True
@@ -137,4 +136,3 @@ class ViewTestCase(TestCase):
         response = self.client.get(url)
         self.assertRedirects(response,
             '{}?next={}'.format(reverse(settings.LOGIN_URL), quote(url)))
-

@@ -114,23 +114,23 @@ Running Postorius on Apache with mod_wsgi
 
 These settings need to be added to your Apache VirtualHost:
 
-:: 
+::
 
     Alias /static /path/to/postorius_standalone/static
     <Directory "/path/to/postorius_standalone/static">
         Order deny,allow
         Allow from all
-    </Directory>    
+    </Directory>
 
     WSGIScriptAlias / /path/to/postorius_standalone/srv/postorius.wsgi
     <Directory "/path/to/postorius_standalone/srv">
         Order deny,allow
         Allow from all
-    </Directory>    
+    </Directory>
 
 The first Alias serves the static files (CSS, JS, Images, etc.). The
 WSGIScriptAlias serves the Django application. The paths need to be changed
-depending on which location you downloaded ``postorius_standalone`` to. 
+depending on which location you downloaded ``postorius_standalone`` to.
 
 We're almost ready. But you need to collect the static files from Postorius
 (which resides somewhere on your pythonpath) to be able to serve them from the
@@ -141,4 +141,4 @@ site directory. All you have to do is to change into the
 
     $ python manage.py collectstatic
 
-After reloading the webserver Postorius should be running! 
+After reloading the webserver Postorius should be running!

@@ -158,7 +158,6 @@ class AddRemoveOwnerTest(ViewTestCase):
         self.assertHasErrorMessage(response)
 
 
-
 class AddModeratorTest(ViewTestCase):
     """Tests for the list members page.
 

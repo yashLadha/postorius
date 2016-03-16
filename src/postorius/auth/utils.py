@@ -24,6 +24,7 @@ from django.utils import six
 from postorius.utils import set_other_emails
 from postorius.models import List
 
+
 def user_is_in_list_roster(user, mailing_list, roster):
     if not user.is_authenticated():
         return False
@@ -31,7 +32,7 @@ def user_is_in_list_roster(user, mailing_list, roster):
         set_other_emails(user)
     addresses = set([user.email]) | set(user.other_emails)
     if addresses & set(getattr(mailing_list, roster)):
-        return True # At least one address is in the roster
+        return True  # At least one address is in the roster
     return False
 
 
