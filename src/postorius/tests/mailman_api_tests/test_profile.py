@@ -50,24 +50,27 @@ class TestProfile(ViewTestCase):
     def test_view_contains_form(self):
         # The view context should contain a form.
         response = self.client.get(reverse('user_profile'))
-        self.assertContains(response, 'You can add other addresses to your profile')
+        self.assertContains(response,
+                            'You can add other addresses to your profile')
 
     def test_post_invalid_form_shows_error_msg(self):
         # Entering an invalid email address should render an error message.
-        response = self.client.post(reverse('user_profile'), {
-                                    'email': 'invalid_email',
-                                    'user_email': self.user.email})
+        response = self.client.post(reverse('user_profile'),
+                                    {'email': 'invalid_email',
+                                     'user_email': self.user.email})
         self.assertContains(response, 'Enter a valid email address.')
 
     @patch.object(AddressConfirmationProfile, 'send_confirmation_link')
     def test_post_valid_form_shows_success_message(
             self, mock_send_confirmation_link):
         # Entering a valid email should render the activation_sent template.
-        response = self.client.post(reverse('user_profile'), {
-                                    'email': 'new_address@example.org',
-                                    'user_email': self.user.email}, follow=True)
+        response = self.client.post(reverse('user_profile'),
+                                    {'email': 'new_address@example.org',
+                                     'user_email': self.user.email},
+                                    follow=True)
         self.assertEqual(mock_send_confirmation_link.call_count, 1)
-        self.assertContains(response, 'Please follow the instructions sent via email to confirm the address')
+        self.assertContains(response, 'Please follow the instructions sent '
+                                      'via email to confirm the address')
 
     @patch.object(AddressConfirmationProfile, 'send_confirmation_link')
     def test_post_valid_form_redirects_on_success(
@@ -80,11 +83,12 @@ class TestProfile(ViewTestCase):
         self.assertRedirects(response, reverse('user_profile'))
 
     @patch.object(AddressConfirmationProfile, 'send_confirmation_link',
-                         side_effect=SMTPException())
+                  side_effect=SMTPException())
     def test_post_form_with_smtp_exception(self, mock_send_confirmation_link):
         # If a smtp exception occurs display error
         response = self.client.post(reverse('user_profile'), {
             'email': 'new_address@example.org',
             'user_email': self.user.email}, follow=True)
         self.assertEqual(mock_send_confirmation_link.call_count, 1)
-        self.assertContains(response, 'Currently emails can not be added, please try again later')
+        self.assertContains(response, 'Currently emails can not be added, '
+                                      'please try again later')

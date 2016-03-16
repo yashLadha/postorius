@@ -22,8 +22,7 @@ import csv
 from django.http import HttpResponse
 
 from django.contrib import messages
-from django.contrib.auth.decorators import (login_required,
-                                            user_passes_test)
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
 from django.forms import formset_factory
 from django.shortcuts import render, redirect
@@ -68,16 +67,20 @@ def list_members_view(request, list_id, role=None):
                 members = form.cleaned_data['choices']
                 for member in members:
                     mailing_list.unsubscribe(member)
-                messages.success(request, _('The selected members have been unsubscribed'))
+                messages.success(request, _('The selected members'
+                                            ' have been unsubscribed'))
                 return redirect('list_members', list_id, role)
         else:
             member_form = MemberForm(request.POST)
             if member_form.is_valid():
                 try:
-                    getattr(mailing_list, 'add_%s' % role)(member_form.cleaned_data['email'])
+                    getattr(mailing_list, 'add_%s' % role)(
+                            member_form.cleaned_data['email'])
                     messages.success(
-                        request, _('%(email)s has been added with the role %(role)s.')
-                        % {'email': member_form.cleaned_data['email'], 'role': role})
+                            request, _('%(email)s has been added'
+                                       ' with the role %(role)s')
+                            % {'email': member_form.cleaned_data['email'],
+                               'role': role})
                     return redirect('list_members', list_id, role)
                 except HTTPError as e:
                     messages.error(request, _(e.msg))
@@ -141,7 +144,7 @@ def list_member_options(request, list_id, email):
             if preferences_form.is_valid():
                 if not preferences_form.has_changed():
                     messages.info(request,
-                        _("No change to the member's preferences."))
+                                  _("No change to the member's preferences."))
                     return redirect('list_member_options', list_id, email)
                 for key in preferences_form.fields.keys():
                     member_prefs[key] = preferences_form.cleaned_data[key]
@@ -150,8 +153,8 @@ def list_member_options(request, list_id, email):
                 except HTTPError as e:
                     messages.error(request, e.msg)
                 else:
-                    messages.success(request,
-                        _("The member's preferences have been updated."))
+                    messages.success(request, _("The member's preferences have"
+                                                " been updated."))
                     return redirect('list_member_options', list_id, email)
         elif request.POST.get("formname") == 'moderation':
             preferences_form = UserPreferences(initial=member_prefs)
@@ -160,7 +163,7 @@ def list_member_options(request, list_id, email):
             if moderation_form.is_valid():
                 if not moderation_form.has_changed():
                     messages.info(request,
-                        _("No change to the member's moderation."))
+                                  _("No change to the member's moderation."))
                     return redirect('list_member_options', list_id, email)
                 for key in moderation_form.fields.keys():
                     setattr(mm_member, key, moderation_form.cleaned_data[key])
@@ -169,8 +172,8 @@ def list_member_options(request, list_id, email):
                 except HTTPError as e:
                     messages.error(request, e.msg)
                 else:
-                    messages.success(request,
-                        _("The member's moderation settings have been updated."))
+                    messages.success(request, _("The member's moderation "
+                                                "settings have been updated."))
                     return redirect('list_member_options', list_id, email)
     else:
         preferences_form = UserPreferences(initial=member_prefs)
@@ -232,9 +235,11 @@ class ChangeSubscriptionView(MailingListView):
                 else:
                     self.mailing_list.unsubscribe(old_email)
                     self.mailing_list.subscribe(email)
-                    messages.success(request, _('Subscription changed to %s') % email)
+                    messages.success(request,
+                                     _('Subscription changed to %s') % email)
             else:
-                messages.error(request, _('Something went wrong. Please try again.'))
+                messages.error(request,
+                               _('Something went wrong. Please try again.'))
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
@@ -260,16 +265,19 @@ class ListSubscribeView(MailingListView):
                 email = request.POST.get('email')
                 response = self.mailing_list.subscribe(
                     email, pre_verified=True, pre_confirmed=True)
-                if type(response) == dict and response.get('token_owner') == \
-                        'moderator':
+                if (type(response) == dict and
+                        response.get('token_owner') == 'moderator'):
                     messages.success(
-                        request, _('Your subscription request has been submitted and is '
-                        'waiting for moderator approval.'))
+                        request, _('Your subscription request has been'
+                                   ' submitted and is waiting for moderator'
+                                   ' approval.'))
                 else:
-                    messages.success(request, _('You are subscribed to %s.') %
+                    messages.success(request,
+                                     _('You are subscribed to %s.') %
                                      self.mailing_list.fqdn_listname)
             else:
-                messages.error(request, _('Something went wrong. Please try again.'))
+                messages.error(request,
+                               _('Something went wrong. Please try again.'))
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
@@ -286,7 +294,8 @@ class ListUnsubscribeView(MailingListView):
         email = request.POST['email']
         try:
             self.mailing_list.unsubscribe(email)
-            messages.success(request, _('%s has been unsubscribed from this list.') % email)
+            messages.success(request, _('%s has been unsubscribed'
+                                        ' from this list.') % email)
         except MailmanApiError:
             return utils.render_api_error(request)
         except ValueError as e:
@@ -304,17 +313,21 @@ def list_mass_subscribe(request, list_id):
             for email in form.cleaned_data['emails']:
                 try:
                     validate_email(email)
-                    mailing_list.subscribe(
-                        address=email, pre_verified=True, pre_confirmed=True, pre_approved=True)
-                    messages.success(request,
-                                     _('The address %(address)s has been subscribed to %(list)s.') %
-                                     {'address':email, 'list': mailing_list.fqdn_listname})
+                    mailing_list.subscribe(address=email, pre_verified=True,
+                                           pre_confirmed=True,
+                                           pre_approved=True)
+                    messages.success(
+                            request, _('The address %(address)s has been'
+                                       ' subscribed to %(list)s.') %
+                            {'address': email,
+                             'list': mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except HTTPError as e:
                     messages.error(request, e)
                 except ValidationError:
-                    messages.error(request, _('The email address %s is not valid.') % email)
+                    messages.error(request, _('The email address %s'
+                                              ' is not valid.') % email)
     else:
         form = ListMassSubscription()
     return render(request, 'postorius/lists/mass_subscribe.html',
@@ -344,15 +357,18 @@ class ListMassRemovalView(MailingListView):
                 try:
                     validate_email(email)
                     self.mailing_list.unsubscribe(email.lower())
-                    messages.success(request,
-                                    _('The address %(address)s has been unsubscribed from %(list)s.') %
-                                     {'email': email, 'list': self.mailing_list.fqdn_listname})
+                    messages.success(
+                            request, _('The address %(address)s has been'
+                                       ' unsubscribed from %(list)s.') %
+                            {'email': email,
+                             'list': self.mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except (HTTPError, ValueError) as e:
                     messages.error(request, e)
                 except ValidationError:
-                    messages.error(request, _('The email address %s is not valid.') % email)
+                    messages.error(request, _('The email address %s'
+                                              ' is not valid.') % email)
         return redirect('mass_removal', self.mailing_list.list_id)
 
 
@@ -372,13 +388,16 @@ def list_moderation(request, list_id):
             try:
                 if 'accept' in request.POST:
                     _perform_action(message_ids, mailing_list.accept_message)
-                    messages.success(request, _('The selected messages were accepted'))
+                    messages.success(request,
+                                     _('The selected messages were accepted'))
                 elif 'reject' in request.POST:
                     _perform_action(message_ids, mailing_list.reject_message)
-                    messages.success(request, _('The selected messages were rejected'))
+                    messages.success(request,
+                                     _('The selected messages were rejected'))
                 elif 'discard' in request.POST:
                     _perform_action(message_ids, mailing_list.discard_message)
-                    messages.success(request, _('The selected messages were discarded'))
+                    messages.success(request,
+                                     _('The selected messages were discarded'))
             except MailmanApiError:
                 return utils.render_api_error(request)
             except HTTPError:
@@ -428,8 +447,7 @@ def _get_choosable_domains(request):
         return utils.render_api_error(request)
     choosable_domains = [("", _("Choose a Domain"))]
     for domain in domains:
-        choosable_domains.append((domain.mail_host,
-                                  domain.mail_host))
+        choosable_domains.append((domain.mail_host, domain.mail_host))
     return choosable_domains
 
 
@@ -467,7 +485,8 @@ def list_new(request, template='postorius/lists/new.html'):
                                 list_id=mailing_list.list_id)
             # TODO catch correct Error class:
             except HTTPError as e:
-                return render(request, 'postorius/errors/generic.html', {'error': e})
+                return render(request, 'postorius/errors/generic.html',
+                              {'error': e})
     else:
         choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains,
@@ -493,9 +512,10 @@ def list_index(request, template='postorius/index.html'):
         return utils.render_api_error(request)
     choosable_domains = _get_choosable_domains(request)
     return render(request, template,
-            {'count_options': [10, 25, 50, 100, 200], 'error': error,
-            'lists': utils.paginate(request, lists, count=request.GET.get('count', 10)),
-            'domain_count': len(choosable_domains)})
+                  {'count_options': [10, 25, 50, 100, 200], 'error': error,
+                   'lists': utils.paginate(request, lists,
+                                           count=request.GET.get('count', 10)),
+                   'domain_count': len(choosable_domains)})
 
 
 @login_required
@@ -515,7 +535,8 @@ def list_delete(request, list_id):
                              kwargs={'list_id': list_id})
         cancel_url = reverse('list_index',)
         return render(request, 'postorius/lists/confirm_delete.html',
-                {'submit_url': submit_url, 'cancel_url': cancel_url, 'list': the_list})
+                      {'submit_url': submit_url, 'cancel_url': cancel_url,
+                       'list': the_list})
 
 
 @login_required
@@ -595,7 +616,8 @@ def list_subscription_requests(request, list_id):
         m_list = List.objects.get_or_404(fqdn_listname=list_id)
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render(request, 'postorius/lists/subscription_requests.html',{'list': m_list})
+    return render(request, 'postorius/lists/subscription_requests.html',
+                  {'list': m_list})
 
 
 @login_required
@@ -624,10 +646,11 @@ def handle_subscription_request(request, list_id, request_id, action):
     except HTTPError as e:
         if e.code == 409:
             messages.success(request,
-                _('The request was already moderated: %s') % e.reason)
+                             _('The request was already moderated: %s')
+                             % e.reason)
         else:
-            messages.error(request,
-                _('The request could not be moderated: %s') % e.reason)
+            messages.error(request, _('The request could not be moderated: %s')
+                           % e.reason)
     return redirect('list_subscription_requests', m_list.list_id)
 
 
@@ -718,8 +741,8 @@ def remove_role(request, list_id=None, role=None, address=None,
     roster = getattr(the_list, '{}s'.format(role))
     if address not in roster:
         messages.error(request,
-            _('The user %(email)s is not in the %(role)s group')
-            % {'email': address, 'role': role})
+                       _('The user %(email)s is not in the %(role)s group')
+                       % {'email': address, 'role': role})
         return redirect('list_members', the_list.list_id, role)
 
     if role == 'owner':
@@ -740,15 +763,16 @@ def remove_role(request, list_id=None, role=None, address=None,
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
-            messages.error(
-                request, _('The user could not be removed: %(msg)s')
-                % {'msg': e.msg})
+            messages.error(request, _('The user could not be removed: %(msg)s')
+                           % {'msg': e.msg})
             return redirect('list_members', the_list.list_id, role)
-        messages.success(request, _('The user %(address)s has been removed from the %(role)s group.')
+        messages.success(request, _('The user %(address)s has been removed'
+                                    ' from the %(role)s group.')
                          % {'address': address, 'role': role})
         return redirect_on_success
     return render(request, template,
-            {'role': role, 'address': address, 'list_id': the_list.list_id})
+                  {'role': role, 'address': address,
+                   'list_id': the_list.list_id})
 
 
 @login_required
@@ -760,18 +784,21 @@ def remove_all_subscribers(request, list_id):
     try:
         mlist = List.objects.get_or_404(fqdn_listname=list_id)
         if len(mlist.members) == 0:
-            messages.error(request, _('No member is subscribed to the list currently.'))
+            messages.error(request,
+                           _('No member is subscribed to the list currently.'))
             return redirect('mass_removal', mlist.list_id)
         if request.method == 'POST':
             try:
                 for names in mlist.members:
                     mlist.unsubscribe(names.email)
-                messages.success(request, _('All members have been unsubscribed from the list.'))
+                messages.success(request, _('All members have been'
+                                            ' unsubscribed from the list.'))
                 return redirect('list_members', mlist.list_id)
             except Exception as e:
                 messages.error(request, e)
-        return render(request, 'postorius/lists/confirm_removeall_subscribers.html',
-                {'list': mlist})
+        return render(request,
+                      'postorius/lists/confirm_removeall_subscribers.html',
+                      {'list': mlist})
     except MailmanApiError:
         return utils.render_api_error(request)
 
@@ -793,9 +820,7 @@ def list_bans(request, list_id):
             if addban_form.is_valid():
                 try:
                     ban_list.add(addban_form.cleaned_data['email'])
-                    messages.success(
-                        request, _('The email {} has been banned.'.format(
-                        addban_form.cleaned_data['email'])))
+                    messages.success(request, _('The email {} has been banned.'.format(addban_form.cleaned_data['email'])))
                 except HTTPError as e:
                     messages.error(
                         request, _('An error occured: %s') % e.reason)
@@ -805,9 +830,7 @@ def list_bans(request, list_id):
         elif 'del' in request.POST:
             try:
                 ban_list.remove(request.POST['email'])
-                messages.success(
-                    request, _('The email {} has been un-banned.'.format(
-                    request.POST['email'])))
+                messages.success(request, _('The email {} has been un-banned'.format(request.POST['email'])))
             except HTTPError as e:
                 messages.error(request, _('An error occured: %s') % e.reason)
             except ValueError as e:
@@ -815,10 +838,8 @@ def list_bans(request, list_id):
             return redirect('list_bans', list_id)
     else:
         addban_form = ListAddBanForm()
-    return render(request, 'postorius/lists/bans.html', {
-         'list': m_list,
-         'addban_form': addban_form,
-         })
+    return render(request, 'postorius/lists/bans.html',
+                  {'list': m_list, 'addban_form': addban_form})
 
 
 @login_required
@@ -869,8 +890,8 @@ def list_header_matches(request, list_id):
                 messages.error(
                     request, _('An error occured: %s') % e.reason)
             if not errors:
-                messages.success(request,
-                    _('The header matches were successfully modified.'))
+                messages.success(request, _('The header matches were'
+                                            ' successfully modified.'))
             return redirect('list_header_matches', list_id)
     else:
         formset = HeaderMatchFormset(initial=initial_data)

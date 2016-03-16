@@ -133,21 +133,24 @@ class ListSummaryPageTest(ViewTestCase):
         self.assertNotContains(response, 'Delete list</a>')
 
     def test_metrics_not_displayed_to_anonymous(self):
-        response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com',)))
         self.assertNotContains(response, 'List metrics')
 
     def test_list_metrics_not_displayed_to_moderator(self):
         mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_moderator('test@example.com')
         self.client.login(username='testuser', password='testpass')
-        response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com',)))
         self.assertNotContains(response, 'List metrics')
 
     def test_list_metrics_displayed_to_owner(self):
         mlist = self.mm_client.get_list('foo@example.com')
         mlist.add_owner('test@example.com')
         self.client.login(username='testuser', password='testpass')
-        response = self.client.get(reverse('list_summary', args=('foo@example.com',)))
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com',)))
         self.assertContains(response, 'List metrics')
 
     def test_list_metrics_displayed_to_superuser(self):

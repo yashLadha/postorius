@@ -32,8 +32,10 @@ def fieldtype(field):
     return field.field.widget.__class__.__name__
 
 
-@register.inclusion_tag('postorius/lib/form-horizontal.html', takes_context=True)
-def render_form_horizontal(context, form, size_left=2, size_right=8, button=None):
+@register.inclusion_tag('postorius/lib/form-horizontal.html',
+                        takes_context=True)
+def render_form_horizontal(context, form, size_left=2, size_right=8,
+                           button=None):
     return dict(
         form=form,
         size_left=size_left,

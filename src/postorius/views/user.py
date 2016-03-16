@@ -63,7 +63,8 @@ class UserMailmanSettingsView(MailmanUserView):
                         # value.
                         preferences[key] = form.cleaned_data[key]
                 preferences.save()
-                messages.success(request, _('Your preferences have been updated.'))
+                messages.success(request,
+                                 _('Your preferences have been updated.'))
             else:
                 messages.error(request, _('Something went wrong.'))
         except MailmanApiError:
@@ -75,12 +76,13 @@ class UserMailmanSettingsView(MailmanUserView):
     @method_decorator(login_required)
     def get(self, request):
         try:
-            mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
+            mm_user = MailmanUser.objects.get_or_create_from_django(
+                    request.user)
         except MailmanApiError:
             return utils.render_api_error(request)
         settingsform = UserPreferences(initial=mm_user.preferences)
         return render(request, 'postorius/user/mailman_settings.html',
-                {'mm_user': mm_user, 'settingsform': settingsform})
+                      {'mm_user': mm_user, 'settingsform': settingsform})
 
 
 class UserAddressPreferencesView(MailmanUserView):
@@ -97,12 +99,13 @@ class UserAddressPreferencesView(MailmanUserView):
                     preferences = address.preferences
                     for key in form.fields.keys():
                         if form.cleaned_data[key] is not None:
-                            # None: nothing set yet. Remember to remove this test
-                            # when Mailman accepts None as a "reset to default"
-                            # value.
+                            # None: nothing set yet. Remember to remove this
+                            # test when Mailman accepts None as a
+                            # "reset to default" value.
                             preferences[key] = form.cleaned_data[key]
                     preferences.save()
-                messages.success(request, _('Your preferences have been updated.'))
+                messages.success(request,
+                                 _('Your preferences have been updated.'))
             else:
                 messages.error(request, _('Something went wrong.'))
         except MailmanApiError:
@@ -125,10 +128,12 @@ class UserAddressPreferencesView(MailmanUserView):
         except MailmanApiError:
             return utils.render_api_error(request)
         except Mailman404Error:
-            return render(request, 'postorius/user/address_preferences.html', {'nolists': 'true'})
+            return render(request, 'postorius/user/address_preferences.html',
+                          {'nolists': 'true'})
         return render(request, 'postorius/user/address_preferences.html',
-                {'mm_user': mm_user, 'addresses': addresses, 'helperform': helperform,
-                 'formset': formset, 'zipped_data': zipped_data})
+                      {'mm_user': mm_user, 'addresses': addresses,
+                       'helperform': helperform, 'formset': formset,
+                       'zipped_data': zipped_data})
 
 
 @login_required
@@ -155,16 +160,17 @@ def user_list_options(request, list_id):
                     preferences[key] = form.cleaned_data[key]
             preferences.save()
             messages.success(request, _('Your preferences have been updated.'))
-            return redirect("user_list_options", list_id)
+            return redirect('user_list_options', list_id)
         else:
             messages.error(request, _('Something went wrong.'))
     else:
         form = UserPreferences(initial=subscription.preferences)
     user_emails = [request.user.email] + request.user.other_emails
-    subscription_form = ChangeSubscriptionForm(user_emails, initial={'email': subscription.email})
+    subscription_form = ChangeSubscriptionForm(
+            user_emails, initial={'email': subscription.email})
     return render(request, 'postorius/user/list_options.html',
-            {'form': form, 'list': mlist,
-             'change_subscription_form': subscription_form})
+                  {'form': form, 'list': mlist,
+                   'change_subscription_form': subscription_form})
 
 
 class UserSubscriptionPreferencesView(MailmanUserView):
@@ -181,12 +187,13 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                     preferences = subscription.preferences
                     for key in form.cleaned_data.keys():
                         if form.cleaned_data[key] is not None:
-                            # None: nothing set yet. Remember to remove this test
-                            # when Mailman accepts None as a "reset to default"
-                            # value.
+                            # None: nothing set yet. Remember to remove this
+                            # test when Mailman accepts None as a
+                            # "reset to default" value.
                             preferences[key] = form.cleaned_data[key]
                     preferences.save()
-                messages.success(request, _('Your preferences have been updated.'))
+                messages.success(request,
+                                 _('Your preferences have been updated.'))
             else:
                 messages.error(request, _('Something went wrong.'))
         except MailmanApiError:
@@ -208,10 +215,11 @@ class UserSubscriptionPreferencesView(MailmanUserView):
         except MailmanApiError:
             return utils.render_api_error(request)
         except Mailman404Error:
-            return render(request, 'postorius/user/subscription_preferences.html',
-                    {'nolists': 'true'})
+            return render(request,
+                          'postorius/user/subscription_preferences.html',
+                          {'nolists': 'true'})
         return render(request, 'postorius/user/subscription_preferences.html',
-                {'zipped_data': zipped_data, 'formset': formset})
+                      {'zipped_data': zipped_data, 'formset': formset})
 
 
 @login_required
@@ -224,7 +232,7 @@ def user_subscriptions(request):
         return utils.render_api_error(request)
     memberships = [m for m in mm_user.subscriptions if m.role == 'member']
     return render(request, 'postorius/user/subscriptions.html',
-        {'memberships': memberships})
+                  {'memberships': memberships})
 
 
 @login_required()
@@ -237,25 +245,27 @@ def user_profile(request):
     if request.method == 'POST':
         form = AddressActivationForm(request.POST)
         if form.is_valid():
-            profile, created = AddressConfirmationProfile.objects.update_or_create(
-                email=form.cleaned_data['email'], user=request.user, defaults={
-                'activation_key': uuid.uuid4().hex})
+            profile, c = AddressConfirmationProfile.objects.update_or_create(
+                email=form.cleaned_data['email'], user=request.user,
+                defaults={'activation_key': uuid.uuid4().hex})
             try:
                 profile.send_confirmation_link(request)
                 messages.success(request,
-                        _('Please follow the instructions sent via email to confirm the address'))
+                                 _('Please follow the instructions sent via'
+                                   ' email to confirm the address'))
                 return redirect('user_profile')
-            except (SMTPException, socket_error) as serr:
-                if not isinstance(serr, SMTPException) and serr.errno != errno.ECONNREFUSED:
-                    raise serr
+            except (SMTPException, socket_error) as e:
+                if (not isinstance(e, SMTPException) and
+                        e.errno != errno.ECONNREFUSED):
+                    raise e
                 profile.delete()
-                messages.error(request,
-                        _('Currently emails can not be added, please try again later'))
+                messages.error(request, _('Currently emails can not be added,'
+                                          ' please try again later'))
     else:
-        form = AddressActivationForm(initial={'user_email': request.user.email})
+        form = AddressActivationForm(
+                initial={'user_email': request.user.email})
     return render(request, 'postorius/user/profile.html',
                   {'mm_user': mm_user, 'form': form})
-
 
 
 @login_required()
@@ -273,12 +283,15 @@ def address_activation_link(request, activation_key):
                 reverse(settings.LOGIN_URL), request.path))
         if not profile.is_expired:
             # Add the address to the user record in Mailman.
-            logger.info("Adding address %s to %s", profile.email, request.user.email)
+            logger.info('Adding address %s to %s', profile.email,
+                        request.user.email)
             try:
                 try:
-                    mailman_user = MailmanUser.objects.get(address=request.user.email)
+                    mailman_user = MailmanUser.objects.get(
+                            address=request.user.email)
                 except Mailman404Error:
-                    mailman_user = MailmanUser.objects.create(request.user.email, '')
+                    mailman_user = MailmanUser.objects.create(
+                            request.user.email, '')
                 mm_address = mailman_user.add_address(profile.email)
                 # The address has just been verified.
                 mm_address.verify()
@@ -289,9 +302,11 @@ def address_activation_link(request, activation_key):
             if hasattr(request.user, 'other_emails'):
                 del request.user.other_emails
             utils.set_other_emails(request.user)
-            messages.success(request, _('The email address has been activated!'))
+            messages.success(request,
+                             _('The email address has been activated!'))
         else:
-            messages.error(request, _('The activation link has expired, please add the email again!'))
+            messages.error(request, _('The activation link has expired,'
+                                      ' please add the email again!'))
         profile.delete()
     except AddressConfirmationProfile.DoesNotExist:
         messages.error(request, _('The activation link is invalid'))

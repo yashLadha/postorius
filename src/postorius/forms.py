@@ -191,11 +191,13 @@ class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
     """
 
-    email = forms.ChoiceField(label=_('Your email address'),
+    email = forms.ChoiceField(
+                label=_('Your email address'),
                 validators=[validate_email],
                 widget=forms.Select(),
-                error_messages={'required': _('Please enter an email address.'),
-                                'invalid': _('Please enter a valid email address.')})
+                error_messages={
+                    'required': _('Please enter an email address.'),
+                    'invalid': _('Please enter a valid email address.')})
 
     display_name = forms.CharField(label=_('Your name (optional)'),
                                    required=False)
@@ -236,8 +238,10 @@ class ListSubscriptionPolicyForm(ListSettingsForm):
         help_text=_('Open: Subscriptions are added automatically\n'
                     'Confirm: Subscribers need to confirm the subscription '
                     'using an email sent to them\n'
-                    'Moderate: Moderators will have to authorize each subscription manually.\n'
-                    'Confirm then Moderate: First subscribers have to confirm, then a moderator '
+                    'Moderate: Moderators will have to authorize '
+                    'each subscription manually.\n'
+                    'Confirm then Moderate: First subscribers have to confirm,'
+                    ' then a moderator '
                     'needs to authorize.'))
 
 
@@ -347,7 +351,8 @@ class DigestSettingsForm(ListSettingsForm):
     """
     digest_size_threshold = forms.DecimalField(
         label=_('Digest size threshold'),
-        help_text=_('How big in Kb should a digest be before it gets sent out?'))
+        help_text=_('How big in Kb should a digest be before '
+                    'it gets sent out?'))
 
 
 class AlterMessagesForm(ListSettingsForm):
@@ -360,16 +365,16 @@ class AlterMessagesForm(ListSettingsForm):
         widget=forms.RadioSelect,
         required=False,
         label=_('Filter content'),
-        help_text=_('Should Mailman filter the content of list traffic according '
-                    'to the settings below?'))
+        help_text=_('Should Mailman filter the content of list traffic '
+                    'according to the settings below?'))
     collapse_alternatives = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
         label=_('Collapse alternatives'),
-        help_text=_('Should Mailman collapse multipart/alternative to its first '
-                    'part content?'))
+        help_text=_('Should Mailman collapse multipart/alternative to '
+                    'its first part content?'))
     convert_html_to_plaintext = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -377,15 +382,17 @@ class AlterMessagesForm(ListSettingsForm):
         required=False,
         label=_('Convert html to plaintext'),
         help_text=_('Should Mailman convert text/html parts to plain text? '
-                   'This conversion happens after MIME attachments have been stripped.'))
+                    'This conversion happens after MIME attachments '
+                    'have been stripped.'))
     anonymous_list = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
         label=_('Anonymous list'),
-        help_text=_('Hide the sender of a message, replacing it with the list address '
-                   '(Removes From, Sender and Reply-To fields)'))
+        help_text=_('Hide the sender of a message, '
+                    'replacing it with the list address '
+                    '(Removes From, Sender and Reply-To fields)'))
     include_rfc2369_headers = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
@@ -489,7 +496,8 @@ class ListAutomaticResponsesForm(ListSettingsForm):
         choices=autorespond_choices,
         widget=forms.RadioSelect,
         label=_('Autorespond to list owner'),
-        help_text=_('Should Mailman send an auto-response to emails sent to the -owner address?'))
+        help_text=_('Should Mailman send an auto-response to '
+                    'emails sent to the -owner address?'))
     autoresponse_owner_text = forms.CharField(
         label=_('Autoresponse owner text'),
         widget=forms.Textarea(),
@@ -499,7 +507,8 @@ class ListAutomaticResponsesForm(ListSettingsForm):
         choices=autorespond_choices,
         widget=forms.RadioSelect,
         label=_('Autorespond postings'),
-        help_text=_('Should Mailman send an auto-response to mailing list posters?'))
+        help_text=_('Should Mailman send an auto-response to '
+                    'mailing list posters?'))
     autoresponse_postings_text = forms.CharField(
         label=_('Autoresponse postings text'),
         widget=forms.Textarea(),
@@ -560,7 +569,8 @@ class ListAutomaticResponsesForm(ListSettingsForm):
         widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
         label=_('Notify admin of membership changes'),
-        help_text=_('Should administrator get notices of subscribes and unsubscribes?'))
+        help_text=_('Should administrator get notices of '
+                    'subscribes and unsubscribes?'))
 
 
 class ListIdentityForm(ListSettingsForm):
@@ -572,7 +582,8 @@ class ListIdentityForm(ListSettingsForm):
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         label=_('Show list on index page'),
-        help_text=_('Choose whether to include this list on the list of all lists'))
+        help_text=_('Choose whether to include this list '
+                    'on the list of all lists'))
     description = forms.CharField(
         label=_('Description'),
         help_text=_(
@@ -655,10 +666,8 @@ class ListAddBanForm(forms.Form):
 class ListHeaderMatchForm(forms.Form):
     """Edit a list's header match."""
 
-    HM_ACTION_CHOICES = [
-            (None, _("Default antispam action")) ] + [
-            a for a in ACTION_CHOICES if a[0] != 'defer'
-            ]
+    HM_ACTION_CHOICES = [(None, _("Default antispam action"))] + \
+                        [a for a in ACTION_CHOICES if a[0] != 'defer']
 
     header = forms.CharField(
         label=_('Header'),
@@ -675,17 +684,18 @@ class ListHeaderMatchForm(forms.Form):
     action = forms.ChoiceField(
         label=_('Action'),
         error_messages={'invalid': _('Please enter a valid action.')},
-        #widget=forms.RadioSelect(),
         required=False,
         choices=HM_ACTION_CHOICES,
         help_text=_('Action to take when a header matches')
         )
 
+
 class ListHeaderMatchFormset(forms.BaseFormSet):
     def clean(self):
         """Checks that no two header matches have the same order."""
         if any(self.errors):
-            # Don't bother validating the formset unless each form is valid on its own
+            # Don't bother validating the formset unless
+            # each form is valid on its own
             return
         orders = []
         for form in self.forms:
@@ -694,7 +704,8 @@ class ListHeaderMatchFormset(forms.BaseFormSet):
             except KeyError:
                 continue
             if order in orders:
-                raise forms.ValidationError("Header matches must have distinct orders.")
+                raise forms.ValidationError('Header matches must have'
+                                            ' distinct orders.')
             orders.append(order)
 
 
@@ -814,14 +825,15 @@ class AddressActivationForm(forms.Form):
 
         # Check if the address belongs to someone else
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError(_('This email is in use.'
-                                          'Please choose another or contact the administrator'),
-                                          'error')
+            raise forms.ValidationError(
+                    _('This email is in use. Please choose another or contact'
+                      ' the administrator'), 'error')
 
         # Check if the email is attached to a user in Mailman
         try:
             utils.get_client().get_user(email)
-            raise forms.ValidationError(_('This email already belongs to a user'), 'error')
+            raise forms.ValidationError(
+                    _('This email already belongs to a user'), 'error')
         except HTTPError:
             pass
         return email

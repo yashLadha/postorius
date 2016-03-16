@@ -38,8 +38,8 @@ def render_api_error(request):
     Use if MailmanApiError is catched.
     """
     return render(request, 'postorius/errors/generic.html',
-        {'error': _('Mailman REST API not available. Please start Mailman core.')})
-
+                  {'error': _('Mailman REST API not available. '
+                              'Please start Mailman core.')})
 
 
 class MailmanPaginator(Paginator):
@@ -106,7 +106,7 @@ def set_other_emails(user):
                              if address.verified_on is not None]
     except (MailmanApiError, Mailman404Error, AttributeError) as e:
         # MailmanApiError: No connection to Mailman
-        # Mailman404Error: The user does not have a mailman user associated with it.
+        # Mailman404Error: The user does not have a mailman user associated
         # AttributeError: Anonymous user
         logger.warning("Mailman error while setting other emails for %s: %r",
                        user.email, e)

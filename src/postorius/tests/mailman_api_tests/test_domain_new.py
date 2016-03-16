@@ -54,14 +54,15 @@ class DomainCreationTest(ViewTestCase):
         post_data = {'mail_host': 'example.com',
                      'web_host': 'http://example.com',
                      'description': 'A new Domain.'}
-        response = self.client.post(reverse('domain_new'), post_data, follow=True)
+        response = self.client.post(reverse('domain_new'), post_data,
+                                    follow=True)
 
         self.assertContains(response, 'New Domain registered')
         self.assertRedirects(response, reverse('domain_index'))
 
-        a_new_domain  = self.mm_client.get_domain('example.com')
+        a_new_domain = self.mm_client.get_domain('example.com')
         self.assertEqual(a_new_domain.mail_host, u'example.com')
         self.assertEqual(a_new_domain.base_url, u'http://example.com')
         self.assertEqual(a_new_domain.owners[0]['user_id'],
-                self.mm_client.get_user('su@example.com').user_id)
+                         self.mm_client.get_user('su@example.com').user_id)
         a_new_domain.delete()

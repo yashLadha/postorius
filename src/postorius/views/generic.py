@@ -19,7 +19,8 @@
 
 from django.views.generic import TemplateView
 
-from postorius.models import List, MailmanUser, MailmanApiError, Mailman404Error
+from postorius.models import (List, MailmanUser, MailmanApiError,
+                              Mailman404Error)
 from postorius import utils
 from postorius.auth.utils import set_user_access_props
 

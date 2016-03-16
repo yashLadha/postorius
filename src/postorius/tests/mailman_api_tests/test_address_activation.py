@@ -37,14 +37,16 @@ class TestAddressActivationForm(ViewTestCase):
     def setUp(self):
         super(TestAddressActivationForm, self).setUp()
         # Create a user and profile.
-        self.user = User.objects.create_user('testuser', 'les@example.org', 'testpass')
-        self.profile = AddressConfirmationProfile.objects.create(email='les2@example.org',
-                                                                         user=self.user)
-        self.expired = AddressConfirmationProfile.objects.create(email='expired@example.org',
-                                                                         user=self.user)
+        self.user = User.objects.create_user(
+                'testuser', 'les@example.org', 'testpass')
+        self.profile = AddressConfirmationProfile.objects.create(
+                email='les2@example.org', user=self.user)
+        self.expired = AddressConfirmationProfile.objects.create(
+                email='expired@example.org', user=self.user)
         self.expired.created -= timedelta(weeks=100)
         self.expired.save()
-        self.mm_user = self.mm_client.create_user('subscribed@example.org', 'password')
+        self.mm_user = self.mm_client.create_user(
+                'subscribed@example.org', 'password')
 
     def tearDown(self):
         self.profile.delete()
@@ -87,8 +89,8 @@ class TestAddressConfirmationProfile(ViewTestCase):
         self.user = User.objects.create_user(
             username=u'ler_mm', email=u'ler@mailman.mostdesirable.org',
             password=u'pwd')
-        self.profile = AddressConfirmationProfile.objects.create(email=u'les@example.org',
-                                                                 user=self.user)
+        self.profile = AddressConfirmationProfile.objects.create(
+                email=u'les@example.org', user=self.user)
         # Create a test request object
         self.request = RequestFactory().get('/')
 
@@ -166,7 +168,8 @@ class TestAddressActivationLinkSuccess(ViewTestCase):
             username='ler', email=u'ler@example.org',
             password='pwd')
         self.mm_user = self.mm_client.create_user('ler@example.org', None)
-        self.profile = AddressConfirmationProfile.objects.create(email=u'les@example.org', user=self.user)
+        self.profile = AddressConfirmationProfile.objects.create(
+                email=u'les@example.org', user=self.user)
         self.profile.save()
 
     def tearDown(self):
