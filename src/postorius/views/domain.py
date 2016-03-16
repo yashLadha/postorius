@@ -21,15 +21,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
-from django.template import RequestContext
 from django.utils.translation import gettext as _
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 from postorius import utils
-from postorius.forms import *
-from postorius.auth.decorators import *
+from postorius.models import Domain
+from postorius.forms import DomainNew
 
 
 @login_required

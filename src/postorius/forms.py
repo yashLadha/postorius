@@ -23,7 +23,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 from postorius.fieldset_forms import FieldsetForm
-from postorius.models import AddressConfirmationProfile
 from postorius import utils
 
 try:

@@ -19,7 +19,6 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals)
 
 
-import random
 import uuid
 import logging
 
@@ -33,7 +32,6 @@ from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.db import models
 from django.http import Http404
-from django.template import Context
 from django.template.loader import render_to_string
 from mailmanclient import MailmanConnectionError
 from postorius.utils import get_client

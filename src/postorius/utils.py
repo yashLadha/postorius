@@ -20,7 +20,6 @@ import logging
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
-from django.template import RequestContext
 from mailmanclient import Client
 from django.utils.translation import gettext as _
 

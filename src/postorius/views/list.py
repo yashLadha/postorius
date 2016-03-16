@@ -38,8 +38,16 @@ except ImportError:
     from urllib.error import HTTPError
 
 from postorius import utils
-from postorius.forms import *
-from postorius.auth.decorators import *
+from postorius.forms import (
+        ListNew, MemberForm, ListSubscribe, MultipleChoiceForm,
+        ListSubscriptionPolicyForm, ArchiveSettingsForm,
+        MessageAcceptanceForm, DigestSettingsForm, AlterMessagesForm,
+        ListAutomaticResponsesForm, ListIdentityForm,
+        ListMassSubscription, ListMassRemoval, ListAddBanForm,
+        ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
+from postorius.models import Domain, List, MailmanApiError
+from postorius.auth.decorators import (list_owner_required,
+                                       list_moderator_required)
 from postorius.views.generic import MailingListView
 
 

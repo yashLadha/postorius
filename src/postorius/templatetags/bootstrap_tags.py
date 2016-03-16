@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.urlresolvers import reverse
 from django import template
 
 

@@ -17,12 +17,11 @@
 
 import logging
 
-from django import VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.test import RequestFactory, TestCase
-from mock import patch, MagicMock
+from mock import MagicMock
 from six.moves.urllib_parse import quote
 
 from postorius.utils import get_client

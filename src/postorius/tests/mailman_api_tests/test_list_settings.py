@@ -21,12 +21,9 @@ from __future__ import absolute_import,  print_function, unicode_literals
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.utils.timezone import now
-from six.moves.urllib_error import HTTPError
-from six.moves.urllib_parse import quote
 
 from postorius.views.list import SETTINGS_FORMS
-from postorius.models import MailmanUser, Mailman404Error, List
+from postorius.models import List
 from postorius.tests.utils import ViewTestCase
 
 

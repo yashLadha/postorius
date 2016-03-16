@@ -21,7 +21,6 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from mock import patch
-from six.moves.urllib_parse import quote
 
 from postorius.models import MailmanUser, Mailman404Error
 from postorius.tests.utils import ViewTestCase
