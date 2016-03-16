@@ -60,6 +60,7 @@ class TestSubscription(ViewTestCase):
         self.mod_list.delete()
         self.mm_user.delete()
         self.domain.delete()
+        User.objects.all().delete()
 
     def test_subscribe_open(self):
         # The subscription goes straight through.
@@ -138,8 +139,7 @@ class TestSubscription(ViewTestCase):
         # Subscribe the user (they are now allowed to self-subscribe)
         self.mod_list.subscribe('test@example.com')
         # Login as the owner to accept the subscription
-        owner = User.objects.create_user(
-            'testowner', 'owner@example.com', 'pwd')
+        User.objects.create_user('testowner', 'owner@example.com', 'pwd')
         self.mod_list.add_owner('owner@example.com')
         self.client.logout()
         self.client.login(username='testowner', password='pwd')

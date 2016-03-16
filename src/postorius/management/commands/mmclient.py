@@ -36,7 +36,6 @@ A complete list of commands can be found in the mailman.client documentation."""
 
     def handle(self, *args, **options):
         # choose an interpreter
-        console = None
         try:
             import IPython
             console_fn = IPython.embed
