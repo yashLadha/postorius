@@ -27,7 +27,7 @@ try:
 except ImportError:
     from urllib.error import HTTPError
 from postorius import utils
-from postorius.models import Domain
+from postorius.models import Domain, MailmanApiError
 from postorius.forms import DomainNew
 
 

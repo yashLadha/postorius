@@ -26,6 +26,8 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.http import Http404
+from django.core.urlresolvers import reverse
+from django.conf import settings
 
 try:
     from urllib2 import HTTPError
@@ -34,8 +36,10 @@ except ImportError:
 
 from postorius import utils
 from postorius.models import (MailmanConnectionError, MailmanApiError, List,
-                              AddressConfirmationProfile, MailmanUser)
-from postorius.forms import UserPreferences, AddressActivationForm
+                              AddressConfirmationProfile, MailmanUser,
+                              Mailman404Error)
+from postorius.forms import (UserPreferences, AddressActivationForm,
+                             ChangeSubscriptionForm)
 from postorius.views.generic import MailmanUserView
 from smtplib import SMTPException
 from socket import error as socket_error
