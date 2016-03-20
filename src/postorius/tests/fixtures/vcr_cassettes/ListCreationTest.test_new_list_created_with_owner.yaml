@@ -17,6 +17,18 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/su@example.com
+  response:
+    body: {string: !!python/unicode 404 Not Found}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/domains
   response:
     body: {string: !!python/unicode '{"entries": [{"base_url": "http://example.com",
@@ -113,7 +125,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/67']
+      location: ['http://localhost:9001/3.0/members/101']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -134,18 +146,18 @@ interactions:
         null, "digest_send_periodic": true, "digest_size_threshold": 30.0, "digest_volume_frequency":
         "monthly", "digests_enabled": true, "display_name": "A_new_list", "filter_content":
         false, "first_strip_reply_to": false, "fqdn_listname": "a_new_list@example.com",
-        "http_etag": "\"f9778b3fbe07971d27dce9b470d0c7c40bb243de\"", "include_rfc2369_headers":
-        true, "join_address": "a_new_list-join@example.com", "last_post_at": null,
-        "leave_address": "a_new_list-leave@example.com", "list_name": "a_new_list",
-        "mail_host": "example.com", "next_digest_number": 1, "no_reply_address": "noreply@example.com",
-        "owner_address": "a_new_list-owner@example.com", "post_id": 1, "posting_address":
-        "a_new_list@example.com", "posting_pipeline": "default-posting-pipeline",
+        "goodbye_message_uri": "", "http_etag": "\"25d3ee87e0387ce7879acc55cab6ad8dce3ab173\"",
+        "include_rfc2369_headers": true, "join_address": "a_new_list-join@example.com",
+        "last_post_at": null, "leave_address": "a_new_list-leave@example.com", "list_name":
+        "a_new_list", "mail_host": "example.com", "next_digest_number": 1, "no_reply_address":
+        "noreply@example.com", "owner_address": "a_new_list-owner@example.com", "post_id":
+        1, "posting_address": "a_new_list@example.com", "posting_pipeline": "default-posting-pipeline",
         "reply_goes_to_list": "no_munging", "reply_to_address": "", "request_address":
         "a_new_list-request@example.com", "scheme": "http", "send_welcome_message":
         true, "subject_prefix": "[A_new_list] ", "subscription_policy": "confirm",
         "volume": 1, "web_host": "example.com", "welcome_message_uri": "mailman:///welcome.txt"}'}
     headers:
-      content-length: ['1773']
+      content-length: ['1800']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
@@ -184,13 +196,13 @@ interactions:
     uri: http://localhost:9001/3.0/lists/a_new_list.example.com/roster/owner
   response:
     body: {string: !!python/unicode '{"entries": [{"address": "http://localhost:9001/3.0/addresses/owner@example.com",
-        "delivery_mode": "regular", "email": "owner@example.com", "http_etag": "\"1e2fbd629007c4240ff07f340756aa70fdfc8a14\"",
-        "list_id": "a_new_list.example.com", "member_id": 67, "moderation_action":
-        "accept", "role": "owner", "self_link": "http://localhost:9001/3.0/members/67",
-        "user": "http://localhost:9001/3.0/users/29"}], "http_etag": "\"62ba27c9dc34385f54216da71698a09942180736\"",
+        "delivery_mode": "regular", "email": "owner@example.com", "http_etag": "\"09866a5750e0216aadee006d6c9f483cba0cb1ab\"",
+        "list_id": "a_new_list.example.com", "member_id": 101, "moderation_action":
+        "accept", "role": "owner", "self_link": "http://localhost:9001/3.0/members/101",
+        "user": "http://localhost:9001/3.0/users/29"}], "http_etag": "\"75ea67189342eb84d0ec5c2d16f9ec2a3f94fb0c\"",
         "start": 0, "total_size": 1}'}
     headers:
-      content-length: ['493']
+      content-length: ['495']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:

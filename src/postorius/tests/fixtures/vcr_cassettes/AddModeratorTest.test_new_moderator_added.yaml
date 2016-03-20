@@ -45,6 +45,18 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/su@example.com
+  response:
+    body: {string: !!python/unicode 404 Not Found}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/foo@example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Foo", "fqdn_listname": "foo@example.com",
@@ -73,6 +85,18 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/su@example.com
+  response:
+    body: {string: !!python/unicode 404 Not Found}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
     uri: http://localhost:9001/3.0/lists/foo@example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Foo", "fqdn_listname": "foo@example.com",
@@ -81,23 +105,6 @@ interactions:
         "http://localhost:9001/3.0/lists/foo.example.com", "volume": 1}'}
     headers:
       content-length: ['294']
-      content-type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
-    uri: http://localhost:9001/3.0/lists/foo.example.com/roster/moderator
-  response:
-    body: {string: !!python/unicode '{"entries": [{"address": "http://localhost:9001/3.0/addresses/newmod@example.com",
-        "delivery_mode": "regular", "email": "newmod@example.com", "http_etag": "\"a81587b982580f8c56376e18931e13c26ebb400d\"",
-        "list_id": "foo.example.com", "member_id": 1, "moderation_action": "accept",
-        "role": "moderator", "self_link": "http://localhost:9001/3.0/members/1", "user":
-        "http://localhost:9001/3.0/users/2"}], "http_etag": "\"4aee3e54b318f2b2b20c079d61332487761ef57d\"",
-        "start": 0, "total_size": 1}'}
-    headers:
-      content-length: ['489']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
 - request:
