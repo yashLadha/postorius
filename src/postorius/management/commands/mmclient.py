@@ -30,7 +30,7 @@ Usage example:
     foo.members
     [<Member "les@primus.org">]
 
-A complete list of commands can be found in the mailman.client documentation."""
+A complete list of commands can be found in the mailmanclient documentation."""
 
     def handle(self, *args, **options):
         # choose an interpreter

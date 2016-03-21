@@ -110,7 +110,6 @@ class ViewTestCase(TestCase):
         self.mm_client = get_client()
         if self.use_vcr:
             cm = MM_VCR.use_cassette('.'.join([
-                #self.__class__.__module__.rpartition('.')[2],
                 self.__class__.__name__, self._testMethodName, 'yaml']))
             self.cassette = cm.__enter__()
             self.addCleanup(cm.__exit__, None, None, None)
