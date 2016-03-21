@@ -70,7 +70,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    #'postorius.middleware.PostoriusMiddleware',
+    'postorius.middleware.PostoriusMiddleware',
 )
 
 # Set `postorius.urls` as main url config if Postorius

@@ -1,5 +1,17 @@
 interactions:
 - request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/su@example.com
+  response:
+    body: {string: !!python/unicode 404 Not Found}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 404, message: Not Found}
+- request:
     body: base_url=http%3A%2F%2Fexample.com&description=A+new+Domain.&mail_host=example.com&owner=su%40example.com
     headers:
       accept-encoding: ['gzip, deflate']
@@ -12,6 +24,36 @@ interactions:
       content-length: ['0']
       location: ['http://localhost:9001/3.0/domains/example.com']
     status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/su@example.com
+  response:
+    body: {string: !!python/unicode '{"created_on": "2005-08-01T07:49:23", "http_etag":
+        "\"1479b23f4b3c2af04f98946e313297006dd20754\"", "is_server_owner": false,
+        "self_link": "http://localhost:9001/3.0/users/27", "user_id": 27}'}
+    headers:
+      content-length: ['190']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users/27/addresses
+  response:
+    body: {string: !!python/unicode '{"entries": [{"email": "su@example.com", "http_etag":
+        "\"9210a0ce3a86784179e843000a09844024fb03b4\"", "original_email": "su@example.com",
+        "registered_on": "2005-08-01T07:49:23", "self_link": "http://localhost:9001/3.0/addresses/su@example.com",
+        "user": "http://localhost:9001/3.0/users/27"}], "http_etag": "\"7684bfa20597c2d46932d3e54dd1df213fb86c45\"",
+        "start": 0, "total_size": 1}'}
+    headers:
+      content-length: ['382']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
 - request:
     body: null
     headers:
