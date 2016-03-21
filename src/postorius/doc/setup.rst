@@ -7,7 +7,7 @@ Installation
     GNU Mailman 3. To install GNU Mailman follow the instructions in the `documentation`_.
 
     If you are looking for an easy way to set up the whole GNU Mailman 3
-    suite (GNU Mailman 3, Postorius, Hyperkitty and mailman.client), check
+    suite (GNU Mailman 3, Postorius, Hyperkitty and mailmanclient), check
     out the `mailman-bundler`_ project on GitLab.
 
 .. _mailman-bundler: https://gitlab.com/mailman/mailman-bundler
@@ -25,13 +25,13 @@ PyPi:
 
 ::
 
-    $ sudo pip install postorius
+    $ pip install postorius
 
 or:
 
 ::
 
-    $ sudo easy_install postorius
+    $ easy_install postorius
 
 
 Latest dev version
@@ -44,7 +44,7 @@ should install Postorius using git:
 
     $ git clone https://gitlab.com/mailman/postorius.git
     $ cd postorius
-    $ sudo python setup.py develop
+    $ python setup.py develop
 
 
 Setup your django project
@@ -102,43 +102,3 @@ The quickest way to run Postorius is to just start the development server:
     You should use the development server only locally. While it's possible to
     make your site publicly available using the dev server, you should never
     do that in a production environment.
-
-
-Running Postorius on Apache with mod_wsgi
-=========================================
-
-.. note::
-    This guide assumes that you know how to setup a VirtualHost with Apache.
-    If you are using SQLite, the ``.db`` file as well as its folder need to be
-    writable by the web server.
-
-These settings need to be added to your Apache VirtualHost:
-
-::
-
-    Alias /static /path/to/postorius_standalone/static
-    <Directory "/path/to/postorius_standalone/static">
-        Order deny,allow
-        Allow from all
-    </Directory>
-
-    WSGIScriptAlias / /path/to/postorius_standalone/srv/postorius.wsgi
-    <Directory "/path/to/postorius_standalone/srv">
-        Order deny,allow
-        Allow from all
-    </Directory>
-
-The first Alias serves the static files (CSS, JS, Images, etc.). The
-WSGIScriptAlias serves the Django application. The paths need to be changed
-depending on which location you downloaded ``postorius_standalone`` to.
-
-We're almost ready. But you need to collect the static files from Postorius
-(which resides somewhere on your pythonpath) to be able to serve them from the
-site directory. All you have to do is to change into the
-``postorius_standalone`` directory and run:
-
-::
-
-    $ python manage.py collectstatic
-
-After reloading the webserver Postorius should be running!

@@ -16,3 +16,4 @@ Table of Contents
    news.rst
    setup.rst
    development.rst
+   deployment.rst

@@ -15,7 +15,10 @@ Git for version control.
 
 Changes are not made directly in the project's master branch, but in
 feature-related personal branches, which get reviewed and then merged into
-the master branch.
+the master branch. There is a contribution guide here_, that mentions the basics
+about contributing to any mailman project.
+
+.. _here: http://wiki.list.org/DEV/HowToContributeGit
 
 An ideal workflow would be like this:
 
