@@ -518,6 +518,8 @@ def list_new(request, template='postorius/lists/new.html'):
             except HTTPError as e:
                 return render(request, 'postorius/errors/generic.html',
                               {'error': e})
+        else:
+            messages.error(request, _('Please check the errors below'))
     else:
         form = ListNew(choosable_domains,
                        initial={'list_owner': request.user.email})

@@ -61,6 +61,8 @@ def domain_new(request):
             else:
                 messages.success(request, _("New Domain registered"))
             return redirect("domain_index")
+        else:
+            messages.error(request, _('Please check the errors below'))
     else:
         form = DomainNew()
     return render(request, 'postorius/domain/new.html', {'form': form,})
