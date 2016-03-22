@@ -154,3 +154,14 @@ class TestSubscription(ViewTestCase):
                                      args=['moderate_subs.example.com']))
         message = self.assertHasSuccessMessage(response)
         self.assertIn('Already subscribed', message)
+
+    def test_mass_subscribe(self):
+        # Perform mass subscription
+        User.objects.create_user('testowner', 'owner@example.com', 'pwd')
+        self.open_list.add_owner('owner@example.com')
+        self.client.login(username='testowner', password='pwd')
+        email_list = 'fritz@example.org\nkane@example.org\nabel@example.org\n'
+        response = self.client.post(
+            reverse('mass_subscribe', args=('open_list.example.com',)),
+            {'emails': email_list})
+        self.assertEqual(len(self.open_list.members), 3)
