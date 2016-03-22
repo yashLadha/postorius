@@ -24,6 +24,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
+from django.core.validators import validate_email
 from django.forms import formset_factory
 from django.shortcuts import render, redirect
 from django.template import RequestContext
