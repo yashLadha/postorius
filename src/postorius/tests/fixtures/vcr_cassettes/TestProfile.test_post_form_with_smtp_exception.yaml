@@ -56,11 +56,52 @@ interactions:
     uri: http://localhost:9001/3.0/users/1
   response:
     body: {string: !!python/unicode '{"created_on": "2005-08-01T07:49:23", "http_etag":
-        "\"f0b94bf2edd58e88d678043b4b49362ca377722e\"", "is_server_owner": false,
-        "password": "$6$rounds=690702$ldltgxeeAosAEu84$ypRhGVnPjh7q/JCzASdnPfc9C2lytW2mFFbTOfncE93GP9pETx6Z.Jra2.ERfCF.v/bueX6J6vvU8rWR9sCDk/",
+        "\"7638b81bc998c9ab658fe1a667546f1a31e4bdbf\"", "is_server_owner": false,
+        "password": "$6$rounds=717826$Wh5Czxm6hOIUZ6rs$0y0MQM877DONrCx6pgYVmTEztIEMV7NO7oYf8NXlhNxDT2OHNFvQppIdZdtPMXy8HAJiHRUWE1RSG26cdKOgm/",
         "self_link": "http://localhost:9001/3.0/users/1", "user_id": 1}'}
     headers:
       content-length: ['324']
       content-type: [application/json; charset=utf-8]
     status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/domains
+  response:
+    body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
+        "start": 0, "total_size": 0}'}
+    headers:
+      content-length: ['90']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users
+  response:
+    body: {string: !!python/unicode '{"entries": [{"created_on": "2005-08-01T07:49:23",
+        "http_etag": "\"7638b81bc998c9ab658fe1a667546f1a31e4bdbf\"", "is_server_owner":
+        false, "password": "$6$rounds=717826$Wh5Czxm6hOIUZ6rs$0y0MQM877DONrCx6pgYVmTEztIEMV7NO7oYf8NXlhNxDT2OHNFvQppIdZdtPMXy8HAJiHRUWE1RSG26cdKOgm/",
+        "self_link": "http://localhost:9001/3.0/users/1", "user_id": 1}], "http_etag":
+        "\"ad6c7ac43730c716afad4e5c758969e91155e82d\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['429']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode DELETE
+    uri: http://localhost:9001/3.0/users/1
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-length: ['0']
+    status: {code: 204, message: No Content}
 version: 1

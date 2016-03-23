@@ -85,8 +85,53 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/domains
+  response:
+    body: {string: !!python/unicode '{"entries": [{"base_url": "http://example.com",
+        "description": null, "http_etag": "\"e736411818ff1815ca83575e0958c38c5188f0a4\"",
+        "mail_host": "example.com", "self_link": "http://localhost:9001/3.0/domains/example.com",
+        "url_host": "example.com"}], "http_etag": "\"c385b155f8da284bf78dbe075e20f58a30c893ab\"",
+        "start": 0, "total_size": 1}'}
+    headers:
+      content-length: ['338']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/lists/foo@example.com
+    uri: http://localhost:9001/3.0/domains/example.com
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode GET
+    uri: http://localhost:9001/3.0/users
+  response:
+    body: {string: !!python/unicode '{"entries": [{"created_on": "2005-08-01T07:49:23",
+        "http_etag": "\"3cfc8052df45dbd51a138a5b79c02833187f6536\"", "is_server_owner":
+        false, "self_link": "http://localhost:9001/3.0/users/80", "user_id": 80},
+        {"created_on": "2005-08-01T07:49:23", "http_etag": "\"889bb0e6564a61b50ebbaeff64fa24f8ad504620\"",
+        "is_server_owner": false, "self_link": "http://localhost:9001/3.0/users/81",
+        "user_id": 81}], "http_etag": "\"96011b3b5bdb59441b6904ae40a1ed9ea8f479f5\"",
+        "start": 0, "total_size": 2}'}
+    headers:
+      content-length: ['487']
+      content-type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode DELETE
+    uri: http://localhost:9001/3.0/users/80
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -97,7 +142,7 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/domains/example.com
+    uri: http://localhost:9001/3.0/users/81
   response:
     body: {string: !!python/unicode ''}
     headers:
