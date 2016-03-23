@@ -37,14 +37,6 @@ class DomainCreationTest(ViewTestCase):
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')
 
-    def tearDown(self):
-        self.user.delete()
-        self.superuser.delete()
-        try:
-            self.mm_client.delete_domain('example.com')
-        except HTTPError:
-            pass
-
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
         self.assertRedirectsToLogin(reverse('domain_new'))

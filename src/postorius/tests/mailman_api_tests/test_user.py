@@ -39,12 +39,6 @@ class MailmanUserTest(ViewTestCase):
             'user', 'user@example.com', 'testpass')
         self.mm_user = MailmanUser.objects.create_from_django(self.user)
 
-    def tearDown(self):
-        self.foo_list.delete()
-        self.mm_user.delete()
-        self.user.delete()
-        self.domain.delete()
-
     def test_address_preferences_not_logged_in(self):
         self.assertRedirectsToLogin(reverse('user_address_preferences'))
 

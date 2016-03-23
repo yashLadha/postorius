@@ -49,14 +49,6 @@ class DomainIndexPageTest(ViewTestCase):
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
 
-    def tearDown(self):
-        self.foo_list.delete()
-        self.user.delete()
-        self.superuser.delete()
-        self.owner.delete()
-        self.moderator.delete()
-        self.domain.delete()
-
     def test_domain_index_not_accessible_to_public(self):
         # The list index page should contain the lists
         response = self.client.get(reverse('domain_index'))

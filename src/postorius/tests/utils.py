@@ -114,6 +114,12 @@ class ViewTestCase(TestCase):
             self.cassette = cm.__enter__()
             self.addCleanup(cm.__exit__, None, None, None)
 
+    def tearDown(self):
+        for d in self.mm_client.domains:
+            d.delete()
+        for u in self.mm_client.users:
+            u.delete()
+
     def assertHasSuccessMessage(self, response):
         msgs = get_flash_messages(response)
         self.assertEqual(len(msgs), 1)

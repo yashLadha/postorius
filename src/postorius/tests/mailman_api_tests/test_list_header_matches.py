@@ -45,14 +45,6 @@ class ListHeaderMatchesTest(ViewTestCase):
         self.mlist.add_owner('owner@example.com')
         self.mlist.add_moderator('moderator@example.com')
 
-    def tearDown(self):
-        self.user.delete()
-        self.superuser.delete()
-        self.owner.delete()
-        self.moderator.delete()
-        self.mlist.delete()
-        self.domain.delete()
-
     def test_page_not_accessible_if_not_logged_in(self):
         url = reverse('list_header_matches', args=['list.example.com'])
         self.assertRedirectsToLogin(url)

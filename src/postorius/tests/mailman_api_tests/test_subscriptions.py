@@ -47,16 +47,12 @@ class TestSubscription(ViewTestCase):
         self.mm_user.add_address('fritz@example.org').verify()
 
     def tearDown(self):
-        # Delete all subscription requests
+        # XXX remove the method if core cleares requests on list deletion
         for req in self.open_list.requests:
             self.open_list.moderate_request(req['token'], 'discard')
         for req in self.mod_list.requests:
             self.mod_list.moderate_request(req['token'], 'discard')
-        self.open_list.delete()
-        self.mod_list.delete()
-        self.mm_user.delete()
-        self.domain.delete()
-        User.objects.all().delete()
+        super(TestSubscription, self).tearDown()
 
     def test_subscribe_open(self):
         # The subscription goes straight through.

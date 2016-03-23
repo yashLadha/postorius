@@ -31,11 +31,6 @@ class ListIndexPageTest(ViewTestCase):
         self.foo_list = self.domain.create_list('foo')
         self.bar_list = self.domain.create_list('bar')
 
-    def tearDown(self):
-        for mlist in self.mm_client.lists:
-            mlist.delete()
-        self.domain.delete()
-
     def test_list_index_contains_the_lists(self):
         # The list index page should contain the lists
         response = self.client.get(reverse('list_index'))

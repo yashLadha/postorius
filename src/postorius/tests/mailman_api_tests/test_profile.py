@@ -42,11 +42,6 @@ class TestProfile(ViewTestCase):
         self.client.post(reverse('user_login'),
                          {'username': 'les', 'password': 'secret'})
 
-    def tearDown(self):
-        # Log out and delete user.
-        self.client.logout()
-        self.user.delete()
-
     def test_view_contains_form(self):
         # The view context should contain a form.
         response = self.client.get(reverse('user_profile'))

@@ -34,14 +34,6 @@ class ModelTest(ViewTestCase):
         self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
 
-    def tearDown(self):
-        for mlist in self.mm_client.lists:
-            mlist.delete()
-        for user in self.mm_client.users:
-            user.delete()
-        User.objects.all().delete()
-        self.domain.delete()
-
     def test_mailman_user_not_created_when_flag_is_off(self):
         with self.settings(AUTOCREATE_MAILMAN_USER=False):
             User.objects.create_user('testuser', 'test@example.com',

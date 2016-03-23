@@ -39,12 +39,6 @@ class ListBansTest(ViewTestCase):
         self.client.login(username="test_superuser", password='pwd')
         self.url = reverse('list_bans', args=['test_list.example.com'])
 
-    def tearDown(self):
-        self.test_user.delete()
-        self.test_superuser.delete()
-        self.m_list.delete()
-        self.domain.delete()
-
     def test_login_redirect_for_anonymous(self):
         self.client.logout()
         response = self.client.get(self.url)

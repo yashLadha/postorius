@@ -48,12 +48,6 @@ class TestAddressActivationForm(ViewTestCase):
         self.mm_user = self.mm_client.create_user(
                 'subscribed@example.org', 'password')
 
-    def tearDown(self):
-        self.profile.delete()
-        self.expired.delete()
-        self.user.delete()
-        self.mm_user.delete()
-
     def test_valid_email_is_valid(self):
         form = AddressActivationForm({'email': 'very_new_email@example.org'})
         self.assertTrue(form.is_valid())
@@ -91,11 +85,6 @@ class TestAddressConfirmationProfile(ViewTestCase):
                 email=u'les@example.org', user=self.user)
         # Create a test request object
         self.request = RequestFactory().get('/')
-
-    def tearDown(self):
-        self.profile.delete()
-        self.user.delete()
-        mail.outbox = []
 
     def test_profile_creation(self):
         # Profile is created and has all necessary properties.
@@ -169,11 +158,6 @@ class TestAddressActivationLinkSuccess(ViewTestCase):
         self.profile = AddressConfirmationProfile.objects.create(
                 email=u'les@example.org', user=self.user)
         self.profile.save()
-
-    def tearDown(self):
-        self.profile.delete()
-        self.user.delete()
-        self.mm_user.delete()
 
     def test_add_address(self):
         # An activation key pointing to a valid profile adds the address
