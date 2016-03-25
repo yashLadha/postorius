@@ -47,18 +47,6 @@ class DomainDeleteTest(ViewTestCase):
         self.foo_list.add_moderator('moderator@example.com')
         self.url = reverse('domain_delete', args=['example.com'])
 
-    def tearDown(self):
-        self.user.delete()
-        self.superuser.delete()
-        self.owner.delete()
-        self.moderator.delete()
-        try:
-            self.domain.delete()
-        except HTTPError as e:
-            # The domain was deleted by a test
-            if e.code != 404:
-                raise
-
     def test_access_anonymous(self):
         # Anonymous users users can't delete domains
         self.assertRedirectsToLogin(self.url)

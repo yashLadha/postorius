@@ -33,13 +33,6 @@ class ListCreationTest(ViewTestCase):
                                                        'pwd')
         self.domain = self.mm_client.create_domain('example.com')
 
-    def tearDown(self):
-        self.user.delete()
-        self.superuser.delete()
-        for mlist in self.mm_client.lists:
-            mlist.delete()
-        self.domain.delete()
-
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
         self.assertRedirectsToLogin(reverse('list_new'))

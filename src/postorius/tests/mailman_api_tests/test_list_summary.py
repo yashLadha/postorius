@@ -36,14 +36,6 @@ class ListSummaryPageTest(ViewTestCase):
         self.foo_list = self.domain.create_list('foo')
         User.objects.create_user('testuser', 'test@example.com', 'testpass')
 
-    def tearDown(self):
-        for mlist in self.mm_client.lists:
-            mlist.delete()
-        for user in self.mm_client.users:
-            user.delete()
-        User.objects.all().delete()
-        self.domain.delete()
-
     def test_list_summary_logged_out(self):
         # Response must contain list obj but not the form.
         response = self.client.get(reverse('list_summary',
