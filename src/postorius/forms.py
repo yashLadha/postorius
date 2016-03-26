@@ -818,7 +818,8 @@ class MemberModeration(FieldsetForm):
 
 
 class AddressActivationForm(forms.Form):
-    email = forms.EmailField()
+    email = forms.EmailField(widget=forms.TextInput(
+                             attrs={'placeholder': 'Enter alternate email'}))
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
