@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load nav_helpers %}
+{% load membership_helpers %}
 
 {% block subtitle %}
 {% trans 'Subscriptions' %} | {{ user.username }}
@@ -19,6 +20,8 @@
                         <th>{% trans 'List Name' %}</th>
                         <th>{% trans 'Subscription Address' %}</th>
                         <th>{% trans 'Delivery Mode' %}</th>
+                        <th class="text-center">{% trans 'Owner' %}</th>
+                        <th class="text-center">{% trans 'Moderator' %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,6 +30,24 @@
                             <td><a href="{% url 'list_summary' subscription.list_id %}">{{ subscription.list_id }}</a></td>
                             <td>{{ subscription.address }}</td>
                             <td>{{ subscription.preferences.delivery_mode }}</td>
+                            <td class="text-center">
+                                {% user_is_list_owner request.user subscription.list_id as is_owner %}
+                                <span class={% if is_owner %}
+                                                "glyphicon glyphicon-ok text-success"
+                                            {% else %}
+                                                "glyphicon glyphicon-remove text-danger"
+                                            {% endif %}
+                                ></span>
+                            </td>
+                            <td class="text-center">
+                                {% user_is_list_moderator request.user subscription.list_id as is_moderator %}
+                                <span class={% if is_moderator %}
+                                                "glyphicon glyphicon-ok text-success"
+                                            {% else %}
+                                                "glyphicon glyphicon-remove text-danger"
+                                            {% endif %}
+                                ></span>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
