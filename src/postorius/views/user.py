@@ -39,7 +39,7 @@ from postorius.models import (MailmanConnectionError, MailmanApiError, List,
                               AddressConfirmationProfile, MailmanUser,
                               Mailman404Error)
 from postorius.forms import (UserPreferences, AddressActivationForm,
-                             ChangeSubscriptionForm)
+                             ChangeSubscriptionForm, ChangeDisplayNameForm)
 from postorius.views.generic import MailmanUserView
 from smtplib import SMTPException
 from socket import error as socket_error
@@ -247,29 +247,53 @@ def user_profile(request):
     except MailmanApiError:
         return utils.render_api_error(request)
     if request.method == 'POST':
-        form = AddressActivationForm(request.POST)
-        if form.is_valid():
-            profile, c = AddressConfirmationProfile.objects.update_or_create(
-                email=form.cleaned_data['email'], user=request.user,
-                defaults={'activation_key': uuid.uuid4().hex})
-            try:
-                profile.send_confirmation_link(request)
-                messages.success(request,
-                                 _('Please follow the instructions sent via'
-                                   ' email to confirm the address'))
+        if request.POST.get('formname') == 'displayname':
+            display_name_form = ChangeDisplayNameForm(request.POST)
+            form = AddressActivationForm(
+                    initial={'user_email': request.user.email})
+            if display_name_form.is_valid():
+                name = display_name_form.cleaned_data['display_name']
+                try:
+                    mm_user.display_name = name
+                    mm_user.save()
+                except MailmanApiError:
+                    return utils.render_api_error(request)
+                except HTTPError as e:
+                    messages.error(request, e)
+                else:
+                    messages.success(request, _('Display name changed'))
                 return redirect('user_profile')
-            except (SMTPException, socket_error) as e:
-                if (not isinstance(e, SMTPException) and
-                        e.errno != errno.ECONNREFUSED):
-                    raise e
-                profile.delete()
-                messages.error(request, _('Currently emails can not be added,'
-                                          ' please try again later'))
+        else:
+            display_name_form = ChangeDisplayNameForm(
+                    initial={'display_name': mm_user.display_name})
+            form = AddressActivationForm(request.POST)
+            if form.is_valid():
+                profile, c = (
+                    AddressConfirmationProfile.objects.update_or_create(
+                     email=form.cleaned_data['email'], user=request.user,
+                     defaults={'activation_key': uuid.uuid4().hex}))
+                try:
+                    profile.send_confirmation_link(request)
+                    messages.success(request, _(
+                                     'Please follow the instructions sent via'
+                                     ' email to confirm the address'))
+                    return redirect('user_profile')
+                except (SMTPException, socket_error) as e:
+                    if (not isinstance(e, SMTPException) and
+                            e.errno != errno.ECONNREFUSED):
+                        raise e
+                    profile.delete()
+                    messages.error(request,
+                                   _('Currently emails can not be added,'
+                                     ' please try again later'))
     else:
         form = AddressActivationForm(
                 initial={'user_email': request.user.email})
+        display_name_form = ChangeDisplayNameForm(
+                initial={'display_name': mm_user.display_name})
     return render(request, 'postorius/user/profile.html',
-                  {'mm_user': mm_user, 'form': form})
+                  {'mm_user': mm_user, 'form': form,
+                   'name_form': display_name_form})
 
 
 @login_required()
