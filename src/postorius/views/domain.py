@@ -19,7 +19,6 @@
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
 try:
@@ -65,7 +64,7 @@ def domain_new(request):
             messages.error(request, _('Please check the errors below'))
     else:
         form = DomainNew()
-    return render(request, 'postorius/domain/new.html', {'form': form,})
+    return render(request, 'postorius/domain/new.html', {'form': form})
 
 
 @login_required
@@ -84,4 +83,5 @@ def domain_delete(request, domain):
             messages.error(request,
                            _('The domain could not be deleted: %s' % e.msg))
             return redirect("domain_index")
-    return render(request, 'postorius/domain/confirm_delete.html', {'domain': domain,})
+    return render(request, 'postorius/domain/confirm_delete.html',
+                  {'domain': domain})

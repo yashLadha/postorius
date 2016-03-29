@@ -140,11 +140,10 @@ class MailmanUserTest(ViewTestCase):
         self.client.login(username='user', password='testpass')
         self.foo_list.subscribe(self.user.email, pre_verified=True,
                                 pre_confirmed=True, pre_approved=True)
-        response = self.client.get(reverse('user_list_options', 
+        response = self.client.get(reverse('user_list_options',
                                            args=[self.foo_list.list_id]))
         self.assertEquals(response.status_code, 200)
         self.assertIsInstance(response.context['form'],
                               UserPreferences)
         self.assertIsInstance(response.context['change_subscription_form'],
                               ChangeSubscriptionForm)
-

@@ -20,7 +20,6 @@ from django.contrib.auth.models import User
 from postorius.forms import DomainNew
 
 
-
 class DomainViewTest(TestCase):
 
     def setUp(self):

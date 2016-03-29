@@ -59,5 +59,7 @@ class DomainCreationTest(ViewTestCase):
                      'web_host': 'http://example.com',
                      'description': 'A new Domain'}
         response = self.client.post(reverse('domain_new'), post_data)
-        self.assertHasErrorMessage(response)
+        self.assertContains(response, 'Please check the errors below')
+        self.assertContains(response, 'Please enter a valid domain name')
+        # self.assertHasErrorMessage(response)
         self.assertEquals(response.status_code, 200)
