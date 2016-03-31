@@ -592,17 +592,6 @@ class ListIdentityForm(ListSettingsForm):
             'as succinct as you can get it, while still identifying what the '
             'list is.'),
         widget=forms.Textarea())
-    mail_host = forms.CharField(
-        label=_('Mail Host'),
-        error_messages={'required': _('Please a domain name'),
-                        'invalid': _('Please enter a valid domain name.')},
-        required=True,
-        help_text=_(
-            'The "host_name" is the preferred name for email to '
-            'mailman-related addresses on this host, and generally should be '
-            "the mail host's exchanger address, if any. This setting can be "
-            'useful for selecting among alternative names of a host that '
-            'has multiple addresses.'))
     display_name = forms.CharField(
         label=_('Display name'),
         help_text=_('Display name is the name shown in the web interface.')
