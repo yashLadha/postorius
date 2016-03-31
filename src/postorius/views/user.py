@@ -19,7 +19,7 @@
 
 import logging
 
-from django.forms.formsets import formset_factory
+from django.forms import formset_factory
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
