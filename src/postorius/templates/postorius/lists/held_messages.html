@@ -76,6 +76,11 @@
               <div class="modal-body">
                   <div class="hidden" id="held-message-headers"></div>
                   <div id="held-message-content"></div>
+                  <div class="hidden" id="held-message-attachment-header">
+                    <hr />
+                    <h3>{% trans "Attachments" %}</h3>
+                  </div>
+                  <div id="held-message-attachments"></div>
               </div>
               <div class="modal-footer">
                 <div class="col-md-6 text-left">
@@ -105,6 +110,6 @@
 {% block additionaljs %}
 <script src="{% static 'postorius/js/held_messages.js'%}"></script>
 <script>
-loadjs("{% url 'uncomplete_rest_held_message' list.list_id %}", "{% trans 'Message could not be retrieved' %}")
+loadjs("{% url 'rest_held_message' list.list_id 0 %}", "{% trans 'Message could not be retrieved' %}")
 </script>
 {% endblock %}

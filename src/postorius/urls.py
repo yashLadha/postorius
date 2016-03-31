@@ -100,8 +100,10 @@ urlpatterns = [
     url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]+)/$',
         user_views.address_activation_link,
         name='address_activation_link'),
-    url(r'^api/list/(?P<list_id>[^/]+)/held_message/$',
-        rest_views.get_held_message, name='uncomplete_rest_held_message'),
     url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/$',
         rest_views.get_held_message, name='rest_held_message'),
+    url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/'
+        'attachment/(?P<attachment_id>\d+)/$',
+        rest_views.get_attachment_for_held_message,
+        name='rest_attachment_for_held_message'),
 ]

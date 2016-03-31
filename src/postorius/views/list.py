@@ -19,7 +19,7 @@
 import logging
 import csv
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed, Http404
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -30,7 +30,6 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.http import Http404
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -424,7 +423,7 @@ def list_moderation(request, list_id, held_id=-1):
 @list_moderator_required
 def moderate_held_message(request, list_id):
     if request.method != 'POST':
-        return HttpReponseNotAllowed(['POST',])
+        return HttpResponseNotAllowed(['POST'])
     msg_id = request.POST['msgid']
     try:
         mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
@@ -441,6 +440,7 @@ def moderate_held_message(request, list_id):
         return utils.render_api_error(request)
 
     return redirect('list_held_messages', list_id)
+
 
 @login_required
 @list_owner_required

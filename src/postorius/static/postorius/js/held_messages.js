@@ -5,18 +5,23 @@ var loadjs = function(rest_url, error_message) {
   $('.show-modal-btn').click(function() {
     var msgid = $(this).data('msgid');
     $.ajax({
-      url: rest_url + msgid,
+      url: rest_url.slice(0, rest_url.length - 1) + msgid,
       success: function(data) {
         $('#message-source-btn').attr('href', rest_url + msgid + '?raw')
         $('#message-title').html(data.msg.subject);
         $('.modal-footer form input[name="msgid"]').attr('value', msgid);
         if (data.msg.body) {
           $('#held-message-content').text(data.msg.body);
-        }
-        else if (data.msg.html) {
-          $('#held-message-content').text(data.msg.html);
         } else {
           $('#held-message-content').html('<p>Message content could not be extracted</p>');
+        }
+        attachments = '';
+        for (i = 0; i < data.attachments.length; i++) {
+          attachments += '<a href="' + data.attachments[i][0] + '">' + data.attachments[i][1] + '</a><br />'; 
+        }
+        if (attachments != '') {
+          $('#held-message-attachment-header').removeClass('hidden');
+          $('#held-message-attachments').html(attachments);
         }
         $('#held-message-content').html($('#held-message-content').html().replace(/\n/g, "<br />"));
         $('#held-message-headers').text(data.msg.headers);
@@ -44,5 +49,7 @@ var loadjs = function(rest_url, error_message) {
     $('#held-message-headers').addClass('hidden');
     $('#message-title').html('');
     $('#toggle-headers').removeClass('active');
+    $('#held-message-attachment-header').addClass('hidden');
+    $('#held-message-attachments').text('');
   });
 }
