@@ -332,8 +332,7 @@ def list_mass_subscribe(request, list_id):
     else:
         form = ListMassSubscription()
     return render(request, 'postorius/lists/mass_subscribe.html',
-                  {'form': form, 'list': mailing_list},
-                  context_instance=RequestContext(request))
+                  {'form': form, 'list': mailing_list})
 
 
 class ListMassRemovalView(MailingListView):
