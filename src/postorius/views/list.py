@@ -27,7 +27,6 @@ from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.forms import formset_factory
 from django.shortcuts import render, redirect
-from django.template import RequestContext
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
@@ -344,8 +343,7 @@ class ListMassRemovalView(MailingListView):
     def get(self, request, *args, **kwargs):
         form = ListMassRemoval()
         return render(request, 'postorius/lists/mass_removal.html',
-                      {'form': form, 'list': self.mailing_list},
-                      context_instance=RequestContext(request))
+                      {'form': form, 'list': self.mailing_list})
 
     @method_decorator(list_owner_required)
     def post(self, request, *args, **kwargs):
