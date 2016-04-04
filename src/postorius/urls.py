@@ -27,7 +27,7 @@ from postorius.views import domain as domain_views
 
 list_patterns = [
     url(r'^csv_view/$', list_views.csv_view, name='csv_view'),
-    url(r'^members/options/(?P<email>[^/]+)/$', list_views.list_member_options,
+    url(r'^members/options/(?P<email>.+)$', list_views.list_member_options,
         name='list_member_options'),
     url(r'^members/(?P<role>\w+)/$', list_views.list_members_view,
         name='list_members'),
@@ -63,7 +63,7 @@ list_patterns = [
     url(r'^bans/$', list_views.list_bans, name='list_bans'),
     url(r'^header-matches/$', list_views.list_header_matches,
         name='list_header_matches'),
-    url(r'^remove/(?P<role>[^/]+)/(?P<address>[^/]+)', list_views.remove_role,
+    url(r'^remove/(?P<role>[^/]+)/(?P<address>.+)$', list_views.remove_role,
         name='remove_role'),
     url(r'^settings/(?P<visible_section>[^/]+)?$', list_views.list_settings,
         name='list_settings'),
