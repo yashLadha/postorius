@@ -220,6 +220,8 @@ class ChangeSubscriptionView(MailingListView):
         try:
             user_emails = [request.user.email] + request.user.other_emails
             form = ListSubscribe(user_emails, request.POST)
+            # Find the currently subscribed email
+            old_email = None
             for address in user_emails:
                 try:
                     self.mailing_list.get_member(address)
@@ -228,13 +230,16 @@ class ChangeSubscriptionView(MailingListView):
                 else:
                     old_email = address
                     break  # no need to test more addresses
+            assert old_email is not None
             if form.is_valid():
                 email = form.cleaned_data['email']
                 if old_email == email:
                     messages.error(request, _('You are already subscribed'))
                 else:
                     self.mailing_list.unsubscribe(old_email)
-                    self.mailing_list.subscribe(email)
+                    # Since the action is done via the web UI, no email
+                    # confirmation is needed.
+                    self.mailing_list.subscribe(email, pre_confirmed=True)
                     messages.success(request,
                                      _('Subscription changed to %s') % email)
             else:

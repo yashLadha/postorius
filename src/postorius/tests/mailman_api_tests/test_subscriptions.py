@@ -44,7 +44,9 @@ class TestSubscription(ViewTestCase):
             'testuser', 'test@example.com', 'pwd')
         # Create Mailman user
         self.mm_user = self.mm_client.create_user('test@example.com', '')
-        self.mm_user.add_address('fritz@example.org').verify()
+        self.mm_user.add_address('fritz@example.org')
+        for address in self.mm_user.addresses:
+            address.verify()
 
     def tearDown(self):
         # XXX remove the method if core cleares requests on list deletion
@@ -161,3 +163,49 @@ class TestSubscription(ViewTestCase):
             reverse('mass_subscribe', args=('open_list.example.com',)),
             {'emails': email_list})
         self.assertEqual(len(self.open_list.members), 3)
+
+    def test_change_subscription_open(self):
+        # The subscription is changed from an address to another
+        self.open_list.subscribe('test@example.com')
+        self.assertEqual(len(self.open_list.members), 1)
+        self.assertEqual(len(self.open_list.requests), 0)
+        self.client.login(username='testuser', password='pwd')
+        response = self.client.post(
+            reverse('change_subscription', args=['open_list.example.com']),
+            {'email': 'fritz@example.org'})
+        self.assertHasSuccessMessage(response)
+        self.assertEqual(len(self.open_list.members), 1)
+        self.assertEqual(len(self.open_list.requests), 0)
+        try:
+            member = self.open_list.get_member('fritz@example.org')
+        except ValueError:
+            self.fail('The subscription was not changed')
+        self.assertEqual(member.email, 'fritz@example.org')
+        self.assertRedirects(
+                response, reverse('list_summary',
+                                  args=('open_list.example.com', )))
+
+    def test_change_subscription_confirm(self):
+        # The subscription is changed from an address to another
+        confirm_list = self.domain.create_list('confirm_list')
+        settings = confirm_list.settings
+        settings['subscription_policy'] = 'confirm'
+        settings.save()
+        confirm_list.subscribe('test@example.com', pre_confirmed=True)
+        self.assertEqual(len(confirm_list.members), 1)
+        self.assertEqual(len(confirm_list.requests), 0)
+        self.client.login(username='testuser', password='pwd')
+        response = self.client.post(
+            reverse('change_subscription', args=['confirm_list.example.com']),
+            {'email': 'fritz@example.org'})
+        self.assertHasSuccessMessage(response)
+        self.assertEqual(len(confirm_list.members), 1)
+        self.assertEqual(len(confirm_list.requests), 0)
+        try:
+            member = confirm_list.get_member('fritz@example.org')
+        except ValueError:
+            self.fail('The subscription was not changed')
+        self.assertEqual(member.email, 'fritz@example.org')
+        self.assertRedirects(
+                response, reverse('list_summary',
+                                  args=('confirm_list.example.com', )))
