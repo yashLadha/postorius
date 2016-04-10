@@ -763,7 +763,7 @@ class UserPreferences(FieldsetForm):
     receive_list_copy = forms.NullBooleanField(
         widget=forms.RadioSelect(choices=choices),
         required=False,
-        label=_('Receive list copy'),
+        label=_('Avoid Duplicates'),
         help_text=_(
             'When you are listed explicitly in the To: or Cc: headers of a '
             'list message, you can opt to not receive another copy from the '
