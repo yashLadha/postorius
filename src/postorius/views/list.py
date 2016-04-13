@@ -358,7 +358,7 @@ class ListMassRemovalView(MailingListView):
                     messages.success(
                             request, _('The address %(address)s has been'
                                        ' unsubscribed from %(list)s.') %
-                            {'email': email,
+                            {'address': email,
                              'list': self.mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
