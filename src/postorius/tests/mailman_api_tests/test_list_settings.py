@@ -119,3 +119,20 @@ class ListSettingsTest(ViewTestCase):
         self.assertEqual(dict(m_list.archivers),
                          {'mhonarc': False, 'prototype': True,
                           'mail-archive': False})
+
+    def test_bug_117(self):
+        self.assertEqual(self.foo_list.settings['first_strip_reply_to'], False)
+        self.client.login(username='testsu', password='testpass')
+        url = reverse(
+            'list_settings', args=('foo.example.com', 'alter_messages'))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        form = response.context["form"]
+        self.assertEqual(
+            form.initial['first_strip_reply_to'], False)
+        response = self.client.post(url, {'first_strip_reply_to': 'True'})
+        self.assertRedirects(response, url)
+        self.assertHasSuccessMessage(response)
+        # Get a new list object to avoid caching
+        m_list = List.objects.get(fqdn_listname='foo.example.com')
+        self.assertEqual(m_list.settings['first_strip_reply_to'], True)

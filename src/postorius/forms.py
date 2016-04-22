@@ -413,8 +413,10 @@ class AlterMessagesForm(ListSettingsForm):
             'recommended (and in fact, your ability to disable these headers '
             'may eventually go away).'))
     allow_list_posts = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
+        required=False,
         label=_("Include the list post header"),
         help_text=_(
             "This can be set to no for announce lists that do not wish to "
@@ -428,7 +430,7 @@ class AlterMessagesForm(ListSettingsForm):
             'It is only used if the reply-to is set to use an explicitly set '
             'header'))
     first_strip_reply_to = forms.TypedChoiceField(
-        coerce=lambda x: x == 'False',
+        coerce=lambda x: x == 'True',
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
