@@ -622,6 +622,15 @@ class ListMassSubscription(FieldsetForm):
     """
     emails = ListOfStringsField(
         label=_('Emails to mass subscribe'),
+        help_text=_(
+            'The following formats are accepted:\n'
+            'jdoe@example.com\n'
+            '<jdoe@example.com>\n'
+            'John Doe <jdoe@example.com>\n'
+            '"John Doe" <jdoe@example.com>\n'
+            'jdoe@example.com (John Doe)\n'
+            'Use the last three to associate a display name with'
+            ' the address\n'),
     )
 
 
