@@ -830,6 +830,19 @@ class AddressActivationForm(forms.Form):
         return email
 
 
+class ChangeDisplayNameForm(forms.Form):
+    """
+    Change display name.
+    """
+
+    display_name = forms.CharField(
+        label=_('Display name'),
+        error_messages={
+            'required': _('Please enter a display name')},
+        required=True
+        )
+
+
 class ChangeSubscriptionForm(forms.Form):
     email = forms.ChoiceField()
 

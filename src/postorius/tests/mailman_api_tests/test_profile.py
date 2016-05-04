@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from mock import patch
 from smtplib import SMTPException
 
+from postorius.models import MailmanUser
 from postorius.models import AddressConfirmationProfile
 from postorius.tests.utils import ViewTestCase
 
@@ -87,3 +88,12 @@ class TestProfile(ViewTestCase):
         self.assertEqual(mock_send_confirmation_link.call_count, 1)
         self.assertContains(response, 'Currently emails can not be added, '
                                       'please try again later')
+
+    def test_change_display_name(self):
+        # We create a Mailman user, from the django user object.
+        self.mm_user = MailmanUser.objects.create_from_django(self.user)
+        self.client.post(reverse('user_profile'), {
+                         'formname': 'displayname',
+                         'display_name': 'testname'})
+        # The Mailman user's display name, must have been changed correctly.
+        self.assertEqual(self.mm_user.display_name, 'testname')
