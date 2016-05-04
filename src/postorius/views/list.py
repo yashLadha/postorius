@@ -108,7 +108,8 @@ def list_members_view(request, list_id, role=None):
         if len(mailing_list.members) == 0:
             context['empty_error'] = _('List has no Subscribers')
         else:
-            context['empty_error'] = _('No member was found matching the search')
+            context['empty_error'] =\
+                    _('No member was found matching the search')
         context['count_options'] = [25, 50, 100, 200]
         context['form'] = form
     else:
@@ -324,10 +325,10 @@ def list_mass_subscribe(request, list_id):
                     display_name, address = email.utils.parseaddr(data)
                     validate_email(address)
                     mailing_list.subscribe(address=address,
-                                        display_name=display_name,
-                                        pre_verified=True,
-                                        pre_confirmed=True,
-                                        pre_approved=True)
+                                           display_name=display_name,
+                                           pre_verified=True,
+                                           pre_confirmed=True,
+                                           pre_approved=True)
                     messages.success(
                             request, _('The address %(address)s has been'
                                        ' subscribed to %(list)s.') %
@@ -363,14 +364,14 @@ class ListMassRemovalView(MailingListView):
         if not form.is_valid():
             messages.error(request, _('Please fill out the form correctly.'))
         else:
-            for email in form.cleaned_data['emails']:
+            for address in form.cleaned_data['emails']:
                 try:
-                    validate_email(email)
-                    self.mailing_list.unsubscribe(email.lower())
+                    validate_email(address)
+                    self.mailing_list.unsubscribe(address.lower())
                     messages.success(
                             request, _('The address %(address)s has been'
                                        ' unsubscribed from %(list)s.') %
-                            {'address': email,
+                            {'address': address,
                              'list': self.mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
@@ -378,7 +379,7 @@ class ListMassRemovalView(MailingListView):
                     messages.error(request, e)
                 except ValidationError:
                     messages.error(request, _('The email address %s'
-                                              ' is not valid.') % email)
+                                              ' is not valid.') % address)
         return redirect('mass_removal', self.mailing_list.list_id)
 
 
@@ -494,8 +495,8 @@ def list_new(request, template='postorius/lists/new.html'):
     be logged in to create a new list.
     """
     mailing_list = None
-    choosable_domains = [('', _('Choose a Domain'))] +\
-            _get_choosable_domains(request)
+    choosable_domains = [('', _('Choose a Domain'))]
+    choosable_domains += _get_choosable_domains(request)
     if request.method == 'POST':
         form = ListNew(choosable_domains, request.POST)
         if form.is_valid():
@@ -782,7 +783,9 @@ def list_bans(request, list_id):
             if addban_form.is_valid():
                 try:
                     ban_list.add(addban_form.cleaned_data['email'])
-                    messages.success(request, _('The email {} has been banned.'.format(addban_form.cleaned_data['email'])))
+                    messages.success(request, _(
+                        'The email {} has been banned.'.format(
+                            addban_form.cleaned_data['email'])))
                 except HTTPError as e:
                     messages.error(
                         request, _('An error occured: %s') % e.reason)
@@ -792,7 +795,9 @@ def list_bans(request, list_id):
         elif 'del' in request.POST:
             try:
                 ban_list.remove(request.POST['email'])
-                messages.success(request, _('The email {} has been un-banned'.format(request.POST['email'])))
+                messages.success(request, _(
+                    'The email {} has been un-banned'.format(
+                        request.POST['email'])))
             except HTTPError as e:
                 messages.error(request, _('An error occured: %s') % e.reason)
             except ValueError as e:
