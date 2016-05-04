@@ -448,10 +448,7 @@ def _get_choosable_domains(request):
         domains = Domain.objects.all()
     except MailmanApiError:
         return utils.render_api_error(request)
-    choosable_domains = [("", _("Choose a Domain"))]
-    for domain in domains:
-        choosable_domains.append((domain.mail_host, domain.mail_host))
-    return choosable_domains
+    return [(d.mail_host, d.mail_host) for d in domains]
 
 
 @login_required
@@ -467,8 +464,9 @@ def list_new(request, template='postorius/lists/new.html'):
     be logged in to create a new list.
     """
     mailing_list = None
+    choosable_domains = [('', _('Choose a Domain'))] +\
+            _get_choosable_domains(request)
     if request.method == 'POST':
-        choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains, request.POST)
         if form.is_valid():
             # grab domain
@@ -491,7 +489,6 @@ def list_new(request, template='postorius/lists/new.html'):
                 return render(request, 'postorius/errors/generic.html',
                               {'error': e})
     else:
-        choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains,
                        initial={'list_owner': request.user.email})
     return render(request, template, {'form': form})
