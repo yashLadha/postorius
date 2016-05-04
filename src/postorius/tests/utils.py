@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import logging
 
 from django.conf import settings
@@ -25,11 +26,24 @@ from mock import MagicMock
 from six.moves.urllib_parse import quote
 
 from postorius.utils import get_client
-from postorius.tests import MM_VCR
-
+from mailmanclient.testing.vcr_helpers import get_vcr
 
 vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
+
+
+TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+FIXTURES_DIR = getattr(settings, 'FIXTURES_DIR',
+                       os.path.join(TEST_ROOT, 'fixtures'))
+
+VCR_RECORD_MODE = os.environ.get('POSTORIUS_VCR_RECORD_MODE',
+                                 getattr(settings, 'VCR_RECORD_MODE', 'once'))
+
+MM_VCR = get_vcr(
+    cassette_library_dir=os.path.join(FIXTURES_DIR, 'vcr_cassettes'),
+    record_mode=VCR_RECORD_MODE,
+    )
 
 
 def create_mock_domain(properties=None):
