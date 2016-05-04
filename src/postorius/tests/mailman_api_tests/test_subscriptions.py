@@ -153,16 +153,29 @@ class TestSubscription(ViewTestCase):
         message = self.assertHasSuccessMessage(response)
         self.assertIn('Already subscribed', message)
 
-    def test_mass_subscribe(self):
-        # Perform mass subscription
+    def test_subscribe_with_name(self):
         User.objects.create_user('testowner', 'owner@example.com', 'pwd')
         self.open_list.add_owner('owner@example.com')
         self.client.login(username='testowner', password='pwd')
-        email_list = 'fritz@example.org\nkane@example.org\nabel@example.org\n'
+        email_list = """First Person <test-1@example.org>\n
+                        "Second Person" <test-2@example.org>\n
+                        test-3@example.org (Third Person)\n
+                        test-4@example.org\n
+                        <test-5@example.org>\n"""
         response = self.client.post(
             reverse('mass_subscribe', args=('open_list.example.com',)),
             {'emails': email_list})
-        self.assertEqual(len(self.open_list.members), 3)
+        self.assertEqual(len(self.open_list.members), 5)
+        first = self.open_list.get_member('test-1@example.org')
+        second = self.open_list.get_member('test-2@example.org')
+        third = self.open_list.get_member('test-3@example.org')
+        fourth = self.open_list.get_member('test-4@example.org')
+        fifth = self.open_list.get_member('test-5@example.org')
+        self.assertEqual(first.address.display_name, 'First Person')
+        self.assertEqual(second.address.display_name, 'Second Person')
+        self.assertEqual(third.address.display_name, 'Third Person')
+        self.assertIsNone(fourth.address.display_name)
+        self.assertIsNone(fifth.address.display_name)
 
     def test_change_subscription_open(self):
         # The subscription is changed from an address to another
