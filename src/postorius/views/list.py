@@ -16,8 +16,9 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
 import csv
+import email.utils
+import logging
 
 from django.http import HttpResponse
 
@@ -315,16 +316,20 @@ def list_mass_subscribe(request, list_id):
     if request.method == 'POST':
         form = ListMassSubscription(request.POST)
         if form.is_valid():
-            for email in form.cleaned_data['emails']:
+            for data in form.cleaned_data['emails']:
                 try:
-                    validate_email(email)
-                    mailing_list.subscribe(address=email, pre_verified=True,
-                                           pre_confirmed=True,
-                                           pre_approved=True)
+                    # Parse the data to get the address and the display name
+                    display_name, address = email.utils.parseaddr(data)
+                    validate_email(address)
+                    mailing_list.subscribe(address=address,
+                                        display_name=display_name,
+                                        pre_verified=True,
+                                        pre_confirmed=True,
+                                        pre_approved=True)
                     messages.success(
                             request, _('The address %(address)s has been'
                                        ' subscribed to %(list)s.') %
-                            {'address': email,
+                            {'address': address,
                              'list': mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
@@ -332,7 +337,7 @@ def list_mass_subscribe(request, list_id):
                     messages.error(request, e)
                 except ValidationError:
                     messages.error(request, _('The email address %s'
-                                              ' is not valid.') % email)
+                                              ' is not valid.') % address)
     else:
         form = ListMassSubscription()
     return render(request, 'postorius/lists/mass_subscribe.html',
