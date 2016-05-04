@@ -227,3 +227,19 @@ class ListMembersTest(ViewTestCase):
         self.assertEqual(len(response.context['members']), 1)
         self.assertContains(response, member_1.email)
         self.assertNotContains(response, member_2.email)
+        response = self.client.get(reverse(
+            'list_members', args=['foo@example.com', 'subscriber']),
+            {'q': 'not_a_member'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['members']), 0)
+        self.assertNotContains(response, member_1.email)
+        self.assertNotContains(response, member_2.email)
+        self.assertEqual(response.context['empty_error'],'No member was found matching the search')
+        self.foo_list.unsubscribe('member-1@example.com')
+        self.foo_list.unsubscribe('member-2@example.com')
+        response = self.client.get(reverse(
+            'list_members', args=['foo@example.com', 'subscriber']),
+            {'q': 'member-1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['members']), 0)
+        self.assertEqual(response.context['empty_error'],'List has no Subscribers')

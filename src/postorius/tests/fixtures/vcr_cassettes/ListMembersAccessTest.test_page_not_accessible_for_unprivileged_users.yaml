@@ -10,6 +10,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
       location: ['http://localhost:9001/3.0/domains/example.com']
     status: {code: 201, message: Created}
 - request:
@@ -25,7 +26,7 @@ interactions:
         "url_host": "example.com"}'}
     headers:
       content-length: ['233']
-      content-type: [application/json; charset=utf-8]
+      content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: fqdn_listname=foo%40example.com
@@ -38,6 +39,7 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
       location: ['http://localhost:9001/3.0/lists/foo.example.com']
     status: {code: 201, message: Created}
 - request:
@@ -53,7 +55,7 @@ interactions:
         "http://localhost:9001/3.0/lists/foo.example.com", "volume": 1}'}
     headers:
       content-length: ['294']
-      content-type: [application/json; charset=utf-8]
+      content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: list_id=foo.example.com&role=owner&subscriber=owner%40example.com
@@ -66,7 +68,8 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/15']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/members/7']
     status: {code: 201, message: Created}
 - request:
     body: list_id=foo.example.com&role=moderator&subscriber=moderator%40example.com
@@ -79,7 +82,8 @@ interactions:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
-      location: ['http://localhost:9001/3.0/members/16']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/members/8']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -91,7 +95,7 @@ interactions:
     body: {string: !!python/unicode 404 Not Found}
     headers:
       content-length: ['13']
-      content-type: [application/json; charset=utf-8]
+      content-type: [application/json; charset=UTF-8]
     status: {code: 404, message: Not Found}
 - request:
     body: null
@@ -106,7 +110,7 @@ interactions:
         "http://localhost:9001/3.0/lists/foo.example.com", "volume": 1}'}
     headers:
       content-length: ['294']
-      content-type: [application/json; charset=utf-8]
+      content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -116,14 +120,14 @@ interactions:
     uri: http://localhost:9001/3.0/lists/foo.example.com/roster/owner
   response:
     body: {string: !!python/unicode '{"entries": [{"address": "http://localhost:9001/3.0/addresses/owner@example.com",
-        "delivery_mode": "regular", "email": "owner@example.com", "http_etag": "\"2cf564c08c682ec94e01d7685dc14eadf342de80\"",
-        "list_id": "foo.example.com", "member_id": 15, "moderation_action": "accept",
-        "role": "owner", "self_link": "http://localhost:9001/3.0/members/15", "user":
-        "http://localhost:9001/3.0/users/16"}], "http_etag": "\"f0cefc2c95e89d58556a6cd944c834b1c80d52dc\"",
+        "delivery_mode": "regular", "email": "owner@example.com", "http_etag": "\"776a09d90204935e7d125fce3c160f06d2a98155\"",
+        "list_id": "foo.example.com", "member_id": 7, "moderation_action": "accept",
+        "role": "owner", "self_link": "http://localhost:9001/3.0/members/7", "user":
+        "http://localhost:9001/3.0/users/7"}], "http_etag": "\"2a92d22ca2421f26632227565034353f36bc658c\"",
         "start": 0, "total_size": 1}'}
     headers:
-      content-length: ['486']
-      content-type: [application/json; charset=utf-8]
+      content-length: ['483']
+      content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -134,14 +138,14 @@ interactions:
   response:
     body: {string: !!python/unicode '{"entries": [{"address": "http://localhost:9001/3.0/addresses/moderator@example.com",
         "delivery_mode": "regular", "email": "moderator@example.com", "http_etag":
-        "\"3d9bc77ab406b52c2a71af75616cc6f82a25673e\"", "list_id": "foo.example.com",
-        "member_id": 16, "moderation_action": "accept", "role": "moderator", "self_link":
-        "http://localhost:9001/3.0/members/16", "user": "http://localhost:9001/3.0/users/17"}],
-        "http_etag": "\"254a3b743810bd9a16eb463b5f430b89653381bb\"", "start": 0, "total_size":
+        "\"1d14e6e615be285d3926aace6c71fd58418533b6\"", "list_id": "foo.example.com",
+        "member_id": 8, "moderation_action": "accept", "role": "moderator", "self_link":
+        "http://localhost:9001/3.0/members/8", "user": "http://localhost:9001/3.0/users/8"}],
+        "http_etag": "\"b2b67d3f4db3a3effcaa64bb69aef4ef93b94aad\"", "start": 0, "total_size":
         1}'}
     headers:
-      content-length: ['498']
-      content-type: [application/json; charset=utf-8]
+      content-length: ['495']
+      content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -157,7 +161,7 @@ interactions:
         "start": 0, "total_size": 1}'}
     headers:
       content-length: ['338']
-      content-type: [application/json; charset=utf-8]
+      content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -178,22 +182,22 @@ interactions:
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode '{"entries": [{"created_on": "2005-08-01T07:49:23",
-        "http_etag": "\"a4c6a8d2eaef24b7661151836891c8284b39fb75\"", "is_server_owner":
-        false, "self_link": "http://localhost:9001/3.0/users/16", "user_id": 16},
-        {"created_on": "2005-08-01T07:49:23", "http_etag": "\"5ba84a9331a86066b367c0388a143ff681442612\"",
-        "is_server_owner": false, "self_link": "http://localhost:9001/3.0/users/17",
-        "user_id": 17}], "http_etag": "\"bb8f89796980aa1389a1de16aa1f7aaf93fcc290\"",
+        "http_etag": "\"c7360c029a83c97672ca38dd8b008d48e05949a6\"", "is_server_owner":
+        false, "self_link": "http://localhost:9001/3.0/users/7", "user_id": 7}, {"created_on":
+        "2005-08-01T07:49:23", "http_etag": "\"9f85bec9adf1f795257120c028ebcd42df491bcb\"",
+        "is_server_owner": false, "self_link": "http://localhost:9001/3.0/users/8",
+        "user_id": 8}], "http_etag": "\"6d79d8839102712f649497295042532321f7a937\"",
         "start": 0, "total_size": 2}'}
     headers:
-      content-length: ['487']
-      content-type: [application/json; charset=utf-8]
+      content-length: ['483']
+      content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/users/16
+    uri: http://localhost:9001/3.0/users/7
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -204,7 +208,7 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/users/17
+    uri: http://localhost:9001/3.0/users/8
   response:
     body: {string: !!python/unicode ''}
     headers:

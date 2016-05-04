@@ -106,7 +106,10 @@ def list_members_view(request, list_id, role=None):
         context['members'] = utils.paginate(
             request, method, count=request.GET.get('count', 25),
             paginator_class=utils.MailmanPaginator)
-        context['empty_error'] = _('List has no Subscribers')
+        if len(mailing_list.members) == 0:
+            context['empty_error'] = _('List has no Subscribers')
+        else:
+            context['empty_error'] = _('No member was found matching the search')
         context['count_options'] = [25, 50, 100, 200]
         context['form'] = form
     else:
