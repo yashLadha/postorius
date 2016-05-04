@@ -16,9 +16,9 @@
      <li> <a href="{% url 'user_address_preferences' %}">{% trans 'Address-based preferences' %}</a></li>
      <li class="active"><a href="#">{% trans 'Subscription-based preferences' %}</a></li>
     </ul>
-    {% if nolists %}
+    {% if not zipped_data or nolists %}
       <div>
-          <h1>{% trans 'No preferences available' %}</h1>
+          <h4>{% trans 'No preferences available' %}</h4>
       </div>
       <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
     {% else %}
