@@ -32,16 +32,14 @@ vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
 
 
-TEST_ROOT = os.path.abspath(os.path.dirname(__file__))
-
-FIXTURES_DIR = getattr(settings, 'FIXTURES_DIR',
-                       os.path.join(TEST_ROOT, 'fixtures'))
+FIXTURES_DIR = os.path.join(os.path.abspath(
+    os.path.dirname(__file__)), 'fixtures', 'vcr_cassettes')
 
 VCR_RECORD_MODE = os.environ.get('POSTORIUS_VCR_RECORD_MODE',
                                  getattr(settings, 'VCR_RECORD_MODE', 'once'))
 
 MM_VCR = get_vcr(
-    cassette_library_dir=os.path.join(FIXTURES_DIR, 'vcr_cassettes'),
+    cassette_library_dir=FIXTURES_DIR,
     record_mode=VCR_RECORD_MODE,
     )
 
