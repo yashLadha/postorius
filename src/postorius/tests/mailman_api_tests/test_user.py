@@ -58,8 +58,6 @@ class MailmanUserTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context["formset"]), 3)
         self.assertEqual(len(response.context["zipped_data"]), 3)
-        #self.assertEqual(
-        #    response.context["formset"].initial['archive_policy'], 'public')
 
     def test_preferences_none(self):
         # Mailman does not accept None values for boolean preferences. When
