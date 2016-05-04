@@ -1,11 +1,12 @@
 var loadjs = function(rest_url, error_message) {
+  rest_url = rest_url.slice(0, rest_url.length - 2);
   $('#all-messages-checkbox').change(function() {
     $('.message-checkbox').prop('checked', this.checked);
   });
   $('.show-modal-btn').click(function() {
     var msgid = $(this).data('msgid');
     $.ajax({
-      url: rest_url.slice(0, rest_url.length - 1) + msgid,
+      url: rest_url + msgid,
       success: function(data) {
         $('#message-source-btn').attr('href', rest_url + msgid + '?raw')
         $('#message-title').html(data.msg.subject);
