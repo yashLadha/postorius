@@ -634,7 +634,6 @@ class ListMassSubscription(FieldsetForm):
     )
 
 
-
 class ListMassRemoval(FieldsetForm):
 
     """Form fields to remove multiple list users.
