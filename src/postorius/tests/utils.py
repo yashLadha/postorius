@@ -143,4 +143,4 @@ class ViewTestCase(TestCase):
     def assertRedirectsToLogin(self, url):
         response = self.client.get(url)
         self.assertRedirects(response, '{}?next={}'.format(
-                    reverse(settings.LOGIN_URL), quote(url)))
+            reverse(settings.LOGIN_URL), quote(url)))

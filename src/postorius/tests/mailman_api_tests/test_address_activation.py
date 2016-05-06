@@ -38,15 +38,15 @@ class TestAddressActivationForm(ViewTestCase):
         super(TestAddressActivationForm, self).setUp()
         # Create a user and profile.
         self.user = User.objects.create_user(
-                'testuser', 'les@example.org', 'testpass')
+            'testuser', 'les@example.org', 'testpass')
         self.profile = AddressConfirmationProfile.objects.create(
-                email='les2@example.org', user=self.user)
+            email='les2@example.org', user=self.user)
         self.expired = AddressConfirmationProfile.objects.create(
-                email='expired@example.org', user=self.user)
+            email='expired@example.org', user=self.user)
         self.expired.created -= timedelta(weeks=100)
         self.expired.save()
         self.mm_user = self.mm_client.create_user(
-                'subscribed@example.org', 'password')
+            'subscribed@example.org', 'password')
 
     def test_valid_email_is_valid(self):
         form = AddressActivationForm({'email': 'very_new_email@example.org'})
@@ -82,7 +82,7 @@ class TestAddressConfirmationProfile(ViewTestCase):
             username=u'ler_mm', email=u'ler@mailman.mostdesirable.org',
             password=u'pwd')
         self.profile = AddressConfirmationProfile.objects.create(
-                email=u'les@example.org', user=self.user)
+            email=u'les@example.org', user=self.user)
         # Create a test request object
         self.request = RequestFactory().get('/')
 
@@ -156,7 +156,7 @@ class TestAddressActivationLinkSuccess(ViewTestCase):
             password='pwd')
         self.mm_user = self.mm_client.create_user('ler@example.org', None)
         self.profile = AddressConfirmationProfile.objects.create(
-                email=u'les@example.org', user=self.user)
+            email=u'les@example.org', user=self.user)
         self.profile.save()
 
     def test_add_address(self):

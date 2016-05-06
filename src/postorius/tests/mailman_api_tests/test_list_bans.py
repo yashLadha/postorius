@@ -17,7 +17,7 @@
 
 """Tests for ban lists"""
 
-from __future__ import absolute_import,  print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -59,11 +59,11 @@ class ListBansTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('addban_form' in response.context)
         self.assertContains(
-                response, '<input class="form-control" id="id_email" '
-                          'name="email" type="text" />')
+            response, '<input class="form-control" id="id_email" '
+                      'name="email" type="text" />')
         self.assertContains(
-                response, '<button class="btn btn-primary" type="submit" '
-                          'name="add">Ban email</button>')
+            response, '<button class="btn btn-primary" type="submit" '
+                      'name="add">Ban email</button>')
 
     def test_context_contains_delete_forms(self):
         banned = ['banned{}@example.com'.format(i) for i in range(1, 10)]
@@ -73,11 +73,12 @@ class ListBansTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         for ban in banned:
             self.assertContains(
-                    response, '<input type="hidden" name="email" value="%s" />'
-                    % ban)
+                response,
+                '<input type="hidden" name="email" value="%s" />' % ban)
         self.assertContains(
-                response, '<button class="btn btn-danger btn-xs" '
-                          'type="submit" name="del"', count=9)
+            response,
+            '<button class="btn btn-danger btn-xs" type="submit" name="del"',
+            count=9)
 
     def test_add_ban(self):
         response = self.client.post(self.url, {

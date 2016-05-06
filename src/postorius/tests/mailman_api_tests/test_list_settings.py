@@ -17,7 +17,7 @@
 
 """Tests for list settings"""
 
-from __future__ import absolute_import,  print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -111,7 +111,7 @@ class ListSettingsTest(ViewTestCase):
         self.assertEqual(response.context["form"].initial['archivers'],
                          ['mail-archive', 'mhonarc', 'prototype'])
         response = self.client.post(
-                url, {'archive_policy': 'public', 'archivers': ['prototype']})
+            url, {'archive_policy': 'public', 'archivers': ['prototype']})
         self.assertRedirects(response, url)
         self.assertHasSuccessMessage(response)
         # Get a new list object to avoid caching

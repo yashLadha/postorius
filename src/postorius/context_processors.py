@@ -49,6 +49,6 @@ def postorius(request):
         'request': request,
         'hyperkitty_url': hyperkitty_url,
         # Resolve the login and logout URLs from the settings
-        'login_url':  resolve_url(settings.LOGIN_URL),
+        'login_url': resolve_url(settings.LOGIN_URL),
         'logout_url': resolve_url(settings.LOGOUT_URL),
     }

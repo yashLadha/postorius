@@ -38,15 +38,14 @@ except ImportError:
 
 from postorius import utils
 from postorius.forms import (
-        ListNew, MemberForm, ListSubscribe, MultipleChoiceForm,
-        ListSubscriptionPolicyForm, ArchiveSettingsForm,
-        MessageAcceptanceForm, DigestSettingsForm, AlterMessagesForm,
-        ListAutomaticResponsesForm, ListIdentityForm, UserPreferences,
-        ListMassSubscription, ListMassRemoval, ListAddBanForm,
-        ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
+    ListNew, MemberForm, ListSubscribe, MultipleChoiceForm, UserPreferences,
+    ListSubscriptionPolicyForm, ArchiveSettingsForm, MessageAcceptanceForm,
+    DigestSettingsForm, AlterMessagesForm, ListAutomaticResponsesForm,
+    ListIdentityForm, ListMassSubscription, ListMassRemoval, ListAddBanForm,
+    ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
 from postorius.models import Domain, List, MailmanApiError, Mailman404Error
-from postorius.auth.decorators import (list_owner_required,
-                                       list_moderator_required)
+from postorius.auth.decorators import (
+    list_owner_required, list_moderator_required)
 from postorius.views.generic import MailingListView
 
 
@@ -75,12 +74,12 @@ def list_members_view(request, list_id, role=None):
             if member_form.is_valid():
                 try:
                     getattr(mailing_list, 'add_%s' % role)(
-                            member_form.cleaned_data['email'])
+                        member_form.cleaned_data['email'])
                     messages.success(
-                            request, _('%(email)s has been added'
-                                       ' with the role %(role)s')
-                            % {'email': member_form.cleaned_data['email'],
-                               'role': role})
+                        request, _('%(email)s has been added'
+                                   ' with the role %(role)s')
+                        % {'email': member_form.cleaned_data['email'],
+                           'role': role})
                     return redirect('list_members', list_id, role)
                 except HTTPError as e:
                     messages.error(request, _(e.msg))
@@ -98,7 +97,7 @@ def list_members_view(request, list_id, role=None):
             if "*" not in query:
                 query = '*{}*'.format(query)
             # Proxy the find_members method to insert the query
-            method = lambda count, page:  mailing_list.find_members(
+            method = lambda count, page: mailing_list.find_members(
                 query, count=count, page=page)
         else:
             method = mailing_list.get_member_page
@@ -109,7 +108,7 @@ def list_members_view(request, list_id, role=None):
             context['empty_error'] = _('List has no Subscribers')
         else:
             context['empty_error'] =\
-                    _('No member was found matching the search')
+                _('No member was found matching the search')
         context['count_options'] = [25, 50, 100, 200]
         context['form'] = form
     else:
@@ -330,10 +329,10 @@ def list_mass_subscribe(request, list_id):
                                            pre_confirmed=True,
                                            pre_approved=True)
                     messages.success(
-                            request, _('The address %(address)s has been'
-                                       ' subscribed to %(list)s.') %
-                            {'address': address,
-                             'list': mailing_list.fqdn_listname})
+                        request, _('The address %(address)s has been'
+                                   ' subscribed to %(list)s.') %
+                        {'address': address,
+                         'list': mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except HTTPError as e:
@@ -369,10 +368,10 @@ class ListMassRemovalView(MailingListView):
                     validate_email(address)
                     self.mailing_list.unsubscribe(address.lower())
                     messages.success(
-                            request, _('The address %(address)s has been'
-                                       ' unsubscribed from %(list)s.') %
-                            {'address': address,
-                             'list': self.mailing_list.fqdn_listname})
+                        request, _('The address %(address)s has been'
+                                   ' unsubscribed from %(list)s.') %
+                        {'address': address,
+                         'list': self.mailing_list.fqdn_listname})
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except (HTTPError, ValueError) as e:
@@ -870,6 +869,6 @@ def list_header_matches(request, list_id):
     del form_new.fields['DELETE']
 
     return render(request, 'postorius/lists/header_matches.html', {
-         'list': m_list,
-         'formset': formset,
-         })
+        'list': m_list,
+        'formset': formset,
+        })

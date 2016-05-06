@@ -81,7 +81,7 @@ class UserMailmanSettingsView(MailmanUserView):
     def get(self, request):
         try:
             mm_user = MailmanUser.objects.get_or_create_from_django(
-                    request.user)
+                request.user)
         except MailmanApiError:
             return utils.render_api_error(request)
         settingsform = UserPreferences(initial=mm_user.preferences)
@@ -171,7 +171,7 @@ def user_list_options(request, list_id):
         form = UserPreferences(initial=subscription.preferences)
     user_emails = [request.user.email] + request.user.other_emails
     subscription_form = ChangeSubscriptionForm(
-            user_emails, initial={'email': subscription.email})
+        user_emails, initial={'email': subscription.email})
     return render(request, 'postorius/user/list_options.html',
                   {'form': form, 'list': mlist,
                    'change_subscription_form': subscription_form})
@@ -250,7 +250,7 @@ def user_profile(request):
         if request.POST.get('formname') == 'displayname':
             display_name_form = ChangeDisplayNameForm(request.POST)
             form = AddressActivationForm(
-                    initial={'user_email': request.user.email})
+                initial={'user_email': request.user.email})
             if display_name_form.is_valid():
                 name = display_name_form.cleaned_data['display_name']
                 try:
@@ -265,13 +265,13 @@ def user_profile(request):
                 return redirect('user_profile')
         else:
             display_name_form = ChangeDisplayNameForm(
-                    initial={'display_name': mm_user.display_name})
+                initial={'display_name': mm_user.display_name})
             form = AddressActivationForm(request.POST)
             if form.is_valid():
                 profile, c = (
                     AddressConfirmationProfile.objects.update_or_create(
-                     email=form.cleaned_data['email'], user=request.user,
-                     defaults={'activation_key': uuid.uuid4().hex}))
+                        email=form.cleaned_data['email'], user=request.user,
+                        defaults={'activation_key': uuid.uuid4().hex}))
                 try:
                     profile.send_confirmation_link(request)
                     messages.success(request, _(
@@ -288,9 +288,9 @@ def user_profile(request):
                                      ' please try again later'))
     else:
         form = AddressActivationForm(
-                initial={'user_email': request.user.email})
+            initial={'user_email': request.user.email})
         display_name_form = ChangeDisplayNameForm(
-                initial={'display_name': mm_user.display_name})
+            initial={'display_name': mm_user.display_name})
     return render(request, 'postorius/user/profile.html',
                   {'mm_user': mm_user, 'form': form,
                    'name_form': display_name_form})
@@ -316,10 +316,10 @@ def address_activation_link(request, activation_key):
             try:
                 try:
                     mailman_user = MailmanUser.objects.get(
-                            address=request.user.email)
+                        address=request.user.email)
                 except Mailman404Error:
                     mailman_user = MailmanUser.objects.create(
-                            request.user.email, '')
+                        request.user.email, '')
                 mm_address = mailman_user.add_address(profile.email)
                 # The address has just been verified.
                 mm_address.verify()

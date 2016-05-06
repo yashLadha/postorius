@@ -71,7 +71,7 @@ def get_held_message(request, list_id, held_id=-1):
         raise Http404(_('Message does not exist'))
 
     held_message = List.objects.get_or_404(
-            fqdn_listname=list_id).get_held_message(held_id)
+        fqdn_listname=list_id).get_held_message(held_id)
     if 'raw' in request.GET:
         return HttpResponse(held_message.msg, content_type='text/plain')
     response_data = dict()
@@ -89,8 +89,8 @@ def get_held_message(request, list_id, held_id=-1):
     for attachment in attachments:
         counter, name, content_type, encoding, content = attachment
         response_data['attachments'].append(
-                (reverse('rest_attachment_for_held_message',
-                         args=(list_id, held_id, counter)), name))
+            (reverse('rest_attachment_for_held_message',
+                     args=(list_id, held_id, counter)), name))
 
     return HttpResponse(json.dumps(response_data),
                         content_type='application/json')
@@ -100,7 +100,7 @@ def get_held_message(request, list_id, held_id=-1):
 @list_moderator_required
 def get_attachment_for_held_message(request, list_id, held_id, attachment_id):
     held_message = List.objects.get_or_404(
-            fqdn_listname=list_id).get_held_message(held_id)
+        fqdn_listname=list_id).get_held_message(held_id)
     attachments = get_attachments(held_message.msg)
     for attachment in attachments:
         if attachment[0] == int(attachment_id):

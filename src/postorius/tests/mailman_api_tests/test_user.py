@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import,  print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -88,7 +88,7 @@ class MailmanUserTest(ViewTestCase):
                     reverse('user_list_options', args=[self.foo_list.list_id]),
                     ):
                 response = self.client.post(
-                        url, dict((pref, None) for pref in prefs_with_none))
+                    url, dict((pref, None) for pref in prefs_with_none))
                 self.assertEqual(response.status_code, 302)
             # Formsets
             for url in ('user_address_preferences',
