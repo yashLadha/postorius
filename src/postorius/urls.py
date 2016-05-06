@@ -23,6 +23,7 @@ from django.contrib.auth.views import logout as logout_view
 from postorius.views import list as list_views
 from postorius.views import user as user_views
 from postorius.views import domain as domain_views
+from postorius.views import rest as rest_views
 
 
 list_patterns = [
@@ -50,16 +51,10 @@ list_patterns = [
     url(r'^mass_removal/$', list_views.ListMassRemovalView.as_view(),
         name='mass_removal'),
     url(r'^delete$', list_views.list_delete, name='list_delete'),
-    url(r'^held_messages/(?P<msg_id>[^/]+)/accept$',
-        list_views.accept_held_message, name='accept_held_message'),
-    url(r'^held_messages/(?P<msg_id>[^/]+)/discard$',
-        list_views.discard_held_message, name='discard_held_message'),
-    url(r'^held_messages/(?P<msg_id>[^/]+)/defer$',
-        list_views.defer_held_message, name='defer_held_message'),
-    url(r'^held_messages/(?P<msg_id>[^/]+)/reject$',
-        list_views.reject_held_message, name='reject_held_message'),
     url(r'^held_messages$', list_views.list_moderation,
         name='list_held_messages'),
+    url(r'^held_messages/moderate$', list_views.moderate_held_message,
+        name='moderate_held_message'),
     url(r'^bans/$', list_views.list_bans, name='list_bans'),
     url(r'^header-matches/$', list_views.list_header_matches,
         name='list_header_matches'),
@@ -105,4 +100,10 @@ urlpatterns = [
     url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]+)/$',
         user_views.address_activation_link,
         name='address_activation_link'),
+    url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/$',
+        rest_views.get_held_message, name='rest_held_message'),
+    url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/'
+        'attachment/(?P<attachment_id>\d+)/$',
+        rest_views.get_attachment_for_held_message,
+        name='rest_attachment_for_held_message'),
 ]

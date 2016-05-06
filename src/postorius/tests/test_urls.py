@@ -35,3 +35,7 @@ class URLTest(TestCase):
                     })
         except NoReverseMatch as e:
             self.fail(e)
+
+    def test_held_message_url_ends_with_slash(self):
+        url = reverse('rest_held_message', args=('foo', 0))
+        self.assertEquals(url[-2:], '0/')
