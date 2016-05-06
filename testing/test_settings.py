@@ -153,8 +153,3 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_browserid.auth.BrowserIDBackend',
 )
-
-
-# Set VCR_RECORD_MODE to 'all' to re-record all API responses.
-# (Remember to use an empty mailman database!)
-VCR_RECORD_MODE = 'once'

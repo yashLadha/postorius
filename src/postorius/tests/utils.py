@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import logging
 
 from django.conf import settings
@@ -25,8 +26,7 @@ from mock import MagicMock
 from six.moves.urllib_parse import quote
 
 from postorius.utils import get_client
-from postorius.tests import MM_VCR
-
+from mailmanclient.testing.vcr_helpers import get_vcr
 
 vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
@@ -105,11 +105,15 @@ get_flash_messages.__test__ = False
 class ViewTestCase(TestCase):
 
     use_vcr = True
+    _fixtures_dir = os.path.join(os.path.abspath(
+        os.path.dirname(__file__)), 'fixtures', 'vcr_cassettes')
+
+    _mm_vcr = get_vcr(cassette_library_dir=_fixtures_dir)
 
     def setUp(self):
         self.mm_client = get_client()
         if self.use_vcr:
-            cm = MM_VCR.use_cassette('.'.join([
+            cm = self._mm_vcr.use_cassette('.'.join([
                 self.__class__.__name__, self._testMethodName, 'yaml']))
             self.cassette = cm.__enter__()
             self.addCleanup(cm.__exit__, None, None, None)
