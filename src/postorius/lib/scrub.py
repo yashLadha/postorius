@@ -170,4 +170,4 @@ class Scrubber(object):
         if ctype == 'message/rfc822':
             submsg = part.get_payload()
             decodedpayload = str(submsg)
-        return (counter, filebase+ext, ctype, charset, decodedpayload)
+        return (counter, filebase + ext, ctype, charset, decodedpayload)

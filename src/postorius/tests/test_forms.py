@@ -103,10 +103,10 @@ class ListNewTest(TestCase):
 
     def test_form_fields_list_invalid(self):
         form = ListNew({
-             'listname': 'xy#z',
-             'mail_host': 'mailman.most-desirable.org',
-             'list_owner': 'mailman.most-desirable.org',
-             'advertise': 'abcd',
-             'description': 'The Most Desirable organization',
+            'listname': 'xy#z',
+            'mail_host': 'mailman.most-desirable.org',
+            'list_owner': 'mailman.most-desirable.org',
+            'advertise': 'abcd',
+            'description': 'The Most Desirable organization',
         })
         self.assertFalse(form.is_valid())

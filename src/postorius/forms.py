@@ -192,15 +192,15 @@ class ListSubscribe(FieldsetForm):
     """
 
     email = forms.ChoiceField(
-                label=_('Your email address'),
-                validators=[validate_email],
-                widget=forms.Select(),
-                error_messages={
-                    'required': _('Please enter an email address.'),
-                    'invalid': _('Please enter a valid email address.')})
+        label=_('Your email address'),
+        validators=[validate_email],
+        widget=forms.Select(),
+        error_messages={
+            'required': _('Please enter an email address.'),
+            'invalid': _('Please enter a valid email address.')})
 
-    display_name = forms.CharField(label=_('Your name (optional)'),
-                                   required=False)
+    display_name = forms.CharField(
+        label=_('Your name (optional)'), required=False)
 
     def __init__(self, user_emails, *args, **kwargs):
         super(ListSubscribe, self).__init__(*args, **kwargs)
@@ -826,14 +826,14 @@ class AddressActivationForm(forms.Form):
         # Check if the address belongs to someone else
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
-                    _('This email is in use. Please choose another or contact'
-                      ' the administrator'), 'error')
+                _('This email is in use. Please choose another or contact'
+                  ' the administrator'), 'error')
 
         # Check if the email is attached to a user in Mailman
         try:
             utils.get_client().get_user(email)
             raise forms.ValidationError(
-                    _('This email already belongs to a user'), 'error')
+                _('This email already belongs to a user'), 'error')
         except HTTPError:
             pass
         return email
