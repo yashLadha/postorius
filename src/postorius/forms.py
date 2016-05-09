@@ -554,6 +554,12 @@ class ListAutomaticResponsesForm(ListSettingsForm):
             'If a welcome message is to be sent to subscribers, you can '
             'specify a URI that gives the text of this message.'),
     )
+    goodbye_message_uri = forms.CharField(
+        label=_('URI for the good bye message'),
+        help_text=_(
+            'If a good bye message is to be sent to unsubscribers, you can '
+            'specify a URI that gives the text of this message.'),
+    )
     admin_immed_notify = forms.BooleanField(
         widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
