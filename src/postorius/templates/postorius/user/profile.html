@@ -14,39 +14,65 @@
     <table class="table table-bordered table-striped">
         <tbody>
             <tr>
-                <td>{% trans 'Mailman display name' %}</td>
-                <td>{{ mm_user.display_name }}</td>
+                <th>{% trans 'Mailman display name' %}</th>
+                <td>
+                  <form class="form-inline" action="" method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                          {{ name_form.display_name|add_form_control }}
+                      </div>
+                      <input type="hidden" name="formname" value="displayname" />
+                      <button class="btn btn-primary"
+                              type="submit">{% trans 'Update' %}</button>
+                  </form>
+                </td>
             </tr>
             <tr>
-                <td>{% trans 'Username' %}</td>
+                <th>{% trans 'Username' %}</th>
                 <td>{{ user.username }}</td>
             </tr>
             <tr>
-                <td>{% trans 'Main email' %}</td>
+                <th>{% trans 'Main email' %}</th>
                 <td>{{ user.email}}</td>
             </tr>
+            {% if user.other_emails %}
+                <tr>
+                    <th>{% trans 'Other emails' %}</th>
+                    <td>
+                        {% for email in user.other_emails %}
+                            <p>&bull; {{ email }}</p>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endif %}
             <tr>
-                <td>{% trans 'Other emails' %}</td>
-                <td><ul class="unstyled">
-                    {% for email in user.other_emails %}
-                        <li>{{ email }}</li>
-                    {% endfor %}
-                </ul></td>
+                <td></td>
+                <td>
+                    <p>
+                        {% blocktrans %}
+                            You can add other addresses to your profile,
+                            to use different addresses for your subscriptions.
+                        {% endblocktrans %}
+                    </p>
+                    <form class="form-inline" action="" method="post">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            {{ form.email|add_form_control }}
+                        </div>
+
+                        {% for error in form.email.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                        <button class="btn btn-primary" type="submit">
+                          {% trans 'Add' %}
+                        </button>
+                    </form>
+                </td>
             </tr>
         </tbody>
     </table>
-    <hr />
-    <form class="form-horizontal" action="" method="post">
-        {% render_form_horizontal name_form 2 5 'Change display name' %}
-        <input type="hidden" name="formname" value="displayname" />
-    </form>
-    <p>
-        {% blocktrans %}
-            You can add other addresses to your profile,
-            to use different addresses for your subscriptions.
-        {% endblocktrans %}
-    </p>
-    <form class="form-horizontal" action="" method="post">
-        {% render_form_horizontal form 2 5 'Add email address' %}
-    </form>
 {% endblock main %}
