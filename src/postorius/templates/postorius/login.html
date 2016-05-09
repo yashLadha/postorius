@@ -7,6 +7,10 @@
 {% block subtitle %}
 {% trans 'Login' %}
 {% endblock %}
+{% block additionalcss %}
+    {% browserid_css %}
+{% endblock %}
+
 
 {% block main %}
 
@@ -22,9 +26,7 @@
         </div>
         <div class="col-md-6 text-center persona-login">
             {% browserid_info %}
-            <a rel="nofollow" class="browserid-login persona-button" id="browserid" href="#">
-                <img src="{% static 'postorius/img/sign_in_blue.png' %}" alt="{% trans 'Login using BrowserID' %}" />
-            </a>
+            {% browserid_login text='Login using Persona' color='blue' next=next %}
             <p>
                 {% blocktrans %}
                     Mozilla Persona is an easy way to sign into multiple websites, while still controlling your personal data.
