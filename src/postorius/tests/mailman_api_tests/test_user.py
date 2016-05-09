@@ -24,6 +24,7 @@ from mock import patch
 
 from postorius.models import MailmanUser, Mailman404Error
 from postorius.tests.utils import ViewTestCase
+from postorius.forms import UserPreferences, ChangeSubscriptionForm
 
 
 class MailmanUserTest(ViewTestCase):
@@ -118,3 +119,31 @@ class MailmanUserTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         # The Mailman user must have been created
         self.assertIsNotNone(MailmanUser.objects.get(address=user.email))
+
+    def test_presence_of_form_in_user_global_settings(self):
+        self.client.login(username='user', password='testpass')
+        response = self.client.get(reverse('user_mailmansettings'))
+        self.assertEquals(response.status_code, 200)
+        self.assertIsInstance(response.context['settingsform'],
+                              UserPreferences)
+
+    def test_presence_of_form_in_user_subscription_preferences(self):
+        self.client.login(username='user', password='testpass')
+        self.foo_list.subscribe(self.user.email, pre_verified=True,
+                                pre_confirmed=True, pre_approved=True)
+        response = self.client.get(reverse('user_subscription_preferences'))
+        self.assertEquals(response.status_code, 200)
+        self.assertIsNotNone(response.context['zipped_data'])
+        self.assertEquals(len(response.context['zipped_data']), 1)
+
+    def test_presence_of_form_in_user_list_options(self):
+        self.client.login(username='user', password='testpass')
+        self.foo_list.subscribe(self.user.email, pre_verified=True,
+                                pre_confirmed=True, pre_approved=True)
+        response = self.client.get(reverse('user_list_options',
+                                           args=[self.foo_list.list_id]))
+        self.assertEquals(response.status_code, 200)
+        self.assertIsInstance(response.context['form'],
+                              UserPreferences)
+        self.assertIsInstance(response.context['change_subscription_form'],
+                              ChangeSubscriptionForm)

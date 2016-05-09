@@ -44,7 +44,20 @@ class ListCreationTest(ViewTestCase):
                      'list_owner': 'owner@example.com',
                      'advertised': 'True',
                      'description': 'A new list.'}
-        self.client.post(reverse('list_new'), post_data)
+        response = self.client.post(reverse('list_new'), post_data)
+        self.assertHasSuccessMessage(response)
         a_new_list = self.mm_client.get_list('a_new_list@example.com')
         self.assertEqual(a_new_list.fqdn_listname, u'a_new_list@example.com')
         self.assertEqual(a_new_list.owners, [u'owner@example.com'])
+
+    def test_listname_validation(self):
+        self.client.login(username='su', password='pwd')
+        post_data = {'listname': 'a new list',
+                     'mail_host': 'example.com',
+                     'list_owner': 'owner@example.com',
+                     'advertised': 'True',
+                     'description': 'A new list.'}
+        response = self.client.post(reverse('list_new'), post_data)
+        self.assertEquals(response.status_code, 200)
+        # self.assertHasErrorMessage(response)
+        self.assertContains(response, 'Please enter a valid listname')

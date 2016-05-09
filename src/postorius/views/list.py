@@ -96,13 +96,14 @@ def list_members_view(request, list_id, role=None):
             query = context['query'] = request.GET['q']
             if "*" not in query:
                 query = '*{}*'.format(query)
+
             # Proxy the find_members method to insert the query
-            method = lambda count, page: mailing_list.find_members(
-                query, count=count, page=page)
+            def find_method(count, page):
+                return mailing_list.find_members(query, count=count, page=page)
         else:
-            method = mailing_list.get_member_page
+            find_method = mailing_list.get_member_page
         context['members'] = utils.paginate(
-            request, method, count=request.GET.get('count', 25),
+            request, find_method, count=request.GET.get('count', 25),
             paginator_class=utils.MailmanPaginator)
         if len(mailing_list.members) == 0:
             context['empty_error'] = _('List has no Subscribers')
@@ -518,6 +519,8 @@ def list_new(request, template='postorius/lists/new.html'):
             except HTTPError as e:
                 return render(request, 'postorius/errors/generic.html',
                               {'error': e})
+        else:
+            messages.error(request, _('Please check the errors below'))
     else:
         form = ListNew(choosable_domains,
                        initial={'list_owner': request.user.email})
