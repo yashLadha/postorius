@@ -33,11 +33,11 @@
                 {% trans 'You are subscribed to this list with the following address:' %} <em>{{ subscribed_address }}</em>
             </p>
             {% url 'user_list_options' list.list_id as user_list_options_url %}
-            {% blocktrans %}
             <p>
-              You can manage your subscription <a href="{{ user_list_options_url }}">here</a>
+              {% blocktrans %}
+                You can manage your subscription <a href="{{ user_list_options_url }}">here</a>
+              {% endblocktrans %}
             </p>
-            {% endblocktrans %}
             <p>
                 <form method="post" action="{% url 'list_unsubscribe' list.list_id %}">
                     {% csrf_token %}
@@ -47,6 +47,13 @@
             </p>
         {% else %}
             <h2>{% trans 'Subscribe to this list' %}</h2>
+            <p>
+              {% blocktrans with address=list.settings.join_address %}
+                  To subscribe you can send an email with 'subscribe' in the subject to
+                  <a href="mailto:{{ address }}?subject=Subscribe">{{ address }}</a>
+                  or use the form below:
+              {% endblocktrans %}
+            </p>
             <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="form-horizontal">
                 {% render_form_horizontal subscribe_form 2 8 'Subscribe' %}
             </form>
