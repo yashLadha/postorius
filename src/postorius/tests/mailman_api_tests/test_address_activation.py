@@ -64,10 +64,6 @@ class TestAddressActivationForm(ViewTestCase):
         form = AddressActivationForm({'email': 'expired@example.org'})
         self.assertTrue(form.is_valid())
 
-    def test_email_used_by_mailman_is_invalid(self):
-        form = AddressActivationForm({'email': 'subscribed@example.org'})
-        self.assertFalse(form.is_valid())
-
 
 class TestAddressConfirmationProfile(ViewTestCase):
     """
@@ -162,6 +158,21 @@ class TestAddressActivationLinkSuccess(ViewTestCase):
     def test_add_address(self):
         # An activation key pointing to a valid profile adds the address
         # to the user.
+        self.client.login(username='ler', password='pwd')
+        url = reverse('address_activation_link',
+                      args=[self.profile.activation_key])
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('user_profile'))
+        self.assertHasSuccessMessage(response)
+        self.assertEqual(
+            set([a.email for a in self.mm_user.addresses]),
+            set(['ler@example.org', 'les@example.org']))
+        logged_in_user = response.wsgi_request.user
+        self.assertEqual(logged_in_user.other_emails, ['les@example.org'])
+
+    def test_existing_user(self):
+        # Add an existing address that is already linked to a user
+        self.mm_client.create_user("les@example.org", None)
         self.client.login(username='ler', password='pwd')
         url = reverse('address_activation_link',
                       args=[self.profile.activation_key])
