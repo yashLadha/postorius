@@ -39,3 +39,15 @@ class ListIndexPageTest(ViewTestCase):
         # The lists should be sorted by address
         self.assertEqual([l.fqdn_listname for l in response.context['lists']],
                          ['bar@example.com', 'foo@example.com'])
+
+    def test_list_index_only_contains_advertised_lists(self):
+        # The list index page should contain only contain the advertised lists
+        baz_list = self.domain.create_list('baz')
+        baz_list.settings['advertised'] = False
+        baz_list.settings.save()
+        response = self.client.get(reverse('list_index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+        self.assertNotIn(
+            'baz.example.com',
+            [ml.list_id for ml in response.context['lists']])

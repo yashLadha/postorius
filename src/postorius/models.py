@@ -129,24 +129,18 @@ class MailmanListManager(MailmanRestManager):
     def __init__(self):
         super(MailmanListManager, self).__init__('list', 'lists')
 
-    def all(self, only_public=False):
+    def all(self, advertised=False):
         try:
-            objects = getattr(get_mailman_client(), self.resource_name_plural)
+            method = getattr(
+                get_mailman_client(), 'get_' + self.resource_name_plural)
+            return method(advertised=advertised)
         except AttributeError:
             raise MailmanApiError
         except MailmanConnectionError as e:
             raise MailmanApiError(e)
-        if only_public:
-            public = []
-            for obj in objects:
-                if obj.settings.get('advertised', False):
-                    public.append(obj)
-            return public
-        else:
-            return objects
 
-    def by_mail_host(self, mail_host, only_public=False):
-        objects = self.all(only_public)
+    def by_mail_host(self, mail_host, advertised=False):
+        objects = self.all(advertised)
         host_objects = []
         for obj in objects:
             if obj.mail_host == mail_host:

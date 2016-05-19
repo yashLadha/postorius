@@ -55,6 +55,81 @@ interactions:
       location: ['http://localhost:9001/3.0/lists/bar.example.com']
     status: {code: 201, message: Created}
 - request:
+    body: !!python/unicode 'fqdn_listname=baz%40example.com'
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
+    method: !!python/unicode 'POST'
+    uri: http://localhost:9001/3.0/lists
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/lists/baz.example.com']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/baz.example.com
+  response:
+    body: {string: !!python/unicode '{"display_name": "Baz", "fqdn_listname": "baz@example.com",
+        "http_etag": "\"4eec713d151af9d161047a5e3b814c05b6c958f0\"", "list_id": "baz.example.com",
+        "list_name": "baz", "mail_host": "example.com", "member_count": 0, "self_link":
+        "http://localhost:9001/3.0/lists/baz.example.com", "volume": 1}'}
+    headers:
+      content-length: ['294']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/baz@example.com/config
+  response:
+    body: {string: !!python/unicode '{"acceptable_aliases": [], "admin_immed_notify":
+        true, "admin_notify_mchanges": false, "administrivia": true, "advertised":
+        true, "allow_list_posts": true, "anonymous_list": false, "archive_policy":
+        "public", "autorespond_owner": "none", "autorespond_postings": "none", "autorespond_requests":
+        "none", "autoresponse_grace_period": "90d", "autoresponse_owner_text": "",
+        "autoresponse_postings_text": "", "autoresponse_request_text": "", "bounces_address":
+        "baz-bounces@example.com", "collapse_alternatives": true, "convert_html_to_plaintext":
+        false, "created_at": "2005-08-01T07:49:23", "default_member_action": "defer",
+        "default_nonmember_action": "hold", "description": "", "digest_footer_uri":
+        "", "digest_header_uri": "", "digest_last_sent_at": null, "digest_send_periodic":
+        true, "digest_size_threshold": 30.0, "digest_volume_frequency": "monthly",
+        "digests_enabled": true, "display_name": "Baz", "filter_content": false, "first_strip_reply_to":
+        false, "footer_uri": "", "fqdn_listname": "baz@example.com", "goodbye_message_uri":
+        "", "header_uri": "", "http_etag": "\"7331faacc9b01fc2247dac57065effc4a4deaf94\"",
+        "include_rfc2369_headers": true, "info": "", "join_address": "baz-join@example.com",
+        "last_post_at": null, "leave_address": "baz-leave@example.com", "list_name":
+        "baz", "mail_host": "example.com", "moderator_password": null, "next_digest_number":
+        1, "no_reply_address": "noreply@example.com", "owner_address": "baz-owner@example.com",
+        "post_id": 1, "posting_address": "baz@example.com", "posting_pipeline": "default-posting-pipeline",
+        "reply_goes_to_list": "no_munging", "reply_to_address": "", "request_address":
+        "baz-request@example.com", "send_welcome_message": true, "subject_prefix":
+        "[Baz] ", "subscription_policy": "confirm", "volume": 1, "welcome_message_uri":
+        ""}'}
+    headers:
+      content-length: ['1789']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/unicode 'advertised=False'
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
+    method: !!python/unicode 'PATCH'
+    uri: http://localhost:9001/3.0/lists/baz@example.com/config
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-length: ['0']
+    status: {code: 204, message: No Content}
+- request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']

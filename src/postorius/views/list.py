@@ -550,25 +550,21 @@ def list_index(request, template='postorius/index.html'):
     """
     if request.method == 'POST':
         return redirect("list_summary", list_id=request.POST["list"])
-    lists = []
-    error = None
-    only_public = True
-    if request.user.is_superuser:
-        only_public = False
+
+    def _get_list_page(count, page):
+        client = get_mailman_client()
+        advertised = not request.user.is_superuser
+        return client.get_list_page(
+            advertised=advertised, count=count, page=page)
     try:
-        # FIXME: this is not paginated, all lists will
-        # always be retrieved.
-        lists = sorted(List.objects.all(only_public=only_public),
-                       key=lambda l: l.fqdn_listname)
-        logger.debug(lists)
+        lists = paginate(
+            _get_list_page, request.GET.get('page'), request.GET.get('count'),
+            paginator_class=MailmanPaginator)
     except MailmanApiError:
         return utils.render_api_error(request)
     choosable_domains = _get_choosable_domains(request)
     return render(request, template,
-                  {'error': error,
-                   'lists': paginate(
-                       lists, request.GET.get('page'),
-                       request.GET.get('count', 10)),
+                  {'lists': lists,
                    'domain_count': len(choosable_domains)})
 
 
