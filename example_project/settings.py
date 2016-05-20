@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -48,7 +48,7 @@ ADMINS = (
 ALLOWED_HOSTS = []
 
 # Mailman API credentials
-MAILMAN_REST_API_URL = 'http://localhost:8001'
+MAILMAN_REST_API_URL = 'http://localhost:9001'
 MAILMAN_REST_API_USER = 'restadmin'
 MAILMAN_REST_API_PASS = 'restpass'
 
@@ -158,7 +158,7 @@ USE_TZ = True
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"

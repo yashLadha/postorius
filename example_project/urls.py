@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -23,11 +23,9 @@ from django.conf.urls import include, url
 from django.contrib import admin
 admin.autodiscover()
 
-# Import mailman urls and set urlpatterns if you want to hook
-# mailman_django into an existing django site.
-# Otherwise set ROOT_URLCONF in settings.py to
-# `mailman_django.urls`.
-# from mailman_django import urls as mailman_urls
+# Import postorius urls and set urlpatterns if you want to hook
+# postorius into an existing django site.
+# Otherwise set ROOT_URLCONF in settings.py to this file
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
