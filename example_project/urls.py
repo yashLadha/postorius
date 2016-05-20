@@ -19,17 +19,14 @@
 
 from django.conf.urls import include, url
 
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-# Import postorius urls and set urlpatterns if you want to hook
-# postorius into an existing django site.
-# Otherwise set ROOT_URLCONF in settings.py to this file
+from postorius import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('', include('django_browserid.urls')),
-    url(r'^$', 'postorius.views.list.list_index'),
+    url(r'^$', views.list.list_index),
     url(r'^postorius/', include('postorius.urls')),
 ]
