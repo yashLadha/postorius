@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
 #

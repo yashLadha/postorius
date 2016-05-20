@@ -198,23 +198,23 @@ SERVER_EMAIL = 'root@localhost.local'
 # EMAIL_CONFIRMATION_TEMPLATE = 'postorius/address_confirmation_message.txt'
 # EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
 
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
-        'django_browserid': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
+# You can enable logging by uncommenting the following lines
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler'
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#         },
+#         'django_browserid': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }
