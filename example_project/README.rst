@@ -8,7 +8,7 @@ postorius example application in this directory:
 ::
 
     $ git clone https://gitlab.com/mailman/postorius.git
-    $ cd postorius/example
+    $ cd postorius/example_project
     $ virtualenv venv
     $ . venv/bin/activate
     $ pip install -r requirements.txt
