@@ -19,7 +19,7 @@ Below is an example uwsgi configuration file:
     [uwsgi]
 
     chdir           = /srv/django/mailman
-    module          = postorius_standalone.wsgi
+    module          = example_project.wsgi
     virtualenv      = /srv/django/mailman/env
 
     master          = true
@@ -97,21 +97,21 @@ These settings need to be added to your Apache VirtualHost:
 
 :: 
 
-    Alias /static /path/to/postorius_standalone/static
-    <Directory "/path/to/postorius_standalone/static">
+    Alias /static /srv/django/mailman/public/static
+    <Directory "/srv/django/mailman/public/static">
         Order deny,allow
         Allow from all
     </Directory>    
 
-    WSGIScriptAlias / /path/to/postorius_standalone/srv/postorius.wsgi
-    <Directory "/path/to/postorius_standalone/srv">
+    WSGIScriptAlias / /srv/django/mailman/srv/postorius.wsgi
+    <Directory "/srv/django/mailman/srv">
         Order deny,allow
         Allow from all
     </Directory>    
 
 The first Alias serves the static files (CSS, JS, Images, etc.). The
 WSGIScriptAlias serves the Django application. The paths need to be changed
-depending on which location you downloaded ``postorius_standalone`` to. 
+depending on which location you have your postorius project in.
 
 Final setup instructions
 ========================
@@ -119,7 +119,7 @@ Final setup instructions
 We're almost ready. But you need to create translations and collect the static
 files from Postorius (which resides somewhere on your pythonpath) to be able to
 serve them from the site directory. All you have to do is to change into the
-``postorius_standalone`` directory and run:
+postorius project directory and run:
 
 ::
 
