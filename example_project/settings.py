@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
@@ -20,10 +20,10 @@
 Django settings for postorius project.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/1.8/topics/settings/
+https://docs.djangoproject.com/en/1.9/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.8/ref/settings/
+https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -31,17 +31,23 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '$!-7^wl#wiifjbh)5@f7ji%x!vp7s1vzbvwt26hxv$idixq0u0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ADMINS = (
+    #('Admin', 'webmaster@example.com'),
+)
 
+ALLOWED_HOSTS = []
 
-
-# Mailman API credentials for testing
+# Mailman API credentials
 MAILMAN_REST_API_URL = 'http://localhost:9001'
 MAILMAN_REST_API_USER = 'restadmin'
 MAILMAN_REST_API_PASS = 'restpass'
@@ -75,7 +81,7 @@ MIDDLEWARE_CLASSES = (
 
 # Set `postorius.urls` as main url config if Postorius
 # is the only app you want to serve.
-ROOT_URLCONF = 'testing.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
@@ -99,11 +105,11 @@ TEMPLATES = [
     },
 ]
 
-#WSGI_APPLICATION = 'postorius_standalone.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -112,9 +118,26 @@ DATABASES = {
     }
 }
 
+# Password validation
+# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.8/topics/i18n/
+# https://docs.djangoproject.com/en/1.9/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -128,17 +151,28 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/var/www/example.com/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static')
+
+# URL prefix for static files.
+# Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
-
-LOGIN_URL          = 'user_login'
+LOGIN_URL = 'user_login'
 LOGIN_REDIRECT_URL = 'list_index'
-LOGOUT_URL         = 'user_logout'
+LOGOUT_URL = 'user_logout'
 
+
+# Use the email username as identifier, but truncate it because
+# the User.username field is only 30 chars long.
 def username(email):
-    return email.rsplit('@', 1)[0]
+    return email.rsplit('@', 1)[0][:30]
 BROWSERID_USERNAME_ALGO = username
 
 
@@ -150,6 +184,37 @@ MESSAGE_TAGS = {
 
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
     'django_browserid.auth.BrowserIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
+
+
+# From Address for emails sent to users
+DEFAULT_FROM_EMAIL = 'postorius@localhost.local'
+# From Address for emails sent to admins
+SERVER_EMAIL = 'root@localhost.local'
+
+# These can be set to override the defaults but are not mandatory:
+# EMAIL_CONFIRMATION_TEMPLATE = 'postorius/address_confirmation_message.txt'
+# EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
+
+# You can enable logging by uncommenting the following lines
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler'
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#         },
+#         'django_browserid': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }

@@ -27,12 +27,6 @@ PyPi:
 
     $ pip install postorius
 
-or:
-
-::
-
-    $ easy_install postorius
-
 
 Latest dev version
 ------------------
@@ -53,28 +47,24 @@ Setup your django project
 Since you have now installed the necessary packages to run Postorius, it's
 time to setup your Django site.
 
-First, get the project directory from gitlab:
+You can find an example project in ``example_project`` in the root of
+``postorius'`` git repository.
 
-::
-
-    $ git clone https://gitlab.com/mailman/postorius_standalone.git
-
-Change the database setting in ``postorius_standalone/settings.py`` to
+Change the database setting in ``example_project/settings.py`` to
 your preferred database, if you want something other than SQlite.
 
 .. note::
     Detailed information on how to use different database engines can be found
     in the `Django documentation`_.
 
-.. _Django documentation: https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+.. _Django documentation: https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 Third, prepare the database:
 
 ::
 
-    $ cd postorius_standalone
+    $ cd example_project
     $ python manage.py migrate
-    $ cd ..
 
 This will create the ``.db file`` (if you ar using SQLite) and will setup all the
 necessary db tables.
@@ -82,9 +72,8 @@ necessary db tables.
 To create a superuser which will act as an admin account for Postorius, run the
 following commands::
 
-    $ cd postorius_standalone
+    $ cd example_project
     $ python manage.py createsuperuser
-    $ cd ..
 
 
 Running the development server
@@ -94,7 +83,7 @@ The quickest way to run Postorius is to just start the development server:
 
 ::
 
-    $ cd postorius_standalone
+    $ cd example_project
     $ python manage.py runserver
 
 

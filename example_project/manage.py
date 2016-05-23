@@ -1,5 +1,6 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2012 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,10 +16,12 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+import os
+import sys
 
-from django.conf.urls import include, url
+if __name__ == "__main__":
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
-urlpatterns = [
-    url('', include('django_browserid.urls')),
-    url(r'', include('postorius.urls')),
-]
+    from django.core.management import execute_from_command_line
+
+    execute_from_command_line(sys.argv)

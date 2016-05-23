@@ -1,10 +1,11 @@
 include COPYING
-include ez_setup.py
 include *.rst
 recursive-include src/postorius *.py *.html *.js *.rst *.txt
 prune src/postorius/doc/_build
 graft src/postorius/static
 include src/postorius/doc/Makefile
-include dev-requirements.txt tox.ini
-recursive-include testing *.py *.cfg
+include tox.ini
+prune example_project/env
+prune example_project/venv
+prune example_project/public
 graft src/postorius/tests/fixtures
