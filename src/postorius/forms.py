@@ -23,12 +23,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 
 from postorius.fieldset_forms import FieldsetForm
-from postorius import utils
-
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
 
 
 ACTION_CHOICES = (
