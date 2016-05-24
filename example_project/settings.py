@@ -48,7 +48,7 @@ ADMINS = (
 ALLOWED_HOSTS = []
 
 # Mailman API credentials
-MAILMAN_REST_API_URL = 'http://localhost:9001'
+MAILMAN_REST_API_URL = 'http://localhost:8001'
 MAILMAN_REST_API_USER = 'restadmin'
 MAILMAN_REST_API_PASS = 'restpass'
 
