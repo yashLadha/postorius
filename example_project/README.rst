@@ -31,3 +31,13 @@ Now you need to run the Django development server:
 
 You should then be able to open your browser on http://127.0.0.1:8000 and see
 postorius running.
+
+
+If you are using the example_application for development, you have to install
+postorius and mailmanclient another way. Be sure to have the virtualenv
+activated and from the base directory of the respective repositories
+you should run:
+
+::
+
+    $ python setup.py develop
