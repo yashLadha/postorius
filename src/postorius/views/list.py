@@ -24,6 +24,7 @@ import logging
 
 from allauth.account.models import EmailAddress
 from django.http import HttpResponse, HttpResponseNotAllowed, Http404
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -202,7 +203,15 @@ class ListSummaryView(MailingListView):
     def get(self, request, list_id):
         data = {'list': self.mailing_list,
                 'userSubscribed': False,
-                'subscribed_address': None}
+                'subscribed_address': None,
+                'public_archive': False,
+                'hyperkitty_enabled': False}
+        if self.mailing_list.settings['archive_policy'] == 'public':
+            data['public_archive'] = True
+        if ('hyperkitty' in settings.INSTALLED_APPS and
+                'hyperkitty' in self.mailing_list.archivers and
+                self.mailing_list.archivers['hyperkitty']):
+            data['hyperkitty_enabled'] = True
         if request.user.is_authenticated():
             user_emails = EmailAddress.objects.filter(
                 user=request.user, verified=True).order_by(
