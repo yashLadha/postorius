@@ -270,9 +270,18 @@ class ChangeSubscriptionView(MailingListView):
                     self.mailing_list.unsubscribe(old_email)
                     # Since the action is done via the web UI, no email
                     # confirmation is needed.
-                    self.mailing_list.subscribe(email, pre_confirmed=True)
-                    messages.success(request,
-                                     _('Subscription changed to %s') % email)
+                    response = self.mailing_list.subscribe(
+                        email, pre_confirmed=True)
+                    if (type(response) == dict and
+                            response.get('token_owner') == 'moderator'):
+                        messages.success(
+                            request, _('Your request to change the email for'
+                                       ' this subscription was submitted and'
+                                       ' is waiting for moderator approval.'))
+                    else:
+                        messages.success(request,
+                                         _('Subscription changed to %s') %
+                                         email)
             else:
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
