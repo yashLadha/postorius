@@ -105,7 +105,7 @@ def list_members_view(request, list_id, role=None):
         context['members'] = utils.paginate(
             request, find_method, count=request.GET.get('count', 25),
             paginator_class=utils.MailmanPaginator)
-        if len(mailing_list.members) == 0:
+        if mailing_list.member_count == 0:
             context['empty_error'] = _('List has no Subscribers')
         else:
             context['empty_error'] =\
