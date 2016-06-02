@@ -19,7 +19,7 @@
 import csv
 import email.utils
 import logging
-
+import datetime
 from django.http import HttpResponse, HttpResponseNotAllowed, Http404
 
 from django.contrib import messages
@@ -43,7 +43,7 @@ from postorius.forms import (
     DigestSettingsForm, AlterMessagesForm, ListAutomaticResponsesForm,
     ListIdentityForm, ListMassSubscription, ListMassRemoval, ListAddBanForm,
     ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
-from postorius.models import Domain, List, MailmanApiError, Mailman404Error
+from postorius.models import Domain, List, MailmanApiError, Mailman404Error, EssaySubscribe
 from postorius.auth.decorators import (
     list_owner_required, list_moderator_required)
 from postorius.views.generic import MailingListView
@@ -260,6 +260,7 @@ class ListSubscribeView(MailingListView):
     """
     view name: `list_subscribe`
     """
+    
 
     @method_decorator(login_required)
     def post(self, request, list_id):
@@ -267,11 +268,37 @@ class ListSubscribeView(MailingListView):
         Subscribes an email address to a mailing list via POST and
         redirects to the `list_summary` view.
         """
+        
         try:
             user_addresses = [request.user.email] + request.user.other_emails
             form = ListSubscribe(user_addresses, request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
+		display_name = request.POST.get('display_name')
+		link = request.POST.get('link')
+		woman = request.POST.get('woman')
+		tech = request.POST.get('tech')
+		terms = request.POST.get('terms')
+		country = request.POST.get('country')
+		city = request.POST.get('city')
+		essay = request.POST.get('essay')
+
+		essay_subscribe = EssaySubscribe()
+		
+		# Stores the values entered by the user in model class EssaySubscribe.
+		essay_subscribe.list_id = list_id	
+		essay_subscribe.email = email
+		essay_subscribe.display_name = display_name
+		essay_subscribe.link = link
+		essay_subscribe.essay = essay
+		essay_subscribe.city = city
+		essay_subscribe.woman = woman
+		essay_subscribe.tech = tech
+		essay_subscribe.terms = terms
+		essay_subscribe.country = country
+		essay_subscribe.date = datetime.datetime.now()
+		essay_subscribe.save()
+
                 response = self.mailing_list.subscribe(
                     email, pre_verified=True, pre_confirmed=True)
                 if (type(response) == dict and
@@ -299,12 +326,17 @@ class ListUnsubscribeView(MailingListView):
     """Unsubscribe from a mailing list."""
 
     @method_decorator(login_required)
-    def post(self, request, *args, **kwargs):
+    def post(self, request,list_id, *args, **kwargs):
         email = request.POST['email']
         try:
             self.mailing_list.unsubscribe(email)
             messages.success(request, _('%s has been unsubscribed'
                                         ' from this list.') % email)
+
+            # Deletes the essay of the user on unsubscribing.
+	    essay_subscribe = EssaySubscribe.objects.filter(list_id=list_id , email=email)
+	    essay_subscribe.delete()
+	
         except MailmanApiError:
             return utils.render_api_error(request)
         except ValueError as e:
@@ -405,10 +437,14 @@ def list_moderation(request, list_id, held_id=-1):
                     _perform_action(message_ids, mailing_list.reject_message)
                     messages.success(request,
                                      _('The selected messages were rejected'))
+		    
+
                 elif 'discard' in request.POST:
                     _perform_action(message_ids, mailing_list.discard_message)
                     messages.success(request,
                                      _('The selected messages were discarded'))
+		    
+
             except MailmanApiError:
                 return utils.render_api_error(request)
             except HTTPError:
@@ -442,9 +478,11 @@ def moderate_held_message(request, list_id):
         elif 'reject' in request.POST:
             mailing_list.reject_message(msg_id)
             messages.success(request, _('The message was rejected'))
+	    
         elif 'discard' in request.POST:
             mailing_list.discard_message(msg_id)
             messages.success(request, _('The message was discarded'))
+	    
     except MailmanApiError:
         return utils.render_api_error(request)
 
