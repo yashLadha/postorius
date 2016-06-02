@@ -210,21 +210,20 @@ class ListSubscribe(FieldsetForm):
             'invalid': _('Please enter a valid email address.')})
 
     display_name = forms.CharField(required=False,
-        		label=_('Your name(optional)'))
+        		           label=_('Your name(optional)'))
 
     link = forms.CharField(required=False,
-        		label=_('Profile link'),
-			help_text = ("Provide url of your Personal website or Linkedin (if any)"))
+        		   label=_('Profile link'),
+			   help_text =_("Provide url of your Personal website or Linkedin (if any)"))
    
     woman = forms.ChoiceField(label=_('Are you a woman? *'),
-			       choices=CHOICES, widget=forms.RadioSelect(),
-                               )
+			      choices=CHOICES, widget=forms.RadioSelect())
 
     tech = forms.ChoiceField(label=_('Are you involved in technology? *'),
-			       choices=CHOICES, widget=forms.RadioSelect())
+			     choices=CHOICES, widget=forms.RadioSelect())
 
     essay = forms.CharField(widget=forms.Textarea,required=False,
-				help_text = ("Mention your achievements in technology and your future goals."),)
+			    help_text =_("Mention your achievements in technology and your future goals."),)
 
     country = forms.ChoiceField(countries, widget=CountrySelectWidget(),label = _('Country *'))
     
