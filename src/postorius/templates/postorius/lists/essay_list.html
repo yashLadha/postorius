@@ -4,16 +4,16 @@
 
 {% block main %}
     {% if object|length > 0 %}
-    	<font color="3399FF"><h2>Essay details</h2></font>
+    	<font color="3399FF"><h2>{% trans 'Essay details' %}</h2></font>
     	<ul>
         	{% for p in object %}
-			<h4><li><u><font  face="verdana">Date : {{ p.date }} </font></u></li></h4>
+			<h4><li><u><font  face="verdana">{% trans 'Date' %} : {{ p.date }} </font></u></li></h4>
 			<ul>
 
 			{% if p.display_name %}
-            			<p><b>Name</b> :<i>{{ p.display_name }}</i></p>
+            			<p><b>{% trans 'Name' %}</b> :<i>{{ p.display_name }}</i></p>
 			{% else %}
-				<p><b>Name</b> :<i>Name is not provided.</i></p>
+				<p><b>{% trans 'Name' %}</b> :<i>{% trans 'Name is not provided.' %}</i></p>
 			{% endif %}
 
 
@@ -21,35 +21,35 @@
 				<i><a href="{{p.link|safe}}">Profile link</a></i>
 				
 			{% else %}
-				<p>No profile link</p>
+				<p>{% trans 'No profile link' %}</p>
 			{% endif %}
 
-	    		<p><b>Email</b> :<i> {{ p.email }}</i></p>
+	    		<p><b>{% trans 'Email' %}</b> :<i> {{ p.email }}</i></p>
  	    		
 			
-			<p><b>Are you a woman? </b>: <i>{{ p.woman }}</i></p>
+			<p><b>{% trans 'Are you a woman?'} </b>: <i>{{ p.woman }}</i></p>
 			
-			<p><b>Are you involved in technology? </b>: <i>{{ p.tech }}</i></p>
+			<p><b>{% trans 'Are you involved in technology?' %} </b>: <i>{{ p.tech }}</i></p>
 
 			{% if p.essay %}
-				<p><b>Achievements in technology </b>: <i>{{ p.essay }}</i></p>
+				<p><b>{% trans 'Achievements in technology' %} </b>: <i>{{ p.essay }}</i></p>
 
 			{% else %}
-				<p><b>Achievements in technology </b> : No essay provided.</p>
+				<p><b>{% trans 'Achievements in technology' %}</b> :<i> {% trans 'No essay provided.' %}</i></p>
 			{% endif %}
 
-			<p><b>Country </b>: <i>{{ p.country }}</i></p>
+			<p><b>{% trans 'Country' %} </b>: <i>{{ p.country }}</i></p>
 
 			{% if p.city %}
-				<p><b>City </b>: <i>{{ p.city }}</i></p>
+				<p><b>{% trans 'City' %} </b>: <i>{{ p.city }}</i></p>
 			{% else %}
-				<p><b>City </b>: <i>City is not provided.</i></p>
+				<p><b>{% trans 'City' %} </b>: <i>{% trans 'City is not provided.' %}</i></p>
 			{% endif %}
 
 
-	    		<p><b>List name</b> : <i>{{ p.list_id }}</i></p>
+	    		<p><b>{% trans 'List name' %}</b> : <i>{{ p.list_id }}</i></p>
 			
-			<p><b>Terms and conditions</b> : <i>{{ p.terms }}</i></p>
+			<p><b>{% trans 'Terms and conditions' %}</b> : <i>{{ p.terms }}</i></p>
 			</ul>
         	{% endfor %}
     	</ul>
