@@ -300,3 +300,22 @@ class AddressConfirmationProfile(models.Model):
                   render_to_string(template_path, template_context),
                   sender_address,
                   [self.email])
+
+
+class EssaySubscribe(models.Model):
+	"""Essay model class.
+    	"""	
+	list_id = models.CharField(max_length=100)
+	email = models.EmailField()
+	display_name = models.CharField(max_length=100)
+        link = models.CharField(max_length=100,default=None)
+	woman = models.CharField(max_length=100)
+	tech = models.CharField(max_length=100)
+	essay = models.CharField(max_length=800)
+	terms = models.BooleanField(default=1)
+	city = models.CharField(max_length=100)
+	country = models.CharField(max_length=100)
+	date = models.DateTimeField(default=datetime.now())
+
+	def __str__(self):
+        	return u'%s   %s' % (self.display_name, self.essay)
