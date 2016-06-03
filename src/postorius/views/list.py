@@ -391,7 +391,7 @@ class ListMassRemovalView(MailingListView):
                       {'form': form, 'list': self.mailing_list})
 
     @method_decorator(list_owner_required)
-    def post(self, request, *args, **kwargs):
+    def post(self, request,list_id, *args, **kwargs):
         form = ListMassRemoval(request.POST)
         if not form.is_valid():
             messages.error(request, _('Please fill out the form correctly.'))
@@ -400,6 +400,11 @@ class ListMassRemovalView(MailingListView):
                 try:
                     validate_email(address)
                     self.mailing_list.unsubscribe(address.lower())
+
+                    # Deletes the essay of the user on unsubscribing.
+                    essay_subscribe = EssaySubscribe.objects.filter(list_id=list_id , email=address)
+                    essay_subscribe.delete()
+
                     messages.success(
                         request, _('The address %(address)s has been'
                                    ' unsubscribed from %(list)s.') %
@@ -794,6 +799,11 @@ def remove_all_subscribers(request, list_id):
             try:
                 for names in mlist.members:
                     mlist.unsubscribe(names.email)
+
+                    # Deletes the essay of the user on unsubscribing.
+                    essay_subscribe = EssaySubscribe.objects.filter(list_id=list_id , email=names.email)
+                    essay_subscribe.delete()
+
                 messages.success(request, _('All members have been'
                                             ' unsubscribed from the list.'))
                 return redirect('list_members', mlist.list_id)
