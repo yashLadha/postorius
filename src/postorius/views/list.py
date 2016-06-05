@@ -201,7 +201,7 @@ class ListSummaryView(MailingListView):
 
     def get(self, request, list_id):
         data = {'list': self.mailing_list,
-                'userSubscribed': False,
+                'user_subscribed': False,
                 'subscribed_address': None,
                 'public_archive': False,
                 'hyperkitty_enabled': False}
@@ -220,13 +220,17 @@ class ListSummaryView(MailingListView):
             user_emails = EmailAddress.objects.filter(
                 user=request.user, verified=True).order_by(
                 "email").values_list("email", flat=True)
+            pending_requests = [r['email'] for r in self.mailing_list.requests]
             for address in user_emails:
+                if address in pending_requests:
+                    data['user_request_pending'] = True
+                    break
                 try:
                     self.mailing_list.get_member(address)
                 except ValueError:
                     pass
                 else:
-                    data['userSubscribed'] = True
+                    data['user_subscribed'] = True
                     data['subscribed_address'] = address
                     break  # no need to test more addresses
             data['subscribe_form'] = ListSubscribe(user_emails)

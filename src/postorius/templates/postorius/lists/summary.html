@@ -38,7 +38,7 @@
 
     {# Subscription #}
     {% if user.is_authenticated %}
-        {% if userSubscribed %}
+        {% if user_subscribed %}
             <h2>{% trans 'Subscription' %}</h2>
             <p>
                 {% trans 'You are subscribed to this list with the following address:' %} <em>{{ subscribed_address }}</em>
@@ -56,6 +56,8 @@
                     <button type="submit" class="btn btn-danger">{% trans 'Unsubscribe' %}</button>
                 </form>
             </p>
+        {% elif user_request_pending %}
+            <h4>{% trans "You have a subscription request pending. If you don't hear back soon, please contact the list owners." %}</h4>
         {% else %}
             <h2>{% trans 'Subscribe to this list' %}</h2>
             <p>
