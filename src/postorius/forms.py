@@ -210,27 +210,27 @@ class ListSubscribe(FieldsetForm):
             'invalid': _('Please enter a valid email address.')})
 
     display_name = forms.CharField(required=False,
-        		           label=_('Your name(optional)'))
+                                   label=_('Your name(optional)'))
 
     link = forms.CharField(required=False,
-        		   label=_('Profile link'),
-			   help_text =_("Provide url of your Personal website or Linkedin (if any)"))
+                           label=_('Profile link'),
+                           help_text =_("Provide url of your Personal website or Linkedin (if any)"))
    
-    woman = forms.ChoiceField(label=_('Are you a woman? *'),
-			      choices=CHOICES, widget=forms.RadioSelect())
+    is_woman = forms.ChoiceField(label=_('Are you a woman? *'),
+                                 choices=CHOICES, widget=forms.RadioSelect())
 
-    tech = forms.ChoiceField(label=_('Are you involved in technology? *'),
-			     choices=CHOICES, widget=forms.RadioSelect())
+    is_woman_in_tech = forms.ChoiceField(label=_('Are you involved in technology? *'),
+                                         choices=CHOICES, widget=forms.RadioSelect())
 
     essay = forms.CharField(widget=forms.Textarea,required=False,
-			    help_text =_("Mention your achievements in technology and your future goals."),)
+                            help_text =_("Describe briefly your achievements in technology and your future goals."),)
 
     country = forms.ChoiceField(countries, widget=CountrySelectWidget(),label = _('Country *'))
     
     city = forms.CharField(required=False,label=_('City'))
 
-    terms = forms.BooleanField(label=_('Terms And Conditions *'),
-				help_text = mark_safe("Initial to affirm that you HAVE READ and AGREE to follow the rules in the <a href='http://systers.org/wiki/communities/doku.php?id=wiki:systers:faq'>frequently asked questions</a>."),)
+    accepted_terms = forms.BooleanField(label=_('Terms And Conditions *'),
+                                        help_text = mark_safe("Do you accept the terms and conditions mentioned in <a href='http://systers.org/wiki/communities/doku.php?id=wiki:systers:faq'>frequently asked questions</a>?"),)
 
     
     
@@ -239,8 +239,7 @@ class ListSubscribe(FieldsetForm):
         super(ListSubscribe, self).__init__(*args, **kwargs)
         self.fields['email'].choices = ((address, address)
                                         for address in user_emails)
-	
-
+    
 
 class ListSettingsForm(forms.Form):
     """
