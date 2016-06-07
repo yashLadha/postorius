@@ -262,14 +262,12 @@ class ListSubscribeView(MailingListView):
     view name: `list_subscribe`
     """
     
-
     @method_decorator(login_required)
     def post(self, request, list_id):
         """
         Subscribes an email address to a mailing list via POST and
         redirects to the `list_summary` view.
-        """
-        
+        """    
         try:
             user_addresses = [request.user.email] + request.user.other_emails
             form = ListSubscribe(user_addresses, request.POST)
