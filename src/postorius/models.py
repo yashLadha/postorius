@@ -303,19 +303,19 @@ class AddressConfirmationProfile(models.Model):
 
 
 class EssaySubscribe(models.Model):
-	"""Essay model class.
-    	"""	
-	list_id = models.CharField(max_length=100)
-	email = models.EmailField()
-	display_name = models.CharField(max_length=100)
-        link = models.CharField(max_length=100,default=None)
-	woman = models.CharField(max_length=100)
-	tech = models.CharField(max_length=100)
-	essay = models.CharField(max_length=800)
-	terms = models.BooleanField(default=1)
-	city = models.CharField(max_length=100)
-	country = models.CharField(max_length=100)
-	date = models.DateTimeField(default=datetime.now())
+    """Essay model class.
+        """ 
+    list_id = models.CharField(max_length=100)
+    email = models.EmailField()
+    display_name = models.CharField(max_length=100)
+    link = models.CharField(max_length=100,default=None)
+    is_woman = models.BooleanField(default=False)
+    is_woman_in_tech = models.BooleanField(default=False)
+    essay = models.CharField(max_length=800)
+    accepted_terms = models.BooleanField(default=1)
+    city = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    date = models.DateTimeField(default=datetime.now())
 
-	def __str__(self):
-        	return u'%s   %s' % (self.display_name, self.essay)
+    def __str__(self):
+            return u'%s   %s' % (self.display_name, self.essay)
