@@ -12,7 +12,7 @@
                 <thead>
                     <tr>
                         <th>{% trans 'E-Mail Address' %}</th>
-			<th>{% trans 'Essay' %}</th>
+            <th>{% trans 'Essay' %}</th>
                         <th>{% trans 'Actions' %}</th>
                     </tr>
                 </thead>
@@ -21,9 +21,9 @@
                     <tr>
                         <td>{{ request.email }}</td>
 
-			<td>
-				<a href = "/postorius/lists/{{list.list_id}}/essay/{{ request.email }}/">Details</a>
-			</td>
+            <td>
+                <a href = "/postorius/lists/{{list.list_id}}/essay/{{ request.email }}/">{% trans 'Details' %}</a>
+            </td>
 
                         <td>
                             <a href="{% url 'handle_subscription_request' list.list_id request.token 'accept' %}" class="btn btn-xs btn-success">{% trans 'Accept' %}</a>
