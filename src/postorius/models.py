@@ -304,7 +304,7 @@ class AddressConfirmationProfile(models.Model):
 
 class EssaySubscribe(models.Model):
     """Essay model class.
-        """ 
+    """ 
     list_id = models.CharField(max_length=100)
     email = models.EmailField()
     display_name = models.CharField(max_length=100)
