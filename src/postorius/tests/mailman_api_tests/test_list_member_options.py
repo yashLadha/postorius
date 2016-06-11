@@ -52,12 +52,11 @@ class ListMembersOptionsTest(ViewTestCase):
                                 pre_confirmed=True, pre_approved=True)
         self.url = reverse('list_member_options', args=(self.foo_list.list_id,
                                                         'test@example.com',))
-        self.url = quote(self.url)
 
     def test_page_not_accessible_if_not_logged_in(self):
         response = self.client.get(self.url)
         self.assertRedirects(response, '{}?next={}'.format(
-            reverse(settings.LOGIN_URL), self.url))
+            reverse(settings.LOGIN_URL), quote(self.url)))
 
     def test_page_not_accessible_for_unprivileged_users(self):
         self.client.login(username='testuser', password='testpass')
@@ -86,3 +85,22 @@ class ListMembersOptionsTest(ViewTestCase):
                               MemberModeration)
         self.assertIsInstance(response.context['preferences_form'],
                               UserPreferences)
+
+    def test_moderation_action(self):
+        member = self.foo_list.get_member('test@example.com')
+        self.assertIsNone(
+            self.foo_list.get_member('test@example.com').moderation_action)
+        self.client.login(username='testsu', password='testpass')
+        response = self.client.post(self.url, {
+            'formname': 'moderation', 'moderation_action': 'hold'})
+        self.assertRedirects(response, self.url)
+        self.assertHasSuccessMessage(response)
+        self.assertEqual(
+            self.foo_list.get_member('test@example.com').moderation_action,
+            'hold')
+        response = self.client.post(self.url, {
+            'formname': 'moderation', 'moderation_action': ''})
+        self.assertRedirects(response, self.url)
+        self.assertHasSuccessMessage(response)
+        self.assertIsNone(
+            self.foo_list.get_member('test@example.com').moderation_action)

@@ -800,10 +800,11 @@ class MemberModeration(FieldsetForm):
         label=_('Moderation'),
         error_messages={
             'required': _("Please choose a moderation action.")},
-        required=True,
-        choices=ACTION_CHOICES,
+        required=False,
+        choices=[(None, _('List default'))] + list(ACTION_CHOICES),
         help_text=_(
             'Default action to take when this member posts to the list. '
+            'List default -- follow the list\'s default member action. '
             'Hold -- This holds the message for approval by the list '
             'moderators. '
             'Reject -- this automatically rejects the message by sending a '
