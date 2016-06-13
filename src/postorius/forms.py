@@ -223,14 +223,14 @@ class ListSubscribe(FieldsetForm):
                                          choices=CHOICES, widget=forms.RadioSelect())
 
     essay = forms.CharField(widget=forms.Textarea,required=False,
-                            help_text =_("Describe briefly your achievements in technology and your future goals."),)
+                            help_text =_("Please tell us more about how you are involved in technology."),)
 
     country = forms.ChoiceField(countries, widget=CountrySelectWidget(),label = _('Country *'))
     
     city = forms.CharField(required=False,label=_('City'))
 
     accepted_terms = forms.BooleanField(label=_('Terms And Conditions *'),
-                                        help_text = mark_safe("Do you accept the terms and conditions mentioned in <a href='http://systers.org/wiki/communities/doku.php?id=wiki:systers:faq'>frequently asked questions</a>?"),)
+                                        help_text = mark_safe("Do you Agree to Conversation Model <a href='http://systers.org/wiki/communities/doku.php?id=wiki:systers:faq'>frequently asked questions</a>?"),)
 
     
     
