@@ -3,9 +3,6 @@
 {% load nav_helpers %}
 
 {% block main %}
-    {# Add 'django.core.context_processors.request', to TEMPLATE_CONTEXT_PROCESSORS in your project's settings#}
-    <a href="{{request.META.HTTP_REFERER}}">Go back</a>
-    
     {% if object|length > 0 %}
         <font color="3399FF"><h2>{% trans 'Essay details' %}</h2></font>
         <ul>
@@ -34,7 +31,7 @@
                 <p><b>{% trans 'Are you a woman?' %} </b>: <i>{% trans 'No' %}</i></p>
             {% endif %}
             
-            {% if p.is_woman_in_tech%}
+            {% if p.is_woman_in_tech  %}
                 <p><b>{% trans 'Are you involved in technology?' %} </b>: <i>{% trans 'Yes' %}</i></p>
             {% else %}
                 <p><b>{% trans 'Are you involved in technology?' %} </b>: <i>{% trans 'No' %}</i></p>
