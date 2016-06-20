@@ -291,8 +291,17 @@ class ListSubscribeView(MailingListView):
                 essay_subscribe.link = link
                 essay_subscribe.essay = essay
                 essay_subscribe.city = city
-                essay_subscribe.is_woman = is_woman
-                essay_subscribe.is_woman_in_tech = is_woman_in_tech
+                
+                if is_woman == 'Yes':
+                    essay_subscribe.is_woman = True
+                else:
+                    essay_subscribe.is_woman = False
+
+                if is_woman_in_tech == 'Yes':
+                    essay_subscribe.is_woman_in_tech = True
+                else:
+                    essay_subscribe.is_woman_in_tech = False
+
                 essay_subscribe.accepted_terms = accepted_terms
                 essay_subscribe.country = country
                 essay_subscribe.date = datetime.datetime.now()
