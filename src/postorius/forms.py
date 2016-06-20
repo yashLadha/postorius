@@ -230,7 +230,7 @@ class ListSubscribe(FieldsetForm):
     city = forms.CharField(required=False,label=_('City'))
 
     accepted_terms = forms.BooleanField(label=_('Terms And Conditions *'),
-                                        help_text = mark_safe("Do you Agree to Conversation Model <a href='http://systers.org/wiki/communities/doku.php?id=wiki:systers:faq'>frequently asked questions</a>?"),)
+                                        help_text = mark_safe("Do you agree to Conversation Model <a href='http://systers.org/wiki/communities/doku.php?id=wiki:systers:faq'>frequently asked questions</a>?"),)
 
     
     
