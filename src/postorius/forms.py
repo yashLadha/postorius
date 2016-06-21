@@ -35,7 +35,7 @@ from django_countries.widgets import CountrySelectWidget
 from django_countries.fields import CountryField 
 from django_countries import countries
 from django.utils.safestring import mark_safe
-
+from functools import partial
 
 ACTION_CHOICES = (
     ("hold", _("Hold for moderation")),
@@ -911,3 +911,8 @@ class MultipleChoiceForm(forms.Form):
         if len(self.cleaned_data['choices']) < 1:
             raise forms.ValidationError(_('Make at least one selection'))
         return self.cleaned_data['choices']
+
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+class UnsubscriberStatsForm(forms.Form):
+    start_date = forms.DateField(widget=DateInput(), label=_('From'))
+    end_date = forms.DateField(widget=DateInput(), label=_('To'))
