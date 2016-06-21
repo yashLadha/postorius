@@ -319,3 +319,14 @@ class EssaySubscribe(models.Model):
 
     def __str__(self):
             return u'%s   %s' % (self.display_name, self.essay)
+
+class UnsubscriberStats(models.Model):
+    """Unsubscriber Stats model class
+    """
+    list_id = models.CharField(max_length=100)
+    email = models.EmailField()
+    channel = models.CharField(max_length=100)
+    date = models.DateTimeField(default=datetime.now())
+
+    def __str__(self):
+        return u'%s   %s   %s' % (self.list_id, self.email, self.channel)
