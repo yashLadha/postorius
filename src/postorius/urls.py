@@ -25,6 +25,7 @@ from postorius.views import user as user_views
 from postorius.views import domain as domain_views
 from postorius.views import rest as rest_views
 from postorius.views.essay import EssayList,EssayDeleteView
+from postorius.views.stats import stats, statsDeleteView
 
 list_patterns = [
     url(r'^csv_view/$', list_views.csv_view, name='csv_view'),
@@ -38,6 +39,8 @@ list_patterns = [
         name='list_subscribe'),
     url(r'^essay/(?P<email>[\w.-]+@[\w.-]+)/$', EssayList, name='view_essay'),
     url(r'^essay/delete/$', EssayDeleteView.as_view(), name='delete_essay'),
+    url(r'^stats/$', stats,name='stats'),
+    url(r'^stats_delete/$', statsDeleteView.as_view(), name='delete_stats'),
     url(r'^change_subscription$', list_views.ChangeSubscriptionView.as_view(),
         name='change_subscription'),
     url(r'^unsubscribe/$', list_views.ListUnsubscribeView.as_view(),
