@@ -32,6 +32,9 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+
+from postorius.models import UnsubscriberStats
+
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -67,6 +70,15 @@ def list_members_view(request, list_id, role=None):
                 members = form.cleaned_data['choices']
                 for member in members:
                     mailing_list.unsubscribe(member)
+
+                    stats = UnsubscriberStats()
+
+                    stats.list_id = list_id
+                    stats.email = member
+                    stats.channel = "Member mgt page"
+                    stats.date = datetime.datetime.now()
+
+                    stats.save()
                 messages.success(request, _('The selected members'
                                             ' have been unsubscribed'))
                 return redirect('list_members', list_id, role)
@@ -339,7 +351,15 @@ class ListUnsubscribeView(MailingListView):
         try:
             self.mailing_list.unsubscribe(email)
             messages.success(request, _('%s has been unsubscribed'
-                                        ' from this list.') % email)    
+                                        ' from this list.') % email)
+            stats = UnsubscriberStats()
+
+            stats.list_id = list_id
+            stats.email = email
+            stats.channel = "Members option page"
+            stats.date = datetime.datetime.now()
+
+            stats.save()    
         except MailmanApiError:
             return utils.render_api_error(request)
         except ValueError as e:
@@ -408,6 +428,15 @@ class ListMassRemovalView(MailingListView):
                                    ' unsubscribed from %(list)s.') %
                         {'address': address,
                          'list': self.mailing_list.fqdn_listname})
+
+                    stats = UnsubscriberStats()
+
+                    stats.list_id = list_id
+                    stats.email = address
+                    stats.channel = "Admin mass Unsubscription"
+                    stats.date = datetime.datetime.now()
+
+                    stats.save()
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except (HTTPError, ValueError) as e:
