@@ -16,6 +16,7 @@ Nginx with uwsgi
 Below is an example uwsgi configuration file:
 
 ::
+
     [uwsgi]
 
     chdir           = /srv/django/mailman
@@ -44,7 +45,7 @@ And a nginx server section to with it:
 		server {
 				listen      80;
 				# TODO Replace with your domain
-				server_name lists.example.com; 
+				server_name lists.example.com;
 				return 301	https://$server_name$request_uri;
 
 		}
@@ -74,7 +75,7 @@ And a nginx server section to with it:
 
 			location /static {
 					# TODO Adjust to your static location
-					alias /srv/django/mailman/public/static; 
+					alias /srv/django/mailman/public/static;
 			}
 
 			# Finally, send all non-media requests to the Django server.
@@ -95,19 +96,19 @@ Apache with mod_wsgi
 
 These settings need to be added to your Apache VirtualHost:
 
-:: 
+::
 
     Alias /static /srv/django/mailman/public/static
     <Directory "/srv/django/mailman/public/static">
         Order deny,allow
         Allow from all
-    </Directory>    
+    </Directory>
 
     WSGIScriptAlias / /srv/django/mailman/srv/postorius.wsgi
     <Directory "/srv/django/mailman/srv">
         Order deny,allow
         Allow from all
-    </Directory>    
+    </Directory>
 
 The first Alias serves the static files (CSS, JS, Images, etc.). The
 WSGIScriptAlias serves the Django application. The paths need to be changed
@@ -126,4 +127,4 @@ postorius project directory and run:
     $ python manage.py compilemessages
     $ python manage.py collectstatic
 
-After reloading the webserver Postorius should be running! 
+After reloading the webserver Postorius should be running!

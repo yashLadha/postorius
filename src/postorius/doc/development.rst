@@ -64,7 +64,7 @@ directory. Please have a look at the existing examples.
 
 
 Mocking calls to Mailman's REST API
------------------------------------
+===================================
 
 A lot of Postorius' code involves calls to Mailman's REST API (through
 the mailman.client library). Running these tests against a real instance
@@ -154,4 +154,4 @@ A quick example:
 
 For detailed information how to use mailmanclient, check out its documentation_.
 
-.. _documentation: https://gitlab.com/mailman/mailmanclient/blob/master/src/mailmanclient/docs/using.rst
+.. _documentation: http://docs.mailman3.org/projects/mailmanclient/en/latest/using.html
