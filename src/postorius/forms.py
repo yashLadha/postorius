@@ -599,6 +599,7 @@ class ListIdentityForm(ListSettingsForm):
     )
     subject_prefix = forms.CharField(
         label=_('Subject prefix'),
+        strip=False,
     )
 
 
