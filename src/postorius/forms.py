@@ -600,7 +600,7 @@ class ListIdentityForm(ListSettingsForm):
     )
     if __version__ < '1.9':
         subject_prefix = forms.CharField(
-        label=_('Subject prefix'),
+            label=_('Subject prefix'),
         )
     else:
         subject_prefix = forms.CharField(
