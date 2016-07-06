@@ -17,6 +17,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
+from django import __version__
 from django.core.validators import validate_email
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
@@ -597,10 +598,15 @@ class ListIdentityForm(ListSettingsForm):
         label=_('Display name'),
         help_text=_('Display name is the name shown in the web interface.')
     )
-    subject_prefix = forms.CharField(
+    if __version__ < '1.9':
+        subject_prefix = forms.CharField(
         label=_('Subject prefix'),
-        strip=False,
-    )
+        )
+    else:
+        subject_prefix = forms.CharField(
+            label=_('Subject prefix'),
+            strip=False,
+        )
 
 
 class ListArchiverForm(forms.Form):
