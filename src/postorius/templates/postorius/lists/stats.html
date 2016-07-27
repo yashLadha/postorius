@@ -4,7 +4,7 @@
 {% load nav_helpers %}
 
 {% block main %}
-     <font color="3399FF"><h2> Stats of Unsubscribers </h2></font>
+     <font color="3399FF"><h3> Stats of Unsubscribers </h3></font>
 <br>
 
 <div class="table-responsive">
@@ -97,8 +97,50 @@
                     </tr>
                 </thead>
             </table>
-        </div>
+</div>
 
+
+<font color="3399FF"><h3> Unique Subject lines </h3></font>
+<br>
+
+<div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                        <th>{% trans 'Total No. of Unique Subject lines' %}</th>
+                        <th>{{unique_subject_list|length}}</th>
+                        
+                        {% if unique_subject_list|length > 0 %} 
+                        <th>
+                           <button type="button" class="btn btn-primary" data-toggle="modal"data-target="#popUpWindow6" >Subjects</button>
+                        </th>
+                        {% else %}
+                        <th>
+                          {% trans 'No Subjects discussed' %}
+                        </th>
+                        {% endif %}
+                    </tr>
+                </thead>
+            </table>
+</div>
+
+<div>
+        <font color="3399FF"><h3> Number of subscribers that posted </h3></font>
+        <br>
+
+        <div class="table-responsive" >
+                <table class="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                            <th>{% trans 'Total No. of subscribers that posted' %}</th>
+                            <th>{{emails_count}}</th>
+                            
+                            
+                        </tr>
+                    </thead>
+                </table>
+        </div>
+        </div>
 
 <div class="modal fade" id="popUpWindow1">
      <div class="modal-dialog">
@@ -148,7 +190,6 @@
         </div>
      </div>
 </div>
-
 
 <div class="modal fade" id="popUpWindow2">
      <div class="modal-dialog">
@@ -354,4 +395,43 @@
      </div>
 </div>
 
+
+<div class="modal fade" id="popUpWindow6">
+     <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Unique Subject lines</h4>
+            </div>
+            <div class="modal-body">
+              <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+
+
+                <thead>
+                    <tr>
+                        <th>{% trans 'Subjects' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        {% for list in unique_subject_list %}
+                        <tr>
+                        <td>
+                            {{ list.subject }}
+                        </td>
+                       </tr>
+                         {% endfor %}
+                    
+                    
+                </tbody>
+        
+                    
+            </table>
+        </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+     </div>
+</div>
 {% endblock main %}
