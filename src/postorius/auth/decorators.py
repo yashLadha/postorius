@@ -18,29 +18,9 @@
 """Postorius view decorators."""
 
 
-from django.contrib.auth import authenticate, login
 from django.core.exceptions import PermissionDenied
 
 from postorius.auth.utils import set_user_access_props
-
-
-def basic_auth_login(fn):
-    def wrapper(*args, **kwargs):
-        request = args[0]
-        if request.user.is_authenticated():
-            print('already logged in')
-        if not request.user.is_authenticated():
-            if 'HTTP_AUTHORIZATION' in request.META:
-                authmeth, auth = request.META['HTTP_AUTHORIZATION'].split(' ',
-                                                                          1)
-                if authmeth.lower() == 'basic':
-                    auth = auth.strip().decode('base64')
-                    username, password = auth.split(':', 1)
-                    user = authenticate(username=username, password=password)
-                    if user:
-                        login(request, user)
-        return fn(request, **kwargs)
-    return wrapper
 
 
 def list_owner_required(fn):
