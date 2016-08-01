@@ -73,15 +73,3 @@ def superuser_or_403(fn):
             raise PermissionDenied
         return fn(*args, **kwargs)
     return wrapper
-
-
-def loggedin_or_403(fn):
-    """Make sure that the logged in user is not anonymous or otherwise raise
-    PermissionDenied.
-    Assumes the request object to be the first arg."""
-    def wrapper(*args, **kwargs):
-        user = args[0].user
-        if not user.is_authenticated():
-            raise PermissionDenied
-        return fn(*args, **kwargs)
-    return wrapper
