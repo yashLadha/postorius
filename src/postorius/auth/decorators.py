@@ -63,7 +63,7 @@ def list_moderator_required(fn):
     return wrapper
 
 
-def superuser_or_403(fn):
+def superuser_required(fn):
     """Make sure that the logged in user is a superuser or otherwise raise
     PermissionDenied.
     Assumes the request object to be the first arg."""
