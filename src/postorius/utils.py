@@ -20,6 +20,7 @@ import logging
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
+from django.utils.functional import cached_property
 from mailmanclient import Client
 from django.utils.translation import gettext as _
 
@@ -61,21 +62,16 @@ class MailmanPaginator(Paginator):
         """
         number = self.validate_number(number)
         result = self.function(count=self.per_page, page=number)
-        if self._count is None:
-            self._count = result.total_size
         return self._get_page(result, number, self)
 
-    def _get_count(self):
+    @cached_property
+    def count(self):
         """
         Returns the total number of objects, across all pages.
         """
-        if self._count is None:
-            # For now we need to get the first page to have the total_size.
-            # Mitigate the price of this call by using count=1.
-            result = self.function(count=1, page=1)
-            self._count = result.total_size
-        return self._count
-    count = property(_get_count)
+        # For now we need to get the first page to have the total_size.
+        # Mitigate the price of this call by using count=1.
+        return self.function(count=1, page=1).total_size
 
 
 def paginate(request, collection, count=20, paginator_class=Paginator):
