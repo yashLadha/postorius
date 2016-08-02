@@ -19,6 +19,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import django
+
+from distutils.version import StrictVersion
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -58,9 +61,16 @@ class ListBansTest(ViewTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('addban_form' in response.context)
-        self.assertContains(
-            response, '<input class="form-control" id="id_email" '
-                      'name="email" type="text" />')
+        if StrictVersion(django.get_version()) < StrictVersion('1.10'):
+            # Django < 1.10 XXX: remove when support for 1.9 is dropped
+            self.assertContains(
+                response, '<input class="form-control" id="id_email" '
+                          'name="email" type="text" />')
+        else:
+            # Django 1.10
+            self.assertContains(
+                response, '<input class="form-control" id="id_email" '
+                          'name="email" type="text" required />')
         self.assertContains(
             response, '<button class="btn btn-primary" type="submit" '
                       'name="add">Ban email</button>')

@@ -102,7 +102,8 @@ class UserAddressPreferencesView(MailmanUserView):
                 for form, address in zip(formset.forms, mm_user.addresses):
                     preferences = address.preferences
                     for key in form.fields.keys():
-                        if form.cleaned_data[key] is not None:
+                        if (key in form.cleaned_data and
+                           form.cleaned_data[key] is not None):
                             # None: nothing set yet. Remember to remove this
                             # test when Mailman accepts None as a
                             # "reset to default" value.
