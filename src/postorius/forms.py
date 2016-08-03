@@ -30,7 +30,6 @@ try:
 except ImportError:
     from urllib.error import HTTPError
 
-#Modules for country
 from django_countries.widgets import CountrySelectWidget
 from django_countries.fields import CountryField 
 from django_countries import countries
@@ -196,10 +195,8 @@ class ListNew(FieldsetForm):
 class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
     """
-    
     CHOICES=[('Yes','Yes'),
          ('No','No')]
-
 
     email = forms.ChoiceField(
         label=_('Your email address *'),
@@ -210,7 +207,7 @@ class ListSubscribe(FieldsetForm):
             'invalid': _('Please enter a valid email address.')})
 
     display_name = forms.CharField(required=False,
-                                   label=_('Your name(optional)'))
+                                   label=_('Your name'))
 
     link = forms.CharField(required=False,
                            label=_('Profile link'),
@@ -222,24 +219,21 @@ class ListSubscribe(FieldsetForm):
     is_woman_in_tech = forms.ChoiceField(label=_('Are you involved in technology? *'),
                                          choices=CHOICES, widget=forms.RadioSelect())
 
-    essay = forms.CharField(widget=forms.Textarea,required=False,
-                            help_text =_("Please tell us more about how you are involved in technology."),)
-
     country = forms.ChoiceField(countries, widget=CountrySelectWidget(),label = _('Country *'))
     
     city = forms.CharField(required=False,label=_('City'))
+    
+    essay = forms.CharField(widget=forms.Textarea,required=False,
+                            help_text =_("Please tell us more about how you are involved in technology."),)
 
     accepted_terms = forms.BooleanField(label=_('Terms And Conditions *'),
                                         help_text = mark_safe("Do you agree to Conversation Model <a href='http://systers.org/wiki/communities/doku.php?id=wiki:systers:faq'>frequently asked questions</a>?"),)
-
-    
-    
 
     def __init__(self, user_emails, *args, **kwargs):
         super(ListSubscribe, self).__init__(*args, **kwargs)
         self.fields['email'].choices = ((address, address)
                                         for address in user_emails)
-    
+
 
 class ListSettingsForm(forms.Form):
     """
