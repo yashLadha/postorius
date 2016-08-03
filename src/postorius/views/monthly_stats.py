@@ -4,8 +4,7 @@ import requests
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from postorius.auth.decorators import (
-    list_owner_required, list_moderator_required)
+from postorius.auth.decorators import list_owner_required
 from postorius.models import UnsubscriberStats,List
 
 @login_required
@@ -89,23 +88,34 @@ def present_month_stats(request,list_id):
         present_month_unique_subject_list = {x['subject']:x for x in present_month_subject_list}.values()
 
                 
-        return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,'current_year':current_year,
-                    'current_monthName':current_monthName,'years':years, 'months':months, 
-                    'unique_subject_list':present_month_unique_subject_list,'list_stats':list_stats,
-                    'stats_member_mgt_page':stats_member_mgt_page,'stats_members_option_page': stats_members_option_page,
-                    'stats_admin_mass_unsubscription':stats_admin_mass_unsubscription, 'stats_disabled':stats_disabled,
-                    'emails_count':count})
+        return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,
+        	                    'current_year':current_year,
+                                'current_monthName':current_monthName,
+                                'years':years, 'months':months, 
+                                'unique_subject_list':present_month_unique_subject_list,
+                                'list_stats':list_stats,
+                                'stats_member_mgt_page':stats_member_mgt_page,
+                                'stats_members_option_page': stats_members_option_page,
+                                'stats_admin_mass_unsubscription':stats_admin_mass_unsubscription, 
+                                'stats_disabled':stats_disabled,
+                                'emails_count':count})
 
     else:
         present_month_unique_subject_list = []
         years.append(current_year)
 
-        return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,'current_year':current_year,
-                    'current_monthName':current_monthName,'years':years, 'months':months, 
-                    'unique_subject_list':present_month_unique_subject_list,'list_stats':list_stats,
-                    'stats_member_mgt_page':stats_member_mgt_page,'stats_members_option_page': stats_members_option_page,
-                    'stats_admin_mass_unsubscription':stats_admin_mass_unsubscription, 'stats_disabled':stats_disabled,
-                    'emails_count':count})
+        return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,
+        	                    'current_year':current_year,
+                                'current_monthName':current_monthName,
+                                'years':years, 
+                                'months':months, 
+                                'unique_subject_list':present_month_unique_subject_list,
+                                'list_stats':list_stats,
+                                'stats_member_mgt_page':stats_member_mgt_page,
+                                'stats_members_option_page': stats_members_option_page,
+                                'stats_admin_mass_unsubscription':stats_admin_mass_unsubscription,
+                                'stats_disabled':stats_disabled,
+                                'emails_count':count})
 
 
 @login_required
@@ -185,11 +195,18 @@ def monthly_stats(request,list_id,year,month):
 
         current_monthName = months[month-1]
 
-        return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,'current_year':year,
-                      'current_monthName':current_monthName,'unique_subject_list':month_unique_subject_list,
-                      'years':years, 'months':months, 'list_stats':list_stats,'stats_member_mgt_page':stats_member_mgt_page,
-                      'stats_members_option_page': stats_members_option_page,'stats_disabled':stats_disabled,
-                      'stats_admin_mass_unsubscription':stats_admin_mass_unsubscription,'emails_count':count})
+        return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,
+        	                    'current_year':year,
+                                'current_monthName':current_monthName,
+                                'unique_subject_list':month_unique_subject_list,
+                                'years':years, 
+                                'months':months, 
+                                'list_stats':list_stats,
+                                'stats_member_mgt_page':stats_member_mgt_page,
+                                'stats_members_option_page': stats_members_option_page,
+                                'stats_disabled':stats_disabled,
+                                'stats_admin_mass_unsubscription':stats_admin_mass_unsubscription,
+                                'emails_count':count})
 
     else:
         current_month = datetime.now().month
@@ -199,8 +216,15 @@ def monthly_stats(request,list_id,year,month):
         month_unique_subject_list = []
         years.append(current_year)
 
-        return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,'current_year':year,
-                      'current_monthName':current_monthName,'unique_subject_list':month_unique_subject_list,
-                      'years':years, 'months':months,'list_stats':list_stats,'stats_member_mgt_page':stats_member_mgt_page,
-                      'stats_members_option_page': stats_members_option_page,'stats_disabled':stats_disabled,
-                      'stats_admin_mass_unsubscription':stats_admin_mass_unsubscription,'emails_count':count})
+        return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,
+        	                    'current_year':year,
+                                'current_monthName':current_monthName,
+                                'unique_subject_list':month_unique_subject_list,
+                                'years':years, 
+                                'months':months,
+                                'list_stats':list_stats,
+                                'stats_member_mgt_page':stats_member_mgt_page,
+                                'stats_members_option_page': stats_members_option_page,
+                                'stats_disabled':stats_disabled,
+                                'stats_admin_mass_unsubscription':stats_admin_mass_unsubscription,
+                                'emails_count':count})
