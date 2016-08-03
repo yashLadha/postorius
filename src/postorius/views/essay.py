@@ -1,8 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View
-from postorius.auth.decorators import (
-    list_owner_required, list_moderator_required)
+from postorius.auth.decorators import list_owner_required
 from postorius.models import EssaySubscribe
 
 @login_required
