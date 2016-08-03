@@ -89,7 +89,7 @@ def present_month_stats(request,list_id):
 
                 
         return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,
-        	                    'current_year':current_year,
+        	                  'current_year':current_year,
                                 'current_monthName':current_monthName,
                                 'years':years, 'months':months, 
                                 'unique_subject_list':present_month_unique_subject_list,
@@ -105,7 +105,7 @@ def present_month_stats(request,list_id):
         years.append(current_year)
 
         return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,
-        	                    'current_year':current_year,
+        	                  'current_year':current_year,
                                 'current_monthName':current_monthName,
                                 'years':years, 
                                 'months':months, 
@@ -196,7 +196,7 @@ def monthly_stats(request,list_id,year,month):
         current_monthName = months[month-1]
 
         return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,
-        	                    'current_year':year,
+        	                  'current_year':year,
                                 'current_monthName':current_monthName,
                                 'unique_subject_list':month_unique_subject_list,
                                 'years':years, 
@@ -217,7 +217,7 @@ def monthly_stats(request,list_id,year,month):
         years.append(current_year)
 
         return render(request , 'postorius/lists/monthly_stats.html', {'list_id':list_id,
-        	                    'current_year':year,
+        	                  'current_year':year,
                                 'current_monthName':current_monthName,
                                 'unique_subject_list':month_unique_subject_list,
                                 'years':years, 
