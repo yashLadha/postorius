@@ -320,6 +320,7 @@ class EssaySubscribe(models.Model):
     def __str__(self):
             return u'%s   %s' % (self.display_name, self.essay)
 
+
 class UnsubscriberStats(models.Model):
     """Unsubscriber Stats model class
     """
