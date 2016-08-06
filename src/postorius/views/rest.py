@@ -28,7 +28,7 @@ from django.core.urlresolvers import reverse
 
 from postorius.auth.decorators import list_moderator_required
 from postorius.models import List
-from postorius.lib.scrub import Scrubber
+from django_mailman3.lib.scrub import Scrubber
 
 
 def parse(message):

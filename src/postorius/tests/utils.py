@@ -21,9 +21,10 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.test import RequestFactory, TestCase
+from django.test import TestCase
 from mock import MagicMock
 from six.moves.urllib_parse import quote
+from django_mailman3.tests.utils import get_flash_messages
 
 from postorius.utils import get_client
 from mailmanclient.testing.vcr_helpers import get_vcr
@@ -86,20 +87,6 @@ def create_mock_member(properties=None):
         for key in properties:
             setattr(mock_object, key, properties[key])
     return mock_object
-
-
-def get_flash_messages(response, empty=True):
-    if "messages" not in response.cookies:
-        return []
-    # A RequestFactory will not run the messages middleware, and thus will
-    # not delete the messages after retrieval.
-    dummy_request = RequestFactory().get("/")
-    dummy_request.COOKIES["messages"] = response.cookies["messages"].value
-    msgs = list(messages.storage.cookie.CookieStorage(dummy_request))
-    if empty:
-        del response.client.cookies["messages"]
-    return msgs
-get_flash_messages.__test__ = False
 
 
 class ViewTestCase(TestCase):

@@ -63,6 +63,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'postorius',
+    'django_mailman3',
     'django_browserid',
 )
 
@@ -199,22 +200,27 @@ SERVER_EMAIL = 'root@localhost.local'
 # EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
 
 # You can enable logging by uncommenting the following lines
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler'
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'INFO',
-#         },
-#         'django_browserid': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#         },
-#     },
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            # 'class': 'logging.StreamHandler'
+            'class': 'logging.NullHandler'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'postorius': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'django_browserid': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
