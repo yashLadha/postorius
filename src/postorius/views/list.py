@@ -31,6 +31,8 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.lib.paginator import paginate, MailmanPaginator
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -102,9 +104,11 @@ def list_members_view(request, list_id, role=None):
                 return mailing_list.find_members(query, count=count, page=page)
         else:
             find_method = mailing_list.get_member_page
-        context['members'] = utils.paginate(
-            request, find_method, count=request.GET.get('count', 25),
-            paginator_class=utils.MailmanPaginator)
+        context['members'] = paginate(
+            find_method,
+            request.GET.get('page'),
+            request.GET.get('count', 25),
+            paginator_class=MailmanPaginator)
         if mailing_list.member_count == 0:
             context['empty_error'] = _('List has no Subscribers')
         else:
@@ -130,7 +134,7 @@ def list_members_view(request, list_id, role=None):
 @list_owner_required
 def list_member_options(request, list_id, email):
     template_name = 'postorius/lists/memberoptions.html'
-    client = utils.get_client()
+    client = get_mailman_client()
     mm_list = List.objects.get_or_404(fqdn_listname=list_id)
     try:
         mm_member = client.get_member(list_id, email)
@@ -315,7 +319,7 @@ class ListUnsubscribeView(MailingListView):
 @login_required
 @list_owner_required
 def list_mass_subscribe(request, list_id):
-    mailing_list = utils.get_client().get_list(list_id)
+    mailing_list = get_mailman_client().get_list(list_id)
     if request.method == 'POST':
         form = ListMassSubscription(request.POST)
         if form.is_valid():
@@ -391,7 +395,7 @@ def _perform_action(message_ids, action):
 @login_required
 @list_moderator_required
 def list_moderation(request, list_id, held_id=-1):
-    mailing_list = utils.get_client().get_list(list_id)
+    mailing_list = get_mailman_client().get_list(list_id)
     if request.method == 'POST':
         form = MultipleChoiceForm(request.POST)
         if form.is_valid():
@@ -415,9 +419,9 @@ def list_moderation(request, list_id, held_id=-1):
                 messages.error(request, _('Message could not be found'))
     else:
         form = MultipleChoiceForm()
-    held_messages = utils.paginate(
-        request, mailing_list.get_held_page,
-        count=request.GET.get('count', 20),
+    held_messages = paginate(
+        mailing_list.get_held_page,
+        request.GET.get('page'), request.GET.get('count'),
         paginator_class=utils.MailmanPaginator)
     context = {
         'list': mailing_list,
@@ -538,6 +542,8 @@ def list_index(request, template='postorius/index.html'):
     if request.user.is_superuser:
         only_public = False
     try:
+        # FIXME: this is not paginated, all lists will
+        # always be retrieved.
         lists = sorted(List.objects.all(only_public=only_public),
                        key=lambda l: l.fqdn_listname)
         logger.debug(lists)
@@ -546,8 +552,9 @@ def list_index(request, template='postorius/index.html'):
     choosable_domains = _get_choosable_domains(request)
     return render(request, template,
                   {'count_options': [10, 25, 50, 100, 200], 'error': error,
-                   'lists': utils.paginate(request, lists,
-                                           count=request.GET.get('count', 10)),
+                   'lists': paginate(
+                       lists, request.GET.get('page'),
+                       request.GET.get('count', 10)),
                    'domain_count': len(choosable_domains)})
 
 

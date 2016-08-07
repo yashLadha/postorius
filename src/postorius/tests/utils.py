@@ -24,9 +24,9 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from mock import MagicMock
 from six.moves.urllib_parse import quote
+from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.tests.utils import get_flash_messages
 
-from postorius.utils import get_client
 from mailmanclient.testing.vcr_helpers import get_vcr
 
 vcr_log = logging.getLogger('vcr')
@@ -98,7 +98,7 @@ class ViewTestCase(TestCase):
     _mm_vcr = get_vcr(cassette_library_dir=_fixtures_dir)
 
     def setUp(self):
-        self.mm_client = get_client()
+        self.mm_client = get_mailman_client()
         if self.use_vcr:
             cm = self._mm_vcr.use_cassette('.'.join([
                 self.__class__.__name__, self._testMethodName, 'yaml']))

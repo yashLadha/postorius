@@ -19,10 +19,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django_mailman3.lib.mailman import get_mailman_client
 from six.moves.urllib_parse import quote
 
 from postorius.tests.utils import ViewTestCase
-from postorius.utils import get_client
 from postorius.forms import MemberModeration, UserPreferences
 
 
@@ -34,7 +34,7 @@ class ListMembersOptionsTest(ViewTestCase):
 
     def setUp(self):
         super(ListMembersOptionsTest, self).setUp()
-        self.domain = get_client().create_domain('example.com')
+        self.domain = get_mailman_client().create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'testpass')
@@ -46,7 +46,7 @@ class ListMembersOptionsTest(ViewTestCase):
             'testmoderator', 'moderator@example.com', 'testpass')
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
-        self.mm_user = get_client().create_user('test@example.com', '')
+        self.mm_user = get_mailman_client().create_user('test@example.com', '')
         self.mm_user.addresses[0].verify()
         self.foo_list.subscribe('test@example.com', pre_verified=True,
                                 pre_confirmed=True, pre_approved=True)

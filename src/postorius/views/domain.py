@@ -21,6 +21,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
+from django_mailman3.lib.mailman import get_mailman_client
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -74,7 +75,7 @@ def domain_delete(request, domain):
     """
     if request.method == 'POST':
         try:
-            client = utils.get_client()
+            client = get_mailman_client()
             client.delete_domain(domain)
             messages.success(request,
                              _('The domain %s has been deleted.' % domain))

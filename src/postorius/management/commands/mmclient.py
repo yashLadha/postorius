@@ -17,7 +17,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.core.management.base import BaseCommand
-from postorius import utils
+from django_mailman3.lib.mailman import get_mailman_client
 
 
 class Command(BaseCommand):
@@ -42,7 +42,7 @@ A complete list of commands can be found in the mailmanclient documentation."""
             shell = code.InteractiveConsole(globals())
             console_fn = shell.interact
         # connect to mailmanclient
-        client = utils.get_client()
+        client = get_mailman_client()
         # Putting client back in the global scope
         globals()['client'] = client
         # run the interpreter

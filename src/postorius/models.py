@@ -33,8 +33,8 @@ from django.dispatch import receiver
 from django.db import models
 from django.http import Http404
 from django.template.loader import render_to_string
+from django_mailman3.lib.mailman import get_mailman_client
 from mailmanclient import MailmanConnectionError
-from postorius.utils import get_client
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -81,7 +81,7 @@ class MailmanRestManager(object):
 
     def all(self):
         try:
-            return getattr(get_client(), self.resource_name_plural)
+            return getattr(get_mailman_client(), self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
         except MailmanConnectionError as e:
@@ -89,7 +89,7 @@ class MailmanRestManager(object):
 
     def get(self, *args, **kwargs):
         try:
-            method = getattr(get_client(), 'get_' + self.resource_name)
+            method = getattr(get_mailman_client(), 'get_' + self.resource_name)
             return method(*args, **kwargs)
         except AttributeError as e:
             raise MailmanApiError(e)
@@ -113,7 +113,8 @@ class MailmanRestManager(object):
 
     def create(self, *args, **kwargs):
         try:
-            method = getattr(get_client(), 'create_' + self.resource_name)
+            method = getattr(
+                get_mailman_client(), 'create_' + self.resource_name)
             return method(*args, **kwargs)
         except AttributeError as e:
             raise MailmanApiError(e)
@@ -139,7 +140,7 @@ class MailmanListManager(MailmanRestManager):
 
     def all(self, only_public=False):
         try:
-            objects = getattr(get_client(), self.resource_name_plural)
+            objects = getattr(get_mailman_client(), self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
         except MailmanConnectionError as e:

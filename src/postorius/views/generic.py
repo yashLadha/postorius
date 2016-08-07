@@ -18,6 +18,7 @@
 
 
 from django.views.generic import TemplateView
+from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.models import (List, MailmanUser, MailmanApiError,
                               Mailman404Error)
@@ -31,7 +32,7 @@ class MailmanClientMixin(object):
 
     def client(self):
         if getattr(self, '_client', None) is None:
-            self._client = utils.get_client()
+            self._client = get_mailman_client()
         return self._client
 
 
