@@ -331,3 +331,5 @@ class UnsubscriberStats(models.Model):
 
     def __str__(self):
         return u'%s   %s   %s' % (self.list_id, self.email, self.channel)
+
+        
