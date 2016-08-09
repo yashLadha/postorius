@@ -284,43 +284,30 @@ class ListSubscribeView(MailingListView):
             user_addresses = [request.user.email] + request.user.other_emails
             form = ListSubscribe(user_addresses, request.POST)
             if form.is_valid():
-                email = request.POST.get('email')
-                display_name = request.POST.get('display_name')
-                link = request.POST.get('link')
-                is_woman = request.POST.get('is_woman')
-                is_woman_in_tech = request.POST.get('is_woman_in_tech')
-                accepted_terms = request.POST.get('accepted_terms')
-                country = request.POST.get('country')
-                city = request.POST.get('city')
-                essay = request.POST.get('essay')
-
                 essay_subscribe = EssaySubscribe()
-        
-                # Stores the values entered by the user in model class EssaySubscribe.
-                essay_subscribe.list_id = list_id   
-                essay_subscribe.email = email
-                essay_subscribe.display_name = display_name
-                essay_subscribe.link = link
-                essay_subscribe.essay = essay
-                essay_subscribe.city = city
+
+                form_data = request.POST
+                email = form_data.get('email')
                 
-                if is_woman == 'Yes':
-                    essay_subscribe.is_woman = True
-                else:
-                    essay_subscribe.is_woman = False
-
-                if is_woman_in_tech == 'Yes':
-                    essay_subscribe.is_woman_in_tech = True
-                else:
-                    essay_subscribe.is_woman_in_tech = False
-
-                essay_subscribe.accepted_terms = accepted_terms
-                essay_subscribe.country = country
+                # Stores the values entered by the user in model class EssaySubscribe.
+                essay_subscribe.list_id = list_id 
+                essay_subscribe.email = form_data.get('email')
+                essay_subscribe.display_name = form_data.get('display_name')
+                essay_subscribe.link = form_data.get('link')
+                essay_subscribe.essay = form_data.get('essay')
+                essay_subscribe.accepted_terms = form_data.get('accepted_terms')
+                essay_subscribe.city = form_data.get('city')
+                essay_subscribe.country = form_data.get('country')
+                essay_subscribe.is_woman = (form_data.get('is_woman') == 'Yes')
+                essay_subscribe.is_woman_in_tech = (form_data.get('is_woman_in_tech') == 'Yes')
+    
                 essay_subscribe.date = datetime.datetime.now()
-                essay_subscribe.save()
+                
 
                 response = self.mailing_list.subscribe(
                     email, pre_verified=True, pre_confirmed=True)
+
+                essay_subscribe.save()
                 if (type(response) == dict and
                         response.get('token_owner') == 'moderator'):
                     messages.success(
@@ -334,6 +321,7 @@ class ListSubscribeView(MailingListView):
             else:
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
+                essay_subscribe.save()
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
@@ -414,7 +402,7 @@ class ListMassRemovalView(MailingListView):
                       {'form': form, 'list': self.mailing_list})
 
     @method_decorator(list_owner_required)
-    def post(self, request,list_id, *args, **kwargs):
+    def post(self, request, list_id, *args, **kwargs):
         form = ListMassRemoval(request.POST)
         if not form.is_valid():
             messages.error(request, _('Please fill out the form correctly.'))
@@ -508,7 +496,7 @@ def moderate_held_message(request, list_id):
             messages.success(request, _('The message was rejected'))
         elif 'discard' in request.POST:
             mailing_list.discard_message(msg_id)
-            messages.success(request, _('The message was discarded'))    
+            messages.success(request, _('The message was discarded'))
     except MailmanApiError:
         return utils.render_api_error(request)
 
