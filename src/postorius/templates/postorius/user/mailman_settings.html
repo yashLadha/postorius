@@ -3,11 +3,11 @@
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'Subscription settings' %} | {{ user.username }}
+{% block head_title %}
+{% trans 'Subscription settings' %} | {{ user.username }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% user_nav 'settings' 'Subscription settings' %}
 
@@ -28,4 +28,4 @@
         </form>
     {% endif %}
 
-{% endblock main %}
+{% endblock content %}

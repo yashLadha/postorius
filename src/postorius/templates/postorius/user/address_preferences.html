@@ -4,11 +4,11 @@
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'Subscription preferences' %} | {{ user.username }}
+{% block head_title %}
+{% trans 'Subscription preferences' %} | {{ user.username }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% user_nav 'settings' 'Subscription settings' %}
 
@@ -67,7 +67,7 @@
         </form>
     {% endif %}
 
-{% endblock main %}
+{% endblock content %}
 {% block additionaljs %}
 <script>
     $(function () {

@@ -4,15 +4,15 @@
 {% load browserid %}
 {% load bootstrap_tags %}
 
-{% block subtitle %}
-{% trans 'Login' %}
+{% block head_title %}
+{% trans 'Login' %} - {{ block.super }}
 {% endblock %}
 {% block additionalcss %}
     {% browserid_css %}
 {% endblock %}
 
 
-{% block main %}
+{% block content %}
 
     <div class="page-header">
         <h3>{% trans 'Login with username and password or with Mozilla Persona' %}</h3>

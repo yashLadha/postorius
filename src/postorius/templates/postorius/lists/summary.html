@@ -3,11 +3,11 @@
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'Info' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Info' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_summary' 'Summary' %}
 

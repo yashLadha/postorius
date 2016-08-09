@@ -3,11 +3,11 @@
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'Profile' %} | {{ user.username }}
+{% block head_title %}
+{% trans 'Profile' %} | {{ user.username }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% user_nav 'profile' 'User Profile' %}
 
@@ -75,4 +75,4 @@
             </tr>
         </tbody>
     </table>
-{% endblock main %}
+{% endblock content %}

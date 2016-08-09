@@ -3,11 +3,11 @@
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'List members' %} | {{ list.fqdn_listname}}
+{% block head_title %}
+{% trans 'List members' %} | {{ list.fqdn_listname}} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_members' page_title %}
 
@@ -96,7 +96,7 @@
         <p>{{ empty_error }}</p>
     {% endif %}
 
-{% endblock main %}
+{% endblock content %}
 {% block additionaljs %}
 <script>
 $('#all-members-checkbox').change(function() {

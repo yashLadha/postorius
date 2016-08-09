@@ -3,11 +3,11 @@
 {% load nav_helpers %}
 {% load bootstrap_tags %}
 
-{% block subtitle %}
-{% trans 'Member options' %} | {{ mm_member.email }}
+{% block head_title %}
+{% trans 'Member options' %} | {{ mm_member.email }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_members' 'Member options' mm_member.email %}
 
@@ -30,4 +30,4 @@
         </div>
 
     {% endif %}
-{% endblock main %}
+{% endblock content %}

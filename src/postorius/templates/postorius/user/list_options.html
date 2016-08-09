@@ -3,11 +3,11 @@
 {% load nav_helpers %}
 {% load bootstrap_tags %}
 
-{% block subtitle %}
-{% trans 'Member options' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Member options' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 <h2>{% trans 'Subscription options for' %} {{ list.fqdn_listname }}</h2>
 <hr />
 <p class="col-md-offset-2">
@@ -21,4 +21,4 @@
   {% bootstrap_form_horizontal form 3 8 'Save changes' %}
   <input type="hidden" name="formname" value="preferences" />
 </form>
-{% endblock main %}
+{% endblock content %}

@@ -6,11 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>
-    {% block title %}
-        {% block subtitle %}{% endblock %} | Mailman/Postorius
-    {% endblock %}
-    </title>
+    <title>{% block head_title %}{{ site_name|title }}{% endblock %}</title>
     <link rel="shortcut icon" href="{% static 'postorius/img/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'postorius/libs/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'postorius/css/style.css' %}">
@@ -61,7 +57,7 @@
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
-        {% block main %}{% endblock main %}
+        {% block content %}{% endblock content %}
     </div>
 
     <footer class="footer">

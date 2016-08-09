@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load bootstrap_tags %}
 
-{% block subtitle %}
-{% trans 'Add domain' %}
+{% block head_title %}
+{% trans 'Add domain' %} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     <div class="page-header">
         <h2>{% trans 'Add a new domain' %}</h2>
@@ -16,4 +16,4 @@
         {% bootstrap_form_horizontal form 2 8 'Create domain' %}
     </form>
 
-{% endblock main %}
+{% endblock content %}

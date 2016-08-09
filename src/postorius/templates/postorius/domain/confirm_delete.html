@@ -1,13 +1,13 @@
 {% extends postorius_base_template %}
 {% load i18n %}
 
-{% block subtitle %}
-{% trans 'Confirm domain removal' %} | {{ domain}}
+{% block head_title %}
+{% trans 'Confirm domain removal' %} | {{ domain}} - {{ block.super }}
 {% endblock %}
 
 {% load nav_helpers %}
 
-{% block main %}
+{% block content %}
 
     <div class="page-header">
         <h2>{% trans 'Confirm deletion' %}</h2>
@@ -21,4 +21,4 @@
         <a class="btn btn-default" href="{% url 'domain_index' %}">{% trans 'Cancel' %}</a>
     </form>
 
-{% endblock main %}
+{% endblock content %}
