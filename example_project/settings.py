@@ -39,11 +39,13 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = '$!-7^wl#wiifjbh)5@f7ji%x!vp7s1vzbvwt26hxv$idixq0u0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ADMINS = (
     #('Admin', 'webmaster@example.com'),
 )
+
+SITE_ID = 1
 
 ALLOWED_HOSTS = []
 
@@ -60,12 +62,23 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'postorius',
     'django_mailman3',
-    'django_browserid',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.openid',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.gitlab',
+    'allauth.socialaccount.providers.google',
+    #'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.stackexchange',
 )
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -83,6 +96,7 @@ MIDDLEWARE_CLASSES = (
 # Set `postorius.urls` as main url config if Postorius
 # is the only app you want to serve.
 ROOT_URLCONF = 'urls'
+
 
 TEMPLATES = [
     {
@@ -165,18 +179,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
-LOGIN_URL = 'user_login'
+LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = 'list_index'
-LOGOUT_URL = 'user_logout'
+LOGOUT_URL = 'account_logout'
 
 
-# Use the email username as identifier, but truncate it because
-# the User.username field is only 30 chars long.
-def username(email):
-    return email.rsplit('@', 1)[0][:30]
-BROWSERID_USERNAME_ALGO = username
 
-
+# From Address for emails sent to users
+DEFAULT_FROM_EMAIL = 'postorius@localhost.local'
+# From Address for emails sent to admins
+SERVER_EMAIL = 'root@localhost.local'
 # Compatibility with Bootstrap 3
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
@@ -185,15 +197,45 @@ MESSAGE_TAGS = {
 
 
 AUTHENTICATION_BACKENDS = (
-    'django_browserid.auth.BrowserIDBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+# Django Allauth
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+ACCOUNT_UNIQUE_EMAIL  = True
 
-# From Address for emails sent to users
-DEFAULT_FROM_EMAIL = 'postorius@localhost.local'
-# From Address for emails sent to admins
-SERVER_EMAIL = 'root@localhost.local'
+SOCIALACCOUNT_PROVIDERS = {
+    'openid': {
+        'SERVERS': [
+            dict(id='yahoo',
+                 name='Yahoo',
+                 openid_url='http://me.yahoo.com'),
+        ],
+    },
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    },
+    'facebook': {
+       'METHOD': 'oauth2',
+       'SCOPE': ['email'],
+       'FIELDS': [
+           'email',
+           'name',
+           'first_name',
+           'last_name',
+           'locale',
+           'timezone',
+           ],
+       'VERSION': 'v2.4',
+    },
+}
+
+
 
 # These can be set to override the defaults but are not mandatory:
 # EMAIL_CONFIRMATION_TEMPLATE = 'postorius/address_confirmation_message.txt'
@@ -215,10 +257,6 @@ LOGGING = {
             'level': 'INFO',
         },
         'postorius': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
-        'django_browserid': {
             'handlers': ['console'],
             'level': 'INFO',
         },

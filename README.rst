@@ -24,8 +24,7 @@ Requirements
 ============
 
 Postorius requires Python 2.7 or newer and mailmanclient,
-the official Python bindings for GNU Mailman, it also requires
-django-browserid.
+the official Python bindings for GNU Mailman.
 The minimum Django version is 1.8.
 Postorius needs a running version of GNU Mailman version 3.
 

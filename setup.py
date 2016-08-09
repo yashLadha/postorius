@@ -37,7 +37,6 @@ setup(
         'Django>=1.8',
         'Django<1.10',
         'django-mailman3',
-        'django-browserid',
         'mailmanclient',
     ],
 )
