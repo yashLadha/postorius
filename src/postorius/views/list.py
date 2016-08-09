@@ -23,7 +23,7 @@ import logging
 from django.http import HttpResponse, HttpResponseNotAllowed, Http404
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.forms import formset_factory
@@ -47,7 +47,7 @@ from postorius.forms import (
     ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
 from postorius.models import Domain, List, MailmanApiError, Mailman404Error
 from postorius.auth.decorators import (
-    list_owner_required, list_moderator_required)
+    list_owner_required, list_moderator_required, superuser_or_403)
 from postorius.views.generic import MailingListView
 
 
@@ -487,7 +487,7 @@ def _get_choosable_domains(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@superuser_or_403
 def list_new(request, template='postorius/lists/new.html'):
     """
     Add a new mailing list.

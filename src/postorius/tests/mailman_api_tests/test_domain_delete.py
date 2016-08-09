@@ -50,17 +50,20 @@ class DomainDeleteTest(ViewTestCase):
     def test_access_basic_user(self):
         # Basic users can't delete domains
         self.client.login(username='testuser', password='testpass')
-        self.assertRedirectsToLogin(self.url)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
 
     def test_access_moderators(self):
         # Moderators can't delete domains
         self.client.login(username='testmoderator', password='testpass')
-        self.assertRedirectsToLogin(self.url)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
 
     def test_access_owners(self):
         # Owners can't delete domains
         self.client.login(username='testowner', password='testpass')
-        self.assertRedirectsToLogin(self.url)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
 
     def test_domain_delete_confirm(self):
         # The user should be ask to confirm domain deletion on GET requests

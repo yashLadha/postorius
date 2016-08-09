@@ -34,7 +34,8 @@ class DomainCreationTest(ViewTestCase):
 
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
-        self.assertRedirectsToLogin(reverse('domain_new'))
+        response = self.client.get(reverse('domain_new'))
+        self.assertEqual(response.status_code, 403)
 
     def test_new_domain_created_with_owner(self):
         self.client.login(username='su', password='pwd')
