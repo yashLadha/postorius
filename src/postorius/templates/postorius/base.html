@@ -43,10 +43,10 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'user_profile' %}">{% trans 'Logged in as' %}: {{ user.username }}</a></li>
-                        <li><a href="{{ logout_url }}?next={% url 'list_index' %}" title="{% trans 'Logout' %}">Logout</a></li>
+                        <li><a href="{% url 'ps_user_profile' %}">{% trans 'Logged in as' %}: {{ user.username }}</a></li>
+                        <li><a href="{% LOGOUT_URL %}?next={% url 'list_index' %}" title="{% trans 'Logout' %}">Logout</a></li>
                     {% else %}
-                    <li><a href="{{ login_url }}?next={{ next|default:request.path|urlencode }}">{% trans 'Login' %}</a></li>
+                    <li><a href="{% LOGIN_URL %}?next={{ next|default:request.path|urlencode }}">{% trans 'Login' %}</a></li>
                     {% endif %}
                 </ul>
             </div>

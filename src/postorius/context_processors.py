@@ -36,19 +36,6 @@ def postorius(request):
     else:
         template_to_extend = "postorius/base.html"
 
-    # Find the HyperKitty URL if installed
-    hyperkitty_url = False
-    if "hyperkitty" in settings.INSTALLED_APPS:
-        try:
-            hyperkitty_url = reverse("hk_root")
-        except NoReverseMatch:
-            pass
-
     return {
         'postorius_base_template': template_to_extend,
-        'request': request,
-        'hyperkitty_url': hyperkitty_url,
-        # Resolve the login and logout URLs from the settings
-        'login_url': resolve_url(settings.LOGIN_URL),
-        'logout_url': resolve_url(settings.LOGOUT_URL),
     }
