@@ -1,16 +1,11 @@
 {% load i18n %}
 {% load nav_helpers %}
 
-<ul class="nav nav-pills">
-    <li role="presentation" class="{% nav_active_class current 'profile' %}"><a href="{% url 'ps_user_profile' %}">{% trans 'Profile' %}</a></li>
-    <li role="presentation" class="{% nav_active_class current 'settings' %}"><a href="{% url 'user_mailmansettings' %}">{% trans 'Subscription settings' %}</a></li>
-    <li role="presentation" class="{% nav_active_class current 'subscriptions' %}"><a href="{% url 'user_subscriptions' %}">{% trans 'Subscriptions' %}</a></li>
-</ul>
+<h1>{% trans 'Mailman profile' %} <small>{{ user }}</small></h1>
 
-<div class="page-header">
-    {% if current == 'ps_user_profile' %}
-        <h1>{% trans 'User Profile' %} <small>{{ user }}</small></h1>
-    {% else %}
-        <h3>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h3>
-    {% endif %}
-</div>
+<ul class="nav nav-tabs margin-bottom">
+    <li role="presentation" class="{% nav_active_class current 'subscriptions' %}"><a href="{% url 'ps_user_profile' %}">{% trans 'Subscriptions' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'settings_global' %}"><a href="{% url 'user_mailmansettings' %}">{% trans 'Global Mailman preferences' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'settings_address' %}"><a href="{% url 'user_address_preferences' %}">{% trans 'Address-based preferences' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'settings_list' %}"><a href="{% url 'user_subscription_preferences' %}">{% trans 'List-based preferences' %}</a></li>
+</ul>

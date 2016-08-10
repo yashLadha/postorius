@@ -67,10 +67,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'postorius',
     'django_mailman3',
+    'django_gravatar',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.openid',
+    'django_mailman3.lib.auth.fedora',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.gitlab',
     'allauth.socialaccount.providers.google',
@@ -248,8 +250,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'console': {
-            # 'class': 'logging.StreamHandler'
-            'class': 'logging.NullHandler'
+            'class': 'logging.StreamHandler'
         },
     },
     'loggers': {
@@ -263,3 +264,9 @@ LOGGING = {
         },
     },
 }
+
+
+try:
+    from settings_local import *
+except ImportError:
+    pass

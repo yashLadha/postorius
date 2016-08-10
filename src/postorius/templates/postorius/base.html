@@ -9,6 +9,7 @@
     <title>{% block head_title %}{{ site_name|title }}{% endblock %}</title>
     <link rel="shortcut icon" href="{% static 'postorius/img/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'postorius/libs/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'django-mailman3/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'postorius/css/style.css' %}">
     {% block additionalcss %}{% endblock %}
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -43,10 +44,25 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'ps_user_profile' %}">{% trans 'Logged in as' %}: {{ user.username }}</a></li>
-                        <li><a href="{% LOGOUT_URL %}?next={% url 'list_index' %}" title="{% trans 'Logout' %}">Logout</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button" aria-haspopup="true" aria-expanded="false">
+                                {{ user.username|truncatechars:"35" }}
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'mm_user_profile' %}">{% trans 'Account' %}</a></li>
+                                <li><a href="{% url 'ps_user_profile' %}">{% trans 'Mailman profile' %}</a></li>
+                                {% if 'hyperkitty' in INSTALLED_APPS %}
+                                <li><a href="{% url 'hk_user_profile' %}">{% trans 'Posting activity' %}</a></li>
+                                {% endif %}
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{% url LOGOUT_URL %}?next={% url 'list_index' %}">{% trans 'Logout' %}</a></li>
+                            </ul>
+                        </li>
                     {% else %}
-                    <li><a href="{% LOGIN_URL %}?next={{ next|default:request.path|urlencode }}">{% trans 'Login' %}</a></li>
+                    <li><a href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}">{% trans 'Login' %}</a></li>
+                    <li><a href="{% url 'account_signup' %}?next={{next|default:request.path|urlencode}}">{% trans 'Sign Up' %}</a></li>
                     {% endif %}
                 </ul>
             </div>

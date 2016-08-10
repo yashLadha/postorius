@@ -68,12 +68,8 @@ list_patterns = [
 
 urlpatterns = [
     url(r'^$', list_views.list_index),
-    url(r'^accounts/login/$', login_view,
-        {"template_name": "postorius/login.html"}, name='user_login'),
-    url(r'^accounts/logout/$', logout_view, name='user_logout'),
-    url(r'^accounts/profile/$', user_views.user_profile, name='ps_user_profile'),
     url(r'^accounts/subscriptions/$', user_views.user_subscriptions,
-        name='user_subscriptions'),
+        name='ps_user_profile'),
     url(r'^accounts/per-address-preferences/$',
         user_views.UserAddressPreferencesView.as_view(),
         name='user_address_preferences'),
@@ -96,10 +92,6 @@ urlpatterns = [
     url(r'^lists/$', list_views.list_index, name='list_index'),
     url(r'^lists/new/$', list_views.list_new, name='list_new'),
     url(r'^lists/(?P<list_id>[^/]+)/', include(list_patterns)),
-    # XXX This can be changed to limit the length of activation keys
-    url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]+)/$',
-        user_views.address_activation_link,
-        name='address_activation_link'),
     url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/$',
         rest_views.get_held_message, name='rest_held_message'),
     url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/'

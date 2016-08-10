@@ -36,11 +36,9 @@ except ImportError:
     from urllib.error import HTTPError
 
 from postorius import utils
-from postorius.models import (MailmanConnectionError, MailmanApiError, List,
-                              AddressConfirmationProfile, MailmanUser,
-                              Mailman404Error)
-from postorius.forms import (UserPreferences, AddressActivationForm,
-                             ChangeSubscriptionForm, ChangeDisplayNameForm)
+from postorius.models import (
+    MailmanApiError, List, MailmanUser, Mailman404Error)
+from postorius.forms import UserPreferences, ChangeSubscriptionForm
 from postorius.views.generic import MailmanUserView
 from smtplib import SMTPException
 from socket import error as socket_error
@@ -239,109 +237,3 @@ def user_subscriptions(request):
     memberships = [m for m in mm_user.subscriptions if m.role == 'member']
     return render(request, 'postorius/user/subscriptions.html',
                   {'memberships': memberships})
-
-
-@login_required()
-def user_profile(request):
-    utils.set_other_emails(request.user)
-    try:
-        mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    if request.method == 'POST':
-        if request.POST.get('formname') == 'displayname':
-            display_name_form = ChangeDisplayNameForm(request.POST)
-            form = AddressActivationForm(
-                initial={'user_email': request.user.email})
-            if display_name_form.is_valid():
-                name = display_name_form.cleaned_data['display_name']
-                try:
-                    mm_user.display_name = name
-                    mm_user.save()
-                except MailmanApiError:
-                    return utils.render_api_error(request)
-                except HTTPError as e:
-                    messages.error(request, e)
-                else:
-                    messages.success(request, _('Display name changed'))
-                return redirect('user_profile')
-        else:
-            display_name_form = ChangeDisplayNameForm(
-                initial={'display_name': mm_user.display_name})
-            form = AddressActivationForm(request.POST)
-            if form.is_valid():
-                profile, c = (
-                    AddressConfirmationProfile.objects.update_or_create(
-                        email=form.cleaned_data['email'], user=request.user,
-                        defaults={'activation_key': uuid.uuid4().hex}))
-                try:
-                    profile.send_confirmation_link(request)
-                    messages.success(request, _(
-                                     'Please follow the instructions sent via'
-                                     ' email to confirm the address'))
-                    return redirect('user_profile')
-                except (SMTPException, socket_error) as e:
-                    if (not isinstance(e, SMTPException) and
-                            e.errno != errno.ECONNREFUSED):
-                        raise e
-                    profile.delete()
-                    messages.error(request,
-                                   _('Currently emails can not be added,'
-                                     ' please try again later'))
-    else:
-        form = AddressActivationForm(
-            initial={'user_email': request.user.email})
-        display_name_form = ChangeDisplayNameForm(
-            initial={'display_name': mm_user.display_name})
-    return render(request, 'postorius/user/profile.html',
-                  {'mm_user': mm_user, 'form': form,
-                   'name_form': display_name_form})
-
-
-@login_required()
-def address_activation_link(request, activation_key):
-    """
-    Checks the given activation_key. If it is valid, the saved address will be
-    added to mailman. Also, the corresponding profile record will be removed.
-    If the key is not valid, it will be ignored.
-    """
-    try:
-        profile = AddressConfirmationProfile.objects.get(
-            activation_key=activation_key)
-        if request.user != profile.user:
-            return redirect('{}?next={}'.format(
-                reverse(settings.LOGIN_URL), request.path))
-        if not profile.is_expired:
-            # Add the address to the user record in Mailman.
-            logger.info('Adding address %s to %s', profile.email,
-                        request.user.email)
-            try:
-                try:
-                    mailman_user = MailmanUser.objects.get(
-                        address=request.user.email)
-                except Mailman404Error:
-                    mailman_user = MailmanUser.objects.create(
-                        request.user.email, '')
-                # If the adress already exists, it's an import artefact: it's
-                # been validated by email, so it's safe to merge.
-                mm_address = mailman_user.add_address(
-                    profile.email, absorb_existing=True)
-                # The address has just been verified.
-                if not mm_address.verified_on:
-                    mm_address.verify()
-            except (MailmanApiError, MailmanConnectionError):
-                messages.error(request, _('The address could not be added.'))
-                return
-            # Reset the other_emails cache
-            if hasattr(request.user, 'other_emails'):
-                del request.user.other_emails
-            utils.set_other_emails(request.user)
-            messages.success(request,
-                             _('The email address has been activated!'))
-        else:
-            messages.error(request, _('The activation link has expired,'
-                                      ' please add the email again!'))
-        profile.delete()
-    except AddressConfirmationProfile.DoesNotExist:
-        messages.error(request, _('The activation link is invalid'))
-    return redirect('user_profile')

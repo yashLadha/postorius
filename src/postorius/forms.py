@@ -20,7 +20,6 @@ from django import forms
 from django.core.validators import validate_email
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 
 from postorius.fieldset_forms import FieldsetForm
 
@@ -819,35 +818,6 @@ class MemberModeration(FieldsetForm):
             'Accept -- accepts any postings without any further checks. '
             'Defer -- default processing, run additional checks and accept '
             'the message. '))
-
-
-class AddressActivationForm(forms.Form):
-    email = forms.EmailField(widget=forms.TextInput(
-                             attrs={'placeholder': 'Enter alternate email'}))
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-
-        # Check if the address belongs to someone else
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError(
-                _('This email is in use. Please choose another or contact'
-                  ' the administrator'), 'error')
-
-        return email
-
-
-class ChangeDisplayNameForm(forms.Form):
-    """
-    Change display name.
-    """
-
-    display_name = forms.CharField(
-        label=_('Display name'),
-        error_messages={
-            'required': _('Please enter a display name')},
-        required=True
-        )
 
 
 class ChangeSubscriptionForm(forms.Form):

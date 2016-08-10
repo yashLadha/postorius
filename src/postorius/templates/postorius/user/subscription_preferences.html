@@ -9,13 +9,9 @@
 
 {% block content %}
 
-    {% user_nav 'settings' 'Subscription settings' %}
+<div class="user-profile">
+    {% user_nav 'settings_list' 'Subscription settings' %}
 
-    <ul class="nav nav-tabs margin-bottom">
-     <li> <a href="{% url 'user_mailmansettings' %}">{% trans 'Global Mailman preferences' %}</a></li>
-     <li> <a href="{% url 'user_address_preferences' %}">{% trans 'Address-based preferences' %}</a></li>
-     <li class="active"><a href="#">{% trans 'Subscription-based preferences' %}</a></li>
-    </ul>
     {% if not zipped_data or nolists %}
       <div>
           <h4>{% trans 'No preferences available' %}</h4>
@@ -66,6 +62,7 @@
             </div>
         </form>
     {% endif %}
+</div>
 
 {% endblock content %}
 {% block additionaljs %}
