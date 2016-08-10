@@ -422,7 +422,7 @@ def list_moderation(request, list_id, held_id=-1):
     held_messages = paginate(
         mailing_list.get_held_page,
         request.GET.get('page'), request.GET.get('count'),
-        paginator_class=utils.MailmanPaginator)
+        paginator_class=MailmanPaginator)
     context = {
         'list': mailing_list,
         'count_options': [25, 50, 100, 200],
