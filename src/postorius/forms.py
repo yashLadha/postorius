@@ -592,6 +592,10 @@ class ListIdentityForm(ListSettingsForm):
             'other mailing lists, or in headers, and so forth. It should be '
             'as succinct as you can get it, while still identifying what the '
             'list is.'),
+        )
+    info = forms.CharField(
+        label=_('Information'),
+        help_text=_('A longer description of this mailing list.'),
         widget=forms.Textarea())
     display_name = forms.CharField(
         label=_('Display name'),
