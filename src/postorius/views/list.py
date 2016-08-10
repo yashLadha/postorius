@@ -20,8 +20,8 @@ import csv
 import email.utils
 import logging
 
+from allauth.account.models import EmailAddress
 from django.http import HttpResponse, HttpResponseNotAllowed, Http404
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -203,7 +203,9 @@ class ListSummaryView(MailingListView):
                 'userSubscribed': False,
                 'subscribed_address': None}
         if request.user.is_authenticated():
-            user_emails = [request.user.email] + request.user.other_emails
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
             for address in user_emails:
                 try:
                     self.mailing_list.get_member(address)
@@ -226,7 +228,9 @@ class ChangeSubscriptionView(MailingListView):
     @method_decorator(login_required)
     def post(self, request, list_id):
         try:
-            user_emails = [request.user.email] + request.user.other_emails
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
             form = ListSubscribe(user_emails, request.POST)
             # Find the currently subscribed email
             old_email = None
@@ -272,8 +276,10 @@ class ListSubscribeView(MailingListView):
         redirects to the `list_summary` view.
         """
         try:
-            user_addresses = [request.user.email] + request.user.other_emails
-            form = ListSubscribe(user_addresses, request.POST)
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
+            form = ListSubscribe(user_emails, request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
                 response = self.mailing_list.subscribe(
@@ -721,10 +727,10 @@ def remove_role(request, list_id=None, role=None, address=None,
         if len(roster) == 1:
             messages.error(request, _('Removing the last owner is impossible'))
             return redirect('list_members', the_list.list_id, role)
-        # the user may not have a other_emails property if it's a superuser
-        user_addresses = set([request.user.email]) | \
-            set(getattr(request.user, 'other_emails', []))
-        if address in user_addresses:
+        user_emails = EmailAddress.objects.filter(
+            user=request.user, verified=True).order_by(
+            "email").values_list("email", flat=True)
+        if address in user_emails:
             # The user is removing themselves, redirect to the list info page
             # because they won't have access to the members page anyway.
             redirect_on_success = redirect('list_summary', the_list.list_id)

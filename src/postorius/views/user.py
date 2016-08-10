@@ -19,6 +19,7 @@
 
 import logging
 
+from allauth.account.models import EmailAddress
 from django.forms import formset_factory
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -143,7 +144,6 @@ class UserAddressPreferencesView(MailmanUserView):
 
 @login_required
 def user_list_options(request, list_id):
-    utils.set_other_emails(request.user)
     mlist = List.objects.get_or_404(fqdn_listname=list_id)
     mm_user = MailmanUser.objects.get(address=request.user.email)
     subscription = None
@@ -170,7 +170,9 @@ def user_list_options(request, list_id):
             messages.error(request, _('Something went wrong.'))
     else:
         form = UserPreferences(initial=subscription.preferences)
-    user_emails = [request.user.email] + request.user.other_emails
+    user_emails = EmailAddress.objects.filter(
+        user=request.user, verified=True).order_by(
+        "email").values_list("email", flat=True)
     subscription_form = ChangeSubscriptionForm(
         user_emails, initial={'email': subscription.email})
     return render(request, 'postorius/user/list_options.html',
@@ -230,7 +232,6 @@ class UserSubscriptionPreferencesView(MailmanUserView):
 @login_required
 def user_subscriptions(request):
     """Shows the subscriptions of a user."""
-    utils.set_other_emails(request.user)
     try:
         mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
     except MailmanApiError:

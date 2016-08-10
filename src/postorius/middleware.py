@@ -23,9 +23,6 @@ from postorius.models import MailmanApiError
 
 class PostoriusMiddleware(object):
 
-    def process_request(self, request):
-        utils.set_other_emails(request.user)
-
     def process_exception(self, request, exception):
         if isinstance(exception, MailmanApiError):
             return utils.render_api_error(request)
