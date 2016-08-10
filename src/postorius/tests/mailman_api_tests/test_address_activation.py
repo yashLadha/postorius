@@ -163,7 +163,7 @@ class TestAddressActivationLinkSuccess(ViewTestCase):
         url = reverse('address_activation_link',
                       args=[self.profile.activation_key])
         response = self.client.get(url)
-        self.assertRedirects(response, reverse('user_profile'))
+        self.assertRedirects(response, reverse('ps_user_profile'))
         self.assertHasSuccessMessage(response)
         self.assertEqual(
             set([a.email for a in self.mm_user.addresses]),
@@ -178,7 +178,7 @@ class TestAddressActivationLinkSuccess(ViewTestCase):
         url = reverse('address_activation_link',
                       args=[self.profile.activation_key])
         response = self.client.get(url)
-        self.assertRedirects(response, reverse('user_profile'))
+        self.assertRedirects(response, reverse('ps_user_profile'))
         self.assertHasSuccessMessage(response)
         self.assertEqual(
             set([a.email for a in self.mm_user.addresses]),

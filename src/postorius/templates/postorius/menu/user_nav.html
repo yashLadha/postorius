@@ -2,13 +2,13 @@
 {% load nav_helpers %}
 
 <ul class="nav nav-pills">
-    <li role="presentation" class="{% nav_active_class current 'profile' %}"><a href="{% url 'user_profile' %}">{% trans 'Profile' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'profile' %}"><a href="{% url 'ps_user_profile' %}">{% trans 'Profile' %}</a></li>
     <li role="presentation" class="{% nav_active_class current 'settings' %}"><a href="{% url 'user_mailmansettings' %}">{% trans 'Subscription settings' %}</a></li>
     <li role="presentation" class="{% nav_active_class current 'subscriptions' %}"><a href="{% url 'user_subscriptions' %}">{% trans 'Subscriptions' %}</a></li>
 </ul>
 
 <div class="page-header">
-    {% if current == 'user_profile' %}
+    {% if current == 'ps_user_profile' %}
         <h1>{% trans 'User Profile' %} <small>{{ user }}</small></h1>
     {% else %}
         <h3>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h3>

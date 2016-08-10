@@ -71,7 +71,7 @@ urlpatterns = [
     url(r'^accounts/login/$', login_view,
         {"template_name": "postorius/login.html"}, name='user_login'),
     url(r'^accounts/logout/$', logout_view, name='user_logout'),
-    url(r'^accounts/profile/$', user_views.user_profile, name='user_profile'),
+    url(r'^accounts/profile/$', user_views.user_profile, name='ps_user_profile'),
     url(r'^accounts/subscriptions/$', user_views.user_subscriptions,
         name='user_subscriptions'),
     url(r'^accounts/per-address-preferences/$',
