@@ -60,7 +60,7 @@ class ListBansTest(ViewTestCase):
         self.assertTrue('addban_form' in response.context)
         self.assertContains(
             response, '<input class="form-control" id="id_email" '
-                      'name="email" type="text" />')
+                      'name="email" type="text" ')
         self.assertContains(
             response, '<button class="btn btn-primary" type="submit" '
                       'name="add">Ban email</button>')

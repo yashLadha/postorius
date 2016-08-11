@@ -126,7 +126,8 @@ class TestAddressConfirmationProfile(ViewTestCase):
 
     @override_settings(
         EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
-        EMAIL_CONFIRMATION_FROM='mailman@mostdesirable.org')
+        EMAIL_CONFIRMATION_FROM='mailman@mostdesirable.org',
+        ALLOWED_HOSTS=['another-virtualhost'])
     def test_confirmation_link(self):
         # The profile obj can send out a confirmation email.
         # Simulate a VirtualHost with a different name
