@@ -58,16 +58,9 @@ class ListBansTest(ViewTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('addban_form' in response.context)
-        try:
-            # Django 1.10
-            self.assertContains(
-                response, '<input class="form-control" id="id_email" '
-                          'name="email" type="text" required />')
-        except AssertionError:
-            # Django < 1.10 XXX: remove when support for 1.9 is dropped
-            self.assertContains(
-                response, '<input class="form-control" id="id_email" '
-                          'name="email" type="text" />')
+        self.assertContains(
+            response, '<input class="form-control" id="id_email" '
+                      'name="email" type="text" ')
         self.assertContains(
             response, '<button class="btn btn-primary" type="submit" '
                       'name="add">Ban email</button>')
