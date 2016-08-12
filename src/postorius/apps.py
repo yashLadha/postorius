@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 2016 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,7 +16,12 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+
 from __future__ import absolute_import, unicode_literals
 
-__version__ = '1.0.2'
-default_app_config = 'postorius.apps.PostoriusConfig'
+from django.apps import AppConfig
+
+
+class PostoriusConfig(AppConfig):
+    name = 'postorius'
+    verbose_name = "Postorius"
