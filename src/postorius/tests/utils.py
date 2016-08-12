@@ -114,13 +114,17 @@ class ViewTestCase(TestCase):
     def assertHasSuccessMessage(self, response):
         msgs = get_flash_messages(response)
         self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertEqual(
+            msgs[0].level, messages.SUCCESS,
+            "%s: %s" % (messages.DEFAULT_TAGS[msgs[0].level], msgs[0].message))
         return msgs[0].message
 
     def assertHasErrorMessage(self, response):
         msgs = get_flash_messages(response)
         self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.ERROR, msgs[0].message)
+        self.assertEqual(
+            msgs[0].level, messages.ERROR,
+            "%s: %s" % (messages.DEFAULT_TAGS[msgs[0].level], msgs[0].message))
         return msgs[0].message
 
     def assertHasNoMessage(self, response):
