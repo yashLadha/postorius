@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -42,6 +43,10 @@ class TestSubscription(ViewTestCase):
         # Create django user.
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'pwd')
+        EmailAddress.objects.create(
+            user=self.user, email=self.user.email, verified=True)
+        EmailAddress.objects.create(
+            user=self.user, email='fritz@example.org', verified=True)
         # Create Mailman user
         self.mm_user = self.mm_client.create_user('test@example.com', '')
         self.mm_user.add_address('fritz@example.org')
@@ -153,7 +158,10 @@ class TestSubscription(ViewTestCase):
         self.assertIn('Already subscribed', message)
 
     def test_subscribe_with_name(self):
-        User.objects.create_user('testowner', 'owner@example.com', 'pwd')
+        owner = User.objects.create_user(
+            'testowner', 'owner@example.com', 'pwd')
+        EmailAddress.objects.create(
+            user=owner, email=owner.email, verified=True)
         self.open_list.add_owner('owner@example.com')
         self.client.login(username='testowner', password='pwd')
         email_list = """First Person <test-1@example.org>\n

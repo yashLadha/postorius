@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
@@ -38,6 +39,8 @@ class MailmanUserTest(ViewTestCase):
         self.foo_list = self.domain.create_list('foo')
         self.user = User.objects.create_user(
             'user', 'user@example.com', 'testpass')
+        EmailAddress.objects.create(
+            user=self.user, email=self.user.email, verified=True)
         self.mm_user = MailmanUser.objects.create_from_django(self.user)
 
     def test_address_preferences_not_logged_in(self):
@@ -112,6 +115,8 @@ class MailmanUserTest(ViewTestCase):
         # cause views to crash.
         user = User.objects.create_user(
             'old-user', 'old-user@example.com', 'testpass')
+        EmailAddress.objects.create(
+            user=user, email=user.email, verified=True)
         self.client.login(username='old-user', password='testpass')
         self.assertRaises(Mailman404Error, MailmanUser.objects.get,
                           address=user.email)

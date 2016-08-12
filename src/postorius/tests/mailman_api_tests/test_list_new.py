@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -31,6 +32,9 @@ class ListCreationTest(ViewTestCase):
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')
+        for user in (self.user, self.superuser):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
         self.domain = self.mm_client.create_domain('example.com')
 
     def test_permission_denied(self):

@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -34,7 +35,10 @@ class ListSummaryPageTest(ViewTestCase):
         super(ListSummaryPageTest, self).setUp()
         self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
-        User.objects.create_user('testuser', 'test@example.com', 'testpass')
+        self.user = User.objects.create_user(
+            'testuser', 'test@example.com', 'testpass')
+        EmailAddress.objects.create(
+            user=self.user, email=self.user.email, verified=True)
 
     def test_list_summary_logged_out(self):
         # Response must contain list obj but not the form.
@@ -57,6 +61,8 @@ class ListSummaryPageTest(ViewTestCase):
     def test_list_summary_shows_all_addresses(self):
         mlist = self.mm_client.get_list('foo@example.com')
         mlist.subscribe('test@example.com')
+        EmailAddress.objects.create(
+            user=self.user, email='anotheremail@example.com', verified=True)
         user = self.mm_client.get_user('test@example.com')
         address = user.add_address('anotheremail@example.com')
         address.verify()
@@ -100,6 +106,8 @@ class ListSummaryPageTest(ViewTestCase):
 
     def test_list_summary_is_admin_secondary_owner(self):
         # Response must contain the administration menu
+        EmailAddress.objects.create(
+            user=self.user, email='anotheremail@example.com', verified=True)
         user = self.mm_client.create_user('test@example.com', None)
         address = user.add_address('anotheremail@example.com')
         address.verify()
@@ -112,6 +120,8 @@ class ListSummaryPageTest(ViewTestCase):
 
     def test_list_summary_is_admin_secondary_moderator(self):
         # Response must contain the administration menu
+        EmailAddress.objects.create(
+            user=self.user, email='anotheremail@example.com', verified=True)
         user = self.mm_client.create_user('test@example.com', None)
         address = user.add_address('anotheremail@example.com')
         address.verify()
@@ -146,8 +156,10 @@ class ListSummaryPageTest(ViewTestCase):
         self.assertContains(response, 'List metrics')
 
     def test_list_metrics_displayed_to_superuser(self):
-        User.objects.create_superuser('testadminuser', 'testadmin@example.com',
-                                      'testpass')
+        user = User.objects.create_superuser(
+            'testadminuser', 'testadmin@example.com', 'testpass')
+        EmailAddress.objects.create(
+            user=user, email=user.email, verified=True)
         self.assertTrue(self.client.login(username='testadminuser',
                                           password='testpass'))
         response = self.client.get(reverse('list_summary',
