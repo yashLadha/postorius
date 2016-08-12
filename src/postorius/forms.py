@@ -70,7 +70,7 @@ class DomainNew(FieldsetForm):
         label=_('Web Host'),
         error_messages={'required': _('Please enter a host name'),
                         'invalid': _('Please enter a valid host name.')},
-        required=True,
+        required=False,
         help_text=_('Example: http://www.domain.org'),
         )
     description = forms.CharField(

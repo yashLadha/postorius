@@ -44,7 +44,6 @@ class DomainCreationTest(ViewTestCase):
     def test_new_domain_created_with_owner(self):
         self.client.login(username='su', password='pwd')
         post_data = {'mail_host': 'example.com',
-                     'web_host': 'http://example.com',
                      'description': 'A new Domain.'}
         response = self.client.post(reverse('domain_new'), post_data)
 
@@ -53,7 +52,6 @@ class DomainCreationTest(ViewTestCase):
 
         a_new_domain = self.mm_client.get_domain('example.com')
         self.assertEqual(a_new_domain.mail_host, u'example.com')
-        self.assertEqual(a_new_domain.base_url, u'http://example.com')
         self.assertEqual(a_new_domain.owners[0]['user_id'],
                          self.mm_client.get_user('su@example.com').user_id)
         a_new_domain.delete()
@@ -61,7 +59,6 @@ class DomainCreationTest(ViewTestCase):
     def test_validation_of_mail_host(self):
         self.client.login(username='su', password='pwd')
         post_data = {'mail_host': 'example com',
-                     'web_host': 'http://example.com',
                      'description': 'A new Domain'}
         response = self.client.post(reverse('domain_new'), post_data)
         self.assertContains(response, 'Please check the errors below')
