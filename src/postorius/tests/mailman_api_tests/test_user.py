@@ -47,11 +47,11 @@ class MailmanUserTest(ViewTestCase):
         self.assertRedirectsToLogin(reverse('user_address_preferences'))
 
     def test_subscriptions_not_logged_in(self):
-        self.assertRedirectsToLogin(reverse('user_subscriptions'))
+        self.assertRedirectsToLogin(reverse('ps_user_profile'))
 
     def test_subscriptions_logged_in(self):
         self.client.login(username='user', password='testpass')
-        response = self.client.get(reverse('user_subscriptions'))
+        response = self.client.get(reverse('ps_user_profile'))
         self.assertEquals(response.status_code, 200)
 
     def test_address_based_preferences(self):
@@ -120,7 +120,7 @@ class MailmanUserTest(ViewTestCase):
         self.client.login(username='old-user', password='testpass')
         self.assertRaises(Mailman404Error, MailmanUser.objects.get,
                           address=user.email)
-        response = self.client.get(reverse('user_subscriptions'))
+        response = self.client.get(reverse('ps_user_profile'))
         self.assertEqual(response.status_code, 200)
         # The Mailman user must have been created
         self.assertIsNotNone(MailmanUser.objects.get(address=user.email))
