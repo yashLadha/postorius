@@ -244,23 +244,43 @@ SOCIALACCOUNT_PROVIDERS = {
 # EMAIL_CONFIRMATION_TEMPLATE = 'postorius/address_confirmation_message.txt'
 # EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
 
-# You can enable logging by uncommenting the following lines
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
         'console': {
-            'class': 'logging.StreamHandler'
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file':{
+            'level': 'INFO',
+            #'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'postorius.log'),
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'INFO',
         },
+        'django.request': {
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
+        },
         'postorius': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'INFO',
+        },
+    },
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s: %(message)s'
+        },
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(process)d %(name)s %(message)s'
         },
     },
 }
