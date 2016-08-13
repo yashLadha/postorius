@@ -15,7 +15,7 @@
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
 
     {# Archives #}
-    {% if hyperkitty_url %}
+    {% if 'hyperkitty' in INSTALLED_APPS %}
         {% url 'hk_list_overview' list.fqdn_listname as hyperkitty_list_url %}
         {% blocktrans %}
           <p>To see the prior postings to this list, visit
