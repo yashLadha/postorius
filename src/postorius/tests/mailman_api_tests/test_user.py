@@ -152,3 +152,19 @@ class MailmanUserTest(ViewTestCase):
                               UserPreferences)
         self.assertIsInstance(response.context['change_subscription_form'],
                               ChangeSubscriptionForm)
+
+    def test_list_options_shows_all_addresses(self):
+        self.client.login(username='user', password='testpass')
+        self.foo_list.subscribe(self.user.email, pre_verified=True,
+                                pre_confirmed=True, pre_approved=True)
+        # Add another email
+        EmailAddress.objects.create(
+            user=self.user, email='anotheremail@example.com', verified=True)
+        user = self.mm_client.get_user('user@example.com')
+        address = user.add_address('anotheremail@example.com')
+        address.verify()
+        # Check response
+        response = self.client.get(reverse('user_list_options',
+                                           args=[self.foo_list.list_id]))
+        self.assertEquals(response.status_code, 200)
+        self.assertTrue('anotheremail@example.com' in response.content)

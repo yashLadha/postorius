@@ -58,23 +58,6 @@ class ListSummaryPageTest(ViewTestCase):
         self.assertContains(response, '<form ')
         self.assertContains(response, 'Subscribe')
 
-    def test_list_summary_shows_all_addresses(self):
-        mlist = self.mm_client.get_list('foo@example.com')
-        mlist.subscribe('test@example.com',
-                        pre_verified=True,
-                        pre_confirmed=True)
-        # Add another email
-        EmailAddress.objects.create(
-            user=self.user, email='anotheremail@example.com', verified=True)
-        user = self.mm_client.get_user('test@example.com')
-        address = user.add_address('anotheremail@example.com')
-        address.verify()
-        self.client.login(username='testuser', password='testpass')
-        response = self.client.get(reverse('list_summary',
-                                           args=('foo@example.com', )))
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('anotheremail@example.com' in response.content)
-
     def test_unsubscribe_button_is_available(self):
         mlist = self.mm_client.get_list('foo@example.com')
         mlist.subscribe('test@example.com',
