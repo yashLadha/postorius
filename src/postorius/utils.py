@@ -34,25 +34,3 @@ def render_api_error(request):
     return render(request, 'postorius/errors/generic.html',
                   {'error': _('Mailman REST API not available. '
                               'Please start Mailman core.')})
-
-
-def set_other_emails(user):
-    from postorius.models import MailmanUser, MailmanApiError, Mailman404Error
-    if hasattr(user, 'other_emails'):
-        return
-    user.other_emails = []
-    if not user.is_authenticated():
-        return
-    try:
-        mm_user = MailmanUser.objects.get(address=user.email)
-        user.other_emails = [str(address) for address in mm_user.addresses
-                             if address.verified_on is not None]
-    except (MailmanApiError, Mailman404Error, AttributeError) as e:
-        # MailmanApiError: No connection to Mailman
-        # Mailman404Error: The user does not have a mailman user associated
-        # AttributeError: Anonymous user
-        logger.warning("Mailman error while setting other emails for %s: %r",
-                       user.email, e)
-        return
-    if user.email in user.other_emails:
-        user.other_emails.remove(user.email)

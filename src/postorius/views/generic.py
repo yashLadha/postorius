@@ -86,13 +86,6 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
             user_obj.first_address = self._get_first_address(user_obj)
         return user_obj
 
-    def _get_list(self, list_id):
-        if getattr(self, 'lists', None) is None:
-            self.lists = {}
-        if self.lists.get(list_id) is None:
-            self.lists[list_id] = List.objects.get(fqdn_listname=list_id)
-        return self.lists[list_id]
-
     def _get_memberships(self):
         memberships = []
         for m in self.mm_user.subscriptions:
