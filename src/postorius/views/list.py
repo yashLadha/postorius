@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
 import csv
 import email.utils
 import logging
@@ -680,10 +682,12 @@ def list_settings(request, list_id=None, visible_section=None,
         return utils.render_api_error(request)
     # List settings are grouped an processed in different forms.
     if request.method == 'POST':
-        form = form_class(request.POST, mlist=m_list)
+        initial_data = dict(
+            (key, unicode(value)) for key, value in list_settings.items())
+        form = form_class(request.POST, mlist=m_list, initial=initial_data)
         if form.is_valid():
             try:
-                for key in form.fields.keys():
+                for key in form.changed_data:
                     if key in form_class.mlist_properties:
                         setattr(m_list, key, form.cleaned_data[key])
                     else:

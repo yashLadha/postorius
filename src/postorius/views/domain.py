@@ -17,6 +17,8 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect

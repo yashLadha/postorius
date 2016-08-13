@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf.urls import url, include
 from django.contrib.auth.views import login as login_view
 from django.contrib.auth.views import logout as logout_view

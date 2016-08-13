@@ -20,6 +20,8 @@
 Authentication and authorization-related utilities.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from allauth.account.models import EmailAddress
 from django.utils import six
 from postorius.models import List

@@ -15,8 +15,10 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
 """Postorius view decorators."""
 
+from __future__ import absolute_import, unicode_literals
 
 from django.contrib.auth import authenticate, login
 from django.core.exceptions import PermissionDenied
