@@ -60,7 +60,10 @@ class ListSummaryPageTest(ViewTestCase):
 
     def test_list_summary_shows_all_addresses(self):
         mlist = self.mm_client.get_list('foo@example.com')
-        mlist.subscribe('test@example.com')
+        mlist.subscribe('test@example.com',
+                        pre_verified=True,
+                        pre_confirmed=True)
+        # Add another email
         EmailAddress.objects.create(
             user=self.user, email='anotheremail@example.com', verified=True)
         user = self.mm_client.get_user('test@example.com')
