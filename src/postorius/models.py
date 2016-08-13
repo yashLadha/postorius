@@ -332,4 +332,7 @@ class UnsubscriberStats(models.Model):
     def __str__(self):
         return u'%s   %s   %s' % (self.list_id, self.email, self.channel)
 
-        
+    @classmethod
+    def create(cls,list_id,email,channel,date):
+        return cls(list_id=list_id,email=email,channel=channel,date=date)
+   
