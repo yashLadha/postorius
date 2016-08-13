@@ -71,13 +71,9 @@ def list_members_view(request, list_id, role=None):
                 for member in members:
                     mailing_list.unsubscribe(member)
 
-                    stats = UnsubscriberStats()
+                    date = datetime.datetime.now()
 
-                    stats.list_id = list_id
-                    stats.email = member
-                    stats.channel = "Member mgt page"
-                    stats.date = datetime.datetime.now()
-
+                    stats = UnsubscriberStats.create(list_id,member,"Member mgt page",date)
                     stats.save()
                 messages.success(request, _('The selected members'
                                             ' have been unsubscribed'))
@@ -340,13 +336,9 @@ class ListUnsubscribeView(MailingListView):
             self.mailing_list.unsubscribe(email)
             messages.success(request, _('%s has been unsubscribed'
                                         ' from this list.') % email)
-            stats = UnsubscriberStats()
+            date = datetime.datetime.now()
 
-            stats.list_id = list_id
-            stats.email = email
-            stats.channel = "Members option page"
-            stats.date = datetime.datetime.now()
-
+            stats = UnsubscriberStats.create(list_id,email,"Members option page",date)
             stats.save()    
         except MailmanApiError:
             return utils.render_api_error(request)
@@ -416,14 +408,9 @@ class ListMassRemovalView(MailingListView):
                                    ' unsubscribed from %(list)s.') %
                         {'address': address,
                          'list': self.mailing_list.fqdn_listname})
+                    date = datetime.datetime.now()
 
-                    stats = UnsubscriberStats()
-
-                    stats.list_id = list_id
-                    stats.email = address
-                    stats.channel = "Admin mass Unsubscription"
-                    stats.date = datetime.datetime.now()
-
+                    stats = UnsubscriberStats.create(list_id,address,"Admin mass Unsubscription",date)
                     stats.save()
                 except MailmanApiError:
                     return utils.render_api_error(request)
