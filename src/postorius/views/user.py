@@ -19,6 +19,10 @@
 from __future__ import absolute_import, unicode_literals
 
 import logging
+try:
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.error import HTTPError
 
 from allauth.account.models import EmailAddress
 from django.forms import formset_factory
@@ -28,23 +32,12 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.http import Http404
-from django.core.urlresolvers import reverse
-from django.conf import settings
-
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
 
 from postorius import utils
 from postorius.models import (
     MailmanApiError, List, MailmanUser, Mailman404Error)
 from postorius.forms import UserPreferences, ChangeSubscriptionForm
 from postorius.views.generic import MailmanUserView
-from smtplib import SMTPException
-from socket import error as socket_error
-import errno
-import uuid
 
 
 logger = logging.getLogger(__name__)

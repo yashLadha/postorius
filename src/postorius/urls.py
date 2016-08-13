@@ -19,8 +19,6 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url, include
-from django.contrib.auth.views import login as login_view
-from django.contrib.auth.views import logout as logout_view
 
 from postorius.views import list as list_views
 from postorius.views import user as user_views

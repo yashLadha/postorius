@@ -19,11 +19,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import logging
-
-from django.conf import settings
-from django.core.urlresolvers import reverse, NoReverseMatch
-from django.shortcuts import resolve_url
-
 logger = logging.getLogger(__name__)
 
 
