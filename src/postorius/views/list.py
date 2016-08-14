@@ -286,8 +286,8 @@ class ListSubscribeView(MailingListView):
                 email = form_data.get('email')
                 
                 # Stores the values entered by the user in model class EssaySubscribe.
-                essay_subscribe.list_id = list_id 
-                essay_subscribe.email = form_data.get('email')
+                essay_subscribe.list_id = list_id
+                essay_subscribe.email = email
                 essay_subscribe.display_name = form_data.get('display_name')
                 essay_subscribe.link = form_data.get('link')
                 essay_subscribe.essay = form_data.get('essay')
