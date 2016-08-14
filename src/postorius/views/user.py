@@ -198,14 +198,10 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                             # "reset to default" value.
                             preferences[key] = form.cleaned_data[key]
                     preferences.save()
-
-                    stats = UnsubscriberStats()
                     
+                    date = datetime.datetime.now()
                     if form.cleaned_data['delivery_status'] == 'by_user':
-                        stats.email = request.user.email
-                        stats.list_id = subscription.list_id
-                        stats.channel = "Disabled"
-                        stats.date = datetime.datetime.now()
+                        stats = UnsubscriberStats.create(subscription.list_id,request.user.email,"Disabled",date)
 
                         stats.save()
                 messages.success(request,
