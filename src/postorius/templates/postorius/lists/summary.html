@@ -12,6 +12,9 @@
     {% list_nav 'list_summary' 'Summary' %}
 
     <p>{{ list.settings.description }}</p>
+    {% if list.settings.info %}
+    <p>{{ list.settings.info }}</p>
+    {% endif %}
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
 
     {# Archives #}
