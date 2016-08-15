@@ -35,9 +35,21 @@
             </div>
             <div class="collapse navbar-collapse" id="header-nav">
                 <ul class="nav navbar-nav">
-                    <li><a href="{% url 'list_index' %}"><span class="glyphicon glyphicon-envelope"></span> {% trans 'Lists' %}</a></li>
+                    <li><a href="{% url 'list_index' %}">
+                        <span class="glyphicon glyphicon-envelope"></span>
+                        {% trans 'Lists' %}
+                    </a></li>
                     {% if user.is_superuser %}
-                        <li><a href="{% url 'domain_index' %}"><span class="glyphicon glyphicon-globe"></span> {% trans 'Domains' %}</a></li>
+                        <li><a href="{% url 'domain_index' %}">
+                            <span class="glyphicon glyphicon-globe"></span>
+                            {% trans 'Domains' %}
+                        </a></li>
+                    {% endif %}
+                    {% if 'hyperkitty' in INSTALLED_APPS %}
+                        <li><a href="{% url 'hk_root' %}">
+                            <span class="glyphicon glyphicon-comment"></span>
+                            {% trans 'Archives' %}
+                        </a></li>
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -50,18 +62,36 @@
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="{% url 'mm_user_profile' %}">{% trans 'Account' %}</a></li>
-                                <li><a href="{% url 'ps_user_profile' %}">{% trans 'Mailman settings' %}</a></li>
+                                <li><a href="{% url 'mm_user_profile' %}">
+                                    <span class="glyphicon glyphicon-user"></span>
+                                    {% trans 'Account' %}
+                                </a></li>
+                                <li><a href="{% url 'ps_user_profile' %}">
+                                    <span class="glyphicon glyphicon-cog"></span>
+                                    {% trans 'Mailman settings' %}
+                                </a></li>
                                 {% if 'hyperkitty' in INSTALLED_APPS %}
-                                <li><a href="{% url 'hk_user_profile' %}">{% trans 'Posting activity' %}</a></li>
+                                <li><a href="{% url 'hk_user_profile' %}">
+                                <span class="glyphicon glyphicon-comment"></span>
+                                    {% trans 'Posting activity' %}
+                                </a></li>
                                 {% endif %}
                                 <li role="separator" class="divider"></li>
-                                <li><a href="{% url LOGOUT_URL %}?next={% url 'list_index' %}">{% trans 'Logout' %}</a></li>
+                                <li><a href="{% url LOGOUT_URL %}?next={% url 'list_index' %}">
+                                    <span class="glyphicon glyphicon-log-out"></span>
+                                    {% trans 'Logout' %}
+                                </a></li>
                             </ul>
                         </li>
                     {% else %}
-                    <li><a href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}">{% trans 'Login' %}</a></li>
-                    <li><a href="{% url 'account_signup' %}?next={{next|default:request.path|urlencode}}">{% trans 'Sign Up' %}</a></li>
+                        <li><a href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}">
+                            <span class="glyphicon glyphicon-log-in"></span>
+                            {% trans 'Login' %}
+                        </a></li>
+                        <li><a href="{% url 'account_signup' %}?next={{next|default:request.path|urlencode}}">
+                            <span class="glyphicon glyphicon-plus-sign"></span>
+                            {% trans 'Sign Up' %}
+                        </a></li>
                     {% endif %}
                 </ul>
             </div>
