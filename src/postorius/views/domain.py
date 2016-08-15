@@ -52,7 +52,6 @@ def domain_new(request):
         form = DomainNew(request.POST)
         if form.is_valid():
             domain = Domain(mail_host=form.cleaned_data['mail_host'],
-                            base_url=form.cleaned_data['web_host'],
                             description=form.cleaned_data['description'],
                             owner=request.user.email)
             try:

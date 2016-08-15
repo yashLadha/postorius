@@ -68,13 +68,6 @@ class DomainNew(FieldsetForm):
         required=True,
         help_text=_('Example: domain.org'),
         )
-    web_host = forms.URLField(
-        label=_('Web Host'),
-        error_messages={'required': _('Please enter a host name'),
-                        'invalid': _('Please enter a valid host name.')},
-        required=False,
-        help_text=_('Example: http://www.domain.org'),
-        )
     description = forms.CharField(
         label=_('Description'),
         required=False)
@@ -98,7 +91,6 @@ class DomainNew(FieldsetForm):
         """
         layout = [["Please enter Details",
                    "mail_host",
-                   "web_host",
                    "description"]]
 
 

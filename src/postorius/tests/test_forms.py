@@ -37,23 +37,13 @@ class UserPreferencesTest(TestCase):
 
 class DomainNewTest(TestCase):
 
-    def test_form_fields_webhost(self):
+    def test_form_fields_valid(self):
         form = DomainNew({
             'mail_host': 'mailman.most-desirable.org',
-            'web_host': 'http://mailman.most-desirable.org',
             'description': 'The Most Desirable organization',
             'contact_address': 'contact@mailman.most-desirable.org',
         })
         self.assertTrue(form.is_valid())
-
-    def test_form_fields_webhost_invalid(self):
-        form = DomainNew({
-            'mail_host': 'mailman.most-desirable.org',
-            'web_host': 'most-desirable',
-            'description': 'The Most Desirable organization',
-            'contact_address': 'contact@mailman.most-desirable.org',
-        })
-        self.assertFalse(form.is_valid())
 
 
 class ListSubscribeTest(TestCase):

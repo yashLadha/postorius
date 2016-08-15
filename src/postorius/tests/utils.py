@@ -44,11 +44,9 @@ def create_mock_domain(properties=None):
     :rtype: MagicMock
     """
     mock_object = MagicMock(name='Domain')
-    mock_object.base_url = ''
     mock_object.contact_address = ''
     mock_object.description = ''
     mock_object.mail_host = ''
-    mock_object.url_host = ''
     mock_object.lists = []
     if properties is not None:
         for key in properties:

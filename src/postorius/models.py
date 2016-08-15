@@ -20,20 +20,13 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals)
 
 
-import uuid
 import logging
 
-from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import send_mail
 from django.db.models.signals import post_save
-from django.core.urlresolvers import reverse
 from django.dispatch import receiver
-from django.db import models
 from django.http import Http404
-from django.template.loader import render_to_string
 from django_mailman3.lib.mailman import get_mailman_client
 from mailmanclient import MailmanConnectionError
 try:
