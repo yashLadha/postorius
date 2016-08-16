@@ -87,7 +87,6 @@ class ListMembersOptionsTest(ViewTestCase):
                               UserPreferences)
 
     def test_moderation_action(self):
-        member = self.foo_list.get_member('test@example.com')
         self.assertIsNone(
             self.foo_list.get_member('test@example.com').moderation_action)
         self.client.login(username='testsu', password='testpass')
