@@ -201,7 +201,7 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                     
                     date = datetime.datetime.now()
                     if form.cleaned_data['delivery_status'] == 'by_user':
-                        stats = UnsubscriberStats.create(subscription.list_id,request.user.email,"Disabled",date)
+                        stats = UnsubscriberStats.create(subscription.list_id,request.user.email,"Disabled",date,request.user.id,request.user)
 
                         stats.save()
                 messages.success(request,
