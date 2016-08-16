@@ -73,7 +73,7 @@ def list_members_view(request, list_id, role=None):
 
                     date = datetime.datetime.now()
 
-                    stats = UnsubscriberStats.create(list_id,member,"Member mgt page",date)
+                    stats = UnsubscriberStats.create(list_id,member,"Member mgt page",date,request.user.id,request.user)
                     stats.save()
                 messages.success(request, _('The selected members'
                                             ' have been unsubscribed'))
@@ -338,7 +338,7 @@ class ListUnsubscribeView(MailingListView):
                                         ' from this list.') % email)
             date = datetime.datetime.now()
 
-            stats = UnsubscriberStats.create(list_id,email,"Members option page",date)
+            stats = UnsubscriberStats.create(list_id,email,"Members option page",date,request.user.id,request.user)
             stats.save()    
         except MailmanApiError:
             return utils.render_api_error(request)
@@ -410,7 +410,7 @@ class ListMassRemovalView(MailingListView):
                          'list': self.mailing_list.fqdn_listname})
                     date = datetime.datetime.now()
 
-                    stats = UnsubscriberStats.create(list_id,address,"Admin mass Unsubscription",date)
+                    stats = UnsubscriberStats.create(list_id,address,"Admin mass Unsubscription",date,request.user.id,request.user)
                     stats.save()
                 except MailmanApiError:
                     return utils.render_api_error(request)
