@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import PermissionDenied
 from django.test.client import RequestFactory
@@ -41,6 +44,14 @@ def dummy_function_mod_req(request, list_id):
 @superuser_or_403
 def dummy_superuser_or_403(request):
     return True
+
+
+def create_user():
+    user = User.objects.create_user(
+        'les c', 'les@primus.org', 'pwd')
+    EmailAddress.objects.create(
+        user=user, email=user.email, verified=True)
+    return user
 
 
 class ListOwnerRequiredTest(TestCase):
@@ -74,6 +85,8 @@ class ListOwnerRequiredTest(TestCase):
             '/lists/foolist.example.org/settings/')
         request.user = User.objects.create_superuser(
             'su1', 'su@sodo.org', 'pwd')
+        EmailAddress.objects.create(
+            user=request.user, email=request.user.email, verified=True)
         return_value = dummy_function(
             request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
@@ -87,8 +100,7 @@ class ListOwnerRequiredTest(TestCase):
         # prepare request
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
-        request.user = User.objects.create_user(
-            'les c', 'les@primus.org', 'pwd')
+        request.user = create_user()
         self.assertRaises(PermissionDenied, dummy_function, request,
                           list_id='foolist.example.org')
 
@@ -101,8 +113,7 @@ class ListOwnerRequiredTest(TestCase):
         # prepare request
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
-        request.user = User.objects.create_user(
-            'les cl', 'les@primus.org', 'pwd')
+        request.user = create_user()
         return_value = dummy_function(
             request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
@@ -139,6 +150,8 @@ class ListModeratorRequiredTest(TestCase):
             '/lists/foolist.example.org/settings/')
         request.user = User.objects.create_superuser(
             'su2', 'su@sodo.org', 'pwd')
+        EmailAddress.objects.create(
+            user=request.user, email=request.user.email, verified=True)
         return_value = dummy_function_mod_req(
             request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
@@ -152,8 +165,7 @@ class ListModeratorRequiredTest(TestCase):
         # prepare request
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
-        request.user = User.objects.create_user(
-            'les cl2', 'les@primus.org', 'pwd')
+        request.user = create_user()
         self.assertRaises(PermissionDenied, dummy_function_mod_req, request,
                           list_id='foolist.example.org')
 
@@ -166,8 +178,7 @@ class ListModeratorRequiredTest(TestCase):
         # prepare request
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
-        request.user = User.objects.create_user(
-            'les cl3', 'les@primus.org', 'pwd')
+        request.user = create_user()
         return_value = dummy_function_mod_req(
             request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
@@ -181,8 +192,7 @@ class ListModeratorRequiredTest(TestCase):
         # prepare request
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
-        request.user = User.objects.create_user(
-            'les cl4', 'les@primus.org', 'pwd')
+        request.user = create_user()
         return_value = dummy_function_mod_req(
             request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
@@ -217,8 +227,7 @@ class TestSuperUserOr403(TestCase):
 
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
-        request.user = User.objects.create_user(
-            'new user', 'new@usersfactory.net', 'testing')
+        request.user = create_user()
         self.assertRaises(PermissionDenied, dummy_superuser_or_403, request)
 
     @patch.object(Client, 'get_list')
@@ -228,6 +237,7 @@ class TestSuperUserOr403(TestCase):
 
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
-        request.user = User.objects.create_superuser(
-            'new su', 'new@su.net', 'testing')
+        request.user = create_user()
+        request.user.is_superuser = True
+        request.user.save()
         self.assertTrue(dummy_superuser_or_403(request))

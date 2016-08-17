@@ -26,3 +26,34 @@ from settings import *
 MAILMAN_REST_API_URL = 'http://localhost:9001'
 MAILMAN_REST_API_USER = 'restadmin'
 MAILMAN_REST_API_PASS = 'restpass'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+        },
+        'postorius': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(process)d %(name)s %(message)s'
+        },
+    },
+}

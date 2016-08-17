@@ -3,22 +3,22 @@
 {% load nav_helpers %}
 {% load bootstrap_tags %}
 
-{% block subtitle %}
-{% trans 'Member options' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Member options' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 <h2>{% trans 'Subscription options for' %} {{ list.fqdn_listname }}</h2>
 <hr />
 <p class="col-md-offset-2">
 {% trans 'Use this form to change the email used for this subscription' %}:
 </p>
 <form action="{% url 'change_subscription' list.list_id %}" method="post" class="form-horizontal">
-    {% render_form_horizontal change_subscription_form 3 8 'Change email used for subscription' %}
+    {% bootstrap_form_horizontal change_subscription_form 3 8 'Change email used for subscription' %}
 </form>
 <hr />
 <form action="" method="post" class="form-horizontal">
-  {% render_form_horizontal form 3 8 'Save changes' %}
+  {% bootstrap_form_horizontal form 3 8 'Save changes' %}
   <input type="hidden" name="formname" value="preferences" />
 </form>
-{% endblock main %}
+{% endblock content %}

@@ -19,6 +19,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -44,6 +45,9 @@ class ListSettingsTest(ViewTestCase):
             'testowner', 'owner@example.com', 'testpass')
         self.moderator = User.objects.create_user(
             'testmoderator', 'moderator@example.com', 'testpass')
+        for user in (self.user, self.superuser, self.owner, self.moderator):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
 
@@ -130,7 +134,11 @@ class ListSettingsTest(ViewTestCase):
         form = response.context["form"]
         self.assertEqual(
             form.initial['first_strip_reply_to'], False)
-        response = self.client.post(url, {'first_strip_reply_to': 'True'})
+        post_data = dict(
+            (key, unicode(self.foo_list.settings[key]))
+            for key in form.fields)
+        post_data['first_strip_reply_to'] = 'True'
+        response = self.client.post(url, post_data)
         self.assertRedirects(response, url)
         self.assertHasSuccessMessage(response)
         # Get a new list object to avoid caching

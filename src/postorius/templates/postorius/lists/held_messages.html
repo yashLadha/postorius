@@ -3,11 +3,11 @@
 {% load nav_helpers %}
 {% load staticfiles %}
 
-{% block subtitle %}
-{% trans 'Held messages' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Held messages' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_held_messages' 'Held messages' %}
 

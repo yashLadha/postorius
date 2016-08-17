@@ -15,6 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import absolute_import, unicode_literals
+
 import json
 
 from email.Header import decode_header
@@ -28,7 +31,7 @@ from django.core.urlresolvers import reverse
 
 from postorius.auth.decorators import list_moderator_required
 from postorius.models import List
-from postorius.lib.scrub import Scrubber
+from django_mailman3.lib.scrub import Scrubber
 
 
 def parse(message):

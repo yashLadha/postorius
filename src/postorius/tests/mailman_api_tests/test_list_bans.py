@@ -19,6 +19,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -36,6 +37,9 @@ class ListBansTest(ViewTestCase):
             'test_user', 'test_user@example.com', 'pwd')
         self.test_superuser = User.objects.create_superuser(
             'test_superuser', 'test_superuser@example.com', 'pwd')
+        for user in (self.test_user, self.test_superuser):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
         self.client.login(username="test_superuser", password='pwd')
         self.url = reverse('list_bans', args=['test_list.example.com'])
 

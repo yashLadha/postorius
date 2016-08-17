@@ -17,21 +17,25 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
+from django_mailman3.lib.mailman import get_mailman_client
 try:
     from urllib2 import HTTPError
 except ImportError:
     from urllib.error import HTTPError
 from postorius import utils
+from postorius.auth.decorators import superuser_or_403
 from postorius.models import Domain, MailmanApiError
 from postorius.forms import DomainNew
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@superuser_or_403
 def domain_index(request):
     try:
         existing_domains = Domain.objects.all()
@@ -42,13 +46,12 @@ def domain_index(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@superuser_or_403
 def domain_new(request):
     if request.method == 'POST':
         form = DomainNew(request.POST)
         if form.is_valid():
             domain = Domain(mail_host=form.cleaned_data['mail_host'],
-                            base_url=form.cleaned_data['web_host'],
                             description=form.cleaned_data['description'],
                             owner=request.user.email)
             try:
@@ -68,13 +71,13 @@ def domain_new(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@superuser_or_403
 def domain_delete(request, domain):
     """Deletes a domain but asks for confirmation first.
     """
     if request.method == 'POST':
         try:
-            client = utils.get_client()
+            client = get_mailman_client()
             client.delete_domain(domain)
             messages.success(request,
                              _('The domain %s has been deleted.' % domain))

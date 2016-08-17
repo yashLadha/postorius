@@ -16,12 +16,13 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
 from django import forms
 from django import __version__
 from django.core.validators import validate_email
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 
 from postorius.fieldset_forms import FieldsetForm
 
@@ -68,13 +69,6 @@ class DomainNew(FieldsetForm):
         required=True,
         help_text=_('Example: domain.org'),
         )
-    web_host = forms.URLField(
-        label=_('Web Host'),
-        error_messages={'required': _('Please enter a host name'),
-                        'invalid': _('Please enter a valid host name.')},
-        required=True,
-        help_text=_('Example: http://www.domain.org'),
-        )
     description = forms.CharField(
         label=_('Description'),
         required=False)
@@ -98,7 +92,6 @@ class DomainNew(FieldsetForm):
         """
         layout = [["Please enter Details",
                    "mail_host",
-                   "web_host",
                    "description"]]
 
 
@@ -826,35 +819,6 @@ class MemberModeration(FieldsetForm):
             'Accept -- accepts any postings without any further checks. '
             'Defer -- default processing, run additional checks and accept '
             'the message. '))
-
-
-class AddressActivationForm(forms.Form):
-    email = forms.EmailField(widget=forms.TextInput(
-                             attrs={'placeholder': 'Enter alternate email'}))
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-
-        # Check if the address belongs to someone else
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError(
-                _('This email is in use. Please choose another or contact'
-                  ' the administrator'), 'error')
-
-        return email
-
-
-class ChangeDisplayNameForm(forms.Form):
-    """
-    Change display name.
-    """
-
-    display_name = forms.CharField(
-        label=_('Display name'),
-        error_messages={
-            'required': _('Please enter a display name')},
-        required=True
-        )
 
 
 class ChangeSubscriptionForm(forms.Form):

@@ -15,26 +15,20 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
 from __future__ import (
     absolute_import, division, print_function, unicode_literals)
 
 
-import uuid
 import logging
 
-from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import send_mail
 from django.db.models.signals import post_save
-from django.core.urlresolvers import reverse
 from django.dispatch import receiver
-from django.db import models
 from django.http import Http404
-from django.template.loader import render_to_string
+from django_mailman3.lib.mailman import get_mailman_client
 from mailmanclient import MailmanConnectionError
-from postorius.utils import get_client
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -81,7 +75,7 @@ class MailmanRestManager(object):
 
     def all(self):
         try:
-            return getattr(get_client(), self.resource_name_plural)
+            return getattr(get_mailman_client(), self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
         except MailmanConnectionError as e:
@@ -89,7 +83,7 @@ class MailmanRestManager(object):
 
     def get(self, *args, **kwargs):
         try:
-            method = getattr(get_client(), 'get_' + self.resource_name)
+            method = getattr(get_mailman_client(), 'get_' + self.resource_name)
             return method(*args, **kwargs)
         except AttributeError as e:
             raise MailmanApiError(e)
@@ -113,7 +107,8 @@ class MailmanRestManager(object):
 
     def create(self, *args, **kwargs):
         try:
-            method = getattr(get_client(), 'create_' + self.resource_name)
+            method = getattr(
+                get_mailman_client(), 'create_' + self.resource_name)
             return method(*args, **kwargs)
         except AttributeError as e:
             raise MailmanApiError(e)
@@ -139,7 +134,7 @@ class MailmanListManager(MailmanRestManager):
 
     def all(self, only_public=False):
         try:
-            objects = getattr(get_client(), self.resource_name_plural)
+            objects = getattr(get_mailman_client(), self.resource_name_plural)
         except AttributeError:
             raise MailmanApiError
         except MailmanConnectionError as e:
@@ -216,87 +211,3 @@ class Member(MailmanRestModel):
     """Member model class.
     """
     objects = MailmanRestManager('member', 'members')
-
-
-class AddressConfirmationProfile(models.Model):
-    """
-    Profile model for temporarily storing an activation key to register
-    an email address.
-    """
-    email = models.EmailField(unique=True)
-    activation_key = models.CharField(max_length=32, unique=True)
-    created = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User)
-
-    def save(self, *args, **kwargs):
-        self.activation_key = uuid.uuid4().hex
-        super(AddressConfirmationProfile, self).save(*args, **kwargs)
-
-    def __unicode__(self):
-        return u'Address Confirmation Profile for {0}'.format(self.email)
-
-    @property
-    def is_expired(self):
-        """
-        a profile expires after 1 day by default.
-        This can be configured in the settings.
-
-            >>> EMAIL_CONFIRMATION_EXPIRATION_DELTA = timedelta(days=2)
-
-        """
-        expiration_delta = getattr(
-            settings, 'EMAIL_CONFIRMATION_EXPIRATION_DELTA', timedelta(days=1))
-        age = datetime.now().replace(tzinfo=None) - \
-            self.created.replace(tzinfo=None)
-        return age > expiration_delta
-
-    def send_confirmation_link(self, request, template_context=None,
-                               template_path=None):
-        """
-        Send out a message containing a link to activate the given address.
-
-        The following settings are recognized:
-
-            >>> EMAIL_CONFIRMATION_TEMPLATE = \
-                    'postorius/user/address_confirmation_message.txt'
-            >>> EMAIL_CONFIRMATION_FROM = 'postmaster@list.org'
-            >>> EMAIL_CONFIRMATION_SUBJECT = 'Confirmation needed'
-
-        :param request: The HTTP request object.
-        :type request: HTTPRequest
-        :param template_context: The context used when rendering the template.
-            Falls back to host url and activation link.
-        :type template_context: django.template.Context
-        """
-        # Get the url string from url conf.
-        url = reverse('address_activation_link',
-                      kwargs={'activation_key': self.activation_key})
-        activation_link = request.build_absolute_uri(url)
-        # Detect the right template path, either from the param,
-        # the setting or the default
-        if not template_path:
-            template_path = getattr(
-                settings, 'EMAIL_CONFIRMATION_TEMPLATE',
-                'postorius/user/address_confirmation_message.txt')
-        # Create a template context (if there is none) containing
-        # the activation_link and the host_url.
-        if not template_context:
-            template_context = {'activation_link': activation_link,
-                                'host_url': request.build_absolute_uri("/")}
-        email_subject = getattr(
-            settings, 'EMAIL_CONFIRMATION_SUBJECT', u'Confirmation needed')
-        try:
-            sender_address = getattr(settings, 'EMAIL_CONFIRMATION_FROM')
-        except AttributeError:
-            # settings.EMAIL_CONFIRMATION_FROM is not defined, fallback
-            # settings.DEFAULT_EMAIL_FROM as mentioned in the django
-            # docs. If that also fails, raise a `ImproperlyConfigured` Error.
-            try:
-                sender_address = getattr(settings, 'DEFAULT_FROM_EMAIL')
-            except AttributeError:
-                raise ImproperlyConfigured
-
-        send_mail(email_subject,
-                  render_to_string(template_path, template_context),
-                  sender_address,
-                  [self.email])

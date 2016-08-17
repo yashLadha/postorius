@@ -14,6 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import absolute_import, print_function, unicode_literals
+
+from allauth.account.models import EmailAddress
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
@@ -25,6 +29,8 @@ class DomainViewTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_superuser('su', 'su@example.com',
                                                   'pass')
+        EmailAddress.objects.create(
+            user=self.user, email=self.user.email, verified=True)
 
     def tearDown(self):
         self.user.delete()

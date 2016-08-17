@@ -16,14 +16,16 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
 import csv
 import email.utils
 import logging
 
+from allauth.account.models import EmailAddress
 from django.http import HttpResponse, HttpResponseNotAllowed, Http404
-
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.forms import formset_factory
@@ -31,6 +33,8 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.lib.paginator import paginate, MailmanPaginator
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -45,7 +49,7 @@ from postorius.forms import (
     ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
 from postorius.models import Domain, List, MailmanApiError, Mailman404Error
 from postorius.auth.decorators import (
-    list_owner_required, list_moderator_required)
+    list_owner_required, list_moderator_required, superuser_or_403)
 from postorius.views.generic import MailingListView
 
 
@@ -102,9 +106,11 @@ def list_members_view(request, list_id, role=None):
                 return mailing_list.find_members(query, count=count, page=page)
         else:
             find_method = mailing_list.get_member_page
-        context['members'] = utils.paginate(
-            request, find_method, count=request.GET.get('count', 25),
-            paginator_class=utils.MailmanPaginator)
+        context['members'] = paginate(
+            find_method,
+            request.GET.get('page'),
+            request.GET.get('count', 25),
+            paginator_class=MailmanPaginator)
         if mailing_list.member_count == 0:
             context['empty_error'] = _('List has no Subscribers')
         else:
@@ -130,7 +136,7 @@ def list_members_view(request, list_id, role=None):
 @list_owner_required
 def list_member_options(request, list_id, email):
     template_name = 'postorius/lists/memberoptions.html'
-    client = utils.get_client()
+    client = get_mailman_client()
     mm_list = List.objects.get_or_404(fqdn_listname=list_id)
     try:
         mm_member = client.get_member(list_id, email)
@@ -199,7 +205,9 @@ class ListSummaryView(MailingListView):
                 'userSubscribed': False,
                 'subscribed_address': None}
         if request.user.is_authenticated():
-            user_emails = [request.user.email] + request.user.other_emails
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
             for address in user_emails:
                 try:
                     self.mailing_list.get_member(address)
@@ -222,7 +230,9 @@ class ChangeSubscriptionView(MailingListView):
     @method_decorator(login_required)
     def post(self, request, list_id):
         try:
-            user_emails = [request.user.email] + request.user.other_emails
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
             form = ListSubscribe(user_emails, request.POST)
             # Find the currently subscribed email
             old_email = None
@@ -268,8 +278,10 @@ class ListSubscribeView(MailingListView):
         redirects to the `list_summary` view.
         """
         try:
-            user_addresses = [request.user.email] + request.user.other_emails
-            form = ListSubscribe(user_addresses, request.POST)
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
+            form = ListSubscribe(user_emails, request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
                 response = self.mailing_list.subscribe(
@@ -315,7 +327,7 @@ class ListUnsubscribeView(MailingListView):
 @login_required
 @list_owner_required
 def list_mass_subscribe(request, list_id):
-    mailing_list = utils.get_client().get_list(list_id)
+    mailing_list = get_mailman_client().get_list(list_id)
     if request.method == 'POST':
         form = ListMassSubscription(request.POST)
         if form.is_valid():
@@ -391,7 +403,7 @@ def _perform_action(message_ids, action):
 @login_required
 @list_moderator_required
 def list_moderation(request, list_id, held_id=-1):
-    mailing_list = utils.get_client().get_list(list_id)
+    mailing_list = get_mailman_client().get_list(list_id)
     if request.method == 'POST':
         form = MultipleChoiceForm(request.POST)
         if form.is_valid():
@@ -415,10 +427,10 @@ def list_moderation(request, list_id, held_id=-1):
                 messages.error(request, _('Message could not be found'))
     else:
         form = MultipleChoiceForm()
-    held_messages = utils.paginate(
-        request, mailing_list.get_held_page,
-        count=request.GET.get('count', 20),
-        paginator_class=utils.MailmanPaginator)
+    held_messages = paginate(
+        mailing_list.get_held_page,
+        request.GET.get('page'), request.GET.get('count'),
+        paginator_class=MailmanPaginator)
     context = {
         'list': mailing_list,
         'count_options': [25, 50, 100, 200],
@@ -483,7 +495,7 @@ def _get_choosable_domains(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@superuser_or_403
 def list_new(request, template='postorius/lists/new.html'):
     """
     Add a new mailing list.
@@ -538,6 +550,8 @@ def list_index(request, template='postorius/index.html'):
     if request.user.is_superuser:
         only_public = False
     try:
+        # FIXME: this is not paginated, all lists will
+        # always be retrieved.
         lists = sorted(List.objects.all(only_public=only_public),
                        key=lambda l: l.fqdn_listname)
         logger.debug(lists)
@@ -546,8 +560,9 @@ def list_index(request, template='postorius/index.html'):
     choosable_domains = _get_choosable_domains(request)
     return render(request, template,
                   {'count_options': [10, 25, 50, 100, 200], 'error': error,
-                   'lists': utils.paginate(request, lists,
-                                           count=request.GET.get('count', 10)),
+                   'lists': paginate(
+                       lists, request.GET.get('page'),
+                       request.GET.get('count', 10)),
                    'domain_count': len(choosable_domains)})
 
 
@@ -667,10 +682,12 @@ def list_settings(request, list_id=None, visible_section=None,
         return utils.render_api_error(request)
     # List settings are grouped an processed in different forms.
     if request.method == 'POST':
-        form = form_class(request.POST, mlist=m_list)
+        initial_data = dict(
+            (key, unicode(value)) for key, value in list_settings.items())
+        form = form_class(request.POST, mlist=m_list, initial=initial_data)
         if form.is_valid():
             try:
-                for key in form.fields.keys():
+                for key in form.changed_data:
                     if key in form_class.mlist_properties:
                         setattr(m_list, key, form.cleaned_data[key])
                     else:
@@ -714,10 +731,10 @@ def remove_role(request, list_id=None, role=None, address=None,
         if len(roster) == 1:
             messages.error(request, _('Removing the last owner is impossible'))
             return redirect('list_members', the_list.list_id, role)
-        # the user may not have a other_emails property if it's a superuser
-        user_addresses = set([request.user.email]) | \
-            set(getattr(request.user, 'other_emails', []))
-        if address in user_addresses:
+        user_emails = EmailAddress.objects.filter(
+            user=request.user, verified=True).order_by(
+            "email").values_list("email", flat=True)
+        if address in user_emails:
             # The user is removing themselves, redirect to the list info page
             # because they won't have access to the members page anyway.
             redirect_on_success = redirect('list_summary', the_list.list_id)

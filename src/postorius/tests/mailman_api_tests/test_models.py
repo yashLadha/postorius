@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 try:
     from urllib2 import HTTPError
@@ -36,14 +37,18 @@ class ModelTest(ViewTestCase):
 
     def test_mailman_user_not_created_when_flag_is_off(self):
         with self.settings(AUTOCREATE_MAILMAN_USER=False):
-            User.objects.create_user('testuser', 'test@example.com',
-                                     'testpass')
+            user = User.objects.create_user(
+                'testuser', 'test@example.com', 'testpass')
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
             with self.assertRaises(HTTPError):
                 self.mm_client.get_user('test@example.com')
 
     def test_mailman_user_created_when_flag_is_on(self):
         with self.settings(AUTOCREATE_MAILMAN_USER=True):
-            User.objects.create_user('testuser', 'test@example.com',
-                                     'testpass')
-            user = self.mm_client.get_user('test@example.com')
-            self.assertEqual(str(user.addresses[0]), 'test@example.com')
+            user = User.objects.create_user(
+                'testuser', 'test@example.com', 'testpass')
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
+            mm_user = self.mm_client.get_user('test@example.com')
+            self.assertEqual(str(mm_user.addresses[0]), 'test@example.com')

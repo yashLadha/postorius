@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -31,15 +32,18 @@ class DomainCreationTest(ViewTestCase):
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')
+        for user in (self.user, self.superuser):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
 
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
-        self.assertRedirectsToLogin(reverse('domain_new'))
+        response = self.client.get(reverse('domain_new'))
+        self.assertEqual(response.status_code, 403)
 
     def test_new_domain_created_with_owner(self):
         self.client.login(username='su', password='pwd')
         post_data = {'mail_host': 'example.com',
-                     'web_host': 'http://example.com',
                      'description': 'A new Domain.'}
         response = self.client.post(reverse('domain_new'), post_data)
 
@@ -48,7 +52,6 @@ class DomainCreationTest(ViewTestCase):
 
         a_new_domain = self.mm_client.get_domain('example.com')
         self.assertEqual(a_new_domain.mail_host, u'example.com')
-        self.assertEqual(a_new_domain.base_url, u'http://example.com')
         self.assertEqual(a_new_domain.owners[0]['user_id'],
                          self.mm_client.get_user('su@example.com').user_id)
         a_new_domain.delete()
@@ -56,7 +59,6 @@ class DomainCreationTest(ViewTestCase):
     def test_validation_of_mail_host(self):
         self.client.login(username='su', password='pwd')
         post_data = {'mail_host': 'example com',
-                     'web_host': 'http://example.com',
                      'description': 'A new Domain'}
         response = self.client.post(reverse('domain_new'), post_data)
         self.assertContains(response, 'Please check the errors below')

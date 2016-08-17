@@ -3,19 +3,22 @@
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'Info' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Info' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_summary' 'Summary' %}
 
     <p>{{ list.settings.description }}</p>
+    {% if list.settings.info %}
+    <p>{{ list.settings.info }}</p>
+    {% endif %}
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
 
     {# Archives #}
-    {% if hyperkitty_url %}
+    {% if 'hyperkitty' in INSTALLED_APPS %}
         {% url 'hk_list_overview' list.fqdn_listname as hyperkitty_list_url %}
         {% blocktrans %}
           <p>To see the prior postings to this list, visit
@@ -55,12 +58,12 @@
               {% endblocktrans %}
             </p>
             <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="form-horizontal">
-                {% render_form_horizontal subscribe_form 2 8 'Subscribe' %}
+                {% bootstrap_form_horizontal subscribe_form 2 8 'Subscribe' %}
             </form>
         {% endif %}
     {% else %}
         <p>{% trans 'If you want to subscribe to this list, you have to log in first.' %}</p>
-        <p><a href="{{ login_url }}?next={{ next|default:request.path|urlencode }}" class="btn btn-primary">{% trans 'Log In' %}</a></p>
+        <p><a href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}" class="btn btn-primary">{% trans 'Log In' %}</a></p>
     {% endif %}
 
     {# List metrics #}

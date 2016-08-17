@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
@@ -39,6 +40,9 @@ class DomainDeleteTest(ViewTestCase):
             'testowner', 'owner@example.com', 'testpass')
         self.moderator = User.objects.create_user(
             'testmoderator', 'moderator@example.com', 'testpass')
+        for user in (self.user, self.superuser, self.owner, self.moderator):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
         self.url = reverse('domain_delete', args=['example.com'])
@@ -50,17 +54,20 @@ class DomainDeleteTest(ViewTestCase):
     def test_access_basic_user(self):
         # Basic users can't delete domains
         self.client.login(username='testuser', password='testpass')
-        self.assertRedirectsToLogin(self.url)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
 
     def test_access_moderators(self):
         # Moderators can't delete domains
         self.client.login(username='testmoderator', password='testpass')
-        self.assertRedirectsToLogin(self.url)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
 
     def test_access_owners(self):
         # Owners can't delete domains
         self.client.login(username='testowner', password='testpass')
-        self.assertRedirectsToLogin(self.url)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
 
     def test_domain_delete_confirm(self):
         # The user should be ask to confirm domain deletion on GET requests

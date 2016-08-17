@@ -36,7 +36,7 @@ setup(
     install_requires=[
         'Django>=1.8',
         'Django<1.10',
-        'django-browserid',
+        'django-mailman3',
         'mailmanclient',
     ],
 )

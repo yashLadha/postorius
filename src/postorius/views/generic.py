@@ -17,7 +17,10 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from __future__ import absolute_import, unicode_literals
+
 from django.views.generic import TemplateView
+from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.models import (List, MailmanUser, MailmanApiError,
                               Mailman404Error)
@@ -31,7 +34,7 @@ class MailmanClientMixin(object):
 
     def client(self):
         if getattr(self, '_client', None) is None:
-            self._client = utils.get_client()
+            self._client = get_mailman_client()
         return self._client
 
 
@@ -51,7 +54,6 @@ class MailingListView(TemplateView, MailmanClientMixin):
         if 'list_id' in kwargs:
             self.mailing_list = self._get_list(kwargs['list_id'],
                                                int(kwargs.get('page', 1)))
-            utils.set_other_emails(request.user)
             set_user_access_props(request.user, self.mailing_list)
         # set the template
         if 'template' in kwargs:
@@ -83,13 +85,6 @@ class MailmanUserView(TemplateView, MailmanClientMixin):
                 user_obj.display_name = ''
             user_obj.first_address = self._get_first_address(user_obj)
         return user_obj
-
-    def _get_list(self, list_id):
-        if getattr(self, 'lists', None) is None:
-            self.lists = {}
-        if self.lists.get(list_id) is None:
-            self.lists[list_id] = List.objects.get(fqdn_listname=list_id)
-        return self.lists[list_id]
 
     def _get_memberships(self):
         memberships = []

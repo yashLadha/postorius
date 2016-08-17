@@ -15,17 +15,20 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
 import os
 import logging
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.test import RequestFactory, TestCase
+from django.test import TestCase
 from mock import MagicMock
 from six.moves.urllib_parse import quote
+from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.tests.utils import get_flash_messages
 
-from postorius.utils import get_client
 from mailmanclient.testing.vcr_helpers import get_vcr
 
 vcr_log = logging.getLogger('vcr')
@@ -41,11 +44,9 @@ def create_mock_domain(properties=None):
     :rtype: MagicMock
     """
     mock_object = MagicMock(name='Domain')
-    mock_object.base_url = ''
     mock_object.contact_address = ''
     mock_object.description = ''
     mock_object.mail_host = ''
-    mock_object.url_host = ''
     mock_object.lists = []
     if properties is not None:
         for key in properties:
@@ -88,20 +89,6 @@ def create_mock_member(properties=None):
     return mock_object
 
 
-def get_flash_messages(response, empty=True):
-    if "messages" not in response.cookies:
-        return []
-    # A RequestFactory will not run the messages middleware, and thus will
-    # not delete the messages after retrieval.
-    dummy_request = RequestFactory().get("/")
-    dummy_request.COOKIES["messages"] = response.cookies["messages"].value
-    msgs = list(messages.storage.cookie.CookieStorage(dummy_request))
-    if empty:
-        del response.client.cookies["messages"]
-    return msgs
-get_flash_messages.__test__ = False
-
-
 class ViewTestCase(TestCase):
 
     use_vcr = True
@@ -111,7 +98,7 @@ class ViewTestCase(TestCase):
     _mm_vcr = get_vcr(cassette_library_dir=_fixtures_dir)
 
     def setUp(self):
-        self.mm_client = get_client()
+        self.mm_client = get_mailman_client()
         if self.use_vcr:
             cm = self._mm_vcr.use_cassette('.'.join([
                 self.__class__.__name__, self._testMethodName, 'yaml']))
@@ -127,13 +114,17 @@ class ViewTestCase(TestCase):
     def assertHasSuccessMessage(self, response):
         msgs = get_flash_messages(response)
         self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.SUCCESS, msgs[0].message)
+        self.assertEqual(
+            msgs[0].level, messages.SUCCESS,
+            "%s: %s" % (messages.DEFAULT_TAGS[msgs[0].level], msgs[0].message))
         return msgs[0].message
 
     def assertHasErrorMessage(self, response):
         msgs = get_flash_messages(response)
         self.assertEqual(len(msgs), 1)
-        self.assertEqual(msgs[0].level, messages.ERROR, msgs[0].message)
+        self.assertEqual(
+            msgs[0].level, messages.ERROR,
+            "%s: %s" % (messages.DEFAULT_TAGS[msgs[0].level], msgs[0].message))
         return msgs[0].message
 
     def assertHasNoMessage(self, response):
