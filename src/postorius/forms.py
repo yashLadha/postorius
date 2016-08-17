@@ -19,10 +19,10 @@
 from __future__ import absolute_import, unicode_literals
 
 from django import forms
-from django import __version__
 from django.core.validators import validate_email
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
+from django.utils.version import get_complete_version
 
 from postorius.fieldset_forms import FieldsetForm
 
@@ -595,7 +595,7 @@ class ListIdentityForm(ListSettingsForm):
         label=_('Display name'),
         help_text=_('Display name is the name shown in the web interface.')
     )
-    if __version__ < '1.9':
+    if get_complete_version() < (1, 9):
         subject_prefix = forms.CharField(
             label=_('Subject prefix'),
         )
