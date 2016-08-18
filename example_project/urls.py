@@ -24,7 +24,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(
-        url=reverse_lazy('postorius.views.list.list_index'),
+        url=reverse_lazy('list_index'),
         permanent=True)),
     url(r'^postorius/', include('postorius.urls')),
     #url(r'^hyperkitty/', include('hyperkitty.urls')),
