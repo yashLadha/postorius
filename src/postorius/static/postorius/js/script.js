@@ -21,16 +21,5 @@
  */
 
 
-$(function() {
-
-    /* Pagination */
-    $(".pager .pager-select a").click(function(e) {
-        e.preventDefault();
-        $(this).hide();
-        $(this).next("form").removeClass("hidden");
-    });
-    $(".pager .pager-select form select").change(function() {
-        $(this).closest("form").submit();
-    });
-
-});
+// $(function() {
+// });

@@ -1,5 +1,6 @@
 {% extends postorius_base_template %}
 {% load i18n %}
+{% load pagination %}
 
 {% block head_title %}
 {% trans 'List Index' %} - {{ block.super }}
@@ -47,7 +48,7 @@
         {% if user.is_superuser %}
             <small>* {% trans 'Only admins see unadvertised lists in the list index.' %}</small>
         {% endif %}
-        {% include 'postorius/lib/pagination.html' with page=lists %}
+        {% paginator lists %}
     {% else %}
         <p>{% trans 'There are currently no mailing lists.' %}</p>
     {% endif %}

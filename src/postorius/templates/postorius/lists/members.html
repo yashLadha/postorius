@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load bootstrap_tags %}
 {% load nav_helpers %}
+{% load pagination %}
 
 {% block head_title %}
 {% trans 'List members' %} | {{ list.fqdn_listname}} - {{ block.super }}
@@ -90,7 +91,7 @@
             </div>
         {% if role == 'subscriber' %}
             </form>
-            {% include 'postorius/lib/pagination.html' with page=members %}
+            {% paginator members %}
         {% endif %}
     {% else %}
         <p>{{ empty_error }}</p>

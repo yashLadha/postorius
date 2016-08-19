@@ -116,7 +116,6 @@ def list_members_view(request, list_id, role=None):
         else:
             context['empty_error'] =\
                 _('No member was found matching the search')
-        context['count_options'] = [25, 50, 100, 200]
         context['form'] = form
     else:
         context['member_form'] = member_form
@@ -433,7 +432,6 @@ def list_moderation(request, list_id, held_id=-1):
         paginator_class=MailmanPaginator)
     context = {
         'list': mailing_list,
-        'count_options': [25, 50, 100, 200],
         'held_messages': held_messages,
         'form': form,
         }
@@ -559,7 +557,7 @@ def list_index(request, template='postorius/index.html'):
         return utils.render_api_error(request)
     choosable_domains = _get_choosable_domains(request)
     return render(request, template,
-                  {'count_options': [10, 25, 50, 100, 200], 'error': error,
+                  {'error': error,
                    'lists': paginate(
                        lists, request.GET.get('page'),
                        request.GET.get('count', 10)),

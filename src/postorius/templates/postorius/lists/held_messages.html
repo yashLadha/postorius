@@ -1,6 +1,7 @@
 {% extends postorius_base_template %}
 {% load i18n %}
 {% load nav_helpers %}
+{% load pagination %}
 {% load staticfiles %}
 
 {% block head_title %}
@@ -63,7 +64,7 @@
             </table>
           </div>
         </form>
-        {% include 'postorius/lib/pagination.html' with page=held_messages %}
+        {% paginator held_messages %}
         <div class="modal fade" id="held-messages-modal" tabindex="-1" role="dialog" aria-labelledby="mymodal-label" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
