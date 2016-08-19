@@ -25,14 +25,5 @@ logger = logging.getLogger(__name__)
 def postorius(request):
     """Add template variables to context.
     """
-    # Use a template so that the page header/footer is suppressed when
-    # requested via AJAX
-
-    if request.is_ajax():
-        template_to_extend = "postorius/base_ajax.html"
-    else:
-        template_to_extend = "postorius/base.html"
-
-    return {
-        'postorius_base_template': template_to_extend,
-    }
+    # Unused at the moment
+    return {}
