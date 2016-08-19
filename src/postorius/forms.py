@@ -24,8 +24,6 @@ from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.version import get_complete_version
 
-from postorius.fieldset_forms import FieldsetForm
-
 
 ACTION_CHOICES = (
     ("hold", _("Hold for moderation")),
@@ -57,7 +55,7 @@ class ListOfStringsField(forms.Field):
         return result
 
 
-class DomainNew(FieldsetForm):
+class DomainNew(forms.Form):
 
     """
     Form field to add a new domain
@@ -104,7 +102,7 @@ class MemberForm(forms.Form):
             'invalid': _('Please enter a valid email adddress.')})
 
 
-class ListNew(FieldsetForm):
+class ListNew(forms.Form):
 
     """
     Form fields to add a new list. Languages are hard coded which should
@@ -175,7 +173,7 @@ class ListNew(FieldsetForm):
                    "advertised"], ]
 
 
-class ListSubscribe(FieldsetForm):
+class ListSubscribe(forms.Form):
     """Form fields to join an existing list.
     """
 
@@ -620,7 +618,7 @@ class ListArchiverForm(forms.Form):
             [(key, key) for key in archivers.keys()])
 
 
-class ListMassSubscription(FieldsetForm):
+class ListMassSubscription(forms.Form):
     """Form fields to masssubscribe users to a list.
     """
     emails = ListOfStringsField(
@@ -637,7 +635,7 @@ class ListMassSubscription(FieldsetForm):
     )
 
 
-class ListMassRemoval(FieldsetForm):
+class ListMassRemoval(forms.Form):
 
     """Form fields to remove multiple list users.
     """
@@ -712,7 +710,7 @@ class ListHeaderMatchFormset(forms.BaseFormSet):
             orders.append(order)
 
 
-class UserPreferences(FieldsetForm):
+class UserPreferences(forms.Form):
 
     """
     Form handling the user's global, address and subscription based preferences
@@ -795,7 +793,7 @@ class UserPreferences(FieldsetForm):
                    "delivery_mode", "delivery_status"]]
 
 
-class MemberModeration(FieldsetForm):
+class MemberModeration(forms.Form):
     """
     Form handling the member's moderation_action.
     """
