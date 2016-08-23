@@ -49,7 +49,7 @@ from postorius.forms import (
     ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
 from postorius.models import Domain, List, MailmanApiError, Mailman404Error
 from postorius.auth.decorators import (
-    list_owner_required, list_moderator_required, superuser_or_403)
+    list_owner_required, list_moderator_required, superuser_required)
 from postorius.views.generic import MailingListView
 
 
@@ -493,7 +493,7 @@ def _get_choosable_domains(request):
 
 
 @login_required
-@superuser_or_403
+@superuser_required
 def list_new(request, template='postorius/lists/new.html'):
     """
     Add a new mailing list.
