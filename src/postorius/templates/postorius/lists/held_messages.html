@@ -45,8 +45,15 @@
                 {% for msg in held_messages %}
                   <tr>
                     <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
-                    <td><a href="#" class="show-modal-btn" data-msgid="{{ msg.request_id }}">{{ msg.subject }}</a>
-</td>
+                    <td>
+                      <a href="#" class="show-modal-btn" data-msgid="{{ msg.request_id }}">
+                        {% if msg.subject %}
+                          {{ msg.subject }}
+                        {% else %}
+                          {% trans 'No Subject' %}
+                        {% endif %}
+                      </a>
+                    </td>
                     <td>{{ msg.sender }}</td>
                     <td>
                       {% if msg.reasons %}
