@@ -26,7 +26,7 @@ from mock import patch
 
 from postorius.auth.decorators import (list_owner_required,
                                        list_moderator_required,
-                                       superuser_or_403)
+                                       superuser_required)
 from postorius.tests.utils import create_mock_list
 from mailmanclient import Client
 
@@ -41,8 +41,8 @@ def dummy_function_mod_req(request, list_id):
     return True
 
 
-@superuser_or_403
-def dummy_superuser_or_403(request):
+@superuser_required
+def dummy_superuser_required(request):
     return True
 
 
@@ -199,7 +199,7 @@ class ListModeratorRequiredTest(TestCase):
 
 
 class TestSuperUserOr403(TestCase):
-    """Tests superuser_or_403 auth decorator"""
+    """Tests superuser_required auth decorator"""
 
     def setUp(self):
         self.request_factory = RequestFactory()
@@ -218,7 +218,7 @@ class TestSuperUserOr403(TestCase):
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
         request.user = AnonymousUser()
-        self.assertRaises(PermissionDenied, dummy_superuser_or_403, request)
+        self.assertRaises(PermissionDenied, dummy_superuser_required, request)
 
     @patch.object(Client, 'get_list')
     def test_normal_user(self, mock_get_list):
@@ -228,7 +228,7 @@ class TestSuperUserOr403(TestCase):
         request = self.request_factory.get(
             '/lists/foolist.example.org/settings/')
         request.user = create_user()
-        self.assertRaises(PermissionDenied, dummy_superuser_or_403, request)
+        self.assertRaises(PermissionDenied, dummy_superuser_required, request)
 
     @patch.object(Client, 'get_list')
     def test_super_user(self, mock_get_list):
@@ -240,4 +240,4 @@ class TestSuperUserOr403(TestCase):
         request.user = create_user()
         request.user.is_superuser = True
         request.user.save()
-        self.assertTrue(dummy_superuser_or_403(request))
+        self.assertTrue(dummy_superuser_required(request))
