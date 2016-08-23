@@ -326,7 +326,7 @@ class ListUnsubscribeView(MailingListView):
 @login_required
 @list_owner_required
 def list_mass_subscribe(request, list_id):
-    mailing_list = get_mailman_client().get_list(list_id)
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
     if request.method == 'POST':
         form = ListMassSubscription(request.POST)
         if form.is_valid():
@@ -402,7 +402,7 @@ def _perform_action(message_ids, action):
 @login_required
 @list_moderator_required
 def list_moderation(request, list_id, held_id=-1):
-    mailing_list = get_mailman_client().get_list(list_id)
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
     if request.method == 'POST':
         form = MultipleChoiceForm(request.POST)
         if form.is_valid():
