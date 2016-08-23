@@ -83,7 +83,7 @@ def get_held_message(request, list_id, held_id=-1):
         response_data['reasons'] = held_message.reasons
     except AttributeError:
         pass
-    response_data['moderation_reasons'] = held_message.moderation_reasons
+    response_data['reasons'] = held_message.reasons
     response_data['hold_date'] = held_message.hold_date
     response_data['msg'] = parse(held_message.msg)
     response_data['msgid'] = held_message.request_id
