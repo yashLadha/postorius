@@ -38,7 +38,6 @@ from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.lib.paginator import paginate, MailmanPaginator
 from django.utils.six.moves.urllib.error import HTTPError
 
-from postorius import utils
 from postorius.forms import (
     ListNew, MemberForm, ListSubscribe, MultipleChoiceForm, UserPreferences,
     ListSubscriptionPolicyForm, ArchiveSettingsForm, MessageAcceptanceForm,
@@ -46,7 +45,7 @@ from postorius.forms import (
     ListIdentityForm, ListMassSubscription, ListMassRemoval, ListAddBanForm,
     ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration,
     DMARCMitigationsForm, ListAnonymousSubscribe)
-from postorius.models import Domain, List, MailmanApiError, Mailman404Error
+from postorius.models import Domain, List, Mailman404Error
 from postorius.auth.decorators import (
     list_owner_required, list_moderator_required, superuser_required)
 from postorius.views.generic import MailingListView
@@ -273,8 +272,6 @@ class ChangeSubscriptionView(MailingListView):
             else:
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
-        except MailmanApiError:
-            return utils.render_api_error(request)
         except HTTPError as e:
             messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
@@ -313,8 +310,6 @@ class ListSubscribeView(MailingListView):
             else:
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
-        except MailmanApiError:
-            return utils.render_api_error(request)
         except HTTPError as e:
             messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
@@ -359,8 +354,6 @@ class ListUnsubscribeView(MailingListView):
             self.mailing_list.unsubscribe(email)
             messages.success(request, _('%s has been unsubscribed'
                                         ' from this list.') % email)
-        except MailmanApiError:
-            return utils.render_api_error(request)
         except ValueError as e:
             messages.error(request, e)
         return redirect('list_summary', self.mailing_list.list_id)
@@ -388,8 +381,6 @@ def list_mass_subscribe(request, list_id):
                                    ' subscribed to %(list)s.') %
                         {'address': address,
                          'list': mailing_list.fqdn_listname})
-                except MailmanApiError:
-                    return utils.render_api_error(request)
                 except HTTPError as e:
                     messages.error(request, e)
                 except ValidationError:
@@ -427,8 +418,6 @@ class ListMassRemovalView(MailingListView):
                                    ' unsubscribed from %(list)s.') %
                         {'address': address,
                          'list': self.mailing_list.fqdn_listname})
-                except MailmanApiError:
-                    return utils.render_api_error(request)
                 except (HTTPError, ValueError) as e:
                     messages.error(request, e)
                 except ValidationError:
@@ -463,8 +452,6 @@ def list_moderation(request, list_id, held_id=-1):
                     _perform_action(message_ids, mailing_list.discard_message)
                     messages.success(request,
                                      _('The selected messages were discarded'))
-            except MailmanApiError:
-                return utils.render_api_error(request)
             except HTTPError:
                 messages.error(request, _('Message could not be found'))
     else:
@@ -487,20 +474,16 @@ def moderate_held_message(request, list_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
     msg_id = request.POST['msgid']
-    try:
-        mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
-        if 'accept' in request.POST:
-            mailing_list.accept_message(msg_id)
-            messages.success(request, _('The message was accepted'))
-        elif 'reject' in request.POST:
-            mailing_list.reject_message(msg_id)
-            messages.success(request, _('The message was rejected'))
-        elif 'discard' in request.POST:
-            mailing_list.discard_message(msg_id)
-            messages.success(request, _('The message was discarded'))
-    except MailmanApiError:
-        return utils.render_api_error(request)
-
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+    if 'accept' in request.POST:
+        mailing_list.accept_message(msg_id)
+        messages.success(request, _('The message was accepted'))
+    elif 'reject' in request.POST:
+        mailing_list.reject_message(msg_id)
+        messages.success(request, _('The message was rejected'))
+    elif 'discard' in request.POST:
+        mailing_list.discard_message(msg_id)
+        messages.success(request, _('The message was discarded'))
     return redirect('list_held_messages', list_id)
 
 
@@ -509,11 +492,7 @@ def moderate_held_message(request, list_id):
 def csv_view(request, list_id):
     """Export all the subscriber in csv
     """
-    mm_lists = []
-    try:
-        mm_lists = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    mm_lists = List.objects.get_or_404(fqdn_listname=list_id)
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = (
@@ -528,10 +507,7 @@ def csv_view(request, list_id):
 
 
 def _get_choosable_domains(request):
-    try:
-        domains = Domain.objects.all()
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    domains = Domain.objects.all()
     return [(d.mail_host, d.mail_host) for d in domains]
 
 
@@ -595,12 +571,9 @@ def list_index(request, template='postorius/index.html'):
         advertised = not request.user.is_superuser
         return client.get_list_page(
             advertised=advertised, count=count, page=page)
-    try:
-        lists = paginate(
-            _get_list_page, request.GET.get('page'), request.GET.get('count'),
-            paginator_class=MailmanPaginator)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    lists = paginate(
+        _get_list_page, request.GET.get('page'), request.GET.get('count'),
+        paginator_class=MailmanPaginator)
     choosable_domains = _get_choosable_domains(request)
     return render(request, template,
                   {'lists': lists,
@@ -612,10 +585,7 @@ def list_index(request, template='postorius/index.html'):
 def list_delete(request, list_id):
     """Deletes a list but asks for confirmation first.
     """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    the_list = List.objects.get_or_404(fqdn_listname=list_id)
     if request.method == 'POST':
         the_list.delete()
         return redirect("list_index")
@@ -633,10 +603,7 @@ def list_delete(request, list_id):
 def list_subscription_requests(request, list_id):
     """Shows a list of held messages.
     """
-    try:
-        m_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
     return render(request, 'postorius/lists/subscription_requests.html',
                   {'list': m_list})
 
@@ -662,8 +629,6 @@ def handle_subscription_request(request, list_id, request_id, action):
         # Moderate request and add feedback message to session.
         m_list.moderate_request(request_id, action)
         messages.success(request, confirmation_messages[action])
-    except MailmanApiError:
-        return utils.render_api_error(request)
     except HTTPError as e:
         if e.code == 409:
             messages.success(request,
@@ -718,11 +683,8 @@ def list_settings(request, list_id=None, visible_section=None,
         form_class = SETTINGS_FORMS[visible_section]
     except KeyError:
         raise Http404('No such settings section')
-    try:
-        m_list = List.objects.get_or_404(fqdn_listname=list_id)
-        list_settings = m_list.settings
-    except (MailmanApiError, HTTPError):
-        return utils.render_api_error(request)
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
+    list_settings = m_list.settings
     initial_data = dict(
         (key, unicode(value)) for key, value in list_settings.items())
     # List settings are grouped an processed in different forms.
@@ -756,10 +718,7 @@ def list_settings(request, list_id=None, visible_section=None,
 def remove_role(request, list_id=None, role=None, address=None,
                 template='postorius/lists/confirm_remove_role.html'):
     """Removes a list moderator or owner."""
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    the_list = List.objects.get_or_404(fqdn_listname=list_id)
 
     redirect_on_success = redirect('list_members', the_list.list_id, role)
 
@@ -785,8 +744,6 @@ def remove_role(request, list_id=None, role=None, address=None,
     if request.method == 'POST':
         try:
             the_list.remove_role(role, address)
-        except MailmanApiError:
-            return utils.render_api_error(request)
         except HTTPError as e:
             messages.error(request, _('The user could not be removed: %(msg)s')
                            % {'msg': e.msg})
@@ -806,26 +763,23 @@ def remove_all_subscribers(request, list_id):
 
     """Empty the list by unsubscribing all members."""
 
-    try:
-        mlist = List.objects.get_or_404(fqdn_listname=list_id)
-        if len(mlist.members) == 0:
-            messages.error(request,
-                           _('No member is subscribed to the list currently.'))
-            return redirect('mass_removal', mlist.list_id)
-        if request.method == 'POST':
-            try:
-                for names in mlist.members:
-                    mlist.unsubscribe(names.email)
-                messages.success(request, _('All members have been'
-                                            ' unsubscribed from the list.'))
-                return redirect('list_members', mlist.list_id)
-            except Exception as e:
-                messages.error(request, e)
-        return render(request,
-                      'postorius/lists/confirm_removeall_subscribers.html',
-                      {'list': mlist})
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    mlist = List.objects.get_or_404(fqdn_listname=list_id)
+    if len(mlist.members) == 0:
+        messages.error(request,
+                       _('No member is subscribed to the list currently.'))
+        return redirect('mass_removal', mlist.list_id)
+    if request.method == 'POST':
+        try:
+            for names in mlist.members:
+                mlist.unsubscribe(names.email)
+            messages.success(request, _('All members have been'
+                                        ' unsubscribed from the list.'))
+            return redirect('list_members', mlist.list_id)
+        except Exception as e:
+            messages.error(request, e)
+    return render(request,
+                  'postorius/lists/confirm_removeall_subscribers.html',
+                  {'list': mlist})
 
 
 @login_required

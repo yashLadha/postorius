@@ -28,19 +28,15 @@ from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
 from django_mailman3.models import MailDomain
 from django.utils.six.moves.urllib.error import HTTPError
-from postorius import utils
 from postorius.auth.decorators import superuser_required
-from postorius.models import Domain, MailmanApiError, Mailman404Error
+from postorius.models import Domain, Mailman404Error
 from postorius.forms import DomainForm
 
 
 @login_required
 @superuser_required
 def domain_index(request):
-    try:
-        existing_domains = Domain.objects.all()
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    existing_domains = Domain.objects.all()
     for domain in existing_domains:
         try:
             web_host = MailDomain.objects.get(mail_domain=domain.mail_host)
@@ -66,8 +62,6 @@ def domain_new(request):
                             owner=request.user.email)
             try:
                 domain.save()
-            except MailmanApiError:
-                return utils.render_api_error(request)
             except HTTPError as e:
                 form.add_error('mail_host', e.reason)
             else:
@@ -112,8 +106,6 @@ def domain_edit(request, domain):
                 web_host.save()
             try:
                 domain_obj.save()
-            except MailmanApiError:
-                return utils.render_api_error(request)
             except HTTPError as e:
                 messages.error(request, e)
             else:

@@ -32,8 +32,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import FormView
 from django.http import Http404
 
-from postorius import utils
-from postorius.models import MailmanApiError, List, MailmanUser
+from postorius.models import List, MailmanUser
 from postorius.forms import (
     UserPreferences, UserPreferencesFormset, ChangeSubscriptionForm)
 from postorius.views.generic import MailmanClientMixin
@@ -193,10 +192,7 @@ class UserSubscriptionPreferencesView(UserPreferencesView):
 @login_required
 def user_subscriptions(request):
     """Shows the subscriptions of a user."""
-    try:
-        mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
     memberships = [m for m in mm_user.subscriptions if m.role == 'member']
     return render(request, 'postorius/user/subscriptions.html',
                   {'memberships': memberships})
