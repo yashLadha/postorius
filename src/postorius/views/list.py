@@ -35,10 +35,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.lib.paginator import paginate, MailmanPaginator
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
+from django.utils.six.moves.urllib.error import HTTPError
 
 from postorius import utils
 from postorius.forms import (

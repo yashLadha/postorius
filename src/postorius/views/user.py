@@ -19,10 +19,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import logging
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
+from django.utils.six.moves.urllib.error import HTTPError
 
 from allauth.account.models import EmailAddress
 from django.forms import formset_factory

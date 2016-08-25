@@ -29,10 +29,7 @@ from django.dispatch import receiver
 from django.http import Http404
 from django_mailman3.lib.mailman import get_mailman_client
 from mailmanclient import MailmanConnectionError
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
+from django.utils.six.moves.urllib.error import HTTPError
 
 logger = logging.getLogger(__name__)
 
