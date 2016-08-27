@@ -91,6 +91,13 @@ class ListMembersOptionsTest(ViewTestCase):
         self.assertIsInstance(response.context['preferences_form'],
                               UserPreferences)
 
+    def test_nonexistent_member_returns_404(self):
+        self.client.login(username='testsu', password='testpass')
+        url = reverse('list_member_options', args=(self.foo_list.list_id,
+                                                   'none@example.com',))
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 404)
+
     def test_moderation_action(self):
         self.assertIsNone(
             self.foo_list.get_member('test@example.com').moderation_action)
