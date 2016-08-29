@@ -343,4 +343,3 @@ class UnsubscriberStats(models.Model):
 
     def __eq__(self, other):
         return self.user_id == other.user_id
-   
