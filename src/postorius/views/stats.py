@@ -20,9 +20,9 @@ def stats(request,list_id):
             enddate = request.POST.get('end_date')
             list_stats = UnsubscriberStats.objects.filter(list_id = list_id , date__range=[startdate, enddate]).order_by('-date')
             list_stats = list(set(list_stats))
-
+            print list_stats
             stats_member_mgt_page = [stat for stat in list_stats if stat.channel == 'Member mgt page']
-            stats_members_option_page = [stat for stat in list_stats if stat.channel == 'Member option page']
+            stats_members_option_page = [stat for stat in list_stats if stat.channel == 'Members option page']
             stats_admin_mass_unsubscription = [stat for stat in list_stats if stat.channel == 'Admin mass Unsubscription']
             stats_disabled = [stat for stat in list_stats if stat.channel == 'Disabled']
 
