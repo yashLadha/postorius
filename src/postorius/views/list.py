@@ -25,6 +25,7 @@ from django.http import HttpResponse, HttpResponseNotAllowed, Http404
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.forms import formset_factory
@@ -72,8 +73,8 @@ def list_members_view(request, list_id, role=None):
                     mailing_list.unsubscribe(member)
 
                     date = datetime.datetime.now()
-
-                    stats = UnsubscriberStats.create(list_id,member,"Member mgt page",date,request.user.id,request.user)
+                    u = User.objects.get(email=member)
+                    stats = UnsubscriberStats.create(list_id,member,"Member mgt page",date,u.id,u.username)
                     stats.save()
                 messages.success(request, _('The selected members'
                                             ' have been unsubscribed'))
@@ -337,8 +338,8 @@ class ListUnsubscribeView(MailingListView):
             messages.success(request, _('%s has been unsubscribed'
                                         ' from this list.') % email)
             date = datetime.datetime.now()
-
-            stats = UnsubscriberStats.create(list_id,email,"Members option page",date,request.user.id,request.user)
+            u = User.objects.get(email=email)
+            stats = UnsubscriberStats.create(list_id,email,"Members option page",date,u.id,u.username)
             stats.save()    
         except MailmanApiError:
             return utils.render_api_error(request)
@@ -409,8 +410,8 @@ class ListMassRemovalView(MailingListView):
                         {'address': address,
                          'list': self.mailing_list.fqdn_listname})
                     date = datetime.datetime.now()
-
-                    stats = UnsubscriberStats.create(list_id,address,"Admin mass Unsubscription",date,request.user.id,request.user)
+                    u = User.objects.get(email=address)
+                    stats = UnsubscriberStats.create(list_id,address,"Admin mass Unsubscription",date,u.id,u.username)
                     stats.save()
                 except MailmanApiError:
                     return utils.render_api_error(request)
@@ -795,6 +796,10 @@ def remove_all_subscribers(request, list_id):
             try:
                 for names in mlist.members:
                     mlist.unsubscribe(names.email)
+                    date = datetime.datetime.now()
+                    u = User.objects.get(email=names.email)
+                    stats = UnsubscriberStats.create(list_id,names.email,"Admin mass Unsubscription",date,u.id,u.username)
+                    stats.save()
                 messages.success(request, _('All members have been'
                                             ' unsubscribed from the list.'))
                 return redirect('list_members', mlist.list_id)
