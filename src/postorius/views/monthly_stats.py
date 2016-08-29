@@ -19,11 +19,14 @@ def present_month_stats(request,list_id):
 
     # Number of unsubscribers through different channels
 
-    list_stats = UnsubscriberStats.objects.filter(list_id = list_id,date__month=current_month)
+    list_stats = UnsubscriberStats.objects.filter(list_id = list_id,date__month=current_month).order_by('-date')
+    for i in list_stats:
+        print i
+        print
     list_stats = list(set(list_stats))
 
     stats_member_mgt_page = [stat for stat in list_stats if stat.channel == 'Member mgt page']
-    stats_members_option_page = [stat for stat in list_stats if stat.channel == 'Member option page']
+    stats_members_option_page = [stat for stat in list_stats if stat.channel == 'Members option page']
     stats_admin_mass_unsubscription = [stat for stat in list_stats if stat.channel == 'Admin mass Unsubscription']
     stats_disabled = [stat for stat in list_stats if stat.channel == 'Disabled']
 
@@ -125,14 +128,14 @@ def monthly_stats(request,list_id,year,month):
     year = int(year)
     month = int(month)
 
-    list_stats = UnsubscriberStats.objects.filter(list_id = list_id,date__year=year,date__month=month)
+    list_stats = UnsubscriberStats.objects.filter(list_id = list_id,date__year=year,date__month=month).order_by('-date')
     list_stats = list(set(list_stats))
 
     stats_member_mgt_page = [stat for stat in list_stats if stat.channel == 'Member mgt page']
-    stats_members_option_page = [stat for stat in list_stats if stat.channel == 'Member option page']
+    stats_members_option_page = [stat for stat in list_stats if stat.channel == 'Members option page']
     stats_admin_mass_unsubscription = [stat for stat in list_stats if stat.channel == 'Admin mass Unsubscription']
     stats_disabled = [stat for stat in list_stats if stat.channel == 'Disabled']
-    
+
 
     base_url = "http://127.0.0.1:8000/hyperkitty/api/list/"
 
