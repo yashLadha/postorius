@@ -19,8 +19,9 @@ from __future__ import absolute_import, unicode_literals
 
 from django.test import TestCase
 
-from postorius.forms import (ListNew, UserPreferences, DomainNew,
-                             ListSubscribe, ChangeSubscriptionForm)
+from postorius.forms import (
+    ChangeSubscriptionForm, DomainNew, ListIdentityForm, ListNew,
+    ListSubscribe, UserPreferences)
 
 
 class UserPreferencesTest(TestCase):
@@ -92,7 +93,7 @@ class ListNewTest(TestCase):
             'advertise': 'abcd',
             'description': 'The Most Desirable organization',
         })
-        self.assertTrue(form.is_valid)
+        self.assertTrue(form.is_valid())
 
     def test_form_fields_list_invalid(self):
         form = ListNew({
@@ -103,3 +104,15 @@ class ListNewTest(TestCase):
             'description': 'The Most Desirable organization',
         })
         self.assertFalse(form.is_valid())
+
+
+class ListIdentityTest(TestCase):
+
+    def test_info_not_required(self):
+        form = ListIdentityForm({
+            'advertised': 'True',
+            'description': 'The Most Desirable organization',
+            'display_name': 'Most Desirable',
+            'subject_prefix': '[Most Desirable] ',
+        }, mlist=None)
+        self.assertTrue(form.is_valid(), form.errors)

@@ -588,6 +588,7 @@ class ListIdentityForm(ListSettingsForm):
     info = forms.CharField(
         label=_('Information'),
         help_text=_('A longer description of this mailing list.'),
+        required=False,
         widget=forms.Textarea())
     display_name = forms.CharField(
         label=_('Display name'),
