@@ -86,23 +86,27 @@ class ChangeSubscriptionTest(TestCase):
 class ListNewTest(TestCase):
 
     def test_form_fields_list(self):
-        form = ListNew({
+        form = ListNew([
+            ("mailman.most-desirable.org", "mailman.most-desirable.org")],
+            {
             'listname': 'xyz',
             'mail_host': 'mailman.most-desirable.org',
             'list_owner': 'contact@mailman.most-desirable.org',
-            'advertise': 'abcd',
+            'advertised': 'True',
             'description': 'The Most Desirable organization',
-        })
-        self.assertTrue(form.is_valid())
+            })
+        self.assertTrue(form.is_valid(), form.errors)
 
     def test_form_fields_list_invalid(self):
-        form = ListNew({
+        form = ListNew([
+            ("mailman.most-desirable.org", "mailman.most-desirable.org")],
+            {
             'listname': 'xy#z',
             'mail_host': 'mailman.most-desirable.org',
             'list_owner': 'mailman.most-desirable.org',
-            'advertise': 'abcd',
+            'advertised': 'abcd',
             'description': 'The Most Desirable organization',
-        })
+            })
         self.assertFalse(form.is_valid())
 
 
