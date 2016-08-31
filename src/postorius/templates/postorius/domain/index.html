@@ -13,6 +13,7 @@
 
     <p class="text-right"><a class="btn btn-success" href="{% url 'domain_new' %}">{% trans 'Add Domain' %}</a></p>
 
+    {% if domains %}
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead>
@@ -29,11 +30,17 @@
                         <td>{{ domain.mail_host }}</td>
                         <td>{{ domain.description }}</td>
                         <td>{{ domain.site.name }} ({{ domain.site.domain }})</td>
-                        <td><a href="{% url 'domain_delete' domain.mail_host %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a></td>
+                        <td>
+                            <a href="{% url 'domain_edit' domain.mail_host %}" class="btn btn-xs btn-primary">{% trans 'Edit' %}</a>
+                            <a href="{% url 'domain_delete' domain.mail_host %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% else %}
+    <p>No domains yet.</p>
+    {% endif %}
 
 {% endblock content %}

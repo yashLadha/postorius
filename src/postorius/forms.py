@@ -57,15 +57,22 @@ class ListOfStringsField(forms.Field):
         return result
 
 
-def _get_site_choices():
-    for site in Site.objects.order_by("name"):
-        yield (site.pk, "{} ({})".format(site.name, site.domain))
+class SiteModelChoiceField(forms.ModelChoiceField):
+
+    def label_from_instance(self, obj):
+            return "%s (%s)" % (obj.name, obj.domain)
 
 
-class DomainNew(forms.Form):
+def _get_web_host_help():
+    # Using a function is necessary, otherwise reverse() will be called before
+    # URLConfs are loaded.
+    return (_('<a href="%s">Edit</a> the list of available web hosts.')
+            % reverse("admin:sites_site_changelist"))
 
+
+class DomainForm(forms.Form):
     """
-    Form field to add a new domain
+    Add or edit a domain.
     """
     mail_host = forms.CharField(
         label=_('Mail Host'),
@@ -77,14 +84,14 @@ class DomainNew(forms.Form):
     description = forms.CharField(
         label=_('Description'),
         required=False)
-    web_host = forms.ChoiceField(
+    site = SiteModelChoiceField(
         label=_('Web Host'),
         error_messages={'required': _('Please enter a domain name'),
                         'invalid': _('Please enter a valid domain name.')},
         required=True,
-        choices=_get_site_choices,
-        help_text=lambda: _('<a href="%s">Edit</a> the list of available web hosts.')
-        % reverse("admin:sites_site_changelist"),
+        queryset=Site.objects.order_by("name").all(),
+        initial=Site.objects.get_current(),
+        help_text=_get_web_host_help,
         )
 
     def clean_mail_host(self):
@@ -94,19 +101,6 @@ class DomainNew(forms.Form):
         except:
             raise forms.ValidationError(_("Please enter a valid domain name"))
         return mail_host
-
-    class Meta:
-
-        """
-        Class to handle the automatic insertion of fieldsets and divs.
-
-        To use it: add a list for each wished fieldset. The first item in
-        the list should be the wished name of the fieldset, the following
-        the fields that should be included in the fieldset.
-        """
-        layout = [["Please enter Details",
-                   "mail_host",
-                   "description"]]
 
 
 class MemberForm(forms.Form):

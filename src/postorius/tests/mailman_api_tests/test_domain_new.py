@@ -46,7 +46,7 @@ class DomainCreationTest(ViewTestCase):
         self.client.login(username='su', password='pwd')
         post_data = {'mail_host': 'example.com',
                      'description': 'A new Domain.',
-                     'web_host': '1',
+                     'site': '1',
                      }
         response = self.client.post(reverse('domain_new'), post_data)
 
@@ -65,7 +65,7 @@ class DomainCreationTest(ViewTestCase):
         self.client.login(username='su', password='pwd')
         post_data = {'mail_host': 'example com',
                      'description': 'A new Domain',
-                     'web_host': '1',
+                     'site': '1',
                      }
         response = self.client.post(reverse('domain_new'), post_data)
         self.assertContains(response, 'Please check the errors below')

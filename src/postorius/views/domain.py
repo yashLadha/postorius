@@ -22,6 +22,8 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
+from django.forms.widgets import HiddenInput
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
 from django_mailman3.lib.mailman import get_mailman_client
@@ -32,8 +34,8 @@ except ImportError:
     from urllib.error import HTTPError
 from postorius import utils
 from postorius.auth.decorators import superuser_required
-from postorius.models import Domain, MailmanApiError
-from postorius.forms import DomainNew
+from postorius.models import Domain, MailmanApiError, Mailman404Error
+from postorius.forms import DomainForm
 
 
 @login_required
@@ -59,8 +61,9 @@ def domain_index(request):
 @login_required
 @superuser_required
 def domain_new(request):
+    form_initial = {'site': Site.objects.get_current(request)}
     if request.method == 'POST':
-        form = DomainNew(request.POST)
+        form = DomainForm(request.POST, initial=form_initial)
         if form.is_valid():
             domain = Domain(mail_host=form.cleaned_data['mail_host'],
                             description=form.cleaned_data['description'],
@@ -74,14 +77,58 @@ def domain_new(request):
             else:
                 messages.success(request, _("New Domain registered"))
             MailDomain.objects.get_or_create(
-                site=Site.objects.get(pk=int(form.cleaned_data['web_host'])),
+                site=form.cleaned_data['site'],
                 mail_domain=form.cleaned_data['mail_host'])
             return redirect("domain_index")
         else:
             messages.error(request, _('Please check the errors below'))
     else:
-        form = DomainNew()
+        form = DomainForm(initial=form_initial)
     return render(request, 'postorius/domain/new.html', {'form': form})
+
+
+@login_required
+@superuser_required
+def domain_edit(request, domain):
+    try:
+        domain_obj = Domain.objects.get(mail_host=domain)
+    except Mailman404Error:
+        raise Http404('Domain does not exist')
+    form_args = []
+    if request.method == 'POST':
+        form_args.append(request.POST)
+    form_initial = {
+        'mail_host': domain,
+        'description': domain_obj.description,
+        'site': MailDomain.objects.get(mail_domain=domain).site,
+        }
+    form = DomainForm(*form_args, initial=form_initial)
+    form.fields["mail_host"].widget = HiddenInput()
+
+    if request.method == 'POST':
+        if form.is_valid():
+            domain_obj.description = form.cleaned_data['description']
+            try:
+                web_host = MailDomain.objects.get(mail_domain=domain)
+            except MailDomain.DoesNotExist:
+                web_host = MailDomain.objects.create(
+                    site=form.cleaned_data['site'], mail_domain=domain)
+            else:
+                web_host.site = form.cleaned_data['site']
+                web_host.save()
+            try:
+                domain_obj.save()
+            except MailmanApiError:
+                return utils.render_api_error(request)
+            except HTTPError as e:
+                messages.error(request, e)
+            else:
+                messages.success(request, _("Domain %s updated") % domain)
+            return redirect("domain_edit", domain=domain)
+        else:
+            messages.error(request, _('Please check the errors below'))
+    return render(request, 'postorius/domain/edit.html', {
+                  'domain': domain, 'form': form})
 
 
 @login_required

@@ -86,6 +86,8 @@ urlpatterns = [
     # /domains/
     url(r'^domains/$', domain_views.domain_index, name='domain_index'),
     url(r'^domains/new/$', domain_views.domain_new, name='domain_new'),
+    url(r'^domains/(?P<domain>[^/]+)/$', domain_views.domain_edit,
+        name='domain_edit'),
     url(r'^domains/(?P<domain>[^/]+)/delete$', domain_views.domain_delete,
         name='domain_delete'),
     # /lists/
