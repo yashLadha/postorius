@@ -20,7 +20,7 @@ from __future__ import absolute_import, unicode_literals
 from django.test import TestCase
 
 from postorius.forms import (
-    ChangeSubscriptionForm, DomainNew, ListIdentityForm, ListNew,
+    ChangeSubscriptionForm, DomainForm, ListIdentityForm, ListNew,
     ListSubscribe, UserPreferences)
 
 
@@ -39,10 +39,11 @@ class UserPreferencesTest(TestCase):
 class DomainNewTest(TestCase):
 
     def test_form_fields_valid(self):
-        form = DomainNew({
+        form = DomainForm({
             'mail_host': 'mailman.most-desirable.org',
             'description': 'The Most Desirable organization',
             'contact_address': 'contact@mailman.most-desirable.org',
+            'site': 1,
         })
         self.assertTrue(form.is_valid())
 

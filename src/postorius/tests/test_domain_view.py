@@ -21,7 +21,7 @@ from allauth.account.models import EmailAddress
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from postorius.forms import DomainNew
+from postorius.forms import DomainForm
 
 
 class DomainViewTest(TestCase):
@@ -39,4 +39,4 @@ class DomainViewTest(TestCase):
         self.client.login(username='su', password='pass')
         response = self.client.get(reverse('domain_new'), follow=True)
         self.assertEquals(response.status_code, 200)
-        self.assertIsInstance(response.context['form'], DomainNew)
+        self.assertIsInstance(response.context['form'], DomainForm)

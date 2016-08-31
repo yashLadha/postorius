@@ -26,7 +26,6 @@ from django.forms.widgets import HiddenInput
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
-from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.models import MailDomain
 try:
     from urllib2 import HTTPError
