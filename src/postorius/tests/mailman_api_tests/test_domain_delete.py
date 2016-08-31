@@ -20,6 +20,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from allauth.account.models import EmailAddress
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
+from django_mailman3.models import MailDomain
 
 from postorius.tests.utils import ViewTestCase
 
@@ -45,6 +47,8 @@ class DomainDeleteTest(ViewTestCase):
                 user=user, email=user.email, verified=True)
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
+        MailDomain.objects.create(
+            site=Site.objects.get_current(), mail_domain='example.com')
         self.url = reverse('domain_delete', args=['example.com'])
 
     def test_access_anonymous(self):
@@ -85,3 +89,5 @@ class DomainDeleteTest(ViewTestCase):
         self.assertEqual(len(self.mm_client.domains), 0)
         self.assertEqual(len(self.mm_client.lists), 0)
         self.assertHasSuccessMessage(response)
+        self.assertFalse(
+            MailDomain.objects.filter(mail_domain='example.com').exists())

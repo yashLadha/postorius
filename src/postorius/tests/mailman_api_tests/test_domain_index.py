@@ -20,6 +20,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from allauth.account.models import EmailAddress
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django_mailman3.models import MailDomain
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -72,10 +73,12 @@ class DomainIndexPageTest(ViewTestCase):
         response = self.client.get(reverse('domain_index'))
         self.assertEqual(response.status_code, 403)
 
-    def test_domain_index_contains_the_domains(self):
+    def test_contains_domains_and_site(self):
         # The list index page should contain the lists
         self.client.login(username='testsu', password='testpass')
         response = self.client.get(reverse('domain_index'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['domains']), 1)
         self.assertContains(response, 'example.com')
+        self.assertTrue(
+            MailDomain.objects.filter(mail_domain='example.com').exists())

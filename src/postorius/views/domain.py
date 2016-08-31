@@ -21,9 +21,11 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.models import Site
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
 from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.models import MailDomain
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -41,8 +43,17 @@ def domain_index(request):
         existing_domains = Domain.objects.all()
     except MailmanApiError:
         return utils.render_api_error(request)
-    return render(request, 'postorius/domain/index.html',
-                  {'domains': existing_domains})
+    for domain in existing_domains:
+        try:
+            web_host = MailDomain.objects.get(mail_domain=domain.mail_host)
+        except MailDomain.DoesNotExist:
+            site = Site.objects.get_current(request)
+            web_host = MailDomain.objects.create(
+                site=site, mail_domain=domain.mail_host)
+        domain.site = web_host.site
+    return render(request, 'postorius/domain/index.html', {
+                  'domains': existing_domains,
+                  })
 
 
 @login_required
@@ -62,6 +73,9 @@ def domain_new(request):
                 messages.error(request, e)
             else:
                 messages.success(request, _("New Domain registered"))
+            MailDomain.objects.get_or_create(
+                site=Site.objects.get(pk=int(form.cleaned_data['web_host'])),
+                mail_domain=form.cleaned_data['mail_host'])
             return redirect("domain_index")
         else:
             messages.error(request, _('Please check the errors below'))
@@ -77,8 +91,9 @@ def domain_delete(request, domain):
     """
     if request.method == 'POST':
         try:
-            client = get_mailman_client()
-            client.delete_domain(domain)
+            domain_obj = Domain.objects.get(mail_host=domain)
+            domain_obj.delete()
+            MailDomain.objects.filter(mail_domain=domain).delete()
             messages.success(request,
                              _('The domain %s has been deleted.' % domain))
             return redirect("domain_index")

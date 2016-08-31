@@ -19,6 +19,7 @@
                 <tr>
                     <th>{% trans 'Mail Host' %}</th>
                     <th>{% trans 'Description' %}</th>
+                    <th>{% trans 'Web Host' %}</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>
@@ -27,6 +28,7 @@
                     <tr>
                         <td>{{ domain.mail_host }}</td>
                         <td>{{ domain.description }}</td>
+                        <td>{{ domain.site.name }} ({{ domain.site.domain }})</td>
                         <td><a href="{% url 'domain_delete' domain.mail_host %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a></td>
                     </tr>
                 {% endfor %}

@@ -20,6 +20,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django_mailman3.models import MailDomain
 
 from postorius.tests.utils import ViewTestCase
 
@@ -44,7 +45,9 @@ class DomainCreationTest(ViewTestCase):
     def test_new_domain_created_with_owner(self):
         self.client.login(username='su', password='pwd')
         post_data = {'mail_host': 'example.com',
-                     'description': 'A new Domain.'}
+                     'description': 'A new Domain.',
+                     'web_host': '1',
+                     }
         response = self.client.post(reverse('domain_new'), post_data)
 
         self.assertHasSuccessMessage(response)
@@ -54,12 +57,16 @@ class DomainCreationTest(ViewTestCase):
         self.assertEqual(a_new_domain.mail_host, u'example.com')
         self.assertEqual(a_new_domain.owners[0]['user_id'],
                          self.mm_client.get_user('su@example.com').user_id)
+        self.assertTrue(
+            MailDomain.objects.filter(mail_domain='example.com').exists())
         a_new_domain.delete()
 
     def test_validation_of_mail_host(self):
         self.client.login(username='su', password='pwd')
         post_data = {'mail_host': 'example com',
-                     'description': 'A new Domain'}
+                     'description': 'A new Domain',
+                     'web_host': '1',
+                     }
         response = self.client.post(reverse('domain_new'), post_data)
         self.assertContains(response, 'Please check the errors below')
         self.assertContains(response, 'Please enter a valid domain name')

@@ -19,10 +19,12 @@
 from __future__ import absolute_import, unicode_literals
 
 from django import forms
+from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.version import get_complete_version
+from django.contrib.sites.models import Site
 
 
 ACTION_CHOICES = (
@@ -55,6 +57,11 @@ class ListOfStringsField(forms.Field):
         return result
 
 
+def _get_site_choices():
+    for site in Site.objects.order_by("name"):
+        yield (site.pk, "{} ({})".format(site.name, site.domain))
+
+
 class DomainNew(forms.Form):
 
     """
@@ -70,6 +77,15 @@ class DomainNew(forms.Form):
     description = forms.CharField(
         label=_('Description'),
         required=False)
+    web_host = forms.ChoiceField(
+        label=_('Web Host'),
+        error_messages={'required': _('Please enter a domain name'),
+                        'invalid': _('Please enter a valid domain name.')},
+        required=True,
+        choices=_get_site_choices,
+        help_text=lambda: _('<a href="%s">Edit</a> the list of available web hosts.')
+        % reverse("admin:sites_site_changelist"),
+        )
 
     def clean_mail_host(self):
         mail_host = self.cleaned_data['mail_host']
