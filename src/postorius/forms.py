@@ -90,7 +90,7 @@ class DomainForm(forms.Form):
                         'invalid': _('Please enter a valid domain name.')},
         required=True,
         queryset=Site.objects.order_by("name").all(),
-        initial=Site.objects.get_current(),
+        initial=lambda: Site.objects.get_current(),
         help_text=_get_web_host_help,
         )
 
