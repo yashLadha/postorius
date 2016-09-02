@@ -79,11 +79,7 @@ def get_held_message(request, list_id, held_id=-1):
         return HttpResponse(held_message.msg, content_type='text/plain')
     response_data = dict()
     response_data['sender'] = held_message.sender
-    try:
-        response_data['reasons'] = held_message.reasons
-    except AttributeError:
-        pass
-    response_data['reasons'] = held_message.reasons
+    response_data['reason'] = held_message.reason
     response_data['hold_date'] = held_message.hold_date
     response_data['msg'] = parse(held_message.msg)
     response_data['msgid'] = held_message.request_id
