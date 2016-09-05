@@ -2,6 +2,10 @@
 {% load i18n %}
 {% load nav_helpers %}
 
+{% block head_title %}
+{% trans 'Unsubscribe all members' %} | {{ list.fqdn_listname }} - {{ block.super }}
+{% endblock %}
+
 {% block content %}
 
     {% list_nav 'mass_removal' 'Confirm Removal of All Members' %}

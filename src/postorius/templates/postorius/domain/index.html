@@ -28,7 +28,7 @@
                 {% for domain in domains %}
                     <tr>
                         <td>{{ domain.mail_host }}</td>
-                        <td>{{ domain.description }}</td>
+                        <td>{% if domain.description %}{{ domain.description }}{% endif %}</td>
                         <td>{{ domain.site.name }} ({{ domain.site.domain }})</td>
                         <td>
                             <a href="{% url 'domain_edit' domain.mail_host %}" class="btn btn-xs btn-primary">{% trans 'Edit' %}</a>
