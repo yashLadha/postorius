@@ -137,6 +137,8 @@ def list_member_options(request, list_id, email):
     try:
         mm_member = client.get_member(list_id, email)
         member_prefs = mm_member.preferences
+    except ValueError:
+        raise Http404(_('Member does not exist'))
     except Mailman404Error:
         return render(request, template_name, {'nolists': 'true'})
     initial_moderation = dict([
