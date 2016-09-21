@@ -100,6 +100,20 @@ class TestSubscription(ViewTestCase):
                               args=('open_list.example.com', )))
         self.assertHasErrorMessage(response)
 
+    def test_banned_address(self):
+        # Impossible to register with a banned address
+        self.client.login(username='testuser', password='pwd')
+        self.open_list.bans.add('test@example.com')
+        response = self.client.post(
+            reverse('list_subscribe', args=('open_list.example.com', )),
+            {'email': 'test@example.com'})
+        self.assertEqual(len(self.open_list.members), 0)
+        self.assertEqual(len(self.open_list.requests), 0)
+        self.assertRedirects(
+            response, reverse('list_summary',
+                              args=('open_list.example.com', )))
+        self.assertHasErrorMessage(response)
+
     def test_subscribe_mod(self):
         # The subscription is held for approval.
         self.client.login(username='testuser', password='pwd')
