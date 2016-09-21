@@ -27,10 +27,7 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
 from django_mailman3.models import MailDomain
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
+from django.utils.six.moves.urllib.error import HTTPError
 from postorius import utils
 from postorius.auth.decorators import superuser_required
 from postorius.models import Domain, MailmanApiError, Mailman404Error

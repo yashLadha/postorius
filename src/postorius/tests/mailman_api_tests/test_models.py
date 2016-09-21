@@ -19,10 +19,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-try:
-    from urllib2 import HTTPError
-except ImportError:
-    from urllib.error import HTTPError
+from django.utils.six.moves.urllib.error import HTTPError
 
 from postorius.tests.utils import ViewTestCase
 
