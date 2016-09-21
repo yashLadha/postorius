@@ -18,12 +18,20 @@
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
 
     {# Archives #}
-    {% if 'hyperkitty' in INSTALLED_APPS %}
+    {% if hyperkitty_enabled %}
+      {% if not public_archive and not user.is_authenticated %}
+        <p>
+          {% trans 'You have to login to visit the archives of this list.' %}
+        </p>
+      {% else %}
         {% url 'hk_list_overview' list.fqdn_listname as hyperkitty_list_url %}
-        {% blocktrans %}
-          <p>To see the prior postings to this list, visit
-          <a href="{{ hyperkitty_list_url }}">the archives</a>.</p>
-        {% endblocktrans %}
+        <p>
+          {% blocktrans %}
+            To see the prior postings to this list, visit
+            <a href="{{ hyperkitty_list_url }}">the archives</a>.
+          {% endblocktrans %}
+        </p>
+      {% endif %}
     {% endif %}
 
     <hr />
