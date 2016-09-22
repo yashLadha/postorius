@@ -20,19 +20,17 @@
             {% endfor %}
           {% endif %}
           {% csrf_token %}
+          <div class="row margin-bottom">
+            <div class="col-md-8">{% trans 'Perform action on selected messages' %}</div>
+            <div class="col-md-4 text-right">
+              <input type="submit" class="btn btn-sm btn-success" name="accept" value="{% trans 'Accept' %}" />
+              <input type="submit" class="btn btn-sm btn-warning" name="reject" value="{% trans 'Reject' %}" />
+              <input type="submit" class="btn btn-sm btn-danger" name="discard" value="{% trans 'Discard' %}" />
+            </div>
+          </div>
           <div class="table-responsive">
             <table class="table table-bordered table-striped">
               <thead>
-                <tr>
-                  <td colspan="5">
-                    <div class="col-md-8">{% trans 'Perform action on selected messages' %}</div>
-                    <div class="col-md-4 text-right">
-                    <input type="submit" class="btn btn-sm btn-success" name="accept" value="{% trans 'Accept' %}" />
-                    <input type="submit" class="btn btn-sm btn-warning" name="reject" value="{% trans 'Reject' %}" />
-                    <input type="submit" class="btn btn-sm btn-danger" name="discard" value="{% trans 'Discard' %}" />
-                    </div>
-                  </td>
-                </tr>
                 <tr>
                   <th><input type="checkbox" id="all-messages-checkbox" /></th>
                   <th>{% trans 'Subject' %}</th>
