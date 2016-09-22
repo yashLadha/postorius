@@ -830,8 +830,13 @@ def list_bans(request, list_id):
             return redirect('list_bans', list_id)
     else:
         addban_form = ListAddBanForm()
+    banned_addresses = paginate(
+        list(ban_list), request.GET.get('page'), request.GET.get('count'))
     return render(request, 'postorius/lists/bans.html',
-                  {'list': m_list, 'addban_form': addban_form})
+                  {'list': m_list,
+                   'addban_form': addban_form,
+                   'banned_addresses': banned_addresses,
+                   })
 
 
 @login_required
