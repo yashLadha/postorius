@@ -61,7 +61,6 @@ class MailmanUserTest(ViewTestCase):
         response = self.client.get(reverse('user_address_preferences'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context["formset"]), 3)
-        self.assertEqual(len(response.context["zipped_data"]), 3)
 
     def test_preferences_none(self):
         # Mailman does not accept None values for boolean preferences. When
@@ -129,8 +128,7 @@ class MailmanUserTest(ViewTestCase):
         self.client.login(username='user', password='testpass')
         response = self.client.get(reverse('user_mailmansettings'))
         self.assertEquals(response.status_code, 200)
-        self.assertIsInstance(response.context['settingsform'],
-                              UserPreferences)
+        self.assertIsInstance(response.context['form'], UserPreferences)
 
     def test_presence_of_form_in_user_subscription_preferences(self):
         self.client.login(username='user', password='testpass')
@@ -138,8 +136,8 @@ class MailmanUserTest(ViewTestCase):
                                 pre_confirmed=True, pre_approved=True)
         response = self.client.get(reverse('user_subscription_preferences'))
         self.assertEquals(response.status_code, 200)
-        self.assertIsNotNone(response.context['zipped_data'])
-        self.assertEquals(len(response.context['zipped_data']), 1)
+        self.assertIsNotNone(response.context['formset'])
+        self.assertEquals(len(response.context['formset']), 1)
 
     def test_presence_of_form_in_user_list_options(self):
         self.client.login(username='user', password='testpass')

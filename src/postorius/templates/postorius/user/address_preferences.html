@@ -13,7 +13,7 @@
 <div class="user-profile">
     {% user_nav 'settings_address' 'Address-based settings' %}
 
-    {% if nolists %}
+    {% if formset|length == 0 %}
         <h2>{% trans 'No preferences available' %}</h2>
         <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
     {% else %}
@@ -23,7 +23,7 @@
             {{ formset.management_form }}
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
-                    {% for form,address in zipped_data %}
+                    {% for form in formset %}
                         {% if forloop.first %}
                             <thead>
                                 <tr>
@@ -37,9 +37,9 @@
                             </thead >
                         {% endif %}
                         <tr>
-                            <td>{{ address }}</td>
+                            <td>{{ form.address }}</td>
                                 {% for field in form %}
-                                {% if field|fieldtype == 'RadioSelect' %}
+                                {% if field|fieldtype_is:'RadioSelect' %}
                                     <td class="text-center">
                                         {% for choice in field %}
                                             <label class="radio-inline">
