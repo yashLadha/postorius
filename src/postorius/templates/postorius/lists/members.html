@@ -52,6 +52,7 @@
                 </a>
                 <button class="btn btn-warning" id="unsubscribe-selected-btn">Unsubscribe Selected</button>
                 <a href="{% url 'unsubscribe_all' list.list_id %}" class="btn btn-danger">{% trans 'Unsubscribe All' %}</a>
+                <a href="{% url 'delete_essay' list.list_id %}" class="btn btn-danger">{% trans 'Delete Essay History' %}</a>
             </div>
         {% endif %}
             <div class="table-responsive" style="clear:both">
@@ -75,6 +76,10 @@
                                     <input type="checkbox" class="member-checkbox" name="choices" id="id_choices_{{ forloop.counter0 }}" value="{{ member.email }}" />
                                     {{ member.email }}
                                     </label>
+                                  </td>
+
+                                  <td>
+                                    <a href = "/postorius/lists/{{list.list_id}}/essay/{{ member.email }}/">{% trans 'Essay Details' %}</a>
                                   </td>
                                   <td>
                                     <a href="{% url 'list_member_options' list.list_id member.email %}">{% trans 'Member Options' %}</a>

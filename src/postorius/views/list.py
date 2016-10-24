@@ -19,11 +19,13 @@
 import csv
 import email.utils
 import logging
+import datetime
 
 from django.http import HttpResponse, HttpResponseNotAllowed, Http404
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.forms import formset_factory
@@ -31,6 +33,9 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+
+from postorius.models import UnsubscriberStats
+
 try:
     from urllib2 import HTTPError
 except ImportError:
@@ -43,7 +48,7 @@ from postorius.forms import (
     DigestSettingsForm, AlterMessagesForm, ListAutomaticResponsesForm,
     ListIdentityForm, ListMassSubscription, ListMassRemoval, ListAddBanForm,
     ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
-from postorius.models import Domain, List, MailmanApiError, Mailman404Error
+from postorius.models import Domain, List, MailmanApiError, Mailman404Error, EssaySubscribe
 from postorius.auth.decorators import (
     list_owner_required, list_moderator_required)
 from postorius.views.generic import MailingListView
@@ -66,6 +71,11 @@ def list_members_view(request, list_id, role=None):
                 members = form.cleaned_data['choices']
                 for member in members:
                     mailing_list.unsubscribe(member)
+
+                    date = datetime.datetime.now()
+                    u = User.objects.get(email=member)
+                    stats = UnsubscriberStats.create(list_id,member,"Member mgt page",date,u.id,u.username)
+                    stats.save()
                 messages.success(request, _('The selected members'
                                             ' have been unsubscribed'))
                 return redirect('list_members', list_id, role)
@@ -271,9 +281,30 @@ class ListSubscribeView(MailingListView):
             user_addresses = [request.user.email] + request.user.other_emails
             form = ListSubscribe(user_addresses, request.POST)
             if form.is_valid():
-                email = request.POST.get('email')
+                essay_subscribe = EssaySubscribe()
+
+                form_data = request.POST
+                email = form_data.get('email')
+                
+                # Stores the values entered by the user in model class EssaySubscribe.
+                essay_subscribe.list_id = list_id
+                essay_subscribe.email = email
+                essay_subscribe.display_name = form_data.get('display_name')
+                essay_subscribe.link = form_data.get('link')
+                essay_subscribe.essay = form_data.get('essay')
+                essay_subscribe.accepted_terms = form_data.get('accepted_terms')
+                essay_subscribe.city = form_data.get('city')
+                essay_subscribe.country = form_data.get('country')
+                essay_subscribe.is_woman = (form_data.get('is_woman') == 'Yes')
+                essay_subscribe.is_woman_in_tech = (form_data.get('is_woman_in_tech') == 'Yes')
+    
+                essay_subscribe.date = datetime.datetime.now()
+                
+
                 response = self.mailing_list.subscribe(
                     email, pre_verified=True, pre_confirmed=True)
+
+                essay_subscribe.save()
                 if (type(response) == dict and
                         response.get('token_owner') == 'moderator'):
                     messages.success(
@@ -287,6 +318,7 @@ class ListSubscribeView(MailingListView):
             else:
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
+                essay_subscribe.save()
         except MailmanApiError:
             return utils.render_api_error(request)
         except HTTPError as e:
@@ -299,12 +331,16 @@ class ListUnsubscribeView(MailingListView):
     """Unsubscribe from a mailing list."""
 
     @method_decorator(login_required)
-    def post(self, request, *args, **kwargs):
+    def post(self, request,list_id, *args, **kwargs):
         email = request.POST['email']
         try:
             self.mailing_list.unsubscribe(email)
             messages.success(request, _('%s has been unsubscribed'
                                         ' from this list.') % email)
+            date = datetime.datetime.now()
+            u = User.objects.get(email=email)
+            stats = UnsubscriberStats.create(list_id,email,"Members option page",date,u.id,u.username)
+            stats.save()    
         except MailmanApiError:
             return utils.render_api_error(request)
         except ValueError as e:
@@ -359,7 +395,7 @@ class ListMassRemovalView(MailingListView):
                       {'form': form, 'list': self.mailing_list})
 
     @method_decorator(list_owner_required)
-    def post(self, request, *args, **kwargs):
+    def post(self, request, list_id, *args, **kwargs):
         form = ListMassRemoval(request.POST)
         if not form.is_valid():
             messages.error(request, _('Please fill out the form correctly.'))
@@ -373,6 +409,10 @@ class ListMassRemovalView(MailingListView):
                                    ' unsubscribed from %(list)s.') %
                         {'address': address,
                          'list': self.mailing_list.fqdn_listname})
+                    date = datetime.datetime.now()
+                    u = User.objects.get(email=address)
+                    stats = UnsubscriberStats.create(list_id,address,"Admin mass Unsubscription",date,u.id,u.username)
+                    stats.save()
                 except MailmanApiError:
                     return utils.render_api_error(request)
                 except (HTTPError, ValueError) as e:
@@ -756,6 +796,10 @@ def remove_all_subscribers(request, list_id):
             try:
                 for names in mlist.members:
                     mlist.unsubscribe(names.email)
+                    date = datetime.datetime.now()
+                    u = User.objects.get(email=names.email)
+                    stats = UnsubscriberStats.create(list_id,names.email,"Admin mass Unsubscription",date,u.id,u.username)
+                    stats.save()
                 messages.success(request, _('All members have been'
                                             ' unsubscribed from the list.'))
                 return redirect('list_members', mlist.list_id)

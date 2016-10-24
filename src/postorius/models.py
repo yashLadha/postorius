@@ -300,3 +300,46 @@ class AddressConfirmationProfile(models.Model):
                   render_to_string(template_path, template_context),
                   sender_address,
                   [self.email])
+
+
+class EssaySubscribe(models.Model):
+    """Essay model class.
+    """ 
+    list_id = models.CharField(max_length=100)
+    email = models.EmailField()
+    display_name = models.CharField(max_length=100)
+    link = models.CharField(max_length=100,default=None)
+    is_woman = models.BooleanField(default=False)
+    is_woman_in_tech = models.BooleanField(default=False)
+    essay = models.CharField(max_length=800)
+    accepted_terms = models.BooleanField(default=1)
+    city = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    date = models.DateTimeField(default=datetime.now())
+
+    def __str__(self):
+            return u'%s   %s' % (self.display_name, self.essay)
+
+
+class UnsubscriberStats(models.Model):
+    """Unsubscriber Stats model class
+    """
+    list_id = models.CharField(max_length=100)
+    email = models.EmailField()
+    channel = models.CharField(max_length=100)
+    date = models.DateTimeField(default=datetime.now())
+    user_id = models.IntegerField()
+    user = models.CharField(max_length=100)
+
+    def __str__(self):
+        return u'%s   %s   %s   %s  %d %s' % (self.list_id, self.email, self.channel,self.user,self.user_id,self.date)
+
+    @classmethod
+    def create(cls,list_id,email,channel,date,user_id,user):
+        return cls(list_id=list_id,email=email,channel=channel,date=date,user_id=user_id,user=user)
+
+    def __hash__(self):
+        return hash(self.user_id)
+
+    def __eq__(self, other):
+        return self.user_id == other.user_id

@@ -24,6 +24,11 @@ from django.contrib.auth.models import User
 
 from postorius.fieldset_forms import FieldsetForm
 
+from django_countries.widgets import CountrySelectWidget
+from django_countries.fields import CountryField 
+from django_countries import countries
+from django.utils.safestring import mark_safe
+from functools import partial
 
 ACTION_CHOICES = (
     ("hold", _("Hold for moderation")),
@@ -184,17 +189,39 @@ class ListNew(FieldsetForm):
 class ListSubscribe(FieldsetForm):
     """Form fields to join an existing list.
     """
+    CHOICES=[('Yes','Yes'),
+         ('No','No')]
 
     email = forms.ChoiceField(
-        label=_('Your email address'),
+        label=_('Your email address *'),
         validators=[validate_email],
         widget=forms.Select(),
         error_messages={
             'required': _('Please enter an email address.'),
             'invalid': _('Please enter a valid email address.')})
 
-    display_name = forms.CharField(
-        label=_('Your name (optional)'), required=False)
+    display_name = forms.CharField(required=False,
+                                   label=_('Your name'))
+
+    link = forms.CharField(required=False,
+                           label=_('Profile link'),
+                           help_text =_("Provide url of your Personal website or Linkedin (if any)"))
+   
+    is_woman = forms.ChoiceField(label=_('Are you a woman? *'),
+                                 choices=CHOICES, widget=forms.RadioSelect())
+
+    is_woman_in_tech = forms.ChoiceField(label=_('Are you involved in technology? *'),
+                                         choices=CHOICES, widget=forms.RadioSelect())
+
+    country = forms.ChoiceField(countries, widget=CountrySelectWidget(),label = _('Country *'))
+    
+    city = forms.CharField(required=False,label=_('City'))
+    
+    essay = forms.CharField(widget=forms.Textarea,required=False,
+                            help_text =_("Please tell us more about how you are involved in technology."),)
+
+    accepted_terms = forms.BooleanField(label=_('Terms And Conditions *'),
+                                        help_text = mark_safe("Do you agree to Conversation Model <a href='http://systers.org/wiki/communities/doku.php?id=wiki:systers:faq'>frequently asked questions</a>?"),)
 
     def __init__(self, user_emails, *args, **kwargs):
         super(ListSubscribe, self).__init__(*args, **kwargs)
@@ -872,3 +899,8 @@ class MultipleChoiceForm(forms.Form):
         if len(self.cleaned_data['choices']) < 1:
             raise forms.ValidationError(_('Make at least one selection'))
         return self.cleaned_data['choices']
+
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+class UnsubscriberStatsForm(forms.Form):
+    start_date = forms.DateField(widget=DateInput(), label=_('From'))
+    end_date = forms.DateField(widget=DateInput(), label=_('To'))

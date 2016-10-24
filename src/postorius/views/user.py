@@ -18,6 +18,7 @@
 
 
 import logging
+import datetime
 
 from django.forms import formset_factory
 from django.contrib import messages
@@ -28,6 +29,8 @@ from django.utils.translation import gettext as _
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.conf import settings
+
+from postorius.models import UnsubscriberStats
 
 try:
     from urllib2 import HTTPError
@@ -196,6 +199,12 @@ class UserSubscriptionPreferencesView(MailmanUserView):
                             # "reset to default" value.
                             preferences[key] = form.cleaned_data[key]
                     preferences.save()
+                    
+                    date = datetime.datetime.now()
+                    if form.cleaned_data['delivery_status'] == 'by_user':
+                        stats = UnsubscriberStats.create(subscription.list_id,request.user.email,"Disabled",date,request.user.id,request.user)
+
+                        stats.save()
                 messages.success(request,
                                  _('Your preferences have been updated.'))
             else:
