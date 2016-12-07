@@ -155,7 +155,7 @@ class ListNew(forms.Form):
             (False, _("Hide this list in list index"))))
     description = forms.CharField(
         label=_('Description'),
-        required=True)
+        required=False)
 
     def __init__(self, domain_choices, *args, **kwargs):
         super(ListNew, self).__init__(*args, **kwargs)
@@ -604,6 +604,7 @@ class ListIdentityForm(ListSettingsForm):
                     'on the list of all lists'))
     description = forms.CharField(
         label=_('Description'),
+        required=False,
         help_text=_(
             'This description is used when the mailing list is listed with '
             'other mailing lists, or in headers, and so forth. It should be '
@@ -617,16 +618,19 @@ class ListIdentityForm(ListSettingsForm):
         widget=forms.Textarea())
     display_name = forms.CharField(
         label=_('Display name'),
+        required=False,
         help_text=_('Display name is the name shown in the web interface.')
     )
     if get_complete_version() < (1, 9):
         subject_prefix = forms.CharField(
             label=_('Subject prefix'),
+            required=False,
         )
     else:
         subject_prefix = forms.CharField(
             label=_('Subject prefix'),
             strip=False,
+            required=False,
         )
 
 

@@ -527,7 +527,9 @@ def list_new(request, template='postorius/lists/new.html'):
                     form.cleaned_data['listname'])
                 mailing_list.add_owner(form.cleaned_data['list_owner'])
                 list_settings = mailing_list.settings
-                list_settings["description"] = form.cleaned_data['description']
+                if form.cleaned_data['description']:
+                    list_settings["description"] = \
+                        form.cleaned_data['description']
                 list_settings["advertised"] = form.cleaned_data['advertised']
                 list_settings.save()
                 messages.success(request, _("List created"))
@@ -540,8 +542,10 @@ def list_new(request, template='postorius/lists/new.html'):
         else:
             messages.error(request, _('Please check the errors below'))
     else:
-        form = ListNew(choosable_domains,
-                       initial={'list_owner': request.user.email})
+        form = ListNew(choosable_domains, initial={
+            'list_owner': request.user.email,
+            'advertised': True,
+            })
     return render(request, template, {'form': form})
 
 
@@ -682,10 +686,10 @@ def list_settings(request, list_id=None, visible_section=None,
         list_settings = m_list.settings
     except (MailmanApiError, HTTPError):
         return utils.render_api_error(request)
+    initial_data = dict(
+        (key, unicode(value)) for key, value in list_settings.items())
     # List settings are grouped an processed in different forms.
     if request.method == 'POST':
-        initial_data = dict(
-            (key, unicode(value)) for key, value in list_settings.items())
         form = form_class(request.POST, mlist=m_list, initial=initial_data)
         if form.is_valid():
             try:
@@ -700,7 +704,7 @@ def list_settings(request, list_id=None, visible_section=None,
                 messages.error(request, _('An error occured: %s') % e.reason)
             return redirect('list_settings', m_list.list_id, visible_section)
     else:
-        form = form_class(initial=dict(list_settings), mlist=m_list)
+        form = form_class(initial=initial_data, mlist=m_list)
 
     return render(request, template, {
         'form': form,
