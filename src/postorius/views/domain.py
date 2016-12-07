@@ -69,15 +69,13 @@ def domain_new(request):
             except MailmanApiError:
                 return utils.render_api_error(request)
             except HTTPError as e:
-                messages.error(request, e)
+                form.add_error('mail_host', e.reason)
             else:
                 messages.success(request, _("New Domain registered"))
-            MailDomain.objects.get_or_create(
-                site=form.cleaned_data['site'],
-                mail_domain=form.cleaned_data['mail_host'])
-            return redirect("domain_index")
-        else:
-            messages.error(request, _('Please check the errors below'))
+                MailDomain.objects.get_or_create(
+                    site=form.cleaned_data['site'],
+                    mail_domain=form.cleaned_data['mail_host'])
+                return redirect("domain_index")
     else:
         form = DomainForm(initial=form_initial)
     return render(request, 'postorius/domain/new.html', {'form': form})
