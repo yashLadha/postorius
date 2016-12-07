@@ -540,8 +540,10 @@ def list_new(request, template='postorius/lists/new.html'):
         else:
             messages.error(request, _('Please check the errors below'))
     else:
-        form = ListNew(choosable_domains,
-                       initial={'list_owner': request.user.email})
+        form = ListNew(choosable_domains, initial={
+            'list_owner': request.user.email,
+            'advertised': True,
+            })
     return render(request, template, {'form': form})
 
 
