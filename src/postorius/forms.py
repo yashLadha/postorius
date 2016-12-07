@@ -57,6 +57,21 @@ class ListOfStringsField(forms.Field):
         return result
 
 
+class NullBooleanRadioSelect(forms.RadioSelect):
+    """
+    This is necessary to detect that such a field has not been changed.
+    """
+
+    def value_from_datadict(self, data, files, name):
+        value = data.get(name, None)
+        return {'2': True,
+                True: True,
+                'True': True,
+                '3': False,
+                'False': False,
+                False: False}.get(value, None)
+
+
 class SiteModelChoiceField(forms.ModelChoiceField):
 
     def label_from_instance(self, obj):
@@ -726,6 +741,21 @@ class UserPreferences(forms.Form):
     """
     Form handling the user's global, address and subscription based preferences
     """
+
+    def __init__(self, *args, **kwargs):
+        self._preferences = kwargs.pop('preferences', None)
+        super(UserPreferences, self).__init__(*args, **kwargs)
+
+    @property
+    def initial(self):
+        # Redirect to the preferences, this allows setting the preferences
+        # after instanciation and it will also set the initial data.
+        return self._preferences or {}
+
+    @initial.setter
+    def initial(self, value):
+        pass
+
     choices = ((True, _('Yes')), (False, _('No')))
 
     delivery_mode_choices = (("regular", _('Regular')),
@@ -759,7 +789,7 @@ class UserPreferences(forms.Form):
             'preferred, but if you have a problem reading them, select '
             'plain text digests.'))
     receive_own_postings = forms.NullBooleanField(
-        widget=forms.RadioSelect(choices=choices),
+        widget=NullBooleanRadioSelect(choices=choices),
         required=False,
         label=_('Receive own postings'),
         help_text=_(
@@ -768,13 +798,13 @@ class UserPreferences(forms.Form):
             'to No.'
             ))
     acknowledge_posts = forms.NullBooleanField(
-        widget=forms.RadioSelect(choices=choices),
+        widget=NullBooleanRadioSelect(choices=choices),
         required=False,
         label=_('Acknowledge posts'),
         help_text=_(
             'Receive acknowledgement mail when you send mail to the list?'))
     hide_address = forms.NullBooleanField(
-        widget=forms.RadioSelect(choices=choices),
+        widget=NullBooleanRadioSelect(choices=choices),
         required=False,
         label=_('Hide address'),
         help_text=_(
@@ -784,7 +814,7 @@ class UserPreferences(forms.Form):
             'If you do not want your email address to show up on this '
             'membership roster at all, select Yes for this option.'))
     receive_list_copy = forms.NullBooleanField(
-        widget=forms.RadioSelect(choices=choices),
+        widget=NullBooleanRadioSelect(choices=choices),
         required=False,
         label=_('Avoid Duplicates'),
         help_text=_(
@@ -802,6 +832,34 @@ class UserPreferences(forms.Form):
         layout = [["User Preferences", "acknowledge_posts", "hide_address",
                    "receive_list_copy", "receive_own_postings",
                    "delivery_mode", "delivery_status"]]
+
+    def save(self):
+        if not self.changed_data:
+            return
+        for key in self.changed_data:
+            if self.cleaned_data[key] is not None:
+                # None: nothing set yet. Remember to remove this test
+                # when Mailman accepts None as a "reset to default"
+                # value.
+                self._preferences[key] = self.cleaned_data[key]
+        self._preferences.save()
+
+
+class UserPreferencesFormset(forms.BaseFormSet):
+
+    def __init__(self, *args, **kwargs):
+        self._preferences = kwargs.pop('preferences')
+        kwargs["initial"] = self._preferences
+        super(UserPreferencesFormset, self).__init__(*args, **kwargs)
+
+    def _construct_form(self, i, **kwargs):
+        form = super(UserPreferencesFormset, self)._construct_form(i, **kwargs)
+        form._preferences = self._preferences[i]
+        return form
+
+    def save(self):
+        for form in self.forms:
+            form.save()
 
 
 class MemberModeration(forms.Form):
