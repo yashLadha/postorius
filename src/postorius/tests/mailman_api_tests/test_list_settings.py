@@ -133,7 +133,7 @@ class ListSettingsTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         form = response.context["form"]
         self.assertEqual(
-            form.initial['first_strip_reply_to'], False)
+            form.initial['first_strip_reply_to'], 'False')
         post_data = dict(
             (key, unicode(self.foo_list.settings[key]))
             for key in form.fields)
@@ -144,3 +144,21 @@ class ListSettingsTest(ViewTestCase):
         # Get a new list object to avoid caching
         m_list = List.objects.get(fqdn_listname='foo.example.com')
         self.assertEqual(m_list.settings['first_strip_reply_to'], True)
+
+    def test_list_identity_allow_empty_prefix_and_desc(self):
+        self.assertEqual(self.foo_list.settings['subject_prefix'], '[Foo] ')
+        self.assertEqual(self.foo_list.settings['description'], '')
+        self.client.login(username='testsu', password='testpass')
+        url = reverse('list_settings',
+                      args=('foo.example.com', 'list_identity'))
+        response = self.client.post(url, {
+            'subject_prefix': '',
+            'description': '',
+            'advertised': 'True',
+            })
+        self.assertRedirects(response, url)
+        self.assertHasSuccessMessage(response)
+        # Get a new list object to avoid caching
+        m_list = List.objects.get(fqdn_listname='foo.example.com')
+        self.assertEqual(m_list.settings['subject_prefix'], '')
+        self.assertEqual(m_list.settings['description'], '')
