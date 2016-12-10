@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2016 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -363,6 +363,82 @@ class DigestSettingsForm(ListSettingsForm):
         label=_('Digest size threshold'),
         help_text=_('How big in Kb should a digest be before '
                     'it gets sent out?'))
+
+
+class DMARCMitigationsForm(ListSettingsForm):
+    """
+    DMARC Mitigations list settings.
+    """
+    dmarc_moderation_action = forms.ChoiceField(
+        label=_('DMARC moderation action'),
+        widget=forms.Select(),
+        required=False,
+        error_messages={
+            'required': _("Please choose a DMARC moderation action.")},
+        choices=(
+            ('none', _('No DMARC mitigations')),
+            ('munge_from', _('Replace From: with list address')),
+            ('wrap_message',
+                _('Wrap the message in an outer message From: the list.')),
+            ('reject', _('Reject the message')),
+            ('discard', _('Discard the message'))),
+        help_text=_(
+            'The action to apply to messages From: a domain publishing a '
+            'DMARC policy of reject and possibly quarantine or none. '
+            'When this is set to No DMARC mitigations, no mitigations will '
+            'be applied based on the DMARC policy of the From: domain, but '
+            'From is list actions will be applied.'))
+    dmarc_quarantine_moderation_action = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Quarantine moderation action'),
+        help_text=_(
+            'If DMARC moderation action is other than none, should it apply '
+            'to messages From: domains publishing DMARC p=quarantine as well '
+            'as to messages From: domains publishing DMARC p=reject?'))
+    dmarc_none_moderation_action = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('None moderation action'),
+        help_text=_(
+            'If DMARC moderation action is other than none and quarantine '
+            'moderaction is Yes, should DMARC moderation action also apply '
+            'to messages From: domains publishing DMARC p=none?'))
+    dmarc_moderation_notice = forms.CharField(
+        label=_('DMARC moderation notice'),
+        required=False,
+        widget=forms.Textarea(),
+        help_text=_(
+            'Text to include in any rejection notice to be sent when DMARC '
+            'moderation action of reject applies.'))
+    dmarc_wrapped_message_text = forms.CharField(
+        label=_('DMARC wrapped message text'),
+        required=False,
+        widget=forms.Textarea(),
+        help_text=_(
+            'Text to be added as a separate text/plain MIME part preceding '
+            'the original message part in the wrapped message when DMARC '
+            'moderation action of wrap message applies.'))
+    from_is_list = forms.ChoiceField(
+        label=_('From is list'),
+        widget=forms.Select(),
+        required=False,
+        error_messages={
+            'required': _("Please choose a From is list action.")},
+        choices=(
+            ('none', _('No action')),
+            ('munge_from', _('Replace From: with list address')),
+            ('wrap_message',
+                _('Wrap the message in an outer message From: the list.'))),
+        help_text=_(
+            'This action will be applied to all messages regardless of From: '
+            'domain if DMARC moderation action is none or is not applicable '
+            'because the From: domain does not publish an applicable '
+            'policy.'))
 
 
 class AlterMessagesForm(ListSettingsForm):
