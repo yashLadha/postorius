@@ -393,7 +393,7 @@ class DMARCMitigationsForm(ListSettingsForm):
         required=False,
         label=_('DMARC Mitigate unconditionally'),
         help_text=_(
-            'If DMARC moderation action is munge_from or wrap_message, '
+            'If DMARC mitigation action is munge_from or wrap_message, '
             'should it apply to all messages regardless of the DMARC policy '
             'of the From: domain.'))
     dmarc_moderation_notice = forms.CharField(
@@ -401,8 +401,8 @@ class DMARCMitigationsForm(ListSettingsForm):
         required=False,
         widget=forms.Textarea(),
         help_text=_(
-            'Text to include in any rejection notice to be sent when DMARC '
-            'mitigation action of reject applies.'))
+            'Text to replace the default reason in any rejection notice to '
+            'be sent when DMARC mitigation action of reject applies.'))
     dmarc_wrapped_message_text = forms.CharField(
         label=_('DMARC wrapped message text'),
         required=False,
@@ -410,7 +410,7 @@ class DMARCMitigationsForm(ListSettingsForm):
         help_text=_(
             'Text to be added as a separate text/plain MIME part preceding '
             'the original message part in the wrapped message when DMARC '
-            'moderation action of wrap message applies.'))
+            'mitigation action of wrap message applies.'))
 
 
 class AlterMessagesForm(ListSettingsForm):
