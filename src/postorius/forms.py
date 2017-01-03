@@ -656,9 +656,9 @@ class ListMassSubscription(forms.Form):
         help_text=_(
             'The following formats are accepted:\n'
             'jdoe@example.com\n'
-            '<jdoe@example.com>\n'
-            'John Doe <jdoe@example.com>\n'
-            '"John Doe" <jdoe@example.com>\n'
+            '&lt;jdoe@example.com&gt;\n'
+            'John Doe &lt;jdoe@example.com&gt;\n'
+            '"John Doe" &lt;jdoe@example.com&gt;\n'
             'jdoe@example.com (John Doe)\n'
             'Use the last three to associate a display name with'
             ' the address\n'),
