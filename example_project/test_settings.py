@@ -22,6 +22,8 @@ Django test settings for postorius project.
 
 from settings import *
 
+TESTING = True
+
 # Mailman API credentials for testing
 MAILMAN_REST_API_URL = 'http://localhost:9001'
 MAILMAN_REST_API_USER = 'restadmin'
