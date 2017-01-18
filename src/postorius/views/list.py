@@ -208,6 +208,11 @@ class ListSummaryView(MailingListView):
                 'hyperkitty_enabled': False}
         if self.mailing_list.settings['archive_policy'] == 'public':
             data['public_archive'] = True
+        if getattr(settings, 'TESTING') and \
+                'hyperkitty' not in settings.INSTALLED_APPS:
+            # avoid systematic test failure when HyperKitty is installed
+            # (missing VCR request, see below).
+            list(self.mailing_list.archivers)
         if ('hyperkitty' in settings.INSTALLED_APPS and
                 'hyperkitty' in self.mailing_list.archivers and
                 self.mailing_list.archivers['hyperkitty']):
