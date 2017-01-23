@@ -9,7 +9,7 @@ var loadjs = function(rest_url, error_message) {
       url: rest_url + msgid,
       success: function(data) {
         $('#message-source-btn').attr('href', rest_url + msgid + '?raw')
-        $('#message-title').html(data.msg.subject);
+        $('#message-title').html(data.subject);
         $('.modal-footer form input[name="msgid"]').attr('value', msgid);
         if (data.msg.body) {
           $('#held-message-content').text(data.msg.body);
