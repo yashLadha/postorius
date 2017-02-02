@@ -44,7 +44,8 @@ from postorius.forms import (
     ListSubscriptionPolicyForm, ArchiveSettingsForm, MessageAcceptanceForm,
     DigestSettingsForm, AlterMessagesForm, ListAutomaticResponsesForm,
     ListIdentityForm, ListMassSubscription, ListMassRemoval, ListAddBanForm,
-    ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration)
+    ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration,
+    DMARCMitigationsForm)
 from postorius.models import Domain, List, MailmanApiError, Mailman404Error
 from postorius.auth.decorators import (
     list_owner_required, list_moderator_required, superuser_required)
@@ -649,6 +650,7 @@ SETTINGS_SECTION_NAMES = (
     ('list_identity', _('List Identity')),
     ('automatic_responses', _('Automatic Responses')),
     ('alter_messages', _('Alter Messages')),
+    ('dmarc_mitigations', _('DMARC Mitigations')),
     ('digest', _('Digest')),
     ('message_acceptance', _('Message Acceptance')),
     ('archiving', _('Archiving')),
@@ -659,6 +661,7 @@ SETTINGS_FORMS = {
     'list_identity': ListIdentityForm,
     'automatic_responses': ListAutomaticResponsesForm,
     'alter_messages': AlterMessagesForm,
+    'dmarc_mitigations': DMARCMitigationsForm,
     'digest': DigestSettingsForm,
     'message_acceptance': MessageAcceptanceForm,
     'archiving': ArchiveSettingsForm,

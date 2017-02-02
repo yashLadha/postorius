@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2016 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -363,6 +363,54 @@ class DigestSettingsForm(ListSettingsForm):
         label=_('Digest size threshold'),
         help_text=_('How big in Kb should a digest be before '
                     'it gets sent out?'))
+
+
+class DMARCMitigationsForm(ListSettingsForm):
+    """
+    DMARC Mitigations list settings.
+    """
+    dmarc_mitigate_action = forms.ChoiceField(
+        label=_('DMARC mitigation action'),
+        widget=forms.Select(),
+        required=False,
+        error_messages={
+            'required': _("Please choose a DMARC mitigation action.")},
+        choices=(
+            ('no_mitigation', _('No DMARC mitigations')),
+            ('munge_from', _('Replace From: with list address')),
+            ('wrap_message',
+                _('Wrap the message in an outer message From: the list.')),
+            ('reject', _('Reject the message')),
+            ('discard', _('Discard the message'))),
+        help_text=_(
+            'The action to apply to messages From: a domain publishing a '
+            'DMARC policy of reject or quarantine or to all messages if '
+            'DMARC Mitigate unconditionally is True.'))
+    dmarc_mitigate_unconditionally = forms.TypedChoiceField(
+        coerce=lambda x: x == 'True',
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('DMARC Mitigate unconditionally'),
+        help_text=_(
+            'If DMARC mitigation action is munge_from or wrap_message, '
+            'should it apply to all messages regardless of the DMARC policy '
+            'of the From: domain.'))
+    dmarc_moderation_notice = forms.CharField(
+        label=_('DMARC rejection notice'),
+        required=False,
+        widget=forms.Textarea(),
+        help_text=_(
+            'Text to replace the default reason in any rejection notice to '
+            'be sent when DMARC mitigation action of reject applies.'))
+    dmarc_wrapped_message_text = forms.CharField(
+        label=_('DMARC wrapped message text'),
+        required=False,
+        widget=forms.Textarea(),
+        help_text=_(
+            'Text to be added as a separate text/plain MIME part preceding '
+            'the original message part in the wrapped message when DMARC '
+            'mitigation action of wrap message applies.'))
 
 
 class AlterMessagesForm(ListSettingsForm):
