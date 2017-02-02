@@ -20,7 +20,6 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 
-from email.Header import decode_header
 from email.parser import Parser as EmailParser
 from email.parser import HeaderParser
 
@@ -37,16 +36,6 @@ from django_mailman3.lib.scrub import Scrubber
 def parse(message):
     msgobj = EmailParser().parsestr(message)
     header_parser = HeaderParser()
-    if msgobj['Subject'] is not None:
-        decodefrag = decode_header(msgobj['Subject'])
-        subj_fragments = []
-        for s, enc in decodefrag:
-            if enc:
-                s = unicode(s, enc).encode('utf8', 'replace')
-            subj_fragments.append(s)
-        subject = ''.join(subj_fragments)
-    else:
-        subject = None
 
     headers = []
     headers_dict = header_parser.parsestr(message)
@@ -54,7 +43,6 @@ def parse(message):
         headers += ['{}: {}'.format(key, headers_dict[key])]
     content = Scrubber(msgobj).scrub()[0]
     return {
-        'subject': subject,
         'body': content,
         'headers': '\n'.join(headers),
     }
@@ -79,6 +67,7 @@ def get_held_message(request, list_id, held_id=-1):
         return HttpResponse(held_message.msg, content_type='text/plain')
     response_data = dict()
     response_data['sender'] = held_message.sender
+    response_data['subject'] = held_message.subject
     response_data['reason'] = held_message.reason
     response_data['hold_date'] = held_message.hold_date
     response_data['msg'] = parse(held_message.msg)
