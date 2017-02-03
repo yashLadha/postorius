@@ -54,14 +54,6 @@ class TestSubscription(ViewTestCase):
         for address in self.mm_user.addresses:
             address.verify()
 
-    def tearDown(self):
-        # XXX remove the method if core cleares requests on list deletion
-        for req in self.open_list.requests:
-            self.open_list.moderate_request(req['token'], 'discard')
-        for req in self.mod_list.requests:
-            self.mod_list.moderate_request(req['token'], 'discard')
-        super(TestSubscription, self).tearDown()
-
     @patch('mailmanclient._client.MailingList.subscribe')
     def test_anonymous_subscribe(self, mock_subscribe):
         response = self.client.post(

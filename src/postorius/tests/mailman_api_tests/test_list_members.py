@@ -95,11 +95,6 @@ class AddRemoveOwnerTest(ViewTestCase):
         self.client.login(username='su', password='pwd')
         self.mm_client.get_list('foo@example.com').add_owner('su@example.com')
 
-    def tearDown(self):
-        self.foo_list.delete()
-        self.su.delete()
-        self.domain.delete()
-
     def test_add_remove_owner(self):
         url = reverse('list_members', args=('foo@example.com', 'owner',))
         response = self.client.post(url, {'email': 'newowner@example.com'})
