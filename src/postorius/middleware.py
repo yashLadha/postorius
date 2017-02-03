@@ -20,10 +20,12 @@ from __future__ import absolute_import, unicode_literals
 
 from postorius import utils
 from postorius.models import MailmanApiError
+from mailmanclient import MailmanConnectionError
 
 
 class PostoriusMiddleware(object):
 
     def process_exception(self, request, exception):
-        if isinstance(exception, MailmanApiError):
+        if isinstance(exception, MailmanApiError) or isinstance(
+                exception, MailmanConnectionError):
             return utils.render_api_error(request)
