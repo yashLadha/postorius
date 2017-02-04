@@ -219,6 +219,24 @@ class ListSubscribe(forms.Form):
                                         for address in user_emails)
 
 
+class ListAnonymousSubscribe(forms.Form):
+    """Form fields to join an existing list as an anonymous user.
+    """
+
+    email = forms.CharField(
+        label=_('Your email address'),
+        validators=[validate_email],
+        error_messages={
+            'required': _('Please enter an email address.'),
+            'invalid': _('Please enter a valid email address.')})
+
+    display_name = forms.CharField(
+        label=_('Your name (optional)'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(ListAnonymousSubscribe, self).__init__(*args, **kwargs)
+
+
 class ListSettingsForm(forms.Form):
     """
     Base class for list settings forms.

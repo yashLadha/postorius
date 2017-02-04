@@ -45,7 +45,7 @@ from postorius.forms import (
     DigestSettingsForm, AlterMessagesForm, ListAutomaticResponsesForm,
     ListIdentityForm, ListMassSubscription, ListMassRemoval, ListAddBanForm,
     ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration,
-    DMARCMitigationsForm)
+    DMARCMitigationsForm, ListAnonymousSubscribe)
 from postorius.models import Domain, List, MailmanApiError, Mailman404Error
 from postorius.auth.decorators import (
     list_owner_required, list_moderator_required, superuser_required)
@@ -233,6 +233,7 @@ class ListSummaryView(MailingListView):
             data['subscribe_form'] = ListSubscribe(user_emails)
         else:
             user_emails = None
+            data['anonymous_subscription_form'] = ListAnonymousSubscribe()
         return render(request, 'postorius/lists/summary.html', data)
 
 
@@ -314,6 +315,34 @@ class ListSubscribeView(MailingListView):
                                _('Something went wrong. Please try again.'))
         except MailmanApiError:
             return utils.render_api_error(request)
+        except HTTPError as e:
+            messages.error(request, e.msg)
+        return redirect('list_summary', self.mailing_list.list_id)
+
+
+class ListAnonymousSubscribeView(MailingListView):
+    """
+    view name: `list_anonymous_subscribe`
+    """
+
+    def post(self, request, list_id):
+        """
+        Subscribes an email address to a mailing list via POST and
+        redirects to the `list_summary` view.
+        This view is used for unauthenticated users and asks Mailman core to
+        verify the supplied email address.
+        """
+        try:
+            form = ListAnonymousSubscribe(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data.get('email')
+                self.mailing_list.subscribe(email, pre_verified=False,
+                                            pre_confirmed=False)
+                messages.success(request, _('Please check your inbox for '
+                                            'further instructions'))
+            else:
+                messages.error(request,
+                               _('Something went wrong. Please try again.'))
         except HTTPError as e:
             messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)

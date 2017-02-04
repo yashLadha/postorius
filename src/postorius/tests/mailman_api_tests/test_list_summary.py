@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from postorius.tests.utils import ViewTestCase
+from postorius.forms import ListAnonymousSubscribe
 
 
 class ListSummaryPageTest(ViewTestCase):
@@ -41,13 +42,15 @@ class ListSummaryPageTest(ViewTestCase):
             user=self.user, email=self.user.email, verified=True)
 
     def test_list_summary_logged_out(self):
-        # Response must contain list obj but not the form.
+        # Response must contain list obj and anonymous subscribe form.
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['list'].fqdn_listname,
                          'foo@example.com')
-        self.assertNotContains(response, '<form ')
+        self.assertIsInstance(response.context['anonymous_subscription_form'],
+                              ListAnonymousSubscribe)
+        self.assertContains(response, '<form ')
 
     def test_list_summary_logged_in(self):
         # Response must contain list obj and the form.
