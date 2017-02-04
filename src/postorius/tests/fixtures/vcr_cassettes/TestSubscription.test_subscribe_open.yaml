@@ -74,9 +74,11 @@ interactions:
         "default_nonmember_action": "hold", "description": "", "digest_footer_uri":
         "", "digest_header_uri": "", "digest_last_sent_at": null, "digest_send_periodic":
         true, "digest_size_threshold": 30.0, "digest_volume_frequency": "monthly",
-        "digests_enabled": true, "display_name": "Open_list", "filter_content": false,
-        "first_strip_reply_to": false, "footer_uri": "", "fqdn_listname": "open_list@example.com",
-        "goodbye_message_uri": "", "header_uri": "", "http_etag": "\"2aed2f0ce4a7f2c86eae4124728f0153fda52dc6\"",
+        "digests_enabled": true, "display_name": "Open_list", "dmarc_mitigate_action":
+        "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
+        "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
+        false, "footer_uri": "", "fqdn_listname": "open_list@example.com", "goodbye_message_uri":
+        "", "header_uri": "", "http_etag": "\"530adf8ac47d1bb5980f1c9c8fd18b8c7879a4c4\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "open_list-join@example.com",
         "last_post_at": null, "leave_address": "open_list-leave@example.com", "list_name":
         "open_list", "mail_host": "example.com", "moderator_password": null, "next_digest_number":
@@ -87,7 +89,7 @@ interactions:
         true, "subject_prefix": "[Open_list] ", "subscription_policy": "confirm",
         "volume": 1, "welcome_message_uri": ""}'}
     headers:
-      content-length: ['1849']
+      content-length: ['1997']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -150,9 +152,11 @@ interactions:
         "default_nonmember_action": "hold", "description": "", "digest_footer_uri":
         "", "digest_header_uri": "", "digest_last_sent_at": null, "digest_send_periodic":
         true, "digest_size_threshold": 30.0, "digest_volume_frequency": "monthly",
-        "digests_enabled": true, "display_name": "Moderate_subs", "filter_content":
-        false, "first_strip_reply_to": false, "footer_uri": "", "fqdn_listname": "moderate_subs@example.com",
-        "goodbye_message_uri": "", "header_uri": "", "http_etag": "\"60d87955c09ee35a06c8740e9a4474843e083e3a\"",
+        "digests_enabled": true, "display_name": "Moderate_subs", "dmarc_mitigate_action":
+        "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
+        "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
+        false, "footer_uri": "", "fqdn_listname": "moderate_subs@example.com", "goodbye_message_uri":
+        "", "header_uri": "", "http_etag": "\"052e09045929377c9a6d9766784eb938b0f6bae4\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "moderate_subs-join@example.com",
         "last_post_at": null, "leave_address": "moderate_subs-leave@example.com",
         "list_name": "moderate_subs", "mail_host": "example.com", "moderator_password":
@@ -164,7 +168,7 @@ interactions:
         "[Moderate_subs] ", "subscription_policy": "confirm", "volume": 1, "welcome_message_uri":
         ""}'}
     headers:
-      content-length: ['1889']
+      content-length: ['2037']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -191,7 +195,7 @@ interactions:
     headers:
       content-length: ['0']
       content-type: [application/json; charset=UTF-8]
-      location: ['http://localhost:9001/3.0/users/15']
+      location: ['http://localhost:9001/3.0/users/3667']
     status: {code: 201, message: Created}
 - request:
     body: !!python/unicode 'email=fritz%40example.org'
@@ -199,7 +203,7 @@ interactions:
       accept-encoding: ['gzip, deflate']
       !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
     method: !!python/unicode 'POST'
-    uri: http://localhost:9001/3.0/users/15/addresses
+    uri: http://localhost:9001/3.0/users/3667/addresses
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -212,14 +216,14 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/users/15
+    uri: http://localhost:9001/3.0/users/3667
   response:
     body: {string: !!python/unicode '{"created_on": "2005-08-01T07:49:23", "http_etag":
-        "\"2f84b084fc3c4325814efcfed45decefa9ea0a6d\"", "is_server_owner": false,
-        "password": "$6$rounds=656000$5xho2PHLTYB..rdZ$oG5.apwidsYDhvTy5QVBakCfsEtB9jyPh7dOO6gS.NcI2SfOZ2UZM4EBkhFrTCY7tjXukAIZUhk9F/m6vPhKZ/",
-        "self_link": "http://localhost:9001/3.0/users/15", "user_id": 15}'}
+        "\"3594894ccecc35107f40ba225ee75509a947ae7e\"", "is_server_owner": false,
+        "password": "$6$rounds=656000$MV2dWAau8.A.nDob$IAfSD8n/bAENwJ7bzkwC7ABgyA0Vf0GMac6XQP3Jut0fs1Z7FZ1IlLvloVyRhTcw1U5GP3Y4HBGMxP44rMHL51",
+        "self_link": "http://localhost:9001/3.0/users/3667", "user_id": 3667}'}
     headers:
-      content-length: ['326']
+      content-length: ['330']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -227,18 +231,18 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/users/15/addresses
+    uri: http://localhost:9001/3.0/users/3667/addresses
   response:
     body: {string: !!python/unicode '{"entries": [{"email": "fritz@example.org", "http_etag":
-        "\"f5e7dce17a939b6cd74400155bc8208939e35913\"", "original_email": "fritz@example.org",
+        "\"47007635bae4a9106966c2348e86b02d3f5bfe09\"", "original_email": "fritz@example.org",
         "registered_on": "2005-08-01T07:49:23", "self_link": "http://localhost:9001/3.0/addresses/fritz@example.org",
-        "user": "http://localhost:9001/3.0/users/15"}, {"email": "test@example.com",
-        "http_etag": "\"7e89118330bb8d4cfca6242e4023e3685cfe802f\"", "original_email":
+        "user": "http://localhost:9001/3.0/users/3667"}, {"email": "test@example.com",
+        "http_etag": "\"0ea3b51ede6b6d263ea8d0385b457c06ec407caf\"", "original_email":
         "test@example.com", "registered_on": "2005-08-01T07:49:23", "self_link": "http://localhost:9001/3.0/addresses/test@example.com",
-        "user": "http://localhost:9001/3.0/users/15"}], "http_etag": "\"022eb06e8ccdd9d0317e80895bcf7fe7341666d6\"",
+        "user": "http://localhost:9001/3.0/users/3667"}], "http_etag": "\"1be083c7f716928da8eff4c4ff4f259da2daa8d0\"",
         "start": 0, "total_size": 2}'}
     headers:
-      content-length: ['676']
+      content-length: ['680']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -317,7 +321,7 @@ interactions:
     headers:
       content-length: ['0']
       content-type: [application/json; charset=UTF-8]
-      location: ['http://localhost:9001/3.0/members/13']
+      location: ['http://localhost:9001/3.0/members/5555']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -327,13 +331,13 @@ interactions:
     uri: http://localhost:9001/3.0/lists/open_list@example.com/roster/member
   response:
     body: {string: !!python/unicode '{"entries": [{"address": "http://localhost:9001/3.0/addresses/test@example.com",
-        "delivery_mode": "regular", "email": "test@example.com", "http_etag": "\"79cf48313d7f7d8368360b6809a5fff2d828fdb2\"",
-        "list_id": "open_list.example.com", "member_id": 13, "role": "member", "self_link":
-        "http://localhost:9001/3.0/members/13", "user": "http://localhost:9001/3.0/users/15"}],
-        "http_etag": "\"82b9e225f83d1bab689ed3d998623ada1221e87e\"", "start": 0, "total_size":
+        "delivery_mode": "regular", "email": "test@example.com", "http_etag": "\"b838a1c1467eb5e959448f8b8815218aeac85a82\"",
+        "list_id": "open_list.example.com", "member_id": 5555, "role": "member", "self_link":
+        "http://localhost:9001/3.0/members/5555", "user": "http://localhost:9001/3.0/users/3667"}],
+        "http_etag": "\"46c26e76483f710082efbcd6e52175b6a382dc9c\"", "start": 0, "total_size":
         1}'}
     headers:
-      content-length: ['460']
+      content-length: ['466']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -409,9 +413,11 @@ interactions:
         "default_nonmember_action": "hold", "description": "", "digest_footer_uri":
         "", "digest_header_uri": "", "digest_last_sent_at": null, "digest_send_periodic":
         true, "digest_size_threshold": 30.0, "digest_volume_frequency": "monthly",
-        "digests_enabled": true, "display_name": "Open_list", "filter_content": false,
-        "first_strip_reply_to": false, "footer_uri": "", "fqdn_listname": "open_list@example.com",
-        "goodbye_message_uri": "", "header_uri": "", "http_etag": "\"086805127cff33814207a09645d1d14a418fad63\"",
+        "digests_enabled": true, "display_name": "Open_list", "dmarc_mitigate_action":
+        "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
+        "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
+        false, "footer_uri": "", "fqdn_listname": "open_list@example.com", "goodbye_message_uri":
+        "", "header_uri": "", "http_etag": "\"dfe94eee17035f150f2f9bd8d73782347811ff11\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "open_list-join@example.com",
         "last_post_at": null, "leave_address": "open_list-leave@example.com", "list_name":
         "open_list", "mail_host": "example.com", "moderator_password": null, "next_digest_number":
@@ -422,7 +428,7 @@ interactions:
         true, "subject_prefix": "[Open_list] ", "subscription_policy": "open", "volume":
         1, "welcome_message_uri": ""}'}
     headers:
-      content-length: ['1846']
+      content-length: ['1994']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -436,6 +442,19 @@ interactions:
         "mail-archive": true, "mhonarc": true, "prototype": true}'}
     headers:
       content-length: ['119']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/open_list@example.com/requests
+  response:
+    body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
+        "start": 0, "total_size": 0}'}
+    headers:
+      content-length: ['90']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -459,37 +478,11 @@ interactions:
     uri: http://localhost:9001/3.0/lists/open_list.example.com/member/test@example.com
   response:
     body: {string: !!python/unicode '{"address": "http://localhost:9001/3.0/addresses/test@example.com",
-        "delivery_mode": "regular", "email": "test@example.com", "http_etag": "\"79cf48313d7f7d8368360b6809a5fff2d828fdb2\"",
-        "list_id": "open_list.example.com", "member_id": 13, "role": "member", "self_link":
-        "http://localhost:9001/3.0/members/13", "user": "http://localhost:9001/3.0/users/15"}'}
+        "delivery_mode": "regular", "email": "test@example.com", "http_etag": "\"b838a1c1467eb5e959448f8b8815218aeac85a82\"",
+        "list_id": "open_list.example.com", "member_id": 5555, "role": "member", "self_link":
+        "http://localhost:9001/3.0/members/5555", "user": "http://localhost:9001/3.0/users/3667"}'}
     headers:
-      content-length: ['355']
-      content-type: [application/json; charset=UTF-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/lists/open_list@example.com/requests
-  response:
-    body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
-        "start": 0, "total_size": 0}'}
-    headers:
-      content-length: ['90']
-      content-type: [application/json; charset=UTF-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode 'GET'
-    uri: http://localhost:9001/3.0/lists/moderate_subs@example.com/requests
-  response:
-    body: {string: !!python/unicode '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
-        "start": 0, "total_size": 0}'}
-    headers:
-      content-length: ['90']
+      content-length: ['361']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -527,13 +520,13 @@ interactions:
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode '{"entries": [{"created_on": "2005-08-01T07:49:23",
-        "http_etag": "\"2f84b084fc3c4325814efcfed45decefa9ea0a6d\"", "is_server_owner":
-        false, "password": "$6$rounds=656000$5xho2PHLTYB..rdZ$oG5.apwidsYDhvTy5QVBakCfsEtB9jyPh7dOO6gS.NcI2SfOZ2UZM4EBkhFrTCY7tjXukAIZUhk9F/m6vPhKZ/",
-        "self_link": "http://localhost:9001/3.0/users/15", "user_id": 15}], "http_etag":
-        "\"0d9fb230d34c4ad093e7dab028997bff5c9ea921\"", "start": 0, "total_size":
+        "http_etag": "\"3594894ccecc35107f40ba225ee75509a947ae7e\"", "is_server_owner":
+        false, "password": "$6$rounds=656000$MV2dWAau8.A.nDob$IAfSD8n/bAENwJ7bzkwC7ABgyA0Vf0GMac6XQP3Jut0fs1Z7FZ1IlLvloVyRhTcw1U5GP3Y4HBGMxP44rMHL51",
+        "self_link": "http://localhost:9001/3.0/users/3667", "user_id": 3667}], "http_etag":
+        "\"3d21b185be4a6ea9b7b232eae246459ef7df4b7f\"", "start": 0, "total_size":
         1}'}
     headers:
-      content-length: ['431']
+      content-length: ['435']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -541,7 +534,7 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: !!python/unicode 'DELETE'
-    uri: http://localhost:9001/3.0/users/15
+    uri: http://localhost:9001/3.0/users/3667
   response:
     body: {string: !!python/unicode ''}
     headers:
