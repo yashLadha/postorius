@@ -61,6 +61,23 @@ class ListSummaryPageTest(ViewTestCase):
         self.assertContains(response, '<form ')
         self.assertContains(response, 'Subscribe')
 
+    def test_pending_subscription_request(self):
+        mlist = self.mm_client.get_list('foo@example.com')
+        mlist.settings['subscription_policy'] = 'moderate'
+        mlist.settings.save()
+        mlist.subscribe('test@example.com',
+                        pre_verified=True,
+                        pre_confirmed=True)
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com', )))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('You have a subscription request pending. '
+                        'If you don\'t hear back soon, '
+                        'please contact the list owners.' in response.content)
+        self.assertNotContains(response, 'Unsubscribe')
+        self.assertNotContains(response, 'Subscribe')
+
     def test_unsubscribe_button_is_available(self):
         mlist = self.mm_client.get_list('foo@example.com')
         mlist.subscribe('test@example.com',
