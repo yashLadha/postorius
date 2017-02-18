@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from postorius.tests.utils import ViewTestCase
+from postorius.forms import ListAnonymousSubscribe
 
 
 class ListSummaryPageTest(ViewTestCase):
@@ -41,13 +42,15 @@ class ListSummaryPageTest(ViewTestCase):
             user=self.user, email=self.user.email, verified=True)
 
     def test_list_summary_logged_out(self):
-        # Response must contain list obj but not the form.
+        # Response must contain list obj and anonymous subscribe form.
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['list'].fqdn_listname,
                          'foo@example.com')
-        self.assertNotContains(response, '<form ')
+        self.assertIsInstance(response.context['anonymous_subscription_form'],
+                              ListAnonymousSubscribe)
+        self.assertContains(response, '<form ')
 
     def test_list_summary_logged_in(self):
         # Response must contain list obj and the form.
@@ -57,6 +60,23 @@ class ListSummaryPageTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<form ')
         self.assertContains(response, 'Subscribe')
+
+    def test_pending_subscription_request(self):
+        mlist = self.mm_client.get_list('foo@example.com')
+        mlist.settings['subscription_policy'] = 'moderate'
+        mlist.settings.save()
+        mlist.subscribe('test@example.com',
+                        pre_verified=True,
+                        pre_confirmed=True)
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com', )))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('You have a subscription request pending. '
+                        'If you don\'t hear back soon, '
+                        'please contact the list owners.' in response.content)
+        self.assertNotContains(response, 'Unsubscribe')
+        self.assertNotContains(response, 'Subscribe')
 
     def test_unsubscribe_button_is_available(self):
         mlist = self.mm_client.get_list('foo@example.com')

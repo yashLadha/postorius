@@ -20,6 +20,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from mock import patch
 
 from postorius.tests.utils import ViewTestCase
 
@@ -53,13 +54,19 @@ class TestSubscription(ViewTestCase):
         for address in self.mm_user.addresses:
             address.verify()
 
-    def tearDown(self):
-        # XXX remove the method if core cleares requests on list deletion
-        for req in self.open_list.requests:
-            self.open_list.moderate_request(req['token'], 'discard')
-        for req in self.mod_list.requests:
-            self.mod_list.moderate_request(req['token'], 'discard')
-        super(TestSubscription, self).tearDown()
+    @patch('mailmanclient._client.MailingList.subscribe')
+    def test_anonymous_subscribe(self, mock_subscribe):
+        response = self.client.post(
+            reverse('list_anonymous_subscribe',
+                    args=('open_list.example.com', )),
+            {'email': 'test@example.com'})
+        mock_subscribe.assert_called_once()
+        mock_subscribe.assert_called_with(
+            'test@example.com', pre_verified=False, pre_confirmed=False)
+        self.assertRedirects(
+            response, reverse('list_summary',
+                              args=('open_list.example.com', )))
+        self.assertHasSuccessMessage(response)
 
     def test_subscribe_open(self):
         # The subscription goes straight through.

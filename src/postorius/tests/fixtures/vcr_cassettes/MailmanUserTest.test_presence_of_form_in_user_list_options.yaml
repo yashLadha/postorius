@@ -1,10 +1,10 @@
 interactions:
 - request:
-    body: !!python/unicode mail_host=example.com
+    body: !!python/unicode 'mail_host=example.com'
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
-    method: !!python/unicode POST
+      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
+    method: !!python/unicode 'POST'
     uri: http://localhost:9001/3.0/domains
   response:
     body: {string: !!python/unicode ''}
@@ -17,7 +17,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
+    method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode '{"description": null, "http_etag": "\"d150abd34fabbcef42a2c654bfac81aa04ea4d6f\"",
@@ -27,11 +27,11 @@ interactions:
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
-    body: !!python/unicode fqdn_listname=foo%40example.com
+    body: !!python/unicode 'fqdn_listname=foo%40example.com'
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
-    method: !!python/unicode POST
+      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
+    method: !!python/unicode 'POST'
     uri: http://localhost:9001/3.0/lists
   response:
     body: {string: !!python/unicode ''}
@@ -41,24 +41,24 @@ interactions:
       location: ['http://localhost:9001/3.0/lists/foo.example.com']
     status: {code: 201, message: Created}
 - request:
-    body: !!python/unicode email=user%40example.com
+    body: !!python/unicode 'email=user%40example.com'
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
-    method: !!python/unicode POST
+      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
+    method: !!python/unicode 'POST'
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
       content-type: [application/json; charset=UTF-8]
-      location: ['http://localhost:9001/3.0/users/101']
+      location: ['http://localhost:9001/3.0/users/3746']
     status: {code: 201, message: Created}
 - request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
+    method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/foo.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Foo", "fqdn_listname": "foo@example.com",
@@ -70,24 +70,39 @@ interactions:
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
-    body: !!python/unicode display_name=None&list_id=foo.example.com&pre_approved=True&pre_confirmed=True&pre_verified=True&subscriber=user%40example.com
+    body: !!python/unicode 'display_name=None&list_id=foo.example.com&pre_approved=True&pre_confirmed=True&pre_verified=True&subscriber=user%40example.com'
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
-    method: !!python/unicode POST
+      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
+    method: !!python/unicode 'POST'
     uri: http://localhost:9001/3.0/members
   response:
     body: {string: !!python/unicode ''}
     headers:
       content-length: ['0']
       content-type: [application/json; charset=UTF-8]
-      location: ['http://localhost:9001/3.0/members/104']
+      location: ['http://localhost:9001/3.0/members/5628']
     status: {code: 201, message: Created}
 - request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/users/user@example.com
+  response:
+    body: {string: !!python/unicode '{"created_on": "2005-08-01T07:49:23", "http_etag":
+        "\"f4b5ace411a6ecc158bd7c6e6c953a22478c3a2c\"", "is_server_owner": false,
+        "password": "$6$rounds=656000$OF/Nk1hBqbfthBs9$CMz0o8T2KA16k.BznXG5EnVD8vYGrus/nYpUdutehA7UuppLrTxgr/vwPM9L3QCNi7rrpUo8TqgNQSu9cgxTY0",
+        "self_link": "http://localhost:9001/3.0/users/3746", "user_id": 3746}'}
+    headers:
+      content-length: ['330']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/lists/foo.example.com
   response:
     body: {string: !!python/unicode '{"display_name": "Foo", "fqdn_listname": "foo@example.com",
@@ -102,70 +117,55 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
-    uri: http://localhost:9001/3.0/users/user@example.com
-  response:
-    body: {string: !!python/unicode '{"created_on": "2005-08-01T07:49:23", "http_etag":
-        "\"17a8782a3371f5ca8d05535a0805b1f5a703c4b4\"", "is_server_owner": false,
-        "password": "$6$rounds=631490$qW0YaTebsoVWlG17$VteE/7C0xOsumyDdcfKouUWXpHSPl5umnoX5E8Ymh.ZvGAAzphCmMinokARwVQZdmLvnEk2sAvJfBt7cNNw2V/",
-        "self_link": "http://localhost:9001/3.0/users/101", "user_id": 101}'}
-    headers:
-      content-length: ['328']
-      content-type: [application/json; charset=UTF-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
-    uri: http://localhost:9001/3.0/users/101/addresses
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/users/3746/addresses
   response:
     body: {string: !!python/unicode '{"entries": [{"email": "user@example.com", "http_etag":
-        "\"80744bb322341d024e3f90ed6683f4d67bc0b2c8\"", "original_email": "user@example.com",
+        "\"f0adf481e9492ce17270930cac8fd404b9325acd\"", "original_email": "user@example.com",
         "registered_on": "2005-08-01T07:49:23", "self_link": "http://localhost:9001/3.0/addresses/user@example.com",
-        "user": "http://localhost:9001/3.0/users/101", "verified_on": "2005-08-01T07:49:23"}],
-        "http_etag": "\"eda06689e990b251ca616dc67570bda6d81795d0\"", "start": 0, "total_size":
+        "user": "http://localhost:9001/3.0/users/3746", "verified_on": "2005-08-01T07:49:23"}],
+        "http_etag": "\"ea3ab0460c849f71d3a1e8305cb8f6ba2eb1ccf7\"", "start": 0, "total_size":
         1}'}
     headers:
-      content-length: ['427']
+      content-length: ['428']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
-    body: !!python/unicode subscriber=user%40example.com
+    body: !!python/unicode 'subscriber=user%40example.com'
     headers:
       accept-encoding: ['gzip, deflate']
-      !!python/unicode content-type: [!!python/unicode application/x-www-form-urlencoded]
-    method: !!python/unicode POST
+      !!python/unicode 'content-type': [!!python/unicode 'application/x-www-form-urlencoded']
+    method: !!python/unicode 'POST'
     uri: http://localhost:9001/3.0/members/find
   response:
     body: {string: !!python/unicode '{"entries": [{"address": "http://localhost:9001/3.0/addresses/user@example.com",
-        "delivery_mode": "regular", "email": "user@example.com", "http_etag": "\"0c3f849fb7ab3bd1e4d60e3684c2313ed04efdb3\"",
-        "list_id": "foo.example.com", "member_id": 104, "role": "member", "self_link":
-        "http://localhost:9001/3.0/members/104", "user": "http://localhost:9001/3.0/users/101"}],
-        "http_etag": "\"9fbe568567e2bbfb446941379ff3bb5688dbe7a8\"", "start": 0, "total_size":
+        "delivery_mode": "regular", "email": "user@example.com", "http_etag": "\"a82118234c4af044b0fe2b83d177dad5fd371908\"",
+        "list_id": "foo.example.com", "member_id": 5628, "role": "member", "self_link":
+        "http://localhost:9001/3.0/members/5628", "user": "http://localhost:9001/3.0/users/3746"}],
+        "http_etag": "\"7282bb571758f94a5a4e83b2a397ef55ee3488a8\"", "start": 0, "total_size":
         1}'}
     headers:
-      content-length: ['457']
+      content-length: ['460']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
-    uri: http://localhost:9001/3.0/members/104/preferences
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/members/5628/preferences
   response:
-    body: {string: !!python/unicode '{"http_etag": "\"158065bcee112f4e3b301ee917aeefdd4e53bafe\"",
-        "self_link": "http://localhost:9001/3.0/members/104/preferences"}'}
+    body: {string: !!python/unicode '{"http_etag": "\"08d215767bd4cd760d2438d18cf75608cf5ee306\"",
+        "self_link": "http://localhost:9001/3.0/members/5628/preferences"}'}
     headers:
-      content-length: ['127']
+      content-length: ['128']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
+    method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/domains
   response:
     body: {string: !!python/unicode '{"entries": [{"description": null, "http_etag":
@@ -181,7 +181,7 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode DELETE
+    method: !!python/unicode 'DELETE'
     uri: http://localhost:9001/3.0/domains/example.com
   response:
     body: {string: !!python/unicode ''}
@@ -192,25 +192,25 @@ interactions:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode GET
+    method: !!python/unicode 'GET'
     uri: http://localhost:9001/3.0/users
   response:
     body: {string: !!python/unicode '{"entries": [{"created_on": "2005-08-01T07:49:23",
-        "http_etag": "\"17a8782a3371f5ca8d05535a0805b1f5a703c4b4\"", "is_server_owner":
-        false, "password": "$6$rounds=631490$qW0YaTebsoVWlG17$VteE/7C0xOsumyDdcfKouUWXpHSPl5umnoX5E8Ymh.ZvGAAzphCmMinokARwVQZdmLvnEk2sAvJfBt7cNNw2V/",
-        "self_link": "http://localhost:9001/3.0/users/101", "user_id": 101}], "http_etag":
-        "\"802591088f81215eb00b1e7b4f5e41b0bff53e4b\"", "start": 0, "total_size":
+        "http_etag": "\"f4b5ace411a6ecc158bd7c6e6c953a22478c3a2c\"", "is_server_owner":
+        false, "password": "$6$rounds=656000$OF/Nk1hBqbfthBs9$CMz0o8T2KA16k.BznXG5EnVD8vYGrus/nYpUdutehA7UuppLrTxgr/vwPM9L3QCNi7rrpUo8TqgNQSu9cgxTY0",
+        "self_link": "http://localhost:9001/3.0/users/3746", "user_id": 3746}], "http_etag":
+        "\"3b024e7a3b8ea2d032b871745e935855cda88705\"", "start": 0, "total_size":
         1}'}
     headers:
-      content-length: ['433']
+      content-length: ['435']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
-    method: !!python/unicode DELETE
-    uri: http://localhost:9001/3.0/users/101
+    method: !!python/unicode 'DELETE'
+    uri: http://localhost:9001/3.0/users/3746
   response:
     body: {string: !!python/unicode ''}
     headers:

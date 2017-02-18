@@ -26,6 +26,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.version import get_complete_version
 from django.contrib.sites.models import Site
 
+from django_mailman3.lib.mailman import get_mailman_client
+
 
 ACTION_CHOICES = (
     ("hold", _("Hold for moderation")),
@@ -217,6 +219,24 @@ class ListSubscribe(forms.Form):
         super(ListSubscribe, self).__init__(*args, **kwargs)
         self.fields['email'].choices = ((address, address)
                                         for address in user_emails)
+
+
+class ListAnonymousSubscribe(forms.Form):
+    """Form fields to join an existing list as an anonymous user.
+    """
+
+    email = forms.CharField(
+        label=_('Your email address'),
+        validators=[validate_email],
+        error_messages={
+            'required': _('Please enter an email address.'),
+            'invalid': _('Please enter a valid email address.')})
+
+    display_name = forms.CharField(
+        label=_('Your name (optional)'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(ListAnonymousSubscribe, self).__init__(*args, **kwargs)
 
 
 class ListSettingsForm(forms.Form):
@@ -537,10 +557,8 @@ class AlterMessagesForm(ListSettingsForm):
         required=False,
         error_messages={
             'required': _("Please choose a reply-to action.")},
-        choices=(
-            ('default-owner-pipeline', _('default-owner-pipeline')),
-            ('default-posting-pipeline', _('default-posting-pipeline')),
-            ('virgin', _('virgin'))),
+        choices=lambda: ((p, p) for p in get_mailman_client()
+                         .pipelines['pipelines']),
         help_text=_('Type of pipeline you want to use for this mailing list'))
 
 

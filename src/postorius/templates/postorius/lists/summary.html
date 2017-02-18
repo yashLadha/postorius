@@ -38,7 +38,7 @@
 
     {# Subscription #}
     {% if user.is_authenticated %}
-        {% if userSubscribed %}
+        {% if user_subscribed %}
             <h2>{% trans 'Subscription' %}</h2>
             <p>
                 {% trans 'You are subscribed to this list with the following address:' %} <em>{{ subscribed_address }}</em>
@@ -56,6 +56,8 @@
                     <button type="submit" class="btn btn-danger">{% trans 'Unsubscribe' %}</button>
                 </form>
             </p>
+        {% elif user_request_pending %}
+            <h4>{% trans "You have a subscription request pending. If you don't hear back soon, please contact the list owners." %}</h4>
         {% else %}
             <h2>{% trans 'Subscribe to this list' %}</h2>
             <p>
@@ -70,8 +72,23 @@
             </form>
         {% endif %}
     {% else %}
-        <p>{% trans 'If you want to subscribe to this list, you have to log in first.' %}</p>
+      <div>
+        <p>{% trans 'If you want to subscribe to this list and you have an account, please log in first.' %}</p>
         <p><a href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}" class="btn btn-primary">{% trans 'Log In' %}</a></p>
+      </div>
+      <hr />
+      <div>
+        <p>
+        {% blocktrans %}
+        However you can also subscribe without creating an account.
+        If you wish to to so, please use the form below.
+        {% endblocktrans%}
+        </p>
+        <form action="{% url 'list_anonymous_subscribe' list.list_id %}"
+              method="post" class="form-horizontal">
+          {% bootstrap_form_horizontal anonymous_subscription_form 2 8 'Subscribe' %}
+        </form>
+      </div>
     {% endif %}
 
     {# List metrics #}
