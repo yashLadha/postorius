@@ -26,7 +26,7 @@ setup(
     maintainer="The Mailman GSOC Coders",
     license='GPLv3',
     keywords='email mailman django',
-    url="https://launchpad.net/postorius",
+    url=" https://gitlab.com/mailman/postorius",
     classifiers=[
         "Programming Language :: Python",
         ],
