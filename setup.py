@@ -35,8 +35,13 @@ setup(
     include_package_data=True,
     install_requires=[
         'Django>=1.8',
-        'Django<1.11',
+        'Django<1.12',
         'django-mailman3',
         'mailmanclient',
+    ],
+    tests_require=[
+        "mock",
+        "vcrpy",
+        "beautifulsoup4",
     ],
 )
