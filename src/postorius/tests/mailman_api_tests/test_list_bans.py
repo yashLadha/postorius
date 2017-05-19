@@ -20,6 +20,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
+from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -62,12 +63,16 @@ class ListBansTest(ViewTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('addban_form' in response.context)
-        self.assertContains(
-            response, '<input class="form-control" id="id_email" '
-                      'name="email" type="text" ')
-        self.assertContains(
-            response, '<button class="btn btn-primary" type="submit" '
-                      'name="add">Ban email</button>')
+        soup = BeautifulSoup(response.content, "html.parser")
+        tag_input = soup.find("input", {
+            "class": "form-control", "id": "id_email",
+            "name": "email", "type": "text",
+            })
+        self.assertIsNotNone(tag_input)
+        tag_button = soup.find("button", {
+            "class": "btn btn-primary", "name": "add", "type": "submit",
+            })
+        self.assertIsNotNone(tag_button)
 
     def test_context_contains_delete_forms(self):
         banned = ['banned{}@example.com'.format(i) for i in range(1, 10)]
@@ -75,14 +80,15 @@ class ListBansTest(ViewTestCase):
             self.m_list.bans.add(ban)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, "html.parser")
         for ban in banned:
-            self.assertContains(
-                response,
-                '<input type="hidden" name="email" value="%s" />' % ban)
-        self.assertContains(
-            response,
-            '<button class="btn btn-danger btn-xs" type="submit" name="del"',
-            count=9)
+            self.assertIsNotNone(soup.find("input", {
+                "name": "email", "type": "hidden", "value": ban,
+                }))
+        self.assertEqual(len(soup.find_all("button", {
+            "class": "btn btn-danger btn-xs",
+            "name": "del", "type": "submit",
+            })), 9)
 
     def test_add_ban(self):
         response = self.client.post(self.url, {
