@@ -63,7 +63,7 @@ class Mailman404Error(Exception):
 
 class MailmanRestManager(object):
     """Manager class to give a model class CRUD access to the API.
-    Returns objects (or lists of objects) retrived from the API.
+    Returns objects (or lists of objects) retrieved from the API.
     """
 
     def __init__(self, resource_name, resource_name_plural, cls_name=None):
