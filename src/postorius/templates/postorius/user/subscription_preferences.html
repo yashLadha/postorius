@@ -19,6 +19,7 @@
       <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
     {% else %}
         <p>{% trans 'Each list subscription can have specific Mailman preferences.' %}</p>
+        <p>{% trans 'Any options showing as not set inherit at runtime from your global or address specific preferences (viewable on other tabs)' %}</p>
         <form action="{% url 'user_subscription_preferences' %}" method="post" id="subscriptions_formset">
             {% csrf_token %}
             {{ formset.management_form }}

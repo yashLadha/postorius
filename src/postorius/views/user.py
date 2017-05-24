@@ -36,6 +36,7 @@ from postorius.models import List, MailmanUser
 from postorius.forms import (
     UserPreferences, UserPreferencesFormset, ChangeSubscriptionForm)
 from postorius.views.generic import MailmanClientMixin
+from django_mailman3.lib.mailman import get_mailman_client
 
 
 logger = logging.getLogger(__name__)
@@ -87,7 +88,35 @@ class UserMailmanSettingsView(UserPreferencesView):
     success_url = reverse_lazy('user_mailmansettings')
 
     def _get_preferences(self):
+        # Get the defaults and pre-populate so view shows them
+        combinedpreferences = self._get_combined_preferences()
+        for key in combinedpreferences:
+            if key != u"self_link":
+                self.mm_user.preferences[key] = combinedpreferences[key]
+
+        # This is a bit of a hack so preferences behave as users expect
+        # We probably don't want to save, only display here
+        # but this means that whatever preferences the users see first are
+        # the ones they have unless they explicitly change them
+        self.mm_user.preferences.save()
+
         return self.mm_user.preferences
+
+    def _get_combined_preferences(self):
+        # Get layers of default preferences to match how they are applied
+        # We ignore self_link as we don't want to over-write it
+        defaultpreferences = get_mailman_client().preferences
+        combinedpreferences = {}
+        for key in defaultpreferences:
+            if key != u"self_link":
+                combinedpreferences[key] = defaultpreferences[key]
+
+        # Clobber defaults with any preferences already set
+        for key in self.mm_user.preferences:
+            if key != u"self_link":
+                combinedpreferences[key] = self.mm_user.preferences[key]
+
+        return(combinedpreferences)
 
 
 class UserAddressPreferencesView(UserPreferencesView):
@@ -102,6 +131,43 @@ class UserAddressPreferencesView(UserPreferencesView):
 
     def _get_preferences(self):
         return [address.preferences for address in self.mm_user.addresses]
+
+    def _get_combined_preferences(self):
+        # grab the default preferences
+        defaultpreferences = get_mailman_client().preferences
+
+        # grab your global preferences
+        globalpreferences = self.mm_user.preferences
+
+        # start a new combined preferences object
+        combinedpreferences = []
+
+        for address in self.mm_user.addresses:
+            # make a per-address prefs object
+            prefs = {}
+
+            # initialize with default preferences
+            for key in defaultpreferences:
+                if key != u"self_link":
+                    prefs[key] = defaultpreferences[key]
+
+            # overwrite with user's global preferences
+            for key in globalpreferences:
+                if key != u"self_link":
+                    prefs[key] = globalpreferences[key]
+
+            # overwrite with address-specific preferences
+            for key in address.preferences:
+                if key != u"self_link":
+                    prefs[key] = address.preferences[key]
+            combinedpreferences.append(prefs)
+
+            # put the combined preferences back on the original object
+            for key in prefs:
+                if key != u"self_link":
+                    address.preferences[key] = prefs[key]
+
+        return combinedpreferences
 
     def get_context_data(self, **kwargs):
         data = super(UserAddressPreferencesView, self).get_context_data(
@@ -178,6 +244,52 @@ class UserSubscriptionPreferencesView(UserPreferencesView):
 
     def _get_preferences(self):
         return [sub.preferences for sub in self.subscriptions]
+
+    def _get_combined_preferences(self):
+        # grab the default preferences
+        defaultpreferences = get_mailman_client().preferences
+
+        # grab your global preferences
+        globalpreferences = self.mm_user.preferences
+
+        # start a new combined preferences object
+        combinedpreferences = []
+
+        for sub in self.subscriptions:
+            # make a per-address prefs object
+            prefs = {}
+
+            # initialize with default preferences
+            for key in defaultpreferences:
+                if key != u"self_link":
+                    prefs[key] = defaultpreferences[key]
+
+            # overwrite with user's global preferences
+            for key in globalpreferences:
+                if key != u"self_link":
+                    prefs[key] = globalpreferences[key]
+
+            # overwrite with address-based preferences
+            # There is currently no better way to do this,
+            # we may consider revisiting.
+            addresspreferences = {}
+            for address in self.mm_user.addresses:
+                if sub.email == address.email:
+                    addresspreferences = address.preferences
+
+            for key in addresspreferences:
+                if key != u"self_link":
+                    prefs[key] = addresspreferences[key]
+
+            # overwrite with subscription-specific preferences
+            for key in sub.preferences:
+                if key != u"self_link":
+                    prefs[key] = sub.preferences[key]
+
+            combinedpreferences.append(prefs)
+
+        return combinedpreferences
+        # return [sub.preferences for sub in self.subscriptions]
 
     def get_context_data(self, **kwargs):
         data = super(UserSubscriptionPreferencesView, self).get_context_data(
