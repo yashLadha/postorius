@@ -39,7 +39,7 @@
     {# Subscription #}
     {% if user.is_authenticated %}
         {% if user_subscribed %}
-            <h2>{% trans 'Subscription' %}</h2>
+            <h2>{% trans 'Subscription / Unsubscription' %}</h2>
             <p>
                 {% trans 'You are subscribed to this list with the following address:' %} <em>{{ subscribed_address }}</em>
             </p>
@@ -73,14 +73,19 @@
         {% endif %}
     {% else %}
       <div>
-        <p>{% trans 'If you want to subscribe to this list and you have an account, please log in first.' %}</p>
+        <h2>{% trans 'Subscription / Unsubscription' %}</h2>
+        <p>{% blocktrans %}
+        To subscribe or unsubscribe from this list, please log in first.
+        If you have not previously logged in, you may need to set up an account
+        with the appropriate email address.
+        {% endblocktrans %}</p>
         <p><a href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}" class="btn btn-primary">{% trans 'Log In' %}</a></p>
       </div>
       <hr />
       <div>
         <p>
         {% blocktrans %}
-        However you can also subscribe without creating an account.
+        You can also subscribe without creating an account.
         If you wish to to so, please use the form below.
         {% endblocktrans%}
         </p>
