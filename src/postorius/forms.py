@@ -627,12 +627,14 @@ class ListAutomaticResponsesForm(ListSettingsForm):
             'mailing list manager to Mailman.'))
     welcome_message_uri = forms.CharField(
         label=_('URI for the welcome message'),
+        required=False,
         help_text=_(
             'If a welcome message is to be sent to subscribers, you can '
             'specify a URI that gives the text of this message.'),
     )
     goodbye_message_uri = forms.CharField(
         label=_('URI for the good bye message'),
+        required=False,
         help_text=_(
             'If a good bye message is to be sent to unsubscribers, you can '
             'specify a URI that gives the text of this message.'),
