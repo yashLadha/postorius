@@ -18,6 +18,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.1.0 -- "Welcome to This World"
+================================
+(2017-05-26)
+
+* Added DMARC mitigation settings
+* Switch to Allauth auth library
+* Preference page improvements
+* Moderation page improvements
+* Django support up to Django 1.11
+* Added form to edit header matches
+* Domain edit form improvements
+* All pipelines recognized in alter messages form
+* Use django-mailman3 to share common code with HyperKitty
+* Various bug fixes, code cleanup, and performance improvements
+
+
 1.0.3
 =====
 (2016-02-03)
