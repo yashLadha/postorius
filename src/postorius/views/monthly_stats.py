@@ -138,7 +138,7 @@ def monthly_stats(request,list_id,year,month):
     stats_disabled = [stat for stat in list_stats if stat.channel == 'Disabled']
 
 
-    base_url = "http://127.0.0.1:8000/hyperkitty/api/list/"
+    base_url = settings.HYPERKITTY_API_URL
 
     list_name = list_id.split('.')
     list_name = list_name[0] + '@' + list_name[1] + '.' +list_name[2]
