@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -41,6 +42,9 @@ class ListMembersAccessTest(ViewTestCase):
             'testowner', 'owner@example.com', 'testpass')
         self.moderator = User.objects.create_user(
             'testmoderator', 'moderator@example.com', 'testpass')
+        for user in (self.user, self.superuser, self.owner, self.moderator):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
 
@@ -86,13 +90,10 @@ class AddRemoveOwnerTest(ViewTestCase):
         self.foo_list = self.domain.create_list('foo')
         self.su = User.objects.create_superuser(
             'su', 'su@example.com', 'pwd')
+        EmailAddress.objects.create(
+            user=self.su, email=self.su.email, verified=True)
         self.client.login(username='su', password='pwd')
         self.mm_client.get_list('foo@example.com').add_owner('su@example.com')
-
-    def tearDown(self):
-        self.foo_list.delete()
-        self.su.delete()
-        self.domain.delete()
 
     def test_add_remove_owner(self):
         url = reverse('list_members', args=('foo@example.com', 'owner',))
@@ -158,6 +159,8 @@ class AddModeratorTest(ViewTestCase):
         self.foo_list = self.domain.create_list('foo')
         self.su = User.objects.create_superuser(
             'su', 'su@example.com', 'pwd')
+        EmailAddress.objects.create(
+            user=self.su, email=self.su.email, verified=True)
         # login and post new moderator data to url
         self.client.login(username='su', password='pwd')
         url = reverse('list_members', args=('foo@example.com', 'moderator',))
@@ -183,6 +186,8 @@ class ListMembersTest(ViewTestCase):
         self.foo_list = self.domain.create_list('foo')
         self.superuser = User.objects.create_superuser(
             'testsu', 'su@example.com', 'testpass')
+        EmailAddress.objects.create(
+            user=self.superuser, email=self.superuser.email, verified=True)
 
     def tearDown(self):
         self.foo_list.delete()

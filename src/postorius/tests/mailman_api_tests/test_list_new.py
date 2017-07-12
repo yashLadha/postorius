@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -31,11 +32,15 @@ class ListCreationTest(ViewTestCase):
         self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
         self.superuser = User.objects.create_superuser('su', 'su@example.com',
                                                        'pwd')
+        for user in (self.user, self.superuser):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
         self.domain = self.mm_client.create_domain('example.com')
 
     def test_permission_denied(self):
         self.client.login(username='user', password='pwd')
-        self.assertRedirectsToLogin(reverse('list_new'))
+        response = self.client.get(reverse('list_new'))
+        self.assertEqual(response.status_code, 403)
 
     def test_new_list_created_with_owner(self):
         self.client.login(username='su', password='pwd')

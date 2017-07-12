@@ -1,13 +1,13 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 
-{% block subtitle %}
-{% trans 'Delete' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Delete' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
 {% load nav_helpers %}
 
-{% block main %}
+{% block content %}
     {% list_nav 'list_delete' 'Delete List' %}
 
     <p>{% trans 'Are you sure you want to permanently delete this list?' %}</p>
@@ -27,4 +27,4 @@
         </div>
     </form>
 
-{% endblock main %}
+{% endblock content %}

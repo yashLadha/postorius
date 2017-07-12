@@ -1,13 +1,13 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 {% load nav_helpers %}
 {% load bootstrap_tags %}
 
-{% block subtitle %}
-{% trans 'Member options' %} | {{ mm_member.email }}
+{% block head_title %}
+{% trans 'Member options' %} | {{ mm_member.email }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_members' 'Member options' mm_member.email %}
 
@@ -16,18 +16,18 @@
         <p>{% trans 'You are not the owner for this list' %}</p>
     {% else %}
         <form action="{% url 'list_member_options' list.list_id mm_member.email %}" method="post" class="form-horizontal">
-            {% render_form_horizontal preferences_form 3 8 'Save changes' %}
+            {% bootstrap_form_horizontal preferences_form 3 8 'Save changes' %}
             <input type="hidden" name="formname" value="preferences" />
         </form>
         <div class="panel panel-default">
             <div class="panel-heading">Administration options</div>
             <div class="panel-body">
                 <form action="{% url 'list_member_options' list.list_id mm_member.email %}" method="post" class="form-horizontal">
-                    {% render_form_horizontal moderation_form 3 8 'Save changes' %}
+                    {% bootstrap_form_horizontal moderation_form 3 8 'Save changes' %}
                     <input type="hidden" name="formname" value="moderation" />
                 </form>
             </div>
         </div>
 
     {% endif %}
-{% endblock main %}
+{% endblock content %}

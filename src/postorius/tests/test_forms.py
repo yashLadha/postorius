@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2016 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -14,10 +14,14 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import absolute_import, unicode_literals
+
 from django.test import TestCase
 
-from postorius.forms import (ListNew, UserPreferences, DomainNew,
-                             ListSubscribe, ChangeSubscriptionForm)
+from postorius.forms import (
+    ChangeSubscriptionForm, DomainForm, ListIdentityForm, ListNew,
+    ListSubscribe, UserPreferences)
 
 
 class UserPreferencesTest(TestCase):
@@ -34,23 +38,14 @@ class UserPreferencesTest(TestCase):
 
 class DomainNewTest(TestCase):
 
-    def test_form_fields_webhost(self):
-        form = DomainNew({
+    def test_form_fields_valid(self):
+        form = DomainForm({
             'mail_host': 'mailman.most-desirable.org',
-            'web_host': 'http://mailman.most-desirable.org',
             'description': 'The Most Desirable organization',
             'contact_address': 'contact@mailman.most-desirable.org',
+            'site': 1,
         })
         self.assertTrue(form.is_valid())
-
-    def test_form_fields_webhost_invalid(self):
-        form = DomainNew({
-            'mail_host': 'mailman.most-desirable.org',
-            'web_host': 'most-desirable',
-            'description': 'The Most Desirable organization',
-            'contact_address': 'contact@mailman.most-desirable.org',
-        })
-        self.assertFalse(form.is_valid())
 
 
 class ListSubscribeTest(TestCase):
@@ -92,21 +87,37 @@ class ChangeSubscriptionTest(TestCase):
 class ListNewTest(TestCase):
 
     def test_form_fields_list(self):
-        form = ListNew({
+        form = ListNew([
+            ("mailman.most-desirable.org", "mailman.most-desirable.org")],
+            {
             'listname': 'xyz',
             'mail_host': 'mailman.most-desirable.org',
             'list_owner': 'contact@mailman.most-desirable.org',
-            'advertise': 'abcd',
+            'advertised': 'True',
             'description': 'The Most Desirable organization',
-        })
-        self.assertTrue(form.is_valid)
+            })
+        self.assertTrue(form.is_valid(), form.errors)
 
     def test_form_fields_list_invalid(self):
-        form = ListNew({
+        form = ListNew([
+            ("mailman.most-desirable.org", "mailman.most-desirable.org")],
+            {
             'listname': 'xy#z',
             'mail_host': 'mailman.most-desirable.org',
             'list_owner': 'mailman.most-desirable.org',
-            'advertise': 'abcd',
+            'advertised': 'abcd',
             'description': 'The Most Desirable organization',
-        })
+            })
         self.assertFalse(form.is_valid())
+
+
+class ListIdentityTest(TestCase):
+
+    def test_info_not_required(self):
+        form = ListIdentityForm({
+            'advertised': 'True',
+            'description': 'The Most Desirable organization',
+            'display_name': 'Most Desirable',
+            'subject_prefix': '[Most Desirable] ',
+        }, mlist=None)
+        self.assertTrue(form.is_valid(), form.errors)

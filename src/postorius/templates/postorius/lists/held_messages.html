@@ -1,13 +1,14 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 {% load nav_helpers %}
+{% load pagination %}
 {% load staticfiles %}
 
-{% block subtitle %}
-{% trans 'Held messages' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Held messages' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_held_messages' 'Held messages' %}
 
@@ -19,19 +20,17 @@
             {% endfor %}
           {% endif %}
           {% csrf_token %}
+          <div class="row margin-bottom">
+            <div class="col-md-8">{% trans 'Perform action on selected messages' %}</div>
+            <div class="col-md-4 text-right">
+              <input type="submit" class="btn btn-sm btn-success" name="accept" value="{% trans 'Accept' %}" />
+              <input type="submit" class="btn btn-sm btn-warning" name="reject" value="{% trans 'Reject' %}" />
+              <input type="submit" class="btn btn-sm btn-danger" name="discard" value="{% trans 'Discard' %}" />
+            </div>
+          </div>
           <div class="table-responsive">
             <table class="table table-bordered table-striped">
               <thead>
-                <tr>
-                  <td colspan="5">
-                    <div class="col-md-8">{% trans 'Perform action on selected messages' %}</div>
-                    <div class="col-md-4 text-right">
-                    <input type="submit" class="btn btn-sm btn-success" name="accept" value="{% trans 'Accept' %}" />
-                    <input type="submit" class="btn btn-sm btn-warning" name="reject" value="{% trans 'Reject' %}" />
-                    <input type="submit" class="btn btn-sm btn-danger" name="discard" value="{% trans 'Discard' %}" />
-                    </div>
-                  </td>
-                </tr>
                 <tr>
                   <th><input type="checkbox" id="all-messages-checkbox" /></th>
                   <th>{% trans 'Subject' %}</th>
@@ -44,18 +43,17 @@
                 {% for msg in held_messages %}
                   <tr>
                     <td><input type="checkbox" id="id_choices_{{ forloop.counter0 }}" class="message-checkbox" name="choices" value="{{ msg.request_id }}"/></td>
-                    <td><a href="#" class="show-modal-btn" data-msgid="{{ msg.request_id }}">{{ msg.subject }}</a>
-</td>
-                    <td>{{ msg.sender }}</td>
                     <td>
-                      {% if msg.reasons %}
-                        {{ msg.reason }}
-                      {% else %}
-                        {% for reason in msg.moderation_reasons %}
-                          <p>{{ reason }}</p>
-                        {% endfor %}
-                      {% endif %}
+                      <a href="#" class="show-modal-btn" data-msgid="{{ msg.request_id }}">
+                        {% if msg.subject %}
+                          {{ msg.subject }}
+                        {% else %}
+                          {% trans 'No Subject' %}
+                        {% endif %}
+                      </a>
                     </td>
+                    <td>{{ msg.sender }}</td>
+                    <td>{{ msg.reason }}</td>
                     <td>{{ msg.hold_date }}</td>
                   </tr>
                 {% endfor %}
@@ -63,7 +61,7 @@
             </table>
           </div>
         </form>
-        {% include 'postorius/lib/pagination.html' with page=held_messages %}
+        {% paginator held_messages %}
         <div class="modal fade" id="held-messages-modal" tabindex="-1" role="dialog" aria-labelledby="mymodal-label" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">

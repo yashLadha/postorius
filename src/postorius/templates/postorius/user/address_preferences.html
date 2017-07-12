@@ -1,34 +1,31 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 
 {% load i18n %}
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'Subscription preferences' %} | {{ user.username }}
+{% block head_title %}
+{% trans 'Subscription preferences' %} | {{ user.username }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
-    {% user_nav 'settings' 'Subscription settings' %}
+<div class="user-profile">
+    {% user_nav 'settings_address' 'Address-based settings' %}
 
-    <ul class="nav nav-tabs margin-bottom">
-        <li><a href="{% url 'user_mailmansettings' %}">{% trans 'Global Mailman preferences' %}</a></li>
-        <li class="active"><a href="#">{% trans 'Address-based preferences' %}</a></li>
-        <li><a href="{% url 'user_subscription_preferences' %}">{% trans 'Subscription-based preferences' %}</a></li>
-    </ul>
-
-    {% if nolists %}
+    {% if formset|length == 0 %}
         <h2>{% trans 'No preferences available' %}</h2>
         <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
     {% else %}
         <p>{% trans 'Each email address can have specific Mailman preferences.' %}</p>
+        <p>{% trans 'Any options showing as not set here have inherit at runtime from your global preferences (viewable on other tab)' %}</p>
+
         <form action="{% url 'user_address_preferences' %}" method="post" id="address_formset">
             {% csrf_token %}
             {{ formset.management_form }}
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
-                    {% for form,address in zipped_data %}
+                    {% for form in formset %}
                         {% if forloop.first %}
                             <thead>
                                 <tr>
@@ -42,9 +39,9 @@
                             </thead >
                         {% endif %}
                         <tr>
-                            <td>{{ address }}</td>
+                            <td>{{ form.address }}</td>
                                 {% for field in form %}
-                                {% if field|fieldtype == 'RadioSelect' %}
+                                {% if field|fieldtype_is:'RadioSelect' %}
                                     <td class="text-center">
                                         {% for choice in field %}
                                             <label class="radio-inline">
@@ -66,8 +63,9 @@
             </div>
         </form>
     {% endif %}
+</div>
 
-{% endblock main %}
+{% endblock content %}
 {% block additionaljs %}
 <script>
     $(function () {

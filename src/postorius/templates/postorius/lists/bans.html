@@ -1,13 +1,14 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 {% load bootstrap_tags %}
 {% load nav_helpers %}
+{% load pagination %}
 
-{% block subtitle %}
-{% trans 'Banned addresses' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Banned addresses' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_bans' 'Banned addresses' %}
 
@@ -32,12 +33,10 @@
     <!-- Unban -->
     <h4>{% trans 'Currently banned addresses' %}</h4>
 
-    {% with list_bans=list.bans %}
-
-    {% if list_bans|length > 0 %}
+    {% if banned_addresses|length > 0 %}
     <table class="table bans-current">
         <tbody>
-            {% for ban in list.bans %}
+            {% for ban in banned_addresses %}
             <tr>
                 <td>{{ ban.email }}</td>
                 <td>
@@ -54,10 +53,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% paginator banned_addresses %}
     {% else %}
     <p>{% trans 'No addresses are currently banned.' %}</p>
     {% endif %}
-
-    {% endwith %}
 
 {% endblock %}

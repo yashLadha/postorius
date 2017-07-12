@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,9 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
+from __future__ import absolute_import, unicode_literals
+
 import json
 
-from email.Header import decode_header
 from email.parser import Parser as EmailParser
 from email.parser import HeaderParser
 
@@ -28,22 +30,12 @@ from django.core.urlresolvers import reverse
 
 from postorius.auth.decorators import list_moderator_required
 from postorius.models import List
-from postorius.lib.scrub import Scrubber
+from django_mailman3.lib.scrub import Scrubber
 
 
 def parse(message):
     msgobj = EmailParser().parsestr(message)
     header_parser = HeaderParser()
-    if msgobj['Subject'] is not None:
-        decodefrag = decode_header(msgobj['Subject'])
-        subj_fragments = []
-        for s, enc in decodefrag:
-            if enc:
-                s = unicode(s, enc).encode('utf8', 'replace')
-            subj_fragments.append(s)
-        subject = ''.join(subj_fragments)
-    else:
-        subject = None
 
     headers = []
     headers_dict = header_parser.parsestr(message)
@@ -51,7 +43,6 @@ def parse(message):
         headers += ['{}: {}'.format(key, headers_dict[key])]
     content = Scrubber(msgobj).scrub()[0]
     return {
-        'subject': subject,
         'body': content,
         'headers': '\n'.join(headers),
     }
@@ -76,11 +67,8 @@ def get_held_message(request, list_id, held_id=-1):
         return HttpResponse(held_message.msg, content_type='text/plain')
     response_data = dict()
     response_data['sender'] = held_message.sender
-    try:
-        response_data['reasons'] = held_message.reasons
-    except AttributeError:
-        pass
-    response_data['moderation_reasons'] = held_message.moderation_reasons
+    response_data['subject'] = held_message.subject
+    response_data['reason'] = held_message.reason
     response_data['hold_date'] = held_message.hold_date
     response_data['msg'] = parse(held_message.msg)
     response_data['msgid'] = held_message.request_id

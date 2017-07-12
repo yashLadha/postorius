@@ -1,19 +1,19 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 {% load bootstrap_tags %}
 
-{% block subtitle %}
-{% trans 'Create list' %}
+{% block head_title %}
+{% trans 'Create list' %} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     <div class="page-header">
         <h1>{% trans 'Create a new list' %}</h1>
     </div>
 
     <form action="{% url 'list_new' %}" method="post" class="form-horizontal">
-        {% render_form_horizontal form 2 8 'Create list' %}
+        {% bootstrap_form_horizontal form 2 8 'Create list' %}
     </form>
 
 {% endblock %}

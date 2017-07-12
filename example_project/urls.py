@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2016 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -18,15 +18,18 @@
 
 
 from django.conf.urls import include, url
-
 from django.contrib import admin
-admin.autodiscover()
-
-from postorius.views import list as list_views
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import RedirectView
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url('', include('django_browserid.urls')),
-    url(r'^$', list_views.list_index),
+    url(r'^$', RedirectView.as_view(
+        url=reverse_lazy('list_index'),
+        permanent=True)),
     url(r'^postorius/', include('postorius.urls')),
+    #url(r'^hyperkitty/', include('hyperkitty.urls')),
+    url(r'', include('django_mailman3.urls')),
+    url(r'^accounts/', include('allauth.urls')),
+    # Django admin
+    url(r'^admin/', include(admin.site.urls)),
 ]

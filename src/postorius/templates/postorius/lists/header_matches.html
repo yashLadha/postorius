@@ -1,13 +1,13 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'Header filters' %} | {{ list.fqdn_listname}}
+{% block head_title %}
+{% trans 'Header filters' %} | {{ list.fqdn_listname}} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_header_matches' 'Header filters' %}
 

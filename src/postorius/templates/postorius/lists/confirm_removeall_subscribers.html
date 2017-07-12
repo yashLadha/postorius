@@ -1,8 +1,12 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 {% load nav_helpers %}
 
-{% block main %}
+{% block head_title %}
+{% trans 'Unsubscribe all members' %} | {{ list.fqdn_listname }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
 
     {% list_nav 'mass_removal' 'Confirm Removal of All Members' %}
 
@@ -18,4 +22,4 @@
         <a class="btn btn-default" href="{% url 'mass_removal' list.list_id %}">{% trans 'Cancel' %}</a>
     </form>
 
-{% endblock main %}
+{% endblock content %}

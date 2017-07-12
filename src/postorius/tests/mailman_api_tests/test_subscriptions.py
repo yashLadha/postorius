@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -17,8 +17,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from mock import patch
 
 from postorius.tests.utils import ViewTestCase
 
@@ -42,19 +44,29 @@ class TestSubscription(ViewTestCase):
         # Create django user.
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'pwd')
+        EmailAddress.objects.create(
+            user=self.user, email=self.user.email, verified=True)
+        EmailAddress.objects.create(
+            user=self.user, email='fritz@example.org', verified=True)
         # Create Mailman user
         self.mm_user = self.mm_client.create_user('test@example.com', '')
         self.mm_user.add_address('fritz@example.org')
         for address in self.mm_user.addresses:
             address.verify()
 
-    def tearDown(self):
-        # XXX remove the method if core cleares requests on list deletion
-        for req in self.open_list.requests:
-            self.open_list.moderate_request(req['token'], 'discard')
-        for req in self.mod_list.requests:
-            self.mod_list.moderate_request(req['token'], 'discard')
-        super(TestSubscription, self).tearDown()
+    @patch('mailmanclient._client.MailingList.subscribe')
+    def test_anonymous_subscribe(self, mock_subscribe):
+        response = self.client.post(
+            reverse('list_anonymous_subscribe',
+                    args=('open_list.example.com', )),
+            {'email': 'test@example.com'})
+        mock_subscribe.assert_called_once()
+        mock_subscribe.assert_called_with(
+            'test@example.com', pre_verified=False, pre_confirmed=False)
+        self.assertRedirects(
+            response, reverse('list_summary',
+                              args=('open_list.example.com', )))
+        self.assertHasSuccessMessage(response)
 
     def test_subscribe_open(self):
         # The subscription goes straight through.
@@ -95,6 +107,20 @@ class TestSubscription(ViewTestCase):
                               args=('open_list.example.com', )))
         self.assertHasErrorMessage(response)
 
+    def test_banned_address(self):
+        # Impossible to register with a banned address
+        self.client.login(username='testuser', password='pwd')
+        self.open_list.bans.add('test@example.com')
+        response = self.client.post(
+            reverse('list_subscribe', args=('open_list.example.com', )),
+            {'email': 'test@example.com'})
+        self.assertEqual(len(self.open_list.members), 0)
+        self.assertEqual(len(self.open_list.requests), 0)
+        self.assertRedirects(
+            response, reverse('list_summary',
+                              args=('open_list.example.com', )))
+        self.assertHasErrorMessage(response)
+
     def test_subscribe_mod(self):
         # The subscription is held for approval.
         self.client.login(username='testuser', password='pwd')
@@ -121,9 +147,8 @@ class TestSubscription(ViewTestCase):
                               args=('moderate_subs.example.com', )))
         self.assertHasSuccessMessage(response)
 
-    def test_subscribe_mod_then_open(self):
-        # The list is moderated when the subscription is requested, then the
-        # list is switched to open.
+    def test_subscribe_already_pending(self):
+        # The user tries to subscribe twice on a moderated list.
         self.client.login(username='testuser', password='pwd')
         response = self.client.post(
             reverse('list_subscribe', args=('moderate_subs.example.com', )),
@@ -131,29 +156,20 @@ class TestSubscription(ViewTestCase):
         self.assertEqual(len(self.mod_list.members), 0)
         self.assertEqual(len(self.mod_list.requests), 1)
         self.assertHasSuccessMessage(response)
-        # Switch the list to 'open'
-        self.mod_list.settings['subscription_policy'] = 'open'
-        self.mod_list.settings.save()
-        self.assertEqual(self.mod_list.settings['subscription_policy'], 'open')
-        # Subscribe the user (they are now allowed to self-subscribe)
-        self.mod_list.subscribe('test@example.com')
-        # Login as the owner to accept the subscription
-        User.objects.create_user('testowner', 'owner@example.com', 'pwd')
-        self.mod_list.add_owner('owner@example.com')
-        self.client.logout()
-        self.client.login(username='testowner', password='pwd')
-        accept_url = reverse('handle_subscription_request', args=[
-            'moderate_subs.example.com',
-            self.mod_list.requests[0]['token'], 'accept'])
-        response = self.client.get(accept_url)
-        self.assertRedirects(response,
-                             reverse('list_subscription_requests',
-                                     args=['moderate_subs.example.com']))
-        message = self.assertHasSuccessMessage(response)
-        self.assertIn('Already subscribed', message)
+        # Try to subscribe a second time.
+        response = self.client.post(
+            reverse('list_subscribe', args=('moderate_subs.example.com', )),
+            {'email': 'test@example.com'})
+        self.assertEqual(len(self.mod_list.members), 0)
+        self.assertEqual(len(self.mod_list.requests), 1)
+        message = self.assertHasErrorMessage(response)
+        self.assertIn('Subscription request already pending', message)
 
     def test_subscribe_with_name(self):
-        User.objects.create_user('testowner', 'owner@example.com', 'pwd')
+        owner = User.objects.create_user(
+            'testowner', 'owner@example.com', 'pwd')
+        EmailAddress.objects.create(
+            user=owner, email=owner.email, verified=True)
         self.open_list.add_owner('owner@example.com')
         self.client.login(username='testowner', password='pwd')
         email_list = """First Person <test-1@example.org>\n

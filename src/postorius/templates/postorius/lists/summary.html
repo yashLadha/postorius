@@ -1,34 +1,45 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 {% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block subtitle %}
-{% trans 'Info' %} | {{ list.fqdn_listname }}
+{% block head_title %}
+{% trans 'Info' %} | {{ list.fqdn_listname }} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     {% list_nav 'list_summary' 'Summary' %}
 
     <p>{{ list.settings.description }}</p>
+    {% if list.settings.info %}
+    <p>{{ list.settings.info }}</p>
+    {% endif %}
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
 
     {# Archives #}
-    {% if hyperkitty_url %}
+    {% if hyperkitty_enabled %}
+      {% if not public_archive and not user.is_authenticated %}
+        <p>
+          {% trans 'You have to login to visit the archives of this list.' %}
+        </p>
+      {% else %}
         {% url 'hk_list_overview' list.fqdn_listname as hyperkitty_list_url %}
-        {% blocktrans %}
-          <p>To see the prior postings to this list, visit
-          <a href="{{ hyperkitty_list_url }}">the archives</a>.</p>
-        {% endblocktrans %}
+        <p>
+          {% blocktrans %}
+            To see the prior postings to this list, visit
+            <a href="{{ hyperkitty_list_url }}">the archives</a>.
+          {% endblocktrans %}
+        </p>
+      {% endif %}
     {% endif %}
 
     <hr />
 
     {# Subscription #}
     {% if user.is_authenticated %}
-        {% if userSubscribed %}
-            <h2>{% trans 'Subscription' %}</h2>
+        {% if user_subscribed %}
+            <h2>{% trans 'Subscription / Unsubscription' %}</h2>
             <p>
                 {% trans 'You are subscribed to this list with the following address:' %} <em>{{ subscribed_address }}</em>
             </p>
@@ -45,6 +56,8 @@
                     <button type="submit" class="btn btn-danger">{% trans 'Unsubscribe' %}</button>
                 </form>
             </p>
+        {% elif user_request_pending %}
+            <h4>{% trans "You have a subscription request pending. If you don't hear back soon, please contact the list owners." %}</h4>
         {% else %}
             <h2>{% trans 'Subscribe to this list' %}</h2>
             <p>
@@ -55,12 +68,33 @@
               {% endblocktrans %}
             </p>
             <form action="{% url 'list_subscribe' list.list_id %}" method="post" class="form-horizontal">
-                {% render_form_horizontal subscribe_form 2 8 'Subscribe' %}
+                <p><font color="red">&nbsp &nbsp &nbsp *Required</font></p>
+                {% bootstrap_form_horizontal subscribe_form 2 8 'Subscribe' %}
             </form>
         {% endif %}
     {% else %}
-        <p>{% trans 'If you want to subscribe to this list, you have to log in first.' %}</p>
-        <p><a href="{{ login_url }}?next={{ next|default:request.path|urlencode }}" class="btn btn-primary">{% trans 'Log In' %}</a></p>
+      <div>
+        <h2>{% trans 'Subscription / Unsubscription' %}</h2>
+        <p>{% blocktrans %}
+        To subscribe or unsubscribe from this list, please log in first.
+        If you have not previously logged in, you may need to set up an account
+        with the appropriate email address.
+        {% endblocktrans %}</p>
+        <p><a href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}" class="btn btn-primary">{% trans 'Log In' %}</a></p>
+      </div>
+      <hr />
+      <div>
+        <p>
+        {% blocktrans %}
+        You can also subscribe without creating an account.
+        If you wish to to so, please use the form below.
+        {% endblocktrans%}
+        </p>
+        <form action="{% url 'list_anonymous_subscribe' list.list_id %}"
+              method="post" class="form-horizontal">
+          {% bootstrap_form_horizontal anonymous_subscription_form 2 8 'Subscribe' %}
+        </form>
+      </div>
     {% endif %}
 
     {# List metrics #}

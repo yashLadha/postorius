@@ -40,6 +40,18 @@ should install Postorius using git:
     $ cd postorius
     $ python setup.py develop
 
+.. note::
+    This note only pertains to development installs and should not be used when 
+    doing production installs.
+    
+    When setting up or running your local dev environment, you may run into some 
+    errors. You may want to consider installing mailman modules from source as 
+    changes may not yet be published to PyPI. Example usage below:
+
+::
+
+    $ pip uninstall mailmanclient
+    $ pip install git+https://gitlab.com/mailman/mailmanclient.git
 
 Setup your django project
 =========================

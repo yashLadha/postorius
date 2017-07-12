@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -19,6 +19,8 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from allauth.account.models import EmailAddress
+from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -42,6 +44,9 @@ class ListHeaderMatchesTest(ViewTestCase):
             'testowner', 'owner@example.com', 'testpass')
         self.moderator = User.objects.create_user(
             'testmoderator', 'moderator@example.com', 'testpass')
+        for user in (self.user, self.superuser, self.owner, self.moderator):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
         self.mlist.add_owner('owner@example.com')
         self.mlist.add_moderator('moderator@example.com')
 
@@ -87,7 +92,11 @@ class ListHeaderMatchesTest(ViewTestCase):
               'action': u'discard'}])
         self.assertContains(response, 'testheader')
         self.assertContains(response, 'testpattern')
-        self.assertContains(response, 'value="discard" selected="selected"')
+        soup = BeautifulSoup(response.content, "html.parser")
+        tag_form = soup.find("select", {"name": "form-0-action"})
+        self.assertIsNotNone(tag_form)
+        tag_option = tag_form.find("option", value="discard", selected=True)
+        self.assertIsNotNone(tag_option)
         # the new header match subform should not have ORDER or DELETE fields
         self.assertNotContains(response, 'form-1-ORDER')
         self.assertNotContains(response, 'form-1-DELETE')

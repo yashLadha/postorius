@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,18 +16,21 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf.urls import url, include
-from django.contrib.auth.views import login as login_view
-from django.contrib.auth.views import logout as logout_view
 
 from postorius.views import list as list_views
 from postorius.views import user as user_views
 from postorius.views import domain as domain_views
 from postorius.views import rest as rest_views
+from postorius.views.essay import EssayList, EssayDeleteView
 
 
 list_patterns = [
     url(r'^csv_view/$', list_views.csv_view, name='csv_view'),
+    url(r'^essay/(?P<email>[\w.-]+@[\w.-]+)/$', EssayList, name='view_essay'),
+    url(r'^essay/delete/(?P<email>[\w.-]+@[\w.-]+)/$', EssayDeleteView.as_view(), name='delete_essay'),
     url(r'^members/options/(?P<email>.+)$', list_views.list_member_options,
         name='list_member_options'),
     url(r'^members/(?P<role>\w+)/$', list_views.list_members_view,
@@ -36,6 +39,9 @@ list_patterns = [
         name='list_summary'),
     url(r'^subscribe$', list_views.ListSubscribeView.as_view(),
         name='list_subscribe'),
+    url(r'^anonymous_subscribe$',
+        list_views.ListAnonymousSubscribeView.as_view(),
+        name='list_anonymous_subscribe'),
     url(r'^change_subscription$', list_views.ChangeSubscriptionView.as_view(),
         name='change_subscription'),
     url(r'^unsubscribe/$', list_views.ListUnsubscribeView.as_view(),
@@ -68,12 +74,8 @@ list_patterns = [
 
 urlpatterns = [
     url(r'^$', list_views.list_index),
-    url(r'^accounts/login/$', login_view,
-        {"template_name": "postorius/login.html"}, name='user_login'),
-    url(r'^accounts/logout/$', logout_view, name='user_logout'),
-    url(r'^accounts/profile/$', user_views.user_profile, name='user_profile'),
     url(r'^accounts/subscriptions/$', user_views.user_subscriptions,
-        name='user_subscriptions'),
+        name='ps_user_profile'),
     url(r'^accounts/per-address-preferences/$',
         user_views.UserAddressPreferencesView.as_view(),
         name='user_address_preferences'),
@@ -85,21 +87,19 @@ urlpatterns = [
         user_views.UserMailmanSettingsView.as_view(),
         name='user_mailmansettings'),
     url(r'^accounts/list-options/(?P<list_id>[^/]+)/$',
-        user_views.user_list_options,
+        user_views.UserListOptionsView.as_view(),
         name='user_list_options'),
     # /domains/
     url(r'^domains/$', domain_views.domain_index, name='domain_index'),
     url(r'^domains/new/$', domain_views.domain_new, name='domain_new'),
+    url(r'^domains/(?P<domain>[^/]+)/$', domain_views.domain_edit,
+        name='domain_edit'),
     url(r'^domains/(?P<domain>[^/]+)/delete$', domain_views.domain_delete,
         name='domain_delete'),
     # /lists/
     url(r'^lists/$', list_views.list_index, name='list_index'),
     url(r'^lists/new/$', list_views.list_new, name='list_new'),
     url(r'^lists/(?P<list_id>[^/]+)/', include(list_patterns)),
-    # XXX This can be changed to limit the length of activation keys
-    url(r'^users/address_activation/(?P<activation_key>[A-Za-z0-9]+)/$',
-        user_views.address_activation_link,
-        name='address_activation_link'),
     url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/$',
         rest_views.get_held_message, name='rest_held_message'),
     url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/'

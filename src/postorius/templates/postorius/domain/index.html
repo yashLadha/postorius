@@ -1,11 +1,11 @@
-{% extends postorius_base_template %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 
-{% block subtitle %}
-{% trans 'Domains' %}
+{% block head_title %}
+{% trans 'Domains' %} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
+{% block content %}
 
     <div class="page-header">
         <h1>{% trans 'Domains' %}</h1>
@@ -13,13 +13,14 @@
 
     <p class="text-right"><a class="btn btn-success" href="{% url 'domain_new' %}">{% trans 'Add Domain' %}</a></p>
 
+    {% if domains %}
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>{% trans 'Mail Host' %}</th>
-                    <th>{% trans 'URL Host' %}</th>
                     <th>{% trans 'Description' %}</th>
+                    <th>{% trans 'Web Host' %}</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>
@@ -27,13 +28,19 @@
                 {% for domain in domains %}
                     <tr>
                         <td>{{ domain.mail_host }}</td>
-                        <td>{{ domain.base_url }}</td>
-                        <td>{{ domain.description }}</td>
-                        <td><a href="{% url 'domain_delete' domain.mail_host %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a></td>
+                        <td>{% if domain.description %}{{ domain.description }}{% endif %}</td>
+                        <td>{{ domain.site.name }} ({{ domain.site.domain }})</td>
+                        <td>
+                            <a href="{% url 'domain_edit' domain.mail_host %}" class="btn btn-xs btn-primary">{% trans 'Edit' %}</a>
+                            <a href="{% url 'domain_delete' domain.mail_host %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% else %}
+    <p>No domains yet.</p>
+    {% endif %}
 
-{% endblock main %}
+{% endblock content %}
