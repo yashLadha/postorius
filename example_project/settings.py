@@ -286,6 +286,8 @@ LOGGING = {
     },
 }
 
+# Hyperkitty API
+HYPERKITTY_API_URL = "http://127.0.0.1:8000/hyperkitty/api/list/"
 
 try:
     from settings_local import *
