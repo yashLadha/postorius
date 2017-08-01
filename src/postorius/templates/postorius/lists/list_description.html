@@ -1,0 +1,80 @@
+{% extends "postorius/base.html" %}
+{% load i18n %}
+{% load bootstrap_tags %}
+{% load nav_helpers %}
+
+{% block content %}
+	<div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans 'LIST NAME' %}</th>
+                        <th>{% trans 'DESCRIPTION' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>{{ listname }}</td>
+                            <td>{{ description }}</td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+
+    <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans 'OWNERS' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for owner in owners %}
+                        <tr>
+                            <td>{{ owner }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans 'MODERATORS' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for moderator in moderators %}
+                        <tr>
+                            <td>{{ moderator }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans 'MOST POPULAR DISCUSSIONS' %}</th>
+                        <th>{% trans 'NUMBER OF POSTS' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for thread in threads %}
+                        <tr>
+                        	<td>
+                        		<a href="{{ thread.1.url }}">{{ thread.1.subject }}</a>
+                        	</td>
+
+                        	<td>{{ thread.1.email_count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+{% endblock %}
