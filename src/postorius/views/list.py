@@ -21,6 +21,7 @@ from __future__ import absolute_import, unicode_literals
 import csv
 import email.utils
 import logging
+import requests
 
 from allauth.account.models import EmailAddress
 from django.http import HttpResponse, HttpResponseNotAllowed, Http404
@@ -957,4 +958,42 @@ def list_header_matches(request, list_id):
     return render(request, 'postorius/lists/header_matches.html', {
         'list': m_list,
         'formset': formset,
+        })
+
+
+def list_description(request, list_id):
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+    owners = mailing_list.owners
+    moderators = mailing_list.moderators
+    listname = mailing_list.fqdn_listname
+    description = mailing_list.settings['description']
+
+    base_url = settings.HYPERKITTY_API_URL
+    url = base_url + listname + '/' + 'threads/'+ '?format=json'
+    thread_response = requests.get(url)
+    threads_json = thread_response.json()
+    hyperkitty_url = settings.HYPERKITTY_URL
+
+    threads = {}
+    for thread in threads_json:
+        thread_data = {}
+        emails_url = thread['emails']
+        email_response = requests.get(emails_url)
+        emails_json = email_response.json()
+        thread_data['email_count'] = len(emails_json)
+        thread_data['subject'] = thread['subject']
+        thread_data['url'] = hyperkitty_url + 'list/' + mailing_list.fqdn_listname + '/' + 'thread/' + thread['thread_id']
+        threads[thread['thread_id']] = thread_data
+
+    threads = list(reversed(sorted(threads.iteritems(), key=lambda (x, y): y['email_count'])))
+    
+    if(len(threads) > 10):
+        threads = threads[:10]
+
+    return render(request, 'postorius/lists/list_description.html', {
+        'owners': owners,
+        'moderators': moderators,
+        'threads': threads,
+        'listname': listname,
+        'description': description,
         })
