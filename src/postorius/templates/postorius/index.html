@@ -29,6 +29,7 @@
                         <th>{% trans 'List name' %}</th>
                         <th>{% trans 'Post address' %}</th>
                         <th>{% trans 'Description' %}</th>
+                        <th>{% trans 'Summary' %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,6 +41,9 @@
                             </td>
                             <td>{{ list.fqdn_listname }}</td>
                             <td>{{ list.settings.description }}</td>
+                            <td>
+                                <a href="{% url 'list_description' list_id=list.list_id %}"> View </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

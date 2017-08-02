@@ -81,6 +81,8 @@ list_patterns = [
         name='list_settings'),
     url(r'^unsubscribe_all$', list_views.remove_all_subscribers,
         name='unsubscribe_all'),
+    url(r'^description/$', list_views.list_description,
+        name='list_description'),
 ]
 
 urlpatterns = [
