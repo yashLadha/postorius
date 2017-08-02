@@ -33,7 +33,9 @@ from django.core.validators import validate_email
 from django.forms import formset_factory
 from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
-from django.utils import timezone
+from django_countries.widgets import CountrySelectWidget
+from django_countries.fields import CountryField 
+from django_countries import countries
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django_mailman3.lib.mailman import get_mailman_client
@@ -105,16 +107,27 @@ def list_members_view(request, list_id, role=None):
     }
     if role == 'subscriber':
         context['page_title'] = _('List subscribers')
-        if request.GET.get('q'):
+        if request.GET.get('country'):
+            country = request.GET['country']
+            user_list = EssaySubscribe.objects.filter(list_id=list_id, country=country)
+            email_list = []
+            for user in user_list:
+                email_list.append(user.email)
+            email_list = list(set(email_list))
+            def find_method(count, page):
+                return mailing_list.find_members_by_list(email_list, count=count, page=page)
+        elif request.GET.get('q'):
             query = context['query'] = request.GET['q']
             if "*" not in query:
                 query = '*{}*'.format(query)
+                print query
 
             # Proxy the find_members method to insert the query
             def find_method(count, page):
                 return mailing_list.find_members(query, count=count, page=page)
         else:
             find_method = mailing_list.get_member_page
+
         context['members'] = paginate(
             find_method,
             request.GET.get('page'),
@@ -137,6 +150,7 @@ def list_members_view(request, list_id, role=None):
             context['members'] = mailing_list.moderators
             context['empty_error'] = _('List has no moderators')
             context['form_action'] = _('Add moderator')
+    context['countries'] = sorted(dict(countries).items())
     return render(request, 'postorius/lists/members.html', context)
 
 
