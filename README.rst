@@ -1,3 +1,5 @@
+.. image:: https://img.shields.io/travis/rust-lang/rust.svg?style=plastic   :target: https://github.com/systers/postorius
+
 ===================================
 Postorius - web ui for GNU Mailman
 ===================================
