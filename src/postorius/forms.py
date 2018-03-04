@@ -82,7 +82,7 @@ class DomainNew(FieldsetForm):
         mail_host = self.cleaned_data['mail_host']
         try:
             validate_email('mail@' + mail_host)
-        except:
+        except forms.ValidationError:
             raise forms.ValidationError(_("Please enter a valid domain name"))
         return mail_host
 
@@ -160,7 +160,7 @@ class ListNew(FieldsetForm):
     def clean_listname(self):
         try:
             validate_email(self.cleaned_data['listname'] + '@example.net')
-        except:
+        except forms.ValidationError:
             raise forms.ValidationError(_("Please enter a valid listname"))
         return self.cleaned_data['listname']
 

@@ -99,6 +99,8 @@ def get_flash_messages(response, empty=True):
     if empty:
         del response.client.cookies["messages"]
     return msgs
+
+
 get_flash_messages.__test__ = False
 
 

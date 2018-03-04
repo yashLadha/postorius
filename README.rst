@@ -1,4 +1,5 @@
-.. image:: https://img.shields.io/travis/rust-lang/rust.svg?style=plastic   :target: https://github.com/systers/postorius
+.. image:: https://travis-ci.org/systers/postorius.svg?branch=develop
+    :target: https://travis-ci.org/systers/postorius
 
 ===================================
 Postorius - web ui for GNU Mailman
@@ -46,8 +47,8 @@ Installation
 To install GNU Mailman follow the instructions in the documentation:
 http://mailman.readthedocs.org/
 
-A description how to run Postorius on Django's dev server or deploying it 
-using Apache/mod_wsgi or Nginx/uwsig, can be found in the package documentation: 
+A description how to run Postorius on Django's dev server or deploying it
+using Apache/mod_wsgi or Nginx/uwsig, can be found in the package documentation:
 
 src/postorius/doc/setup.rst
 src/postorius/doc/deployment.rst
